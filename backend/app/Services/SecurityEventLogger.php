@@ -39,6 +39,8 @@ class SecurityEventLogger
 
     public const UNUSUAL_REQUEST_PATTERN = 'UNUSUAL_REQUEST_PATTERN';
 
+    public const EMERGENCY_TRIGGERED = 'EMERGENCY_TRIGGERED';
+
     public static function log(
         string $eventType,
         string $severity = 'info',

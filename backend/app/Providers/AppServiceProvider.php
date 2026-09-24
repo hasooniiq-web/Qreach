@@ -76,21 +76,21 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('public-action', function (Request $request) {
             return [
                 Limit::perMinute(6)->by('public-action-ip:'.$request->ip()),
-                Limit::perMinute(3)->by('public-action-tag:'.$request->route('tag')),
+                Limit::perMinute(3)->by('public-action-token:'.$request->route('token')),
             ];
         });
 
         RateLimiter::for('emergency-action', function (Request $request) {
             return [
                 Limit::perHour(3)->by('emergency-ip:'.$request->ip()),
-                Limit::perHour(3)->by('emergency-tag:'.$request->route('tag')),
+                Limit::perHour(3)->by('emergency-token:'.$request->route('token')),
             ];
         });
 
         RateLimiter::for('contact-request', function (Request $request) {
             return [
                 Limit::perHour(5)->by('contact-ip:'.$request->ip()),
-                Limit::perHour(3)->by('contact-tag:'.$request->route('tag')),
+                Limit::perHour(3)->by('contact-token:'.$request->route('token')),
             ];
         });
 
