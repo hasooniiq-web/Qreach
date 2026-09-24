@@ -1,8 +1,28 @@
 <?php
 
-use Illuminate\Http\Request;
+use App\Http\Controllers\Api\V1\Auth\OtpAuthController;
+use App\Http\Controllers\Api\V1\TagController;
+use App\Http\Controllers\Api\V1\VehicleController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+Route::prefix('v1')->name('api.v1.')->group(function () {
+    Route::prefix('auth')->name('auth.')->group(function () {
+        Route::post('otp/request', [OtpAuthController::class, 'requestOtp'])
+            ->middleware('throttle:otp-request')->name('otp.request');
+        Route::post('otp/verify', [OtpAuthController::class, 'verifyOtp'])
+            ->middleware('throttle:otp-verify')->name('otp.verify');
+
+        Route::middleware('auth:sanctum')->group(function () {
+            Route::post('logout', [OtpAuthController::class, 'logout'])->name('logout');
+            Route::post('logout-all', [OtpAuthController::class, 'logoutAllDevices'])->name('logout-all');
+        });
+    });
+
+    Route::middleware('auth:sanctum')->group(function () {
+        Route::apiResource('vehicles', VehicleController::class)->parameters(['vehicles' => 'vehicle']);
+
+        Route::post('tags/activate', [TagController::class, 'activate'])
+            ->middleware('throttle:qr-activation')->name('tags.activate');
+        Route::get('tags/{token}', [TagController::class, 'show'])->name('tags.show');
+    });
+});

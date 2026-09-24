@@ -13,7 +13,10 @@ class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
-        //
+        // No SMS provider is named in the spec — bind a dev-only log gateway
+        // for now; swap this for a real provider before production (see
+        // docs/ARCHITECTURE_DECISIONS.md and App\Services\Sms\LogSmsGateway).
+        $this->app->bind(\App\Contracts\SmsGatewayContract::class, \App\Services\Sms\LogSmsGateway::class);
     }
 
     public function boot(): void
