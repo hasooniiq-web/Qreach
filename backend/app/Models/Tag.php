@@ -15,7 +15,10 @@ use Illuminate\Support\Str;
  */
 class Tag extends Model
 {
-    protected $fillable = ['public_token', 'serial_number', 'type', 'batch_id', 'status', 'vehicle_id'];
+    protected $fillable = [
+        'public_token', 'serial_number', 'type', 'batch_id', 'status', 'vehicle_id',
+        'activated_at', 'assigned_at', 'revoked_at', 'revocation_reason', 'replaced_by_tag_id',
+    ];
 
     protected $hidden = ['id', 'uuid'];
 

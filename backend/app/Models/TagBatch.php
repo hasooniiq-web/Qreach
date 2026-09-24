@@ -9,7 +9,7 @@ use Illuminate\Support\Str;
 
 class TagBatch extends Model
 {
-    protected $fillable = ['batch_code', 'tag_type', 'quantity', 'status', 'created_by', 'notes'];
+    protected $fillable = ['batch_code', 'tag_type', 'quantity', 'status', 'created_by', 'notes', 'generated_at', 'exported_at'];
 
     protected function casts(): array
     {

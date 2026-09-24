@@ -1,8 +1,13 @@
 <?php
 
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\ContactRequestController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PasswordController;
+use App\Http\Controllers\Admin\TagBatchController;
+use App\Http\Controllers\Admin\TagController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\VehicleController;
 use App\Http\Controllers\Public\ScanController;
 use Illuminate\Support\Facades\Route;
 
@@ -47,17 +52,58 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
             Route::get('sections/{section}', function (string $section) {
                 $titles = [
-                    'users' => 'المستخدمون', 'vehicles' => 'المركبات', 'qr' => 'رموز QR',
-                    'nfc' => 'رموز NFC', 'batches' => 'دفعات الرموز', 'contact-requests' => 'طلبات التواصل',
                     'notifications' => 'التنبيهات والإشعارات', 'reports' => 'التقارير والتحليلات',
                     'security' => 'الأمان', 'audit' => 'سجلات التدقيق', 'admins' => 'المسؤولون والصلاحيات',
-                    'settings' => 'الإعدادات',
+                    'settings' => 'الإعدادات', 'nfc' => 'رموز NFC',
                 ];
 
                 abort_unless(isset($titles[$section]), 404);
 
                 return view('admin.coming-soon', ['title' => $titles[$section]]);
             })->name('coming-soon');
+
+            Route::middleware('admin.permission:users.view')->group(function () {
+                Route::get('users', [UserController::class, 'index'])->name('users.index');
+                Route::get('users/{user}', [UserController::class, 'show'])->name('users.show');
+            });
+            Route::post('users/{user}/suspend', [UserController::class, 'suspend'])
+                ->middleware('admin.permission:users.suspend')->name('users.suspend');
+            Route::post('users/{user}/activate', [UserController::class, 'activate'])
+                ->middleware('admin.permission:users.suspend')->name('users.activate');
+
+            Route::middleware('admin.permission:vehicles.view')->group(function () {
+                Route::get('vehicles', [VehicleController::class, 'index'])->name('vehicles.index');
+                Route::get('vehicles/{vehicle}', [VehicleController::class, 'show'])->name('vehicles.show');
+            });
+
+            Route::middleware('admin.permission:qr.view')->group(function () {
+                Route::get('qr', [TagController::class, 'index'])->name('tags.index');
+                Route::get('qr/{tag:public_token}/image.{format}', [TagController::class, 'image'])->name('tags.image');
+            });
+            Route::post('qr/{tag:public_token}/revoke', [TagController::class, 'revoke'])
+                ->middleware('admin.permission:qr.revoke')->name('tags.revoke');
+
+            // Literal-segment routes (batches/create) must be registered before
+            // the wildcard batches/{tagBatch} route, or Laravel's router matches
+            // the wildcard first and tries to bind a TagBatch with id "create".
+            Route::middleware('admin.permission:qr.generate_batch')->group(function () {
+                Route::get('batches/create', [TagBatchController::class, 'create'])->name('tag-batches.create');
+                Route::post('batches', [TagBatchController::class, 'store'])->name('tag-batches.store');
+            });
+            Route::middleware('admin.permission:qr.view')->group(function () {
+                Route::get('batches', [TagBatchController::class, 'index'])->name('tag-batches.index');
+                Route::get('batches/{tagBatch}', [TagBatchController::class, 'show'])->name('tag-batches.show');
+                Route::get('batches/{tagBatch}/print', [TagBatchController::class, 'print'])->name('tag-batches.print');
+            });
+            Route::get('batches/{tagBatch}/export', [TagBatchController::class, 'exportCsv'])
+                ->middleware('admin.permission:qr.export')->name('tag-batches.export');
+
+            Route::middleware('admin.permission:contact_requests.view')->group(function () {
+                Route::get('contact-requests', [ContactRequestController::class, 'index'])->name('contact-requests.index');
+                Route::get('contact-requests/{contactRequest}', [ContactRequestController::class, 'show'])->name('contact-requests.show');
+            });
+            Route::post('contact-requests/{contactRequest}/close', [ContactRequestController::class, 'close'])
+                ->middleware('admin.permission:contact_requests.respond')->name('contact-requests.close');
         });
     });
 });

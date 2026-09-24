@@ -115,4 +115,20 @@ class TagActivationTest extends TestCase
         $this->postJson('/api/v1/tags/activate', ['token' => 'x', 'vehicle_id' => 'y'])
             ->assertStatus(401);
     }
+
+    public function test_revoking_a_tag_persists_the_reason_and_timestamp(): void
+    {
+        // Regression: Tag was missing revocation_reason/revoked_at from
+        // $fillable, so TagLifecycleService::revoke()'s update() silently
+        // dropped both fields even though the status change succeeded.
+        $tag = $this->makeAvailableTag();
+        $tag->update(['status' => 'assigned']);
+
+        app(\App\Services\TagLifecycleService::class)->revoke($tag, 'Lost by customer', 'admin', null);
+
+        $tag->refresh();
+        $this->assertSame('revoked', $tag->status);
+        $this->assertSame('Lost by customer', $tag->revocation_reason);
+        $this->assertNotNull($tag->revoked_at);
+    }
 }

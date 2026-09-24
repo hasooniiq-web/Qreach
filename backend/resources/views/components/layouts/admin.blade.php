@@ -16,12 +16,12 @@
                 ['icon' => 'dashboard', 'label' => 'لوحة التحكم', 'route' => 'admin.dashboard'],
             ],
             'الإدارة' => [
-                ['icon' => 'users', 'label' => 'المستخدمون', 'route' => 'admin.coming-soon', 'arg' => 'users'],
-                ['icon' => 'car', 'label' => 'المركبات', 'route' => 'admin.coming-soon', 'arg' => 'vehicles'],
-                ['icon' => 'qrcode', 'label' => 'رموز QR', 'route' => 'admin.coming-soon', 'arg' => 'qr'],
+                ['icon' => 'users', 'label' => 'المستخدمون', 'route' => 'admin.users.index'],
+                ['icon' => 'car', 'label' => 'المركبات', 'route' => 'admin.vehicles.index'],
+                ['icon' => 'qrcode', 'label' => 'رموز QR', 'route' => 'admin.tags.index'],
                 ['icon' => 'nfc', 'label' => 'رموز NFC', 'route' => 'admin.coming-soon', 'arg' => 'nfc'],
-                ['icon' => 'batch', 'label' => 'دفعات الرموز', 'route' => 'admin.coming-soon', 'arg' => 'batches'],
-                ['icon' => 'contact', 'label' => 'طلبات التواصل', 'route' => 'admin.coming-soon', 'arg' => 'contact-requests'],
+                ['icon' => 'batch', 'label' => 'دفعات الرموز', 'route' => 'admin.tag-batches.index'],
+                ['icon' => 'contact', 'label' => 'طلبات التواصل', 'route' => 'admin.contact-requests.index'],
                 ['icon' => 'bell', 'label' => 'التنبيهات والإشعارات', 'route' => 'admin.coming-soon', 'arg' => 'notifications'],
             ],
             'التحليلات' => [

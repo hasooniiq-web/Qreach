@@ -24,6 +24,8 @@ class Admin extends Authenticatable
         'password',
         'status',
         'must_change_password',
+        'locked_until',
+        'failed_login_attempts',
     ];
 
     protected $hidden = [
