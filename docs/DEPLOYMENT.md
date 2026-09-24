@@ -2,7 +2,7 @@
 
 ## Status: not yet deployed anywhere
 
-This document describes what production deployment *should* look like based on the application's actual requirements — it has not been executed. No staging/production environment, CI/CD pipeline, or hosting has been set up.
+This document describes what production deployment *should* look like based on the application's actual requirements — it has not been executed. No staging/production environment or hosting has been set up. CI (test/build verification on every push) exists — see the CI/CD section below — but that is not the same as a deployment pipeline; there is no automated deploy-to-server step.
 
 ## Environment configuration checklist
 
@@ -18,7 +18,7 @@ This document describes what production deployment *should* look like based on t
 
 1. **Web server** (php-fpm + nginx/Apache, or equivalent) serving `public/index.php`
 2. **Queue worker** (`php artisan queue:work --daemon`, supervised e.g. by Supervisor or systemd) — required for owner notifications to actually deliver; without it, jobs sit in the `jobs` table indefinitely
-3. **Scheduler** (`php artisan schedule:run` via cron, once analytics aggregation or other scheduled jobs are added — none exist yet)
+3. **Scheduler** (`php artisan schedule:run` via cron) — required now that `analytics:aggregate` runs daily (see `docs/ANALYTICS.md`); without it, the analytics dashboard silently stops accumulating new days
 
 ## Build steps
 
@@ -33,11 +33,11 @@ php artisan view:cache
 
 ## Backups
 
-**Not yet implemented.** At minimum, production needs: automated encrypted Postgres backups on a schedule, a tested restore procedure (a backup that's never been restored isn't a backup — per the spec's own section 41), and a documented retention policy for `audit_logs`/`security_events`/`scans` (see the retention discussion the spec calls for in section 52 — not yet implemented as actual pruning jobs, only as a design intention).
+**Implemented and tested** — see `docs/DISASTER_RECOVERY.md` for the full detail. `php artisan backup:run` produces an AES-256-CBC-encrypted `pg_dump`, and `php artisan backup:restore` restores it using a separate least-privilege backup/restore credential (kept apart from the app's runtime DB role, which deliberately lacks `CREATEDB`). This was verified with a real backup → restore → row-count-and-content comparison → cleanup cycle, not just written and assumed to work. Still missing: an actual production backup *schedule* (the command exists; nothing currently calls it on a cron) and a documented retention/rotation policy for how many backups to keep.
 
 ## CI/CD
 
-**Not yet implemented.** No `.github/workflows` or equivalent exists. A minimal first CI job should run `php artisan test`, `composer audit`, `npm audit`, and `vendor/bin/pint --test` (code style) on every push.
+**Implemented.** `.github/workflows/backend-ci.yml` runs `php artisan test` against SQLite plus a separate job that runs real migrations against a Postgres service container, and `vendor/bin/pint --test`. `.github/workflows/mobile-ci.yml` runs `flutter analyze`, `flutter test`, and `flutter build apk --debug`. Still missing: `composer audit`/`npm audit` as CI gates, and any actual deploy-on-push step (CI currently only verifies, it doesn't ship).
 
 ## Monitoring
 

@@ -1,21 +1,22 @@
 # Analytics
 
-## Current status: live counts only, no time-series or aggregation job
+## Current status: real aggregation pipeline with a scheduled job and charted dashboard
 
 ## What's built
 
-The admin dashboard home page (`GET /admin/dashboard`) shows **live, real** `COUNT()` queries against the transactional tables: total/active users, total/active vehicles, total/available/assigned/revoked tags, new contact requests, unresolved security events. Every number is a real query result — none of it is mocked, per the spec's explicit "do not generate fake statistics" rule (verified: a fresh database shows all zeros, not placeholder sample data).
+- `php artisan analytics:aggregate [--date=]` (`App\Console\Commands\AggregateAnalytics`) reads `scans` (grouped by `action_type`), `users` (new registrations), `tag_assignments` (activations), and `contact_requests` for a given day, and writes one row per metric into `analytics_daily_stats`. Scheduled daily via `bootstrap/app.php`'s `Schedule::command(...)->dailyAt(...)`.
+- The write is idempotent by design: it uses a raw `DB::table(...)->where(...)->update()` followed by a conditional `insert()` rather than `updateOrCreate()`. This was a deliberate fix — the first implementation used `updateOrCreate()` and silently produced duplicate rows on a rerun because Eloquent's date-cast query normalization didn't match the stored value on the second lookup. Re-running the command for the same day now genuinely produces the same row count both times (verified: 11 rows after one run, 11 after two, not 22).
+- `GET /admin/analytics` (`AnalyticsController`) reads exclusively from `analytics_daily_stats` — never the live transactional tables — for five metrics (scans, registrations, QR activations, contact requests, notifications), with a period selector (today/7d/30d/90d/custom range) and a chart per metric.
+- Charts are rendered with Chart.js, self-hosted via npm/Vite (not a CDN), reading data from `data-chart` HTML attributes rather than inline `<script>` — required because the app's CSP is `script-src 'self'` with no `unsafe-inline`.
+- The admin dashboard home page (`GET /admin/dashboard`) still shows separate live `COUNT()` snapshot cards against the transactional tables (total/active users, tags by status, unresolved security events) — this is unchanged and intentional: a live "right now" snapshot next to a historical, aggregated chart page.
+- Regression tests: `tests/Feature/Admin/AnalyticsTest.php` covers that aggregation computes real counts from actual scan rows, that rerunning aggregation for the same day does not duplicate rows, and that the page requires permission and renders with no fabricated data on an empty database.
 
-## What section 43/17 ask for that isn't built
+## What section 43/17 still ask for that isn't built
 
-- `analytics_daily_stats` pre-aggregation table exists in the schema (see `docs/DATABASE.md`) but **nothing populates it** — no scheduled job reads `scans`/`audit_logs` and rolls them into daily buckets yet.
-- Time-series charts (scans over time, registrations, activations, contact requests) — no charting library is wired into the dashboard yet, and there's no aggregated data to chart even if there were.
-- Date-range selection (today/7d/30d/90d/custom) on the dashboard.
-
-## Why the dashboard currently queries live tables directly instead of the aggregate table
-
-This is intentionally the *simple, obviously-correct* version for now rather than a half-built aggregation pipeline: querying `COUNT()` directly against `users`/`vehicles`/`tags` is correct and fast at current (near-zero) data volume. The spec's warning against overloading transactional tables with analytics queries becomes a real concern once these tables have meaningful row counts (thousands of scans, etc.) — the `analytics_daily_stats` table exists specifically so that migration path is already schema-ready, but building the scheduled aggregation job before there's real traffic to aggregate was judged lower priority than the features that generate the data in the first place.
+- Anonymization/aggregation beyond daily rollups (e.g. discarding IP-level detail after N days) — `scans`/`audit_logs` retain raw rows indefinitely today; see `docs/DATA_RETENTION` topics in the master spec and `docs/DISASTER_RECOVERY.md` for what's covered vs. not.
+- Per-tag or per-vehicle drill-down analytics (the current dashboard is platform-wide only).
+- Export of analytics data (CSV/PDF) — see `docs/REPORTING.md`.
 
 ## Recommended next step
 
-A daily `php artisan schedule` job that reads yesterday's `scans` (grouped by `action_type`, `tag_id`'s `type`) and `audit_logs`/`security_events` counts, writes them into `analytics_daily_stats`, and a dashboard chart component that reads from that table with a date-range selector — at that point the live-count cards can stay as "today's snapshot" while the charts show history.
+Add a retention/anonymization job for raw `scans` rows older than a configurable window, now that the daily rollup means the detail rows are no longer the only source of historical counts.

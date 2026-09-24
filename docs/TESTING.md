@@ -20,7 +20,7 @@ flutter build apk --debug   # full compile to a real APK — catches issues anal
 
 The debug APK build matters as a distinct step: it caught a third-party package incompatibility (`phosphor_flutter`) that `flutter analyze` missed entirely. Treat "analyze is clean" and "it actually builds" as two separate claims — this project needed both to be checked.
 
-## What's covered (32 tests, all passing as of the last commit)
+## What's covered (49 tests, all passing as of the last commit)
 
 | File | Covers |
 |---|---|
@@ -29,7 +29,12 @@ The debug APK build matters as a distinct step: it caught a third-party package 
 | `tests/Feature/Api/OtpSecurityTest.php` | OTP replay prevention (the bug found and fixed during development) |
 | `tests/Feature/Admin/AdminAuthSecurityTest.php` | Admin brute-force lockout (also a found-and-fixed bug) |
 | `tests/Feature/Admin/RbacTest.php` | Per-permission route gating across three role scenarios, plus the zero-role default-deny case |
+| `tests/Feature/Admin/AnalyticsTest.php` | Aggregation command computes real counts, reruns are idempotent (no duplicate rows), page requires permission, renders with no fabricated data |
+| `tests/Feature/Admin/NfcTagManagementTest.php` | NFC batch creation reuses the QR lifecycle, tag-type filtering, print action hidden for NFC batches |
+| `tests/Feature/Admin/SystemSettingTest.php` | Settings changes actually affect service behavior (not just stored), permission gating, out-of-range rejection |
+| `tests/Feature/BackupCommandTest.php` | Backup command refuses to run without an encryption key configured |
 | `tests/Feature/Public/ScanTest.php` | Public page access without auth, generic-invalid-page for any failure reason, XSS rejection, emergency confirmation gating, contact-request creation without phone-number leakage, rate limiting |
+| `tests/Feature/Security/AdditionalSecurityTest.php` | OTP brute-force lockout after max attempts, deleted-vehicle scan handling, property-level authorization on vehicle updates (can't reassign ownership via payload), export/batch-creation authorization bypass by direct URL, session token invalidation after logout |
 
 ## What's *not* covered by automated tests yet
 
@@ -44,6 +49,6 @@ Worth recording honestly: several real bugs (OTP replay, admin lockout, tag revo
 
 ## Recommended before production
 
-- A CI job running `php artisan test` on every push (no CI pipeline exists yet — see `DEPLOYMENT.md`)
-- `composer audit` and `npm audit` as CI gates
-- A genuine concurrency test harness (e.g., spinning up parallel Guzzle requests within a single PHPUnit test using a real Postgres connection, not SQLite) to keep the manual concurrency verification from silently rotting
+- CI now runs `php artisan test` on every push (`.github/workflows/backend-ci.yml`), plus a separate job that runs real migrations against a Postgres service container (SQLite is used for the test run itself, but migration compatibility with Postgres is checked separately, since the two aren't guaranteed to behave identically). `.github/workflows/mobile-ci.yml` does the equivalent for Flutter (`flutter analyze`, `flutter test`, `flutter build apk --debug`).
+- `composer audit` and `npm audit` as CI gates — not yet added.
+- A genuine concurrency test harness (e.g., spinning up parallel Guzzle requests within a single PHPUnit test using a real Postgres connection, not SQLite) to keep the manual concurrency verification from silently rotting.
