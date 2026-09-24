@@ -2,12 +2,13 @@
 
 SmartTag is a vehicle communication platform: a vehicle owner attaches a SmartTag QR (and optionally NFC) sticker to their car, and anyone who scans it can reach the owner — without installing an app — for things like "your lights are on," "you're blocking me in," or a genuine emergency, while the owner's phone number stays private by default.
 
-This repository currently contains the **backend platform**: a Laravel 12 application serving the customer/mobile REST API, the public no-login scan experience, and a fully Arabic RTL admin dashboard. The Flutter mobile app is not yet started (see [Known Limitations](#known-limitations)).
+This repository contains: a Laravel 12 backend (customer/mobile REST API, the public no-login scan experience, and a fully Arabic RTL admin dashboard), and a Flutter customer mobile app covering login, vehicle management, and QR tag activation. See each directory's own README and `docs/ARCHITECTURE.md`'s status section for exactly what's real versus scaffolded.
 
 ## Repository layout
 
 ```
 backend/     Laravel 12 application — API, admin dashboard, public scan pages
+mobile/      Flutter customer app — login, vehicles, QR activation
 docs/        Architecture, security, and operational documentation
 ```
 
@@ -39,6 +40,17 @@ For notification delivery to actually happen, also run a queue worker:
 ```bash
 php artisan queue:work
 ```
+
+### Mobile app
+
+```bash
+cd mobile
+flutter pub get
+flutter gen-l10n
+flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8000/api/v1  # 10.0.2.2 = host, from an Android emulator
+```
+
+See `mobile/README.md` for what's actually been verified to work (analyze/build/test all pass; not yet run on a physical device or emulator).
 
 ## Documentation
 

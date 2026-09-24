@@ -1,0 +1,57 @@
+name: qreach_smarttag
+description: "Qreach SmartTag — customer mobile app"
+publish_to: 'none'
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.5.0
+  flutter: ">=3.24.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # State management
+  flutter_riverpod: ^2.6.1
+
+  # Routing
+  go_router: ^14.6.2
+
+  # Networking
+  dio: ^5.7.0
+
+  # Secure token storage (Android Keystore / iOS Keychain backed)
+  flutter_secure_storage: ^9.2.2
+
+  # QR scanning
+  mobile_scanner: ^6.0.6
+
+  # Icons: Material Icons (bundled with Flutter, no external package —
+  # avoids the phosphor_flutter incompatibility found during development,
+  # see docs/ARCHITECTURE_DECISIONS.md). No emoji as structural icons.
+
+  # Typography — IBM Plex Sans Arabic via Google Fonts (fetched/cached at
+  # runtime). For a fully offline-first build, replace with bundled .ttf
+  # assets before shipping — see docs note in core/theme/app_theme.dart.
+  google_fonts: ^6.2.1
+
+  # Utilities
+  intl: ^0.20.2
+  equatable: ^2.0.5
+  url_launcher: ^6.3.1
+
+  cupertino_icons: ^1.0.8
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+  generate: true
+
+  assets:
+    - assets/images/

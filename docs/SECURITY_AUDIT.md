@@ -16,6 +16,8 @@ This is a record of the **internal security review performed during initial deve
 | 6 | Route-ordering bug: `GET /admin/batches/create` was matched by the `batches/{tagBatch}` wildcard (registered first), attempting to bind a `TagBatch` with id `"create"` and causing a Postgres type error | Low | Fixed by reordering route registration; documented inline in `routes/web.php` |
 | 7 | Admin dashboard's own strict CSP (`script-src 'self'`) correctly blocked its own inline `onclick`/`<script>` handlers | N/A (control working as intended) | Rewrote the affected UI (mobile nav drawer, batch print button, tag revoke form) to avoid inline JS entirely, rather than weakening the CSP |
 | 8 | Dashboard security-events counter included routine `AUTH_SUCCESS` info-level events in "unresolved" count, making every fresh login look like an unaddressed security issue | Low (UX/signal-quality, not a vulnerability) | Fixed — counter now filters to `warning`/`critical` severity only |
+| 9 | Mobile: `phosphor_flutter` incompatible with the current Flutter/Dart SDK (`IconData` is now `final`), invisible to `flutter analyze`, only surfaced via an actual `flutter build apk` | Low (build-breaking, not a vulnerability) | Fixed — replaced with Flutter's bundled Material Icons |
+| 10 | Mobile: a `Spacer()`-based login-screen layout overflowed on constrained viewport heights (real `RenderFlex overflowed` runtime error, caught by actually running the app, not by static analysis) | Low (UX, not a vulnerability, but would have shipped a visibly broken screen) | Fixed with a scrollable, `LayoutBuilder`-constrained layout that also handles the on-screen keyboard correctly |
 
 ## Verified controls (positive findings)
 

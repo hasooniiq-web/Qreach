@@ -1,0 +1,42 @@
+import '../../../core/network/api_client.dart';
+import 'vehicle_model.dart';
+
+class VehicleRepository {
+  VehicleRepository(this._client);
+
+  final ApiClient _client;
+
+  Future<List<VehicleModel>> list() async {
+    final response = await _client.dio.get<Map<String, dynamic>>('/vehicles');
+    final data = response.data!['data'] as List<dynamic>;
+    return data
+        .map((v) => VehicleModel.fromJson(v as Map<String, dynamic>))
+        .toList();
+  }
+
+  Future<VehicleModel> show(String id) async {
+    final response =
+        await _client.dio.get<Map<String, dynamic>>('/vehicles/$id');
+    return VehicleModel.fromJson(
+        response.data!['data'] as Map<String, dynamic>);
+  }
+
+  Future<VehicleModel> create(VehicleModel vehicle) async {
+    final response = await _client.dio
+        .post<Map<String, dynamic>>('/vehicles', data: vehicle.toCreateJson());
+    return VehicleModel.fromJson(
+        response.data!['data'] as Map<String, dynamic>);
+  }
+
+  Future<VehicleModel> update(String id, VehicleModel vehicle) async {
+    final response = await _client.dio.put<Map<String, dynamic>>(
+        '/vehicles/$id',
+        data: vehicle.toCreateJson());
+    return VehicleModel.fromJson(
+        response.data!['data'] as Map<String, dynamic>);
+  }
+
+  Future<void> delete(String id) async {
+    await _client.dio.delete('/vehicles/$id');
+  }
+}

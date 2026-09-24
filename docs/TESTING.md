@@ -1,6 +1,6 @@
 # Testing
 
-## Running the suite
+## Backend
 
 ```bash
 cd backend
@@ -8,6 +8,17 @@ php artisan test
 ```
 
 Tests run against an in-memory SQLite database (`phpunit.xml`), fully isolated from the Postgres dev/production database — safe to run anytime without affecting real data.
+
+## Mobile
+
+```bash
+cd mobile
+flutter analyze   # static analysis — clean except 2 harmless style infos
+flutter test      # widget tests
+flutter build apk --debug   # full compile to a real APK — catches issues analyze can't
+```
+
+The debug APK build matters as a distinct step: it caught a third-party package incompatibility (`phosphor_flutter`) that `flutter analyze` missed entirely. Treat "analyze is clean" and "it actually builds" as two separate claims — this project needed both to be checked.
 
 ## What's covered (32 tests, all passing as of the last commit)
 
@@ -25,7 +36,7 @@ Tests run against an in-memory SQLite database (`phpunit.xml`), fully isolated f
 - Genuine multi-process concurrency (the activation race was verified manually with 10 real parallel HTTP requests via `curl`, documented in `QR_SECURITY.md` — the automated test suite only exercises the *sequential* logic, since PHPUnit runs single-threaded against a shared SQLite connection)
 - Admin dashboard view rendering beyond route-level status codes (no Dusk/browser-based UI tests)
 - Load/performance testing
-- The Flutter app (doesn't exist yet)
+- The mobile app on an actual Android/iOS device or emulator (none was available in this environment — verification was `flutter analyze` + `flutter build apk --debug` + `flutter test` + manual interaction via a web build in a browser)
 
 ## How bugs were actually found in this project
 

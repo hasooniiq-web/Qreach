@@ -5,7 +5,7 @@
 ```
 ┌─────────────────┐     ┌──────────────────────────────────────────┐
 │  Flutter app     │────▶│                                          │
-│  (not built yet) │     │   Laravel 12 application (backend/)      │
+│  (mobile/)       │     │   Laravel 12 application (backend/)      │
 └─────────────────┘     │                                          │
                          │   ┌────────────┐  ┌───────────────────┐ │
 ┌─────────────────┐     │   │ REST API   │  │ Admin dashboard    │ │
@@ -54,7 +54,12 @@
 | QR generation | `endroid/qr-code` | Mature, maintained, supports error-correction level H needed for print durability. |
 | Admin dashboard UI | Blade + Tailwind v4 (Vite) | Server-rendered, no SPA complexity needed for an internal tool; matches "desktop-first admin" requirement while still being responsive. |
 | MFA | `pragmarx/google2fa-laravel` | TOTP for admin accounts. |
+| Mobile framework | Flutter 3.47 + Riverpod + go_router + Dio | Required by spec; state management/routing/networking choices are the current mainstream conventions for a maintainable app of this size. |
 
 ## What's real vs. scaffolded
 
-See the end of this file for the phase-by-phase status; the short version: **customer auth, vehicle management, the QR engine, the public scan experience, and the core admin dashboard are implemented and covered by automated tests.** The Flutter app, push notification delivery, payment processing, and NFC provisioning are schema-ready but not built. Full breakdown in the project's final report / commit history.
+**Backend**: customer auth, vehicle management, the QR engine, the public scan experience, and the core admin dashboard are implemented and covered by automated tests. Push notification delivery, payment processing, and NFC provisioning are schema-ready but not built.
+
+**Mobile** (`mobile/`): login (phone+OTP), vehicle CRUD, and QR-scan-to-activate are implemented. `flutter analyze` is clean, `flutter build apk --debug` produces a real APK, `flutter test` passes, and the app was manually exercised via a browser-based web build (catching and fixing a real layout overflow bug in the process). It has **not** been run on an actual Android/iOS device or emulator — none was available in this environment. Push notifications, profile/emergency-contact screens, and biometric re-auth are not built.
+
+Full breakdown in the project's final report / commit history.

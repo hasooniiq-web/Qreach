@@ -33,3 +33,15 @@ The dashboard lets an admin assign an existing (seeded) role to another admin, b
 ## Analytics aggregation job is scaffolded, not scheduled
 
 `analytics_daily_stats` exists as a table but nothing currently writes to it — no `php artisan schedule` job aggregates `scans`/`audit_logs` into it yet. Building the aggregation job without also building the reporting UI that would consume it was judged not worth the partial-completion risk this session; both are deferred together.
+
+## Mobile: Firebase/FCM deliberately left out rather than half-wired
+
+Adding `firebase_messaging`/`firebase_core` to the Flutter app without an actual Firebase project (real `google-services.json`/`GoogleService-Info.plist`) would produce code that compiles but crashes or silently no-ops at runtime — worse than not having the dependency, because it looks done. The app registers a device (`device_name`, `platform`) at login with `push_token` left `null`, and the real integration is documented as an explicit gap in `docs/MOBILE_SECURITY.md` rather than stubbed in a way that could be mistaken for working.
+
+## Mobile: Material Icons instead of a third-party icon package
+
+`phosphor_flutter` was the original choice (matches the admin dashboard's outline-icon aesthetic) but doesn't compile against the Flutter/Dart SDK version available in this environment — `IconData` became a `final class`, breaking the package's `PhosphorIconData extends IconData` subclass. This was only discovered via an actual `flutter build apk` (static analysis passed cleanly despite the incompatibility). Rather than pin to an older Flutter/Dart version to keep a cosmetic icon package, the app uses Flutter's bundled Material Icons, which carries no external SDK-compatibility risk.
+
+## Mobile: IBM Plex Sans Arabic via `google_fonts`, not bundled assets
+
+`google_fonts` fetches and caches the font at runtime rather than shipping the `.ttf` files in the app bundle. This is the faster path to a correct, on-brand result without needing to source and vendor font files by hand, at the cost of a first-run network dependency for text rendering. A fully offline-first production build should replace this with bundled font assets before shipping — noted as a specific, actionable gap in `mobile/README.md` rather than left implicit.
