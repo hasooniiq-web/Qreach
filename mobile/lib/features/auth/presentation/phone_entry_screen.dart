@@ -27,7 +27,7 @@ class _PhoneEntryScreenState extends ConsumerState<PhoneEntryScreen> {
     super.dispose();
   }
 
-  String get _fullPhone => '+966${_phoneController.text.trim()}';
+  String get _fullPhone => '+964${_phoneController.text.trim()}';
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
@@ -110,12 +110,12 @@ class _PhoneEntryScreenState extends ConsumerState<PhoneEntryScreen> {
                       decoration: InputDecoration(
                         labelText: l10n.phoneLabel,
                         hintText: l10n.phoneHint,
-                        prefixText: '+966 ',
+                        prefixText: '+964 ',
                       ),
                       validator: (value) {
                         if (value == null || value.trim().isEmpty)
                           return l10n.requiredField;
-                        if (!RegExp(r'^5\d{8}$').hasMatch(value.trim()))
+                        if (!RegExp(r'^7\d{9}$').hasMatch(value.trim()))
                           return l10n.invalidPhone;
                         return null;
                       },

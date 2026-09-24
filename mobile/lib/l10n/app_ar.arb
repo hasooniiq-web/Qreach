@@ -4,7 +4,7 @@
   "welcomeTitle": "مرحبًا بك في Qreach",
   "welcomeSubtitle": "أضف رمز SmartTag إلى مركبتك للتواصل بأمان",
   "phoneLabel": "رقم الهاتف",
-  "phoneHint": "5xxxxxxxx",
+  "phoneHint": "7xxxxxxxxx",
   "sendCode": "إرسال رمز التحقق",
   "otpTitle": "أدخل رمز التحقق",
   "otpSubtitle": "أرسلنا رمزًا مكونًا من 6 أرقام إلى {phone}",

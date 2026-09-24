@@ -47,7 +47,7 @@ class AuthController extends Notifier<AuthState> {
     phone: '',
     status: 'active',
     locale: 'ar',
-    timezone: 'Asia/Riyadh',
+    timezone: 'Asia/Baghdad',
   );
 
   Future<void> requestOtp(String phone) =>

@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('name_ar');
             $table->string('name_en')->nullable();
             $table->unsignedInteger('price_cents')->default(0);
-            $table->string('currency', 3)->default('SAR');
+            $table->string('currency', 3)->default('IQD');
             $table->unsignedInteger('billing_period_days')->default(365);
             $table->unsignedInteger('max_vehicles')->nullable();
             $table->unsignedInteger('max_tags')->nullable();
@@ -50,7 +50,7 @@ return new class extends Migration
             $table->foreignId('subscription_id')->nullable()->constrained()->nullOnDelete();
             $table->string('idempotency_key')->unique();
             $table->unsignedInteger('amount_cents');
-            $table->string('currency', 3)->default('SAR');
+            $table->string('currency', 3)->default('IQD');
             $table->enum('status', ['pending', 'succeeded', 'failed', 'refunded'])->default('pending');
             $table->string('gateway')->nullable();
             $table->string('gateway_reference')->nullable();

@@ -26,7 +26,7 @@ class UserModel extends Equatable {
         email: json['email'] as String?,
         status: json['status'] as String,
         locale: json['locale'] as String? ?? 'ar',
-        timezone: json['timezone'] as String? ?? 'Asia/Riyadh',
+        timezone: json['timezone'] as String? ?? 'Asia/Baghdad',
       );
 
   @override

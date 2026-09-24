@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('name')->nullable();
             $table->enum('status', ['active', 'suspended', 'deleted'])->default('active');
             $table->string('locale', 8)->default('ar');
-            $table->string('timezone', 64)->default('Asia/Riyadh');
+            $table->string('timezone', 64)->default('Asia/Baghdad');
             $table->rememberToken();
             $table->timestamp('last_login_at')->nullable();
             $table->timestamp('deleted_at')->nullable();

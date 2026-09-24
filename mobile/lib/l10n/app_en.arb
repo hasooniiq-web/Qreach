@@ -4,7 +4,7 @@
   "welcomeTitle": "Welcome to Qreach",
   "welcomeSubtitle": "Add a SmartTag to your vehicle to communicate safely",
   "phoneLabel": "Phone number",
-  "phoneHint": "5xxxxxxxx",
+  "phoneHint": "7xxxxxxxxx",
   "sendCode": "Send verification code",
   "otpTitle": "Enter verification code",
   "otpSubtitle": "We sent a 6-digit code to {phone}",

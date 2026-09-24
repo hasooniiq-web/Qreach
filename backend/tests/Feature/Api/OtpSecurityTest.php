@@ -20,7 +20,7 @@ class OtpSecurityTest extends TestCase
 
     public function test_an_otp_code_cannot_be_verified_twice(): void
     {
-        $phone = '+966500000099';
+        $phone = '+9647500000099';
         $code = '123456';
 
         OtpCode::create([
@@ -41,7 +41,7 @@ class OtpSecurityTest extends TestCase
 
     public function test_consumed_at_is_actually_persisted_on_verification(): void
     {
-        $phone = '+966500000098';
+        $phone = '+9647500000098';
         $code = '654321';
 
         $otp = OtpCode::create([

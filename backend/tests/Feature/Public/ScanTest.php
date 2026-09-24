@@ -6,8 +6,8 @@ use App\Models\Scan;
 use App\Models\Tag;
 use App\Models\User;
 use App\Models\Vehicle;
+use App\Notifications\TagActionNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Notifications\DatabaseNotification;
 use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
@@ -69,7 +69,7 @@ class ScanTest extends TestCase
         $this->post("/t/{$tag->public_token}/vehicle-block")->assertRedirect();
 
         $this->assertDatabaseHas('scans', ['tag_id' => $tag->id, 'action_type' => 'vehicle_block']);
-        Notification::assertSentTo($tag->vehicle->user, \App\Notifications\TagActionNotification::class);
+        Notification::assertSentTo($tag->vehicle->user, TagActionNotification::class);
     }
 
     public function test_important_message_rejects_html_content(): void
@@ -122,7 +122,7 @@ class ScanTest extends TestCase
     public function test_contact_owner_creates_a_contact_request_without_exposing_owner_phone(): void
     {
         Notification::fake();
-        $owner = User::factory()->create(['phone' => '+966599999999']);
+        $owner = User::factory()->create(['phone' => '+9647709999999']);
         $vehicle = Vehicle::factory()->for($owner)->create();
         $tag = Tag::create([
             'public_token' => bin2hex(random_bytes(16)),
@@ -136,7 +136,7 @@ class ScanTest extends TestCase
         ]);
 
         $response->assertRedirect();
-        $response->assertDontSee('+966599999999');
+        $response->assertDontSee('+9647709999999');
 
         $this->assertDatabaseHas('contact_requests', ['vehicle_id' => $vehicle->id, 'visitor_name' => 'زائر']);
     }
