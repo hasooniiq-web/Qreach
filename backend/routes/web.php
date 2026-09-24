@@ -1,12 +1,14 @@
 <?php
 
 use App\Http\Controllers\Admin\AdminManagementController;
+use App\Http\Controllers\Admin\AnalyticsController;
 use App\Http\Controllers\Admin\AuditLogController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\ContactRequestController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PasswordController;
 use App\Http\Controllers\Admin\SecurityEventController;
+use App\Http\Controllers\Admin\SystemSettingController;
 use App\Http\Controllers\Admin\TagBatchController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\UserController;
@@ -54,15 +56,21 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
             Route::get('sections/{section}', function (string $section) {
-                $titles = [
-                    'notifications' => 'التنبيهات والإشعارات', 'reports' => 'التقارير والتحليلات',
-                    'settings' => 'الإعدادات', 'nfc' => 'رموز NFC',
-                ];
+                $titles = ['notifications' => 'التنبيهات والإشعارات'];
 
                 abort_unless(isset($titles[$section]), 404);
 
                 return view('admin.coming-soon', ['title' => $titles[$section]]);
             })->name('coming-soon');
+
+            Route::get('analytics', [AnalyticsController::class, 'index'])
+                ->middleware('admin.permission:analytics.view')->name('analytics.index');
+
+            Route::middleware('admin.permission:settings.view')->group(function () {
+                Route::get('settings', [SystemSettingController::class, 'index'])->name('settings.index');
+            });
+            Route::put('settings', [SystemSettingController::class, 'update'])
+                ->middleware('admin.permission:settings.update')->name('settings.update');
 
             Route::middleware('admin.permission:users.view')->group(function () {
                 Route::get('users', [UserController::class, 'index'])->name('users.index');

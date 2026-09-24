@@ -5,6 +5,7 @@ namespace Tests\Feature\Api;
 use App\Models\Tag;
 use App\Models\User;
 use App\Models\Vehicle;
+use App\Services\TagLifecycleService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -124,7 +125,7 @@ class TagActivationTest extends TestCase
         $tag = $this->makeAvailableTag();
         $tag->update(['status' => 'assigned']);
 
-        app(\App\Services\TagLifecycleService::class)->revoke($tag, 'Lost by customer', 'admin', null);
+        app(TagLifecycleService::class)->revoke($tag, 'Lost by customer', 'admin', null);
 
         $tag->refresh();
         $this->assertSame('revoked', $tag->status);

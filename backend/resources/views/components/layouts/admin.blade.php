@@ -19,13 +19,13 @@
                 ['icon' => 'users', 'label' => 'المستخدمون', 'route' => 'admin.users.index'],
                 ['icon' => 'car', 'label' => 'المركبات', 'route' => 'admin.vehicles.index'],
                 ['icon' => 'qrcode', 'label' => 'رموز QR', 'route' => 'admin.tags.index'],
-                ['icon' => 'nfc', 'label' => 'رموز NFC', 'route' => 'admin.coming-soon', 'arg' => 'nfc'],
+                ['icon' => 'nfc', 'label' => 'رموز NFC', 'route' => 'admin.tags.index', 'query' => ['type' => 'nfc']],
                 ['icon' => 'batch', 'label' => 'دفعات الرموز', 'route' => 'admin.tag-batches.index'],
                 ['icon' => 'contact', 'label' => 'طلبات التواصل', 'route' => 'admin.contact-requests.index'],
                 ['icon' => 'bell', 'label' => 'التنبيهات والإشعارات', 'route' => 'admin.coming-soon', 'arg' => 'notifications'],
             ],
             'التحليلات' => [
-                ['icon' => 'chart', 'label' => 'التقارير والتحليلات', 'route' => 'admin.coming-soon', 'arg' => 'reports'],
+                ['icon' => 'chart', 'label' => 'التقارير والتحليلات', 'route' => 'admin.analytics.index'],
             ],
             'الأمان' => [
                 ['icon' => 'shield', 'label' => 'الأمان', 'route' => 'admin.security.index'],
@@ -33,7 +33,7 @@
                 ['icon' => 'users', 'label' => 'المسؤولون والصلاحيات', 'route' => 'admin.admins.index'],
             ],
             'النظام' => [
-                ['icon' => 'settings', 'label' => 'الإعدادات', 'route' => 'admin.coming-soon', 'arg' => 'settings'],
+                ['icon' => 'settings', 'label' => 'الإعدادات', 'route' => 'admin.settings.index'],
             ],
         ];
     @endphp

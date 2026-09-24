@@ -77,14 +77,14 @@ class QrBatchService
     {
         $url = config('app.url').'/t/'.$tag->public_token;
 
-        $png = (new Builder(writer: new PngWriter()))->build(
+        $png = (new Builder(writer: new PngWriter))->build(
             data: $url,
             errorCorrectionLevel: ErrorCorrectionLevel::High,
             size: 600,
             margin: 16,
         );
 
-        $svg = (new Builder(writer: new SvgWriter()))->build(
+        $svg = (new Builder(writer: new SvgWriter))->build(
             data: $url,
             errorCorrectionLevel: ErrorCorrectionLevel::High,
             size: 600,

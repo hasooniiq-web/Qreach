@@ -8,8 +8,12 @@
         <ul class="space-y-0.5">
             @foreach ($items as $item)
                 @php
-                    $isActive = $current === $item['route'] && (!isset($item['arg']) || request()->route('section') === $item['arg']);
-                    $href = isset($item['arg']) ? route($item['route'], $item['arg']) : route($item['route']);
+                    $isActive = $current === $item['route']
+                        && (!isset($item['arg']) || request()->route('section') === $item['arg'])
+                        && (!isset($item['query']) || request()->query() == $item['query']);
+                    $href = isset($item['arg'])
+                        ? route($item['route'], $item['arg'])
+                        : route($item['route'], $item['query'] ?? []);
                 @endphp
                 <li>
                     <a href="{{ $href }}"

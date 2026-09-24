@@ -15,7 +15,7 @@ class ImportantMessageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'message' => ['required', 'string', 'max:300', new PlainTextOnly()],
+            'message' => ['required', 'string', 'max:300', new PlainTextOnly],
         ];
     }
 }

@@ -3,8 +3,10 @@
 namespace App\Services;
 
 use App\Contracts\SmsGatewayContract;
+use App\Exceptions\OtpCooldownException;
+use App\Exceptions\OtpInvalidException;
 use App\Models\OtpCode;
-use App\Services\SecurityEventLogger;
+use App\Models\SystemSetting;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -17,11 +19,18 @@ class OtpService
 {
     private const LENGTH = 6;
 
-    private const TTL_MINUTES = 5;
-
-    private const RESEND_COOLDOWN_SECONDS = 60;
-
     public function __construct(private readonly SmsGatewayContract $sms) {}
+
+    /** Admin-configurable via the settings page — see SystemSettingController. */
+    public static function ttlMinutes(): int
+    {
+        return (int) SystemSetting::get('otp_code_ttl_minutes', 5);
+    }
+
+    public static function resendCooldownSeconds(): int
+    {
+        return (int) SystemSetting::get('otp_resend_cooldown_seconds', 60);
+    }
 
     public function request(string $phone, string $purpose = 'login'): OtpCode
     {
@@ -31,30 +40,33 @@ class OtpService
             ->latest('id')
             ->first();
 
-        if ($recent && $recent->created_at->diffInSeconds(now()) < self::RESEND_COOLDOWN_SECONDS) {
-            throw new \App\Exceptions\OtpCooldownException(
-                self::RESEND_COOLDOWN_SECONDS - $recent->created_at->diffInSeconds(now())
+        $cooldown = self::resendCooldownSeconds();
+
+        if ($recent && $recent->created_at->diffInSeconds(now()) < $cooldown) {
+            throw new OtpCooldownException(
+                $cooldown - $recent->created_at->diffInSeconds(now())
             );
         }
 
         $code = (string) random_int(100000, 999999);
+        $ttl = self::ttlMinutes();
 
         $otp = OtpCode::create([
             'phone' => $phone,
             'code_hash' => Hash::make($code),
             'purpose' => $purpose,
             'max_attempts' => 5,
-            'expires_at' => now()->addMinutes(self::TTL_MINUTES),
+            'expires_at' => now()->addMinutes($ttl),
             'request_ip' => request()->ip(),
         ]);
 
-        $this->sms->send($phone, "رمز التحقق الخاص بك في Qreach: {$code}. صالح لمدة 5 دقائق.");
+        $this->sms->send($phone, "رمز التحقق الخاص بك في Qreach: {$code}. صالح لمدة {$ttl} دقائق.");
 
         return $otp;
     }
 
     /**
-     * @throws \App\Exceptions\OtpInvalidException
+     * @throws OtpInvalidException
      */
     public function verify(string $phone, string $code, string $purpose = 'login'): void
     {
@@ -68,14 +80,14 @@ class OtpService
             SecurityEventLogger::log(SecurityEventLogger::OTP_ABUSE, 'info', 'customer', null, [
                 'phone' => $this->maskPhone($phone), 'reason' => 'expired_or_missing',
             ]);
-            throw new \App\Exceptions\OtpInvalidException('رمز التحقق غير صالح أو منتهي الصلاحية.');
+            throw new OtpInvalidException('رمز التحقق غير صالح أو منتهي الصلاحية.');
         }
 
         if ($otp->attemptsExhausted()) {
             SecurityEventLogger::log(SecurityEventLogger::OTP_ABUSE, 'warning', 'customer', null, [
                 'phone' => $this->maskPhone($phone), 'reason' => 'attempts_exhausted',
             ]);
-            throw new \App\Exceptions\OtpInvalidException('تم تجاوز عدد المحاولات المسموح به. اطلب رمزًا جديدًا.');
+            throw new OtpInvalidException('تم تجاوز عدد المحاولات المسموح به. اطلب رمزًا جديدًا.');
         }
 
         if (! Hash::check($code, $otp->code_hash)) {
@@ -87,7 +99,7 @@ class OtpService
                 ]);
             }
 
-            throw new \App\Exceptions\OtpInvalidException('رمز التحقق غير صحيح.');
+            throw new OtpInvalidException('رمز التحقق غير صحيح.');
         }
 
         $otp->update(['consumed_at' => now()]);

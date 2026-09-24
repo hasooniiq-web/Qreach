@@ -1,8 +1,23 @@
 <?php
 
+use App\Exceptions\OtpCooldownException;
+use App\Exceptions\OtpInvalidException;
+use App\Exceptions\TagActivationException;
+use App\Http\Middleware\EnsureAdminAuthenticated;
+use App\Http\Middleware\EnsureAdminHasPermission;
+use App\Http\Middleware\EnsureAdminTotpVerified;
+use App\Http\Middleware\SecurityHeaders;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
+use Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -12,18 +27,18 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        $middleware->append(\App\Http\Middleware\SecurityHeaders::class);
+        $middleware->append(SecurityHeaders::class);
 
         $middleware->api(prepend: [
-            \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
+            EnsureFrontendRequestsAreStateful::class,
         ]);
 
         $middleware->throttleApi('api');
 
         $middleware->alias([
-            'admin' => \App\Http\Middleware\EnsureAdminAuthenticated::class,
-            'admin.permission' => \App\Http\Middleware\EnsureAdminHasPermission::class,
-            'admin.2fa' => \App\Http\Middleware\EnsureAdminTotpVerified::class,
+            'admin' => EnsureAdminAuthenticated::class,
+            'admin.permission' => EnsureAdminHasPermission::class,
+            'admin.2fa' => EnsureAdminTotpVerified::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
@@ -31,39 +46,39 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Structured error codes for the API (section 34) — never expose
         // stack traces, SQL, or internal paths regardless of APP_DEBUG.
-        $exceptions->render(function (\App\Exceptions\OtpInvalidException $e) {
+        $exceptions->render(function (OtpInvalidException $e) {
             return response()->json(['error' => ['code' => 'OTP_INVALID', 'message' => $e->getMessage()]], 422);
         });
 
-        $exceptions->render(function (\App\Exceptions\TagActivationException $e) {
+        $exceptions->render(function (TagActivationException $e) {
             return response()->json(['error' => ['code' => $e->errorCode, 'message' => $e->getMessage()]], 422);
         });
 
-        $exceptions->render(function (\App\Exceptions\OtpCooldownException $e) {
+        $exceptions->render(function (OtpCooldownException $e) {
             return response()->json([
                 'error' => ['code' => 'OTP_COOLDOWN', 'message' => $e->getMessage(), 'retry_after' => $e->secondsRemaining],
             ], 429);
         });
 
-        $exceptions->render(function (\Illuminate\Auth\AuthenticationException $e, \Illuminate\Http\Request $request) {
+        $exceptions->render(function (AuthenticationException $e, Request $request) {
             if ($request->is('api/*')) {
                 return response()->json(['error' => ['code' => 'UNAUTHENTICATED', 'message' => 'يجب تسجيل الدخول للوصول إلى هذا المورد.']], 401);
             }
         });
 
-        $exceptions->render(function (\Illuminate\Auth\Access\AuthorizationException|\Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException $e, \Illuminate\Http\Request $request) {
+        $exceptions->render(function (AuthorizationException|AccessDeniedHttpException $e, Request $request) {
             if ($request->is('api/*')) {
                 return response()->json(['error' => ['code' => 'FORBIDDEN', 'message' => 'ليست لديك صلاحية للوصول إلى هذا المورد.']], 403);
             }
         });
 
-        $exceptions->render(function (\Illuminate\Database\Eloquent\ModelNotFoundException|\Symfony\Component\HttpKernel\Exception\NotFoundHttpException $e, \Illuminate\Http\Request $request) {
+        $exceptions->render(function (ModelNotFoundException|NotFoundHttpException $e, Request $request) {
             if ($request->is('api/*')) {
                 return response()->json(['error' => ['code' => 'NOT_FOUND', 'message' => 'المورد المطلوب غير موجود.']], 404);
             }
         });
 
-        $exceptions->render(function (\Illuminate\Validation\ValidationException $e, \Illuminate\Http\Request $request) {
+        $exceptions->render(function (ValidationException $e, Request $request) {
             if ($request->is('api/*')) {
                 return response()->json([
                     'error' => ['code' => 'VALIDATION_FAILED', 'message' => 'بيانات غير صالحة.', 'fields' => $e->errors()],

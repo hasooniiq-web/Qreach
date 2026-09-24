@@ -20,7 +20,7 @@ class EmergencyRequest extends FormRequest
     {
         return [
             'confirmed' => ['required', 'accepted'],
-            'message' => ['nullable', 'string', 'max:300', new PlainTextOnly()],
+            'message' => ['nullable', 'string', 'max:300', new PlainTextOnly],
         ];
     }
 }

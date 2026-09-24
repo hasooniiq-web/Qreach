@@ -1,0 +1,99 @@
+name: Backend CI
+
+on:
+  push:
+    branches: [main, master]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-ci.yml'
+  pull_request:
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend-ci.yml'
+
+defaults:
+  run:
+    working-directory: backend
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: smarttag_test
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, pgsql, pdo_pgsql, bcmath, gd, zip
+          coverage: none
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Cache Composer packages
+        uses: actions/cache@v4
+        with:
+          path: backend/vendor
+          key: composer-${{ hashFiles('backend/composer.lock') }}
+
+      - name: Install Composer dependencies
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+      - name: Install Node dependencies and build assets
+        run: |
+          npm ci
+          npm run build
+
+      - name: Copy environment file
+        run: cp .env.example .env
+
+      - name: Generate application key
+        run: php artisan key:generate
+
+      - name: Validate migrations against real PostgreSQL
+        run: php artisan migrate --force
+        env:
+          DB_CONNECTION: pgsql
+          DB_HOST: 127.0.0.1
+          DB_PORT: 5432
+          DB_DATABASE: smarttag_test
+          DB_USERNAME: postgres
+          DB_PASSWORD: postgres
+
+      - name: Run test suite
+        run: php artisan test
+
+      - name: Check code style (Pint)
+        run: vendor/bin/pint --test
+
+      - name: Audit Composer dependencies for known vulnerabilities
+        run: composer audit
+
+      - name: Audit npm dependencies for known vulnerabilities
+        run: npm audit --audit-level=high
+
+      - name: Check for committed secrets
+        run: |
+          if git grep -nE "AIza[0-9A-Za-z_-]{35}|AKIA[0-9A-Z]{16}" -- . ':!*.lock'; then
+            echo "Potential secret detected in tracked files." >&2
+            exit 1
+          fi

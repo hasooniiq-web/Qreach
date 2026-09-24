@@ -1,8 +1,10 @@
 # NFC Security
 
-## Current status: schema only, no implementation
+## Current status: full admin lifecycle management; no physical chip provisioning
 
-The `nfc_tags` table and the generic `tags` parent (shared with QR — see `docs/QR_SECURITY.md`) exist and support NFC as a `type`. `QrBatchService::createBatch(quantity, adminId, 'nfc')` will create bare NFC tag rows, but **no chip provisioning, writing, or lock step exists** — the "NFC" batch today is just database rows with no corresponding physical action.
+The `nfc_tags` table and the generic `tags` parent (shared with QR — see `docs/QR_SECURITY.md`) exist and support NFC as a `type`. The admin dashboard's batch creation, tag listing/filtering (`?type=nfc`), revocation, and CSV export all work identically for NFC and QR since they reuse the same generic `TagBatchController`/`TagController`/`TagLifecycleService` — verified with automated tests (`tests/Feature/Admin/NfcTagManagementTest.php`). The batch print feature (which renders QR images) correctly does not appear for NFC batches, since there's nothing to print.
+
+**What's still not implemented**: no chip provisioning, writing, or lock step exists — an "NFC" batch today produces real, manageable database rows (creatable, listable, revocable, exportable) with no corresponding physical action on an actual NFC chip.
 
 ## What section 12 of the spec requires, and the plan for each
 

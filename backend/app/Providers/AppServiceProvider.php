@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Contracts\SmsGatewayContract;
+use App\Services\Sms\LogSmsGateway;
 use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
@@ -16,7 +18,7 @@ class AppServiceProvider extends ServiceProvider
         // No SMS provider is named in the spec — bind a dev-only log gateway
         // for now; swap this for a real provider before production (see
         // docs/ARCHITECTURE_DECISIONS.md and App\Services\Sms\LogSmsGateway).
-        $this->app->bind(\App\Contracts\SmsGatewayContract::class, \App\Services\Sms\LogSmsGateway::class);
+        $this->app->bind(SmsGatewayContract::class, LogSmsGateway::class);
     }
 
     public function boot(): void

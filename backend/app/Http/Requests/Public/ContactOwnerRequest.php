@@ -15,8 +15,8 @@ class ContactOwnerRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'message' => ['required', 'string', 'max:500', new PlainTextOnly()],
-            'visitor_name' => ['nullable', 'string', 'max:100', new PlainTextOnly()],
+            'message' => ['required', 'string', 'max:500', new PlainTextOnly],
+            'visitor_name' => ['nullable', 'string', 'max:100', new PlainTextOnly],
             'visitor_phone' => ['nullable', 'string', 'max:32', 'regex:/^\+?[1-9]\d{7,14}$/'],
         ];
     }

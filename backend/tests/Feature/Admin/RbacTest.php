@@ -4,6 +4,7 @@ namespace Tests\Feature\Admin;
 
 use App\Models\Admin;
 use App\Models\Role;
+use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -19,7 +20,7 @@ class RbacTest extends TestCase
 
     public function test_super_admin_role_can_access_admin_management(): void
     {
-        $this->seed(\Database\Seeders\RolesAndPermissionsSeeder::class);
+        $this->seed(RolesAndPermissionsSeeder::class);
         $admin = Admin::factory()->create();
         $admin->roles()->sync([Role::where('slug', 'super_admin')->value('id')]);
 
@@ -28,7 +29,7 @@ class RbacTest extends TestCase
 
     public function test_support_admin_role_cannot_access_admin_management(): void
     {
-        $this->seed(\Database\Seeders\RolesAndPermissionsSeeder::class);
+        $this->seed(RolesAndPermissionsSeeder::class);
         $admin = Admin::factory()->create();
         $admin->roles()->sync([Role::where('slug', 'support_admin')->value('id')]);
 
@@ -37,7 +38,7 @@ class RbacTest extends TestCase
 
     public function test_support_admin_role_cannot_create_qr_batches(): void
     {
-        $this->seed(\Database\Seeders\RolesAndPermissionsSeeder::class);
+        $this->seed(RolesAndPermissionsSeeder::class);
         $admin = Admin::factory()->create();
         $admin->roles()->sync([Role::where('slug', 'support_admin')->value('id')]);
 
@@ -46,7 +47,7 @@ class RbacTest extends TestCase
 
     public function test_support_admin_role_can_view_contact_requests(): void
     {
-        $this->seed(\Database\Seeders\RolesAndPermissionsSeeder::class);
+        $this->seed(RolesAndPermissionsSeeder::class);
         $admin = Admin::factory()->create();
         $admin->roles()->sync([Role::where('slug', 'support_admin')->value('id')]);
 

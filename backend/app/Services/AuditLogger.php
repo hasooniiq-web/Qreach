@@ -45,6 +45,7 @@ class AuditLogger
             foreach (self::FORBIDDEN_KEYS as $forbidden) {
                 if (str_contains(strtolower((string) $key), $forbidden)) {
                     $metadata[$key] = '[REDACTED]';
+
                     continue 2;
                 }
             }

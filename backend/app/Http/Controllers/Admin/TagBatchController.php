@@ -5,10 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\StoreTagBatchRequest;
 use App\Models\TagBatch;
+use App\Services\AuditLogger;
 use App\Services\QrBatchService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -61,7 +61,7 @@ class TagBatchController extends Controller
 
     public function exportCsv(Request $request, TagBatch $tagBatch): StreamedResponse
     {
-        \App\Services\AuditLogger::log(
+        AuditLogger::log(
             'qr.batch_exported', 'admin', $request->user('admin')->id, 'TagBatch', $tagBatch->id, 'success', [], $request
         );
 

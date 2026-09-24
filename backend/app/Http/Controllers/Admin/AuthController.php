@@ -9,6 +9,7 @@ use App\Services\SecurityEventLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 use PragmaRX\Google2FALaravel\Facade as Google2FA;
 
@@ -52,7 +53,7 @@ class AuthController extends Controller
             );
             AuditLogger::log('admin.login_failed', 'admin', $admin?->id, 'Admin', $admin?->id, 'failure', [], $request);
 
-            throw \Illuminate\Validation\ValidationException::withMessages([
+            throw ValidationException::withMessages([
                 'email' => 'بيانات الدخول غير صحيحة.',
             ]);
         }
@@ -94,7 +95,7 @@ class AuthController extends Controller
         if (! Google2FA::verifyKey(decrypt($admin->totp_secret), $request->input('code'))) {
             SecurityEventLogger::log(SecurityEventLogger::AUTH_FAILURE, 'warning', 'admin', $admin->id, ['stage' => 'totp'], $request);
 
-            throw \Illuminate\Validation\ValidationException::withMessages([
+            throw ValidationException::withMessages([
                 'code' => 'رمز التحقق غير صحيح.',
             ]);
         }
