@@ -28,9 +28,9 @@
                 ['icon' => 'chart', 'label' => 'التقارير والتحليلات', 'route' => 'admin.coming-soon', 'arg' => 'reports'],
             ],
             'الأمان' => [
-                ['icon' => 'shield', 'label' => 'الأمان', 'route' => 'admin.coming-soon', 'arg' => 'security'],
-                ['icon' => 'audit', 'label' => 'سجلات التدقيق', 'route' => 'admin.coming-soon', 'arg' => 'audit'],
-                ['icon' => 'users', 'label' => 'المسؤولون والصلاحيات', 'route' => 'admin.coming-soon', 'arg' => 'admins'],
+                ['icon' => 'shield', 'label' => 'الأمان', 'route' => 'admin.security.index'],
+                ['icon' => 'audit', 'label' => 'سجلات التدقيق', 'route' => 'admin.audit.index'],
+                ['icon' => 'users', 'label' => 'المسؤولون والصلاحيات', 'route' => 'admin.admins.index'],
             ],
             'النظام' => [
                 ['icon' => 'settings', 'label' => 'الإعدادات', 'route' => 'admin.coming-soon', 'arg' => 'settings'],

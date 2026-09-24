@@ -1,9 +1,12 @@
 <?php
 
+use App\Http\Controllers\Admin\AdminManagementController;
+use App\Http\Controllers\Admin\AuditLogController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\ContactRequestController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PasswordController;
+use App\Http\Controllers\Admin\SecurityEventController;
 use App\Http\Controllers\Admin\TagBatchController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\UserController;
@@ -53,7 +56,6 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::get('sections/{section}', function (string $section) {
                 $titles = [
                     'notifications' => 'التنبيهات والإشعارات', 'reports' => 'التقارير والتحليلات',
-                    'security' => 'الأمان', 'audit' => 'سجلات التدقيق', 'admins' => 'المسؤولون والصلاحيات',
                     'settings' => 'الإعدادات', 'nfc' => 'رموز NFC',
                 ];
 
@@ -104,6 +106,30 @@ Route::prefix('admin')->name('admin.')->group(function () {
             });
             Route::post('contact-requests/{contactRequest}/close', [ContactRequestController::class, 'close'])
                 ->middleware('admin.permission:contact_requests.respond')->name('contact-requests.close');
+
+            Route::middleware('admin.permission:security.view')->group(function () {
+                Route::get('security', [SecurityEventController::class, 'index'])->name('security.index');
+            });
+            Route::post('security/{securityEvent}/resolve', [SecurityEventController::class, 'resolve'])
+                ->middleware('admin.permission:security.resolve')->name('security.resolve');
+
+            Route::get('audit', [AuditLogController::class, 'index'])
+                ->middleware('admin.permission:audit.view')->name('audit.index');
+
+            Route::middleware('admin.permission:admins.view')->group(function () {
+                Route::get('admins', [AdminManagementController::class, 'index'])->name('admins.index');
+                Route::get('admins/{admin}/edit', [AdminManagementController::class, 'edit'])->name('admins.edit');
+            });
+            Route::middleware('admin.permission:admins.create')->group(function () {
+                Route::get('admins/create', [AdminManagementController::class, 'create'])->name('admins.create');
+                Route::post('admins', [AdminManagementController::class, 'store'])->name('admins.store');
+            });
+            Route::put('admins/{admin}', [AdminManagementController::class, 'update'])
+                ->middleware('admin.permission:admins.update')->name('admins.update');
+            Route::post('admins/{admin}/suspend', [AdminManagementController::class, 'suspend'])
+                ->middleware('admin.permission:admins.update')->name('admins.suspend');
+            Route::post('admins/{admin}/activate', [AdminManagementController::class, 'activate'])
+                ->middleware('admin.permission:admins.update')->name('admins.activate');
         });
     });
 });
