@@ -30,6 +30,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'admins' => ['view', 'create', 'update', 'delete'],
             'roles' => ['view', 'create', 'update', 'delete'],
             'settings' => ['view', 'update'],
+            'subscriptions' => ['view', 'manage'],
         ];
 
         $groupNamesAr = [
@@ -37,7 +38,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'nfc' => 'رموز NFC', 'contact_requests' => 'طلبات التواصل', 'emergency' => 'التنبيهات الطارئة',
             'notifications' => 'الإشعارات', 'reports' => 'التقارير', 'analytics' => 'التحليلات',
             'security' => 'الأمان', 'audit' => 'سجلات التدقيق', 'admins' => 'المسؤولون',
-            'roles' => 'الأدوار والصلاحيات', 'settings' => 'الإعدادات',
+            'roles' => 'الأدوار والصلاحيات', 'settings' => 'الإعدادات', 'subscriptions' => 'الاشتراكات',
         ];
 
         $permissions = [];
@@ -87,7 +88,7 @@ class RolesAndPermissionsSeeder extends Seeder
         $supportAdmin->permissions()->sync(
             Permission::whereIn('key', [
                 'users.view', 'vehicles.view', 'qr.view', 'nfc.view',
-                'contact_requests.view', 'contact_requests.respond', 'emergency.view',
+                'contact_requests.view', 'contact_requests.respond', 'emergency.view', 'subscriptions.view',
             ])->pluck('id')
         );
 

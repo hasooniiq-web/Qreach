@@ -28,6 +28,65 @@
         </dl>
     </x-card>
 
+    @php $canManageSubs = auth('admin')->user()->hasPermission('subscriptions.manage'); @endphp
+    <x-card class="mb-4">
+        <div class="flex flex-wrap items-start justify-between gap-4">
+            <div>
+                <h3 class="mb-1 text-sm font-semibold text-ink-900">الاشتراك</h3>
+                <p class="flex flex-wrap items-center gap-2 text-sm text-ink-900">
+                    <span class="font-semibold">{{ $plan->name_ar }}</span>
+                    <x-plan-price :plan="$plan" class="text-ink-600" />
+                    @if ($activeSubscription)
+                        <x-status-badge :status="$activeSubscription->effectiveStatus()" />
+                    @else
+                        <span class="text-xs text-ink-400">الباقة الافتراضية</span>
+                    @endif
+                </p>
+                <p class="mt-1 text-xs text-ink-500">
+                    @if ($activeSubscription?->current_period_ends_at)
+                        ينتهي في {{ $activeSubscription->current_period_ends_at->format('Y-m-d') }}
+                    @elseif ($plan->publicContactTypes() === [])
+                        المراسلة فقط — لا تُعرض بيانات تواصل مباشرة للزوار.
+                    @endif
+                </p>
+                @if ($plan->publicContactTypes() !== [])
+                    <p class="mt-1 text-xs text-ink-500">يمكنه عرض رقم هاتف وإنستغرام ومعلومات إضافية للزوار.</p>
+                @endif
+            </div>
+
+            @if ($canManageSubs)
+                <div class="flex flex-wrap items-end gap-3">
+                    <form method="POST" action="{{ route('admin.users.subscription.grant', $user) }}" class="flex items-end gap-2">
+                        @csrf
+                        <div>
+                            <label for="grant-plan" class="mb-1 block text-xs text-ink-500">الباقة</label>
+                            <select id="grant-plan" name="plan" class="form-control !py-2">
+                                @foreach ($paidPlans as $paidPlan)
+                                    <option value="{{ $paidPlan->slug }}">{{ $paidPlan->name_ar }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label for="grant-days" class="mb-1 block text-xs text-ink-500">المدة (أيام)</label>
+                            <input id="grant-days" type="number" name="days" min="1" max="3650" placeholder="افتراضي" class="form-control w-24 !py-2">
+                        </div>
+                        <button class="btn-accent">{{ $activeSubscription ? 'تمديد / منح' : 'منح الباقة' }}</button>
+                    </form>
+                    @if ($activeSubscription)
+                        <form method="POST" action="{{ route('admin.subscriptions.cancel', $activeSubscription) }}"
+                              data-confirm-title="إلغاء الاشتراك؟"
+                              data-confirm="سيعود المستخدم إلى الباقة الأساسية فورًا وتُخفى بيانات التواصل المعروضة للزوار."
+                              data-confirm-label="إلغاء الاشتراك">
+                            @csrf
+                            <button class="btn-danger">إلغاء الاشتراك</button>
+                        </form>
+                    @endif
+                </div>
+                @error('plan')<p class="w-full text-xs text-status-danger" role="alert">{{ $message }}</p>@enderror
+            @endif
+        </div>
+    </x-card>
+
     <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <x-card>
             <h3 class="mb-3 text-sm font-semibold text-ink-900">المركبات ({{ $user->vehicles->count() }})</h3>

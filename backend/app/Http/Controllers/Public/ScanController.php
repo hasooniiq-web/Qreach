@@ -11,6 +11,7 @@ use App\Models\Scan;
 use App\Models\Tag;
 use App\Notifications\ContactRequestNotification;
 use App\Notifications\TagActionNotification;
+use App\Services\PublicContacts;
 use App\Services\SecurityEventLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -46,6 +47,7 @@ class ScanController extends Controller
             'tag' => $tag,
             'vehicle' => $tag->vehicle,
             'publicAttributes' => $tag->vehicle->publicAttributes(),
+            'ownerContacts' => app(PublicContacts::class)->visibleTo($tag->vehicle->user),
         ]);
     }
 

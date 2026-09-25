@@ -49,8 +49,40 @@
         @else
             <p class="text-sm text-white/70">اختار مالك هذه المركبة عدم عرض أي تفاصيل عنها.</p>
         @endif
-        <p class="mt-4 text-xs text-white/60">رقم هاتف المالك لا يُعرض لك أبدًا — رسالتك تصله عبر التطبيق.</p>
+        <p class="mt-4 text-xs text-white/60">
+            @if (count($ownerContacts) > 0)
+                اختار المالك مشاركة وسائل التواصل أدناه، ويمكنك أيضًا مراسلته عبر التطبيق.
+            @else
+                رقم هاتف المالك لا يُعرض لك — رسالتك تصله عبر التطبيق.
+            @endif
+        </p>
     </section>
+
+    {{-- Direct contact: only present when the owner is on Pro AND chose to show it
+         (PublicContacts re-checks the plan on every render). Basic owners get messaging only. --}}
+    @if (count($ownerContacts) > 0)
+        <section class="mb-6 rounded-xl border border-ink-200 bg-white p-4" aria-labelledby="direct-contact-title">
+            <h2 id="direct-contact-title" class="mb-3 text-sm font-bold text-ink-900">تواصل مباشر مع المالك</h2>
+            <ul class="space-y-2">
+                @foreach ($ownerContacts as $contact)
+                    <li>
+                        @if ($contact['href'])
+                            <a href="{{ $contact['href'] }}" @if (str_starts_with($contact['href'], 'https://')) target="_blank" rel="noopener noreferrer" @endif
+                               class="flex items-center justify-between gap-3 rounded-lg border border-ink-200 px-4 py-3 text-sm transition-colors hover:border-brand-black">
+                                <span class="font-medium text-ink-900">{{ $contact['label'] }}</span>
+                                <span class="text-ink-600" dir="ltr">{{ $contact['type'] === 'instagram' ? '@'.ltrim($contact['value'], '@') : $contact['value'] }}</span>
+                            </a>
+                        @else
+                            <div class="flex items-center justify-between gap-3 rounded-lg bg-ink-50 px-4 py-3 text-sm">
+                                <span class="font-medium text-ink-900">{{ $contact['label'] }}</span>
+                                <span class="text-ink-600">{{ $contact['value'] }}</span>
+                            </div>
+                        @endif
+                    </li>
+                @endforeach
+            </ul>
+        </section>
+    @endif
 
     <h2 class="mb-3 text-base font-bold text-ink-900">كيف تريد المساعدة؟</h2>
 

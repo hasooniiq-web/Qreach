@@ -1,0 +1,70 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\Subscription;
+use App\Models\SubscriptionPlan;
+use App\Services\AuditLogger;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\View\View;
+
+/**
+ * Plan price/description and — the part that matters for permissions — which
+ * contact-detail types each plan may show publicly. Messaging is always on
+ * (it's the baseline every plan has), so it isn't editable.
+ */
+class PlanController extends Controller
+{
+    public function index(): View
+    {
+        $plans = SubscriptionPlan::orderBy('sort_order')->get();
+
+        $subscriberCounts = Subscription::query()
+            ->whereIn('status', ['active', 'trialing'])
+            ->where(fn ($q) => $q->whereNull('current_period_ends_at')->orWhere('current_period_ends_at', '>', now()))
+            ->selectRaw('plan_id, count(distinct user_id) as total')
+            ->groupBy('plan_id')
+            ->pluck('total', 'plan_id');
+
+        return view('admin.subscriptions.plans', compact('plans', 'subscriberCounts'));
+    }
+
+    public function update(Request $request, SubscriptionPlan $plan): RedirectResponse
+    {
+        $data = $request->validate([
+            'name_ar' => ['required', 'string', 'max:100'],
+            'description_ar' => ['nullable', 'string', 'max:255'],
+            'price_cents' => ['required', 'integer', 'min:0', 'max:100000000'],
+            'billing_period_days' => ['required', 'integer', 'min:1', 'max:3650'],
+            'is_active' => ['nullable', 'boolean'],
+            'public_contacts' => ['nullable', 'array'],
+            'public_contacts.*' => [Rule::in(SubscriptionPlan::PUBLIC_CONTACT_TYPES)],
+        ]);
+
+        // The free default must stay active and free — every customer falls back to it.
+        if ($plan->slug === SubscriptionPlan::BASIC) {
+            $data['price_cents'] = 0;
+            $data['is_active'] = true;
+        }
+
+        $before = $plan->only(['price_cents', 'billing_period_days', 'features']);
+
+        $plan->update([
+            'name_ar' => $data['name_ar'],
+            'description_ar' => $data['description_ar'] ?? null,
+            'price_cents' => $data['price_cents'],
+            'billing_period_days' => $data['billing_period_days'],
+            'is_active' => (bool) ($data['is_active'] ?? false),
+            'features' => ['messaging' => true, 'public_contacts' => array_values($data['public_contacts'] ?? [])],
+        ]);
+
+        AuditLogger::log('admin.plan_updated', 'admin', $request->user('admin')->id, 'SubscriptionPlan', $plan->id, 'success', [
+            'before' => $before, 'after' => $plan->only(['price_cents', 'billing_period_days', 'features']),
+        ], $request);
+
+        return back()->with('status', 'تم حفظ الباقة "'.$plan->name_ar.'".');
+    }
+}

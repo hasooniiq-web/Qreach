@@ -10,11 +10,19 @@
         <button type="submit" class="btn-primary">بحث</button>
     </x-filter-bar>
 
-    <x-data-table :headers="['المستخدم', 'رقم الهاتف', 'المركبات', 'الحالة', 'تاريخ التسجيل', '']">
+    <x-data-table :headers="['المستخدم', 'رقم الهاتف', 'الباقة', 'المركبات', 'الحالة', 'تاريخ التسجيل', '']">
         @forelse ($users as $user)
             <tr class="hover:bg-ink-50">
                 <td class="px-4 py-3 font-medium text-ink-900">{{ $user->name ?? 'بدون اسم' }}</td>
                 <td class="px-4 py-3 tabular-nums text-ink-600" dir="ltr">{{ $user->phone }}</td>
+                <td class="px-4 py-3">
+                    @php $paid = $user->subscriptions->first(fn ($s) => $s->isCurrentlyActive())?->plan; @endphp
+                    @if ($paid)
+                        <span class="inline-flex items-center rounded-full bg-brand-yellow/20 px-2.5 py-1 text-xs font-semibold text-ink-900">{{ $paid->name_ar }}</span>
+                    @else
+                        <span class="text-xs text-ink-400">الأساسية</span>
+                    @endif
+                </td>
                 <td class="px-4 py-3 text-ink-600">{{ $user->vehicles_count }}</td>
                 <td class="px-4 py-3"><x-status-badge :status="$user->status" /></td>
                 <td class="px-4 py-3 text-ink-500">{{ $user->created_at->format('Y-m-d') }}</td>
@@ -23,7 +31,7 @@
                 </td>
             </tr>
         @empty
-            <x-table-empty :cols="6" icon="users" title="لا يوجد مستخدمون مطابقون"
+            <x-table-empty :cols="7" icon="users" title="لا يوجد مستخدمون مطابقون"
                            description="جرّب تغيير البحث أو مسح التصفية. المستخدمون يظهرون هنا فور تسجيلهم عبر التطبيق." />
         @endforelse
     </x-data-table>

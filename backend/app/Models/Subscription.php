@@ -26,6 +26,23 @@ class Subscription extends Model
         });
     }
 
+    /** Active/trialing and not past its end date — the only state that grants plan features. */
+    public function isCurrentlyActive(): bool
+    {
+        return in_array($this->status, ['active', 'trialing'], true)
+            && ($this->current_period_ends_at === null || $this->current_period_ends_at->isFuture());
+    }
+
+    /** What to show an admin: a stored "active" row past its end date is really expired. */
+    public function effectiveStatus(): string
+    {
+        if (in_array($this->status, ['active', 'trialing'], true) && ! $this->isCurrentlyActive()) {
+            return 'expired';
+        }
+
+        return $this->status;
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);

@@ -24,6 +24,10 @@
         'success' => ['bg-status-success/10 text-status-success', 'نجاح'],
         'failure' => ['bg-status-danger/10 text-status-danger', 'فشل'],
         'resolved' => ['bg-status-success/10 text-status-success', 'تم الحل'],
+        'expired' => ['bg-ink-100 text-ink-500', 'منتهي'],
+        'canceled' => ['bg-status-danger/10 text-status-danger', 'ملغى'],
+        'trialing' => ['bg-brand-yellow/20 text-ink-900', 'تجريبي'],
+        'past_due' => ['bg-status-danger/10 text-status-danger', 'متأخر السداد'],
         'unresolved' => ['bg-ink-100 text-ink-600', 'قيد المراجعة'],
     ];
     [$classes, $label] = $map[$status] ?? ['bg-ink-100 text-ink-500', $status];

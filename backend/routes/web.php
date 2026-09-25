@@ -7,7 +7,9 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\ContactRequestController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PasswordController;
+use App\Http\Controllers\Admin\PlanController;
 use App\Http\Controllers\Admin\SecurityEventController;
+use App\Http\Controllers\Admin\SubscriptionController;
 use App\Http\Controllers\Admin\SystemSettingController;
 use App\Http\Controllers\Admin\TagBatchController;
 use App\Http\Controllers\Admin\TagController;
@@ -80,6 +82,20 @@ Route::prefix('admin')->name('admin.')->group(function () {
                 ->middleware('admin.permission:users.suspend')->name('users.suspend');
             Route::post('users/{user}/activate', [UserController::class, 'activate'])
                 ->middleware('admin.permission:users.suspend')->name('users.activate');
+
+            // Subscriptions & plans. Literal segments (requests) come before any wildcard.
+            Route::middleware('admin.permission:subscriptions.view')->group(function () {
+                Route::get('subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions.index');
+                Route::get('subscriptions/requests', [SubscriptionController::class, 'requests'])->name('subscriptions.requests');
+                Route::get('plans', [PlanController::class, 'index'])->name('plans.index');
+            });
+            Route::middleware('admin.permission:subscriptions.manage')->group(function () {
+                Route::post('subscriptions/requests/{upgradeRequest}/approve', [SubscriptionController::class, 'approve'])->name('subscriptions.requests.approve');
+                Route::post('subscriptions/requests/{upgradeRequest}/reject', [SubscriptionController::class, 'reject'])->name('subscriptions.requests.reject');
+                Route::post('subscriptions/{subscription}/cancel', [SubscriptionController::class, 'cancel'])->name('subscriptions.cancel');
+                Route::post('users/{user}/subscription', [SubscriptionController::class, 'grant'])->name('users.subscription.grant');
+                Route::put('plans/{plan}', [PlanController::class, 'update'])->name('plans.update');
+            });
 
             Route::middleware('admin.permission:vehicles.view')->group(function () {
                 Route::get('vehicles', [VehicleController::class, 'index'])->name('vehicles.index');

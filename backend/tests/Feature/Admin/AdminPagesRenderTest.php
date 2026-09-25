@@ -63,6 +63,9 @@ class AdminPagesRenderTest extends TestCase
             'admins' => '/admin/admins',
             'new admin' => '/admin/admins/create',
             'settings' => '/admin/settings',
+            'subscriptions' => '/admin/subscriptions',
+            'upgrade requests' => '/admin/subscriptions/requests',
+            'plans' => '/admin/plans',
         ];
     }
 

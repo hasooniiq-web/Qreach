@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\Api\V1\Auth\OtpAuthController;
 use App\Http\Controllers\Api\V1\DeviceController;
+use App\Http\Controllers\Api\V1\PublicContactController;
+use App\Http\Controllers\Api\V1\SubscriptionController;
 use App\Http\Controllers\Api\V1\TagController;
 use App\Http\Controllers\Api\V1\VehicleController;
 use Illuminate\Support\Facades\Route;
@@ -27,5 +29,12 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::get('tags/{token}', [TagController::class, 'show'])->name('tags.show');
 
         Route::put('devices/push-token', [DeviceController::class, 'updatePushToken'])->name('devices.push-token');
+
+        Route::get('subscription', [SubscriptionController::class, 'show'])->name('subscription.show');
+        Route::post('subscription/upgrade-requests', [SubscriptionController::class, 'requestUpgrade'])
+            ->middleware('throttle:5,1')->name('subscription.upgrade');
+
+        Route::get('public-contact', [PublicContactController::class, 'show'])->name('public-contact.show');
+        Route::put('public-contact', [PublicContactController::class, 'update'])->name('public-contact.update');
     });
 });

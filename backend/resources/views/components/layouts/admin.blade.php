@@ -41,6 +41,7 @@
                 ['icon' => 'audit', 'label' => 'سجلات التدقيق', 'route' => 'admin.audit.index'],
             ],
             'الإدارة' => [
+                ['icon' => 'star', 'label' => 'الاشتراكات والباقات', 'route' => 'admin.subscriptions.index'],
                 ['icon' => 'users', 'label' => 'المسؤولون والصلاحيات', 'route' => 'admin.admins.index'],
                 ['icon' => 'settings', 'label' => 'إعدادات النظام', 'route' => 'admin.settings.index'],
             ],
