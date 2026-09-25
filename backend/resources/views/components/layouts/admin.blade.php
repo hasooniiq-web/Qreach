@@ -96,22 +96,27 @@
                         <span class="hidden text-sm font-medium text-ink-700 sm:inline">{{ $me->name }}</span>
                         <x-admin-avatar :admin="$me" />
                     </summary>
-                    <div class="absolute end-0 top-full z-30 mt-2 w-60 overflow-hidden rounded-lg border border-ink-200 bg-white shadow-lg">
-                        <div class="border-b border-ink-100 px-4 py-3">
-                            <p class="truncate text-sm font-semibold text-ink-900">{{ $me->name }}</p>
-                            <p class="truncate text-xs text-ink-400" dir="ltr">{{ $me->email }}</p>
+                    <div class="absolute end-0 top-full z-30 mt-3 w-80 overflow-hidden rounded-xl border border-ink-200 bg-white shadow-xl">
+                        <div class="flex items-center gap-4 border-b border-ink-100 px-5 py-5">
+                            <x-admin-avatar :admin="$me" size="size-14" class="!text-lg" />
+                            <div class="min-w-0">
+                                <p class="truncate text-base font-semibold text-ink-900">{{ $me->name }}</p>
+                                <p class="truncate text-sm text-ink-400" dir="ltr">{{ $me->email }}</p>
+                            </div>
                         </div>
-                        <a href="{{ route('admin.profile.edit') }}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-ink-800 hover:bg-ink-50">
-                            <x-icon name="users" class="size-4 text-ink-500" />
-                            الملف الشخصي
-                        </a>
-                        <form method="POST" action="{{ route('admin.logout') }}" class="border-t border-ink-100">
-                            @csrf
-                            <button type="submit" class="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-status-danger hover:bg-status-danger/5">
-                                <x-icon name="logout" class="size-4" />
-                                تسجيل الخروج
-                            </button>
-                        </form>
+                        <div class="p-2">
+                            <a href="{{ route('admin.profile.edit') }}" class="flex items-center gap-3 rounded-lg px-4 py-3.5 text-base text-ink-800 hover:bg-ink-50">
+                                <x-icon name="users" class="size-5 text-ink-500" />
+                                الملف الشخصي
+                            </a>
+                            <form method="POST" action="{{ route('admin.logout') }}">
+                                @csrf
+                                <button type="submit" class="flex w-full items-center gap-3 rounded-lg px-4 py-3.5 text-base text-status-danger hover:bg-status-danger/5">
+                                    <x-icon name="logout" class="size-5" />
+                                    تسجيل الخروج
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </details>
             </header>

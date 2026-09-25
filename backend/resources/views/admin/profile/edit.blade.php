@@ -7,12 +7,13 @@
             <div class="mb-6 flex flex-wrap items-center gap-5">
                 <x-admin-avatar :admin="$admin" size="size-20" class="!text-2xl" />
                 <div class="space-y-2">
-                    <form method="POST" action="{{ route('admin.profile.avatar.store') }}" enctype="multipart/form-data" class="flex flex-wrap items-center gap-2">
+                    <form method="POST" action="{{ route('admin.profile.avatar.store') }}" enctype="multipart/form-data">
                         @csrf
-                        <label for="avatar" class="sr-only">اختر صورة</label>
-                        <input id="avatar" type="file" name="avatar" accept="image/png,image/jpeg,image/webp" required
-                               class="text-sm text-ink-600 file:me-3 file:rounded-md file:border-0 file:bg-ink-100 file:px-3 file:py-2 file:text-sm file:font-medium file:text-ink-800 hover:file:bg-ink-200">
-                        <button type="submit" class="btn-primary">رفع الصورة</button>
+                        {{-- Choosing a file submits the form right away (data-auto-submit, handled in admin-ui.js). --}}
+                        <input id="avatar" type="file" name="avatar" accept="image/png,image/jpeg,image/webp" required data-auto-submit class="peer sr-only">
+                        <label for="avatar" class="btn-secondary cursor-pointer peer-focus-visible:ring-2 peer-focus-visible:ring-brand-yellow">
+                            {{ $admin->avatar_path ? 'تغيير الصورة' : 'اختيار صورة' }}
+                        </label>
                     </form>
                     @error('avatar')<p class="text-xs text-status-danger" role="alert">{{ $message }}</p>@enderror
                     <p class="text-xs text-ink-400">PNG أو JPG أو WebP، حتى 2 ميجابايت. تُقتصّ الصورة إلى مربع تلقائيًا.</p>
