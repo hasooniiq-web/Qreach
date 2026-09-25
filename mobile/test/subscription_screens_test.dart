@@ -4,9 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:qreach_smarttag/core/providers.dart';
+import 'package:qreach_smarttag/features/profile/data/profile_models.dart';
+import 'package:qreach_smarttag/features/profile/data/profile_repository.dart';
+import 'package:qreach_smarttag/features/profile/presentation/visibility_screen.dart';
 import 'package:qreach_smarttag/features/subscription/data/subscription_models.dart';
 import 'package:qreach_smarttag/features/subscription/data/subscription_repository.dart';
-import 'package:qreach_smarttag/features/subscription/presentation/public_contact_screen.dart';
 import 'package:qreach_smarttag/features/subscription/presentation/subscription_screen.dart';
 import 'package:qreach_smarttag/l10n/app_localizations.dart';
 
@@ -33,10 +35,10 @@ const _pro = PlanModel(
 );
 
 class FakeSubscriptionRepository implements SubscriptionRepository {
-  FakeSubscriptionRepository({required this.info, required this.contact});
+  FakeSubscriptionRepository({required this.info, this.profile});
 
   SubscriptionInfo info;
-  PublicContactModel contact;
+  ProfileModel? profile;
   final List<String> upgradeRequests = [];
 
   @override
@@ -45,18 +47,43 @@ class FakeSubscriptionRepository implements SubscriptionRepository {
   @override
   Future<void> requestUpgrade(String planSlug) async =>
       upgradeRequests.add(planSlug);
-
-  @override
-  Future<PublicContactModel> fetchPublicContact() async => contact;
-
-  @override
-  Future<PublicContactModel> updatePublicContact({
-    required String phone,
-    required String instagram,
-    required String extra,
-  }) async =>
-      contact;
 }
+
+class FakeProfileRepository implements ProfileRepository {
+  FakeProfileRepository(this.profile);
+
+  ProfileModel profile;
+  bool saved = false;
+
+  @override
+  Future<ProfileModel> fetch() async => profile;
+
+  @override
+  Future<ProfileModel> updateName(String name) async => profile;
+
+  @override
+  Future<ProfileModel> updateContact({
+    required String phone,
+    required bool phoneVisible,
+    required String instagram,
+    required bool instagramVisible,
+    required String extra,
+    required bool extraVisible,
+  }) async {
+    saved = true;
+    return profile;
+  }
+}
+
+ProfileModel _profile({required bool canShow, String? phone, String? insta}) =>
+    ProfileModel(
+      name: 'علي',
+      phone: '+9647700000000',
+      plan: canShow ? 'pro' : 'basic',
+      phoneField: ContactField(value: phone, canShow: canShow),
+      instagram: ContactField(value: insta, canShow: canShow),
+      extra: ContactField(canShow: canShow),
+    );
 
 SubscriptionInfo _info({
   required PlanModel plan,
@@ -73,9 +100,14 @@ SubscriptionInfo _info({
       pendingUpgrade: pending,
     );
 
-Widget _app(FakeSubscriptionRepository repo, Widget screen) {
+Widget _app(FakeSubscriptionRepository repo, Widget screen,
+    {FakeProfileRepository? profileRepo}) {
   return ProviderScope(
-    overrides: [subscriptionRepositoryProvider.overrideWithValue(repo)],
+    overrides: [
+      subscriptionRepositoryProvider.overrideWithValue(repo),
+      if (profileRepo != null)
+        profileRepositoryProvider.overrideWithValue(profileRepo),
+    ],
     child: MaterialApp.router(
       locale: const Locale('ar'),
       supportedLocales: const [Locale('ar'), Locale('en')],
@@ -108,9 +140,7 @@ void main() {
         'Basic user sees a free plan, locked pro features and an upgrade button',
         (tester) async {
       _tall(tester);
-      final repo = FakeSubscriptionRepository(
-          info: _info(plan: _basic),
-          contact: const PublicContactModel(editable: false));
+      final repo = FakeSubscriptionRepository(info: _info(plan: _basic));
 
       await tester.pumpWidget(_app(repo, const SubscriptionScreen()));
       await tester.pumpAndSettle();
@@ -128,8 +158,7 @@ void main() {
         (tester) async {
       _tall(tester);
       final repo = FakeSubscriptionRepository(
-          info: _info(plan: _pro, isDefault: false, status: 'active'),
-          contact: const PublicContactModel(editable: true));
+          info: _info(plan: _pro, isDefault: false, status: 'active'));
 
       await tester.pumpWidget(_app(repo, const SubscriptionScreen()));
       await tester.pumpAndSettle();
@@ -146,8 +175,7 @@ void main() {
         (tester) async {
       _tall(tester);
       final repo = FakeSubscriptionRepository(
-          info: _info(plan: _basic, status: 'expired'),
-          contact: const PublicContactModel(editable: false));
+          info: _info(plan: _basic, status: 'expired'));
 
       await tester.pumpWidget(_app(repo, const SubscriptionScreen()));
       await tester.pumpAndSettle();
@@ -159,9 +187,8 @@ void main() {
     testWidgets('a pending upgrade disables the request button',
         (tester) async {
       _tall(tester);
-      final repo = FakeSubscriptionRepository(
-          info: _info(plan: _basic, pending: true),
-          contact: const PublicContactModel(editable: false));
+      final repo =
+          FakeSubscriptionRepository(info: _info(plan: _basic, pending: true));
 
       await tester.pumpWidget(_app(repo, const SubscriptionScreen()));
       await tester.pumpAndSettle();
@@ -173,9 +200,7 @@ void main() {
     testWidgets('requesting an upgrade confirms first, then sends the request',
         (tester) async {
       _tall(tester);
-      final repo = FakeSubscriptionRepository(
-          info: _info(plan: _basic),
-          contact: const PublicContactModel(editable: false));
+      final repo = FakeSubscriptionRepository(info: _info(plan: _basic));
 
       await tester.pumpWidget(_app(repo, const SubscriptionScreen()));
       await tester.pumpAndSettle();
@@ -196,50 +221,57 @@ void main() {
     });
   });
 
-  group('PublicContactScreen', () {
+  group('VisibilityScreen', () {
     testWidgets('Basic owner sees a locked explanation and a link to the plans',
         (tester) async {
       _tall(tester);
-      final repo = FakeSubscriptionRepository(
-          info: _info(plan: _basic),
-          contact: const PublicContactModel(editable: false));
+      final repo = FakeSubscriptionRepository(info: _info(plan: _basic));
+      final profileRepo = FakeProfileRepository(_profile(canShow: false));
 
-      await tester.pumpWidget(_app(repo, const PublicContactScreen()));
+      await tester.pumpWidget(
+          _app(repo, const VisibilityScreen(), profileRepo: profileRepo));
       await tester.pumpAndSettle();
 
-      expect(find.text('متاحة في الباقة الاحترافية'), findsOneWidget);
-      expect(find.byType(TextFormField), findsNothing);
-
-      await tester.tap(find.text('عرض الباقات'));
-      await tester.pumpAndSettle();
-      expect(find.text('subscription-route'), findsOneWidget);
+      expect(find.byIcon(Icons.lock_outline), findsWidgets);
+      final switches = tester
+          .widgetList<SwitchListTile>(find.byType(SwitchListTile))
+          .toList();
+      expect(switches, hasLength(3));
+      expect(switches.every((s) => s.onChanged == null), isTrue,
+          reason: 'switches are locked on Basic');
     });
 
     testWidgets('Pro owner gets the form pre-filled with saved details',
         (tester) async {
       _tall(tester);
       final repo = FakeSubscriptionRepository(
-        info: _info(plan: _pro, isDefault: false, status: 'active'),
-        contact: const PublicContactModel(
-            editable: true, phone: '+9647701234567', instagram: 'my.car'),
-      );
+          info: _info(plan: _pro, isDefault: false, status: 'active'));
+      final profileRepo = FakeProfileRepository(
+          _profile(canShow: true, phone: '+9647701234567', insta: 'my.car'));
 
-      await tester.pumpWidget(_app(repo, const PublicContactScreen()));
+      await tester.pumpWidget(
+          _app(repo, const VisibilityScreen(), profileRepo: profileRepo));
       await tester.pumpAndSettle();
 
       expect(find.byType(TextFormField), findsNWidgets(3));
       expect(find.text('+9647701234567'), findsOneWidget);
       expect(find.text('my.car'), findsOneWidget);
+      final switches = tester
+          .widgetList<SwitchListTile>(find.byType(SwitchListTile))
+          .toList();
+      expect(switches.every((s) => s.value == false), isTrue,
+          reason: 'everything is hidden by default');
     });
 
     testWidgets('an invalid Instagram handle is rejected before saving',
         (tester) async {
       _tall(tester);
       final repo = FakeSubscriptionRepository(
-          info: _info(plan: _pro, isDefault: false, status: 'active'),
-          contact: const PublicContactModel(editable: true));
+          info: _info(plan: _pro, isDefault: false, status: 'active'));
+      final profileRepo = FakeProfileRepository(_profile(canShow: true));
 
-      await tester.pumpWidget(_app(repo, const PublicContactScreen()));
+      await tester.pumpWidget(
+          _app(repo, const VisibilityScreen(), profileRepo: profileRepo));
       await tester.pumpAndSettle();
 
       await tester.enterText(find.byType(TextFormField).at(1), 'not a handle!');
@@ -248,6 +280,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('اسم مستخدم غير صالح'), findsOneWidget);
+      expect(profileRepo.saved, isFalse);
     });
   });
 }

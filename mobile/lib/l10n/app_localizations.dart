@@ -889,6 +889,276 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'لا يوجد نشاط بعد. عندما يمسح أحدهم رمز مركبتك ستراه هنا.'**
   String get noRecentActivity;
+
+  /// No description provided for @tabHome.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرئيسية'**
+  String get tabHome;
+
+  /// No description provided for @tabVehicles.
+  ///
+  /// In ar, this message translates to:
+  /// **'مركباتي'**
+  String get tabVehicles;
+
+  /// No description provided for @tabContacts.
+  ///
+  /// In ar, this message translates to:
+  /// **'التواصل'**
+  String get tabContacts;
+
+  /// No description provided for @tabProfile.
+  ///
+  /// In ar, this message translates to:
+  /// **'الملف الشخصي'**
+  String get tabProfile;
+
+  /// No description provided for @contactsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلبات التواصل'**
+  String get contactsTitle;
+
+  /// No description provided for @contactsEmptyTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد رسائل بعد'**
+  String get contactsEmptyTitle;
+
+  /// No description provided for @contactsEmptySubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'عندما يراسلك أحدهم بعد مسح رمز مركبتك ستظهر رسالته هنا.'**
+  String get contactsEmptySubtitle;
+
+  /// No description provided for @contactStatusNew.
+  ///
+  /// In ar, this message translates to:
+  /// **'جديد'**
+  String get contactStatusNew;
+
+  /// No description provided for @contactStatusRead.
+  ///
+  /// In ar, this message translates to:
+  /// **'مقروء'**
+  String get contactStatusRead;
+
+  /// No description provided for @contactStatusResponded.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم الرد'**
+  String get contactStatusResponded;
+
+  /// No description provided for @contactStatusClosed.
+  ///
+  /// In ar, this message translates to:
+  /// **'مغلق'**
+  String get contactStatusClosed;
+
+  /// No description provided for @markResponded.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحديد أنه تم الرد'**
+  String get markResponded;
+
+  /// No description provided for @callVisitor.
+  ///
+  /// In ar, this message translates to:
+  /// **'اتصال بالزائر'**
+  String get callVisitor;
+
+  /// No description provided for @visitorAnonymous.
+  ///
+  /// In ar, this message translates to:
+  /// **'زائر'**
+  String get visitorAnonymous;
+
+  /// No description provided for @contactAboutVehicle.
+  ///
+  /// In ar, this message translates to:
+  /// **'بخصوص {vehicle}'**
+  String contactAboutVehicle(String vehicle);
+
+  /// No description provided for @vehicleCodeTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'رمز المركبة'**
+  String get vehicleCodeTitle;
+
+  /// No description provided for @removeCode.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف الرمز'**
+  String get removeCode;
+
+  /// No description provided for @removeCodeConfirmTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف رمز المركبة؟'**
+  String get removeCodeConfirmTitle;
+
+  /// No description provided for @removeCodeConfirmBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيتوقف الرمز الحالي عن العمل نهائيًا ولا يمكن ربطه من جديد. بعدها تستطيع ربط رمز جديد.'**
+  String get removeCodeConfirmBody;
+
+  /// No description provided for @codeRemoved.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم حذف الرمز'**
+  String get codeRemoved;
+
+  /// No description provided for @oneCodeNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'لكل مركبة رمز واحد. لتبديله احذف الحالي ثم اربط الجديد.'**
+  String get oneCodeNote;
+
+  /// No description provided for @noCodeYetTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يوجد رمز مرتبط'**
+  String get noCodeYetTitle;
+
+  /// No description provided for @noCodeYetSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'امسح رمز الملصق لتصبح المركبة قابلة للتواصل.'**
+  String get noCodeYetSubtitle;
+
+  /// No description provided for @profileMyInfo.
+  ///
+  /// In ar, this message translates to:
+  /// **'معلوماتي'**
+  String get profileMyInfo;
+
+  /// No description provided for @profileName.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاسم'**
+  String get profileName;
+
+  /// No description provided for @profileNameHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسمك كما تريد أن يظهر'**
+  String get profileNameHint;
+
+  /// No description provided for @editName.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل الاسم'**
+  String get editName;
+
+  /// No description provided for @notSet.
+  ///
+  /// In ar, this message translates to:
+  /// **'غير محدد'**
+  String get notSet;
+
+  /// No description provided for @visibilityTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما يظهر للزائر'**
+  String get visibilityTitle;
+
+  /// No description provided for @visibilitySubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'افتراضيًا لا يرى الزائر شيئًا سوى إرسال رسالة لك. أضف معلوماتك واختر ما تريد إظهاره.'**
+  String get visibilitySubtitle;
+
+  /// No description provided for @showToVisitors.
+  ///
+  /// In ar, this message translates to:
+  /// **'إظهار للزوار'**
+  String get showToVisitors;
+
+  /// No description provided for @proBadge.
+  ///
+  /// In ar, this message translates to:
+  /// **'احترافية'**
+  String get proBadge;
+
+  /// No description provided for @visibilityNoneShown.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يظهر للزائر أي شيء الآن — يستطيع مراسلتك فقط.'**
+  String get visibilityNoneShown;
+
+  /// No description provided for @visibilitySharing.
+  ///
+  /// In ar, this message translates to:
+  /// **'يظهر للزائر: {items}'**
+  String visibilitySharing(String items);
+
+  /// No description provided for @visibilityLockedHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'إظهار المعلومات للزوار متاح في الباقة الاحترافية.'**
+  String get visibilityLockedHint;
+
+  /// No description provided for @scanManualTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إدخال الرمز يدويًا'**
+  String get scanManualTitle;
+
+  /// No description provided for @scanManualHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'ألصق رابط الرمز أو الرمز نفسه'**
+  String get scanManualHint;
+
+  /// No description provided for @scanManualButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'ربط'**
+  String get scanManualButton;
+
+  /// No description provided for @scanCameraError.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر تشغيل الكاميرا'**
+  String get scanCameraError;
+
+  /// No description provided for @scanCameraPermission.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسمح للتطبيق باستخدام الكاميرا من إعدادات الهاتف ثم أعد المحاولة، أو أدخل الرمز يدويًا.'**
+  String get scanCameraPermission;
+
+  /// No description provided for @scanTorch.
+  ///
+  /// In ar, this message translates to:
+  /// **'الفلاش'**
+  String get scanTorch;
+
+  /// No description provided for @homeStatVehicles.
+  ///
+  /// In ar, this message translates to:
+  /// **'مركبات'**
+  String get homeStatVehicles;
+
+  /// No description provided for @homeStatNewMessages.
+  ///
+  /// In ar, this message translates to:
+  /// **'رسائل جديدة'**
+  String get homeStatNewMessages;
+
+  /// No description provided for @homeLinkCode.
+  ///
+  /// In ar, this message translates to:
+  /// **'ربط رمز'**
+  String get homeLinkCode;
+
+  /// No description provided for @homeNoCodeCta.
+  ///
+  /// In ar, this message translates to:
+  /// **'اربط رمز المركبة'**
+  String get homeNoCodeCta;
 }
 
 class _AppLocalizationsDelegate

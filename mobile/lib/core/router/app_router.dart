@@ -4,21 +4,27 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/auth_controller.dart';
 import '../../features/auth/presentation/otp_screen.dart';
 import '../../features/auth/presentation/phone_entry_screen.dart';
+import '../../features/contacts/presentation/contacts_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/notifications/presentation/notifications_screen.dart';
 import '../../features/profile/presentation/profile_screen.dart';
-import '../../features/subscription/presentation/public_contact_screen.dart';
+import '../../features/profile/presentation/visibility_screen.dart';
+import '../../features/shell/app_shell.dart';
 import '../../features/subscription/presentation/subscription_screen.dart';
+import '../../features/tags/presentation/scan_screen.dart';
 import '../../features/vehicles/presentation/vehicle_detail_screen.dart';
 import '../../features/vehicles/presentation/vehicle_form_screen.dart';
 import '../../features/vehicles/presentation/vehicle_list_screen.dart';
-import '../../features/tags/presentation/scan_screen.dart';
 import '../splash_screen.dart';
 
 /// Rebuilding the whole router on auth-state change is a deliberate
 /// simplification: login/logout are exactly the moments where resetting
 /// the navigation stack is the *correct* behavior anyway (you never want
 /// "back" to return you to a screen you were on before logging out).
+///
+/// Structure: four bottom tabs (home, vehicles, contacts, profile) in a
+/// shell; every other screen is a top-level route that opens full-screen
+/// over the tabs.
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authControllerProvider);
 
@@ -45,13 +51,34 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) =>
             OtpScreen(phone: state.extra as String? ?? ''),
       ),
-      GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) =>
+            AppShell(navigationShell: navigationShell),
+        branches: [
+          StatefulShellBranch(routes: [
+            GoRoute(
+                path: '/home', builder: (context, state) => const HomeScreen()),
+          ]),
+          StatefulShellBranch(routes: [
+            GoRoute(
+                path: '/vehicles',
+                builder: (context, state) => const VehicleListScreen()),
+          ]),
+          StatefulShellBranch(routes: [
+            GoRoute(
+                path: '/contacts',
+                builder: (context, state) => const ContactsScreen()),
+          ]),
+          StatefulShellBranch(routes: [
+            GoRoute(
+                path: '/profile',
+                builder: (context, state) => const ProfileScreen()),
+          ]),
+        ],
+      ),
       GoRoute(
           path: '/notifications',
           builder: (context, state) => const NotificationsScreen()),
-      GoRoute(
-          path: '/vehicles',
-          builder: (context, state) => const VehicleListScreen()),
       GoRoute(
           path: '/vehicles/new',
           builder: (context, state) => const VehicleFormScreen()),
@@ -66,13 +93,11 @@ final routerProvider = Provider<GoRouter>((ref) {
             ScanScreen(vehicleId: state.pathParameters['id']!),
       ),
       GoRoute(
-          path: '/profile', builder: (context, state) => const ProfileScreen()),
-      GoRoute(
           path: '/subscription',
           builder: (context, state) => const SubscriptionScreen()),
       GoRoute(
-          path: '/public-contact',
-          builder: (context, state) => const PublicContactScreen()),
+          path: '/visibility',
+          builder: (context, state) => const VisibilityScreen()),
     ],
   );
 });

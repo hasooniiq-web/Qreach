@@ -197,5 +197,64 @@
     "viewAll": "View all",
     "unreadLabel": "Unread",
     "emergencyLabel": "Emergency",
-    "noRecentActivity": "No activity yet. When someone scans your vehicle tag, you will see it here."
+    "noRecentActivity": "No activity yet. When someone scans your vehicle tag, you will see it here.",
+    "tabHome": "Home",
+    "tabVehicles": "Vehicles",
+    "tabContacts": "Contacts",
+    "tabProfile": "Profile",
+    "contactsTitle": "Contact requests",
+    "contactsEmptyTitle": "No messages yet",
+    "contactsEmptySubtitle": "When someone messages you after scanning your vehicle tag, it appears here.",
+    "contactStatusNew": "New",
+    "contactStatusRead": "Read",
+    "contactStatusResponded": "Replied",
+    "contactStatusClosed": "Closed",
+    "markResponded": "Mark as replied",
+    "callVisitor": "Call visitor",
+    "visitorAnonymous": "Visitor",
+    "contactAboutVehicle": "About {vehicle}",
+    "@contactAboutVehicle": {
+        "placeholders": {
+            "vehicle": {
+                "type": "String"
+            }
+        }
+    },
+    "vehicleCodeTitle": "Vehicle code",
+    "removeCode": "Remove code",
+    "removeCodeConfirmTitle": "Remove the vehicle code?",
+    "removeCodeConfirmBody": "The current code stops working for good and cannot be linked again. You can then link a new one.",
+    "codeRemoved": "Code removed",
+    "oneCodeNote": "Each vehicle has one code. To change it, remove the current one, then link the new one.",
+    "noCodeYetTitle": "No code linked",
+    "noCodeYetSubtitle": "Scan the sticker code so people can reach you about this vehicle.",
+    "profileMyInfo": "My info",
+    "profileName": "Name",
+    "profileNameHint": "Your name as you want it shown",
+    "editName": "Edit name",
+    "notSet": "Not set",
+    "visibilityTitle": "What visitors see",
+    "visibilitySubtitle": "By default a visitor sees nothing except a way to message you. Add your details and choose what to show.",
+    "showToVisitors": "Show to visitors",
+    "proBadge": "Pro",
+    "visibilityNoneShown": "Nothing is shown to visitors right now — they can only message you.",
+    "visibilitySharing": "Visitors see: {items}",
+    "@visibilitySharing": {
+        "placeholders": {
+            "items": {
+                "type": "String"
+            }
+        }
+    },
+    "visibilityLockedHint": "Showing details to visitors is available on the Pro plan.",
+    "scanManualTitle": "Enter the code manually",
+    "scanManualHint": "Paste the code link or the code itself",
+    "scanManualButton": "Link",
+    "scanCameraError": "Couldn't start the camera",
+    "scanCameraPermission": "Allow camera access in your phone settings and try again, or enter the code manually.",
+    "scanTorch": "Flash",
+    "homeStatVehicles": "Vehicles",
+    "homeStatNewMessages": "New messages",
+    "homeLinkCode": "Link a code",
+    "homeNoCodeCta": "Link your vehicle code"
 }

@@ -109,28 +109,3 @@ class SubscriptionInfo extends Equatable {
   List<Object?> get props =>
       [plan, isDefault, subscriptionStatus, endsAt, plans, pendingUpgrade];
 }
-
-class PublicContactModel extends Equatable {
-  const PublicContactModel({
-    required this.editable,
-    this.phone,
-    this.instagram,
-    this.extra,
-  });
-
-  final bool editable;
-  final String? phone;
-  final String? instagram;
-  final String? extra;
-
-  factory PublicContactModel.fromJson(Map<String, dynamic> json) =>
-      PublicContactModel(
-        editable: json['editable'] as bool? ?? false,
-        phone: json['phone'] as String?,
-        instagram: json['instagram'] as String?,
-        extra: json['extra'] as String?,
-      );
-
-  @override
-  List<Object?> get props => [editable, phone, instagram, extra];
-}

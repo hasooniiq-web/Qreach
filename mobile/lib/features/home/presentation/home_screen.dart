@@ -9,8 +9,9 @@ import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/plate_badge.dart';
 import '../../../shared/widgets/skeleton.dart';
-import '../../auth/presentation/auth_controller.dart';
-import '../../auth/presentation/profile_menu_button.dart';
+import '../../../shared/widgets/notification_bell.dart';
+import '../../contacts/presentation/contact_controller.dart';
+import '../../profile/presentation/profile_controller.dart';
 import '../../notifications/presentation/notification_controller.dart';
 import '../../notifications/presentation/notification_tile.dart';
 import '../../subscription/data/subscription_models.dart';
@@ -28,12 +29,14 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    final authState = ref.watch(authControllerProvider);
+    final profile = ref.watch(profileProvider).valueOrNull;
+    final newMessages =
+        ref.watch(contactsProvider).valueOrNull?.unreadCount ?? 0;
     final vehiclesAsync = ref.watch(vehicleListControllerProvider);
     final subscription = ref.watch(subscriptionProvider).valueOrNull;
     final feed = ref.watch(notificationsProvider).valueOrNull;
 
-    final name = authState is AuthAuthenticated ? authState.user.name : null;
+    final name = profile?.name;
     final greeting = (name != null && name.isNotEmpty)
         ? l10n.homeGreetingWithName(name)
         : l10n.homeGreetingNoName;
@@ -44,6 +47,8 @@ class HomeScreen extends ConsumerWidget {
           onRefresh: () async {
             ref.invalidate(subscriptionProvider);
             ref.invalidate(notificationsProvider);
+            ref.invalidate(profileProvider);
+            ref.invalidate(contactsProvider);
             await ref.read(vehicleListControllerProvider.notifier).refresh();
           },
           child: ListView(
@@ -69,7 +74,7 @@ class HomeScreen extends ConsumerWidget {
                       ],
                     ),
                   ),
-                  const ProfileMenuButton(),
+                  const NotificationBell(),
                 ],
               ),
               const SizedBox(height: AppSpacing.xl),
@@ -90,37 +95,22 @@ class HomeScreen extends ConsumerWidget {
                 const SizedBox(height: AppSpacing.lg),
                 _UpgradePrompt(l10n: l10n),
               ],
-              const SizedBox(height: AppSpacing.xl),
-              Text(
-                l10n.quickActions,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium
-                    ?.copyWith(fontWeight: FontWeight.w700),
-              ),
               const SizedBox(height: AppSpacing.md),
               Row(
                 children: [
-                  _QuickAction(
+                  _Stat(
                     icon: Icons.directions_car_outlined,
-                    label: l10n.myVehicles,
-                    onTap: () => context.push('/vehicles'),
+                    value: '${vehiclesAsync.valueOrNull?.length ?? 0}',
+                    label: l10n.homeStatVehicles,
+                    onTap: () => context.go('/vehicles'),
                   ),
-                  _QuickAction(
-                    icon: Icons.add,
-                    label: l10n.addVehicle,
-                    onTap: () => context.push('/vehicles/new'),
-                  ),
-                  _QuickAction(
-                    icon: Icons.notifications_outlined,
-                    label: l10n.notifications,
-                    badge: feed?.unreadCount ?? 0,
-                    onTap: () => context.push('/notifications'),
-                  ),
-                  _QuickAction(
-                    icon: Icons.person_outline,
-                    label: l10n.profile,
-                    onTap: () => context.push('/profile'),
+                  const SizedBox(width: AppSpacing.md),
+                  _Stat(
+                    icon: Icons.forum_outlined,
+                    value: '$newMessages',
+                    label: l10n.homeStatNewMessages,
+                    highlight: newMessages > 0,
+                    onTap: () => context.go('/contacts'),
                   ),
                 ],
               ),
@@ -224,9 +214,9 @@ class _HeroVehicleCard extends StatelessWidget {
 
     return Material(
       color: AppColors.brandBlack,
-      borderRadius: BorderRadius.circular(16),
+      borderRadius: BorderRadius.circular(24),
       child: InkWell(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(24),
         onTap: () => context.push('/vehicles/${vehicle.id}'),
         child: Padding(
           padding: const EdgeInsets.all(AppSpacing.xl),
@@ -274,8 +264,12 @@ class _HeroVehicleCard extends StatelessWidget {
                 children: [
                   PlateBadge(plate: vehicle.plateNumber, onDark: true),
                   const Spacer(),
-                  Text(l10n.tagsLinkedCount(assigned),
-                      style: const TextStyle(color: Colors.white70)),
+                  if (!isProtected)
+                    Text(l10n.homeNoCodeCta,
+                        style: const TextStyle(
+                            color: AppColors.brandYellow,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 13)),
                 ],
               ),
             ],
@@ -361,53 +355,57 @@ class _UpgradePrompt extends StatelessWidget {
   }
 }
 
-class _QuickAction extends StatelessWidget {
-  const _QuickAction({
+class _Stat extends StatelessWidget {
+  const _Stat({
     required this.icon,
+    required this.value,
     required this.label,
     required this.onTap,
-    this.badge = 0,
+    this.highlight = false,
   });
 
   final IconData icon;
+  final String value;
   final String label;
   final VoidCallback onTap;
-  final int badge;
+  final bool highlight;
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: InkResponse(
-        onTap: onTap,
-        radius: 44,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: AppSpacing.xs),
-          child: Column(
-            children: [
-              Container(
-                width: 56,
-                height: 56,
-                decoration: BoxDecoration(
-                  color: AppColors.brandWhite,
-                  shape: BoxShape.circle,
-                  border: Border.all(color: AppColors.ink200),
+      child: Material(
+        color: highlight
+            ? AppColors.brandYellow.withValues(alpha: 0.2)
+            : AppColors.brandWhite,
+        borderRadius: BorderRadius.circular(16),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(16),
+          onTap: onTap,
+          child: Container(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(color: AppColors.ink100),
+            ),
+            child: Row(
+              children: [
+                Icon(icon, color: AppColors.ink700),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(value,
+                          style: const TextStyle(
+                              fontSize: 22, fontWeight: FontWeight.w800)),
+                      Text(label,
+                          style: const TextStyle(
+                              color: AppColors.ink500, fontSize: 12)),
+                    ],
+                  ),
                 ),
-                child: Badge(
-                  isLabelVisible: badge > 0,
-                  label: Text('$badge'),
-                  backgroundColor: AppColors.brandYellow,
-                  textColor: AppColors.brandBlack,
-                  child: Icon(icon, color: AppColors.brandBlack),
-                ),
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              Text(label,
-                  textAlign: TextAlign.center,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
-                      fontSize: 12, fontWeight: FontWeight.w600)),
-            ],
+              ],
+            ),
           ),
         ),
       ),

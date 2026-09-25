@@ -39,4 +39,9 @@ class VehicleRepository {
   Future<void> delete(String id) async {
     await _client.dio.delete('/vehicles/$id');
   }
+
+  /// Removes the vehicle's code so a new one can be linked (one code per vehicle).
+  Future<void> removeTag(String vehicleId) async {
+    await _client.dio.delete('/vehicles/$vehicleId/tag');
+  }
 }

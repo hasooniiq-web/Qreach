@@ -431,4 +431,151 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get noRecentActivity =>
       'لا يوجد نشاط بعد. عندما يمسح أحدهم رمز مركبتك ستراه هنا.';
+
+  @override
+  String get tabHome => 'الرئيسية';
+
+  @override
+  String get tabVehicles => 'مركباتي';
+
+  @override
+  String get tabContacts => 'التواصل';
+
+  @override
+  String get tabProfile => 'الملف الشخصي';
+
+  @override
+  String get contactsTitle => 'طلبات التواصل';
+
+  @override
+  String get contactsEmptyTitle => 'لا توجد رسائل بعد';
+
+  @override
+  String get contactsEmptySubtitle =>
+      'عندما يراسلك أحدهم بعد مسح رمز مركبتك ستظهر رسالته هنا.';
+
+  @override
+  String get contactStatusNew => 'جديد';
+
+  @override
+  String get contactStatusRead => 'مقروء';
+
+  @override
+  String get contactStatusResponded => 'تم الرد';
+
+  @override
+  String get contactStatusClosed => 'مغلق';
+
+  @override
+  String get markResponded => 'تحديد أنه تم الرد';
+
+  @override
+  String get callVisitor => 'اتصال بالزائر';
+
+  @override
+  String get visitorAnonymous => 'زائر';
+
+  @override
+  String contactAboutVehicle(String vehicle) {
+    return 'بخصوص $vehicle';
+  }
+
+  @override
+  String get vehicleCodeTitle => 'رمز المركبة';
+
+  @override
+  String get removeCode => 'حذف الرمز';
+
+  @override
+  String get removeCodeConfirmTitle => 'حذف رمز المركبة؟';
+
+  @override
+  String get removeCodeConfirmBody =>
+      'سيتوقف الرمز الحالي عن العمل نهائيًا ولا يمكن ربطه من جديد. بعدها تستطيع ربط رمز جديد.';
+
+  @override
+  String get codeRemoved => 'تم حذف الرمز';
+
+  @override
+  String get oneCodeNote =>
+      'لكل مركبة رمز واحد. لتبديله احذف الحالي ثم اربط الجديد.';
+
+  @override
+  String get noCodeYetTitle => 'لا يوجد رمز مرتبط';
+
+  @override
+  String get noCodeYetSubtitle =>
+      'امسح رمز الملصق لتصبح المركبة قابلة للتواصل.';
+
+  @override
+  String get profileMyInfo => 'معلوماتي';
+
+  @override
+  String get profileName => 'الاسم';
+
+  @override
+  String get profileNameHint => 'اسمك كما تريد أن يظهر';
+
+  @override
+  String get editName => 'تعديل الاسم';
+
+  @override
+  String get notSet => 'غير محدد';
+
+  @override
+  String get visibilityTitle => 'ما يظهر للزائر';
+
+  @override
+  String get visibilitySubtitle =>
+      'افتراضيًا لا يرى الزائر شيئًا سوى إرسال رسالة لك. أضف معلوماتك واختر ما تريد إظهاره.';
+
+  @override
+  String get showToVisitors => 'إظهار للزوار';
+
+  @override
+  String get proBadge => 'احترافية';
+
+  @override
+  String get visibilityNoneShown =>
+      'لا يظهر للزائر أي شيء الآن — يستطيع مراسلتك فقط.';
+
+  @override
+  String visibilitySharing(String items) {
+    return 'يظهر للزائر: $items';
+  }
+
+  @override
+  String get visibilityLockedHint =>
+      'إظهار المعلومات للزوار متاح في الباقة الاحترافية.';
+
+  @override
+  String get scanManualTitle => 'إدخال الرمز يدويًا';
+
+  @override
+  String get scanManualHint => 'ألصق رابط الرمز أو الرمز نفسه';
+
+  @override
+  String get scanManualButton => 'ربط';
+
+  @override
+  String get scanCameraError => 'تعذّر تشغيل الكاميرا';
+
+  @override
+  String get scanCameraPermission =>
+      'اسمح للتطبيق باستخدام الكاميرا من إعدادات الهاتف ثم أعد المحاولة، أو أدخل الرمز يدويًا.';
+
+  @override
+  String get scanTorch => 'الفلاش';
+
+  @override
+  String get homeStatVehicles => 'مركبات';
+
+  @override
+  String get homeStatNewMessages => 'رسائل جديدة';
+
+  @override
+  String get homeLinkCode => 'ربط رمز';
+
+  @override
+  String get homeNoCodeCta => 'اربط رمز المركبة';
 }

@@ -9,8 +9,3 @@ final subscriptionProvider =
     FutureProvider.autoDispose<SubscriptionInfo>((ref) {
   return ref.watch(subscriptionRepositoryProvider).fetch();
 });
-
-final publicContactProvider =
-    FutureProvider.autoDispose<PublicContactModel>((ref) {
-  return ref.watch(subscriptionRepositoryProvider).fetchPublicContact();
-});

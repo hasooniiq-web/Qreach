@@ -35,12 +35,45 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
     if (capture.barcodes.isEmpty) return;
     final rawValue = capture.barcodes.first.rawValue;
     if (rawValue == null) return;
+    await _activate(rawValue);
+  }
 
+  Future<void> _enterManually() async {
+    final l10n = AppLocalizations.of(context)!;
+    final input = TextEditingController();
+    final value = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.scanManualTitle),
+        content: TextField(
+          controller: input,
+          autofocus: true,
+          textDirection: TextDirection.ltr,
+          decoration: InputDecoration(hintText: l10n.scanManualHint),
+        ),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.of(context).pop(),
+              child: Text(l10n.cancel)),
+          TextButton(
+              onPressed: () => Navigator.of(context).pop(input.text.trim()),
+              child: Text(l10n.scanManualButton)),
+        ],
+      ),
+    );
+    input.dispose();
+    if (value != null && value.isNotEmpty) await _activate(value);
+  }
+
+  Future<void> _activate(String rawValue) async {
+    if (_processing) return;
     setState(() {
       _processing = true;
       _error = null;
     });
-    await _controller.stop();
+    try {
+      await _controller.stop();
+    } catch (_) {}
 
     final token = TagRepository.extractToken(rawValue);
 
@@ -56,6 +89,7 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
         barrierDismissible: false,
         builder: (_) => const _ActivationSuccessDialog(),
       );
+      ref.read(vehicleListControllerProvider.notifier).refresh();
       if (mounted) context.pop();
     } catch (e) {
       final apiError = asApiException(e);
@@ -63,7 +97,9 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
         _error = _messageForCode(apiError.code) ?? apiError.message;
         _processing = false;
       });
-      await _controller.start();
+      try {
+        await _controller.start();
+      } catch (_) {}
     }
   }
 
@@ -86,10 +122,46 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
       appBar: AppBar(
           backgroundColor: Colors.transparent,
           foregroundColor: AppColors.brandWhite,
-          elevation: 0),
+          elevation: 0,
+          actions: [
+            IconButton(
+              tooltip: l10n.scanTorch,
+              icon: const Icon(Icons.flashlight_on_outlined),
+              onPressed: () async {
+                try {
+                  await _controller.toggleTorch();
+                } catch (_) {}
+              },
+            ),
+          ]),
       body: Stack(
         children: [
-          MobileScanner(controller: _controller, onDetect: _onDetect),
+          MobileScanner(
+            controller: _controller,
+            onDetect: _onDetect,
+            errorBuilder: (context, error, child) => Center(
+              child: Padding(
+                padding: const EdgeInsets.all(32),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.no_photography_outlined,
+                        color: AppColors.brandWhite, size: 48),
+                    const SizedBox(height: 16),
+                    Text(l10n.scanCameraError,
+                        style: const TextStyle(
+                            color: AppColors.brandWhite,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700)),
+                    const SizedBox(height: 8),
+                    Text(l10n.scanCameraPermission,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: Colors.white70)),
+                  ],
+                ),
+              ),
+            ),
+          ),
           const _ScanOverlay(),
           Positioned(
             left: 24,
@@ -110,6 +182,14 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
                     style: const TextStyle(
                         color: AppColors.brandWhite, fontSize: 15),
                   ),
+                ),
+                const SizedBox(height: 12),
+                TextButton.icon(
+                  onPressed: _processing ? null : _enterManually,
+                  icon: const Icon(Icons.keyboard_alt_outlined,
+                      color: AppColors.brandYellow),
+                  label: Text(l10n.scanManualTitle,
+                      style: const TextStyle(color: AppColors.brandYellow)),
                 ),
                 if (_processing) ...[
                   const SizedBox(height: 16),

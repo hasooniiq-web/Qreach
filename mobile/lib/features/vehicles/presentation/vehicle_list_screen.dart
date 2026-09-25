@@ -11,7 +11,7 @@ import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/plate_badge.dart';
 import '../../../shared/widgets/skeleton.dart';
 import '../../../shared/widgets/status_badge.dart';
-import '../../auth/presentation/profile_menu_button.dart';
+import '../../../shared/widgets/notification_bell.dart';
 import 'vehicle_controller.dart';
 
 class VehicleListScreen extends ConsumerWidget {
@@ -25,7 +25,7 @@ class VehicleListScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.myVehicles),
-        actions: const [ProfileMenuButton()],
+        actions: const [NotificationBell()],
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/vehicles/new'),

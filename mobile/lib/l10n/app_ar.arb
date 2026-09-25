@@ -197,5 +197,64 @@
     "viewAll": "عرض الكل",
     "unreadLabel": "غير مقروء",
     "emergencyLabel": "طارئ",
-    "noRecentActivity": "لا يوجد نشاط بعد. عندما يمسح أحدهم رمز مركبتك ستراه هنا."
+    "noRecentActivity": "لا يوجد نشاط بعد. عندما يمسح أحدهم رمز مركبتك ستراه هنا.",
+    "tabHome": "الرئيسية",
+    "tabVehicles": "مركباتي",
+    "tabContacts": "التواصل",
+    "tabProfile": "الملف الشخصي",
+    "contactsTitle": "طلبات التواصل",
+    "contactsEmptyTitle": "لا توجد رسائل بعد",
+    "contactsEmptySubtitle": "عندما يراسلك أحدهم بعد مسح رمز مركبتك ستظهر رسالته هنا.",
+    "contactStatusNew": "جديد",
+    "contactStatusRead": "مقروء",
+    "contactStatusResponded": "تم الرد",
+    "contactStatusClosed": "مغلق",
+    "markResponded": "تحديد أنه تم الرد",
+    "callVisitor": "اتصال بالزائر",
+    "visitorAnonymous": "زائر",
+    "contactAboutVehicle": "بخصوص {vehicle}",
+    "@contactAboutVehicle": {
+        "placeholders": {
+            "vehicle": {
+                "type": "String"
+            }
+        }
+    },
+    "vehicleCodeTitle": "رمز المركبة",
+    "removeCode": "حذف الرمز",
+    "removeCodeConfirmTitle": "حذف رمز المركبة؟",
+    "removeCodeConfirmBody": "سيتوقف الرمز الحالي عن العمل نهائيًا ولا يمكن ربطه من جديد. بعدها تستطيع ربط رمز جديد.",
+    "codeRemoved": "تم حذف الرمز",
+    "oneCodeNote": "لكل مركبة رمز واحد. لتبديله احذف الحالي ثم اربط الجديد.",
+    "noCodeYetTitle": "لا يوجد رمز مرتبط",
+    "noCodeYetSubtitle": "امسح رمز الملصق لتصبح المركبة قابلة للتواصل.",
+    "profileMyInfo": "معلوماتي",
+    "profileName": "الاسم",
+    "profileNameHint": "اسمك كما تريد أن يظهر",
+    "editName": "تعديل الاسم",
+    "notSet": "غير محدد",
+    "visibilityTitle": "ما يظهر للزائر",
+    "visibilitySubtitle": "افتراضيًا لا يرى الزائر شيئًا سوى إرسال رسالة لك. أضف معلوماتك واختر ما تريد إظهاره.",
+    "showToVisitors": "إظهار للزوار",
+    "proBadge": "احترافية",
+    "visibilityNoneShown": "لا يظهر للزائر أي شيء الآن — يستطيع مراسلتك فقط.",
+    "visibilitySharing": "يظهر للزائر: {items}",
+    "@visibilitySharing": {
+        "placeholders": {
+            "items": {
+                "type": "String"
+            }
+        }
+    },
+    "visibilityLockedHint": "إظهار المعلومات للزوار متاح في الباقة الاحترافية.",
+    "scanManualTitle": "إدخال الرمز يدويًا",
+    "scanManualHint": "ألصق رابط الرمز أو الرمز نفسه",
+    "scanManualButton": "ربط",
+    "scanCameraError": "تعذّر تشغيل الكاميرا",
+    "scanCameraPermission": "اسمح للتطبيق باستخدام الكاميرا من إعدادات الهاتف ثم أعد المحاولة، أو أدخل الرمز يدويًا.",
+    "scanTorch": "الفلاش",
+    "homeStatVehicles": "مركبات",
+    "homeStatNewMessages": "رسائل جديدة",
+    "homeLinkCode": "ربط رمز",
+    "homeNoCodeCta": "اربط رمز المركبة"
 }

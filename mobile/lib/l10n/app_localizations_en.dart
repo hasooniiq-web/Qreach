@@ -435,4 +435,151 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get noRecentActivity =>
       'No activity yet. When someone scans your vehicle tag, you will see it here.';
+
+  @override
+  String get tabHome => 'Home';
+
+  @override
+  String get tabVehicles => 'Vehicles';
+
+  @override
+  String get tabContacts => 'Contacts';
+
+  @override
+  String get tabProfile => 'Profile';
+
+  @override
+  String get contactsTitle => 'Contact requests';
+
+  @override
+  String get contactsEmptyTitle => 'No messages yet';
+
+  @override
+  String get contactsEmptySubtitle =>
+      'When someone messages you after scanning your vehicle tag, it appears here.';
+
+  @override
+  String get contactStatusNew => 'New';
+
+  @override
+  String get contactStatusRead => 'Read';
+
+  @override
+  String get contactStatusResponded => 'Replied';
+
+  @override
+  String get contactStatusClosed => 'Closed';
+
+  @override
+  String get markResponded => 'Mark as replied';
+
+  @override
+  String get callVisitor => 'Call visitor';
+
+  @override
+  String get visitorAnonymous => 'Visitor';
+
+  @override
+  String contactAboutVehicle(String vehicle) {
+    return 'About $vehicle';
+  }
+
+  @override
+  String get vehicleCodeTitle => 'Vehicle code';
+
+  @override
+  String get removeCode => 'Remove code';
+
+  @override
+  String get removeCodeConfirmTitle => 'Remove the vehicle code?';
+
+  @override
+  String get removeCodeConfirmBody =>
+      'The current code stops working for good and cannot be linked again. You can then link a new one.';
+
+  @override
+  String get codeRemoved => 'Code removed';
+
+  @override
+  String get oneCodeNote =>
+      'Each vehicle has one code. To change it, remove the current one, then link the new one.';
+
+  @override
+  String get noCodeYetTitle => 'No code linked';
+
+  @override
+  String get noCodeYetSubtitle =>
+      'Scan the sticker code so people can reach you about this vehicle.';
+
+  @override
+  String get profileMyInfo => 'My info';
+
+  @override
+  String get profileName => 'Name';
+
+  @override
+  String get profileNameHint => 'Your name as you want it shown';
+
+  @override
+  String get editName => 'Edit name';
+
+  @override
+  String get notSet => 'Not set';
+
+  @override
+  String get visibilityTitle => 'What visitors see';
+
+  @override
+  String get visibilitySubtitle =>
+      'By default a visitor sees nothing except a way to message you. Add your details and choose what to show.';
+
+  @override
+  String get showToVisitors => 'Show to visitors';
+
+  @override
+  String get proBadge => 'Pro';
+
+  @override
+  String get visibilityNoneShown =>
+      'Nothing is shown to visitors right now — they can only message you.';
+
+  @override
+  String visibilitySharing(String items) {
+    return 'Visitors see: $items';
+  }
+
+  @override
+  String get visibilityLockedHint =>
+      'Showing details to visitors is available on the Pro plan.';
+
+  @override
+  String get scanManualTitle => 'Enter the code manually';
+
+  @override
+  String get scanManualHint => 'Paste the code link or the code itself';
+
+  @override
+  String get scanManualButton => 'Link';
+
+  @override
+  String get scanCameraError => 'Couldn\'t start the camera';
+
+  @override
+  String get scanCameraPermission =>
+      'Allow camera access in your phone settings and try again, or enter the code manually.';
+
+  @override
+  String get scanTorch => 'Flash';
+
+  @override
+  String get homeStatVehicles => 'Vehicles';
+
+  @override
+  String get homeStatNewMessages => 'New messages';
+
+  @override
+  String get homeLinkCode => 'Link a code';
+
+  @override
+  String get homeNoCodeCta => 'Link your vehicle code';
 }
