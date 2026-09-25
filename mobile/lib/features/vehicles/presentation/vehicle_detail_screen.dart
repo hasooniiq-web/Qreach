@@ -6,6 +6,7 @@ import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/error_banner.dart';
+import '../../../shared/widgets/status_badge.dart';
 import 'vehicle_controller.dart';
 import 'vehicle_type_labels.dart';
 
@@ -116,7 +117,12 @@ class VehicleDetailScreen extends ConsumerWidget {
                         title: Text(tag.serialNumber,
                             style:
                                 const TextStyle(fontWeight: FontWeight.w600)),
-                        trailing: _StatusChip(status: tag.status),
+                        trailing: StatusBadge(
+                          label: tagStatusLabel(context, tag.status),
+                          tone: tag.status == 'assigned'
+                              ? StatusTone.success
+                              : StatusTone.neutral,
+                        ),
                       ),
                     ),
                   ),
@@ -125,27 +131,6 @@ class VehicleDetailScreen extends ConsumerWidget {
           );
         },
       ),
-    );
-  }
-}
-
-class _StatusChip extends StatelessWidget {
-  const _StatusChip({required this.status});
-
-  final String status;
-
-  @override
-  Widget build(BuildContext context) {
-    final color =
-        status == 'assigned' ? AppColors.statusSuccess : AppColors.ink500;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-          color: color.withValues(alpha: 0.1),
-          borderRadius: BorderRadius.circular(999)),
-      child: Text(tagStatusLabel(context, status),
-          style: TextStyle(
-              color: color, fontSize: 12, fontWeight: FontWeight.w500)),
     );
   }
 }

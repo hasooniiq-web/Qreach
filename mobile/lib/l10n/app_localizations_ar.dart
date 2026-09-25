@@ -49,6 +49,39 @@ class AppLocalizationsAr extends AppLocalizations {
   String get invalidOtp => 'رمز التحقق غير صحيح';
 
   @override
+  String homeGreetingWithName(String name) {
+    return 'مرحبًا، $name';
+  }
+
+  @override
+  String get homeGreetingNoName => 'مرحبًا بك';
+
+  @override
+  String get quickActions => 'إجراءات سريعة';
+
+  @override
+  String get notifications => 'التنبيهات';
+
+  @override
+  String get notificationsComingSoonTitle => 'الإشعارات قريبًا';
+
+  @override
+  String get notificationsComingSoonSubtitle =>
+      'نعمل على إضافة مركز إشعارات كامل لعمليات المسح والنشاط.';
+
+  @override
+  String get vehicleProtected => 'محمية';
+
+  @override
+  String get vehicleNotProtectedYet => 'غير محمية بعد';
+
+  @override
+  String get noVehicleYetHomeTitle => 'أضف مركبتك الأولى';
+
+  @override
+  String get noVehicleYetHomeSubtitle => 'أضف مركبة للبدء في استخدام SmartTag.';
+
+  @override
   String get myVehicles => 'مركباتي';
 
   @override

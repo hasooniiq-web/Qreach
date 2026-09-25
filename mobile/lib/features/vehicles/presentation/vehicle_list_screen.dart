@@ -7,10 +7,8 @@ import '../../../core/theme/app_colors.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_banner.dart';
-import '../../auth/presentation/logout_confirm.dart';
+import '../../auth/presentation/profile_menu_button.dart';
 import 'vehicle_controller.dart';
-
-enum _ProfileMenuAction { profile, logout }
 
 class VehicleListScreen extends ConsumerWidget {
   const VehicleListScreen({super.key});
@@ -23,44 +21,7 @@ class VehicleListScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.myVehicles),
-        actions: [
-          PopupMenuButton<_ProfileMenuAction>(
-            icon: const CircleAvatar(
-              radius: 16,
-              backgroundColor: AppColors.ink100,
-              child: Icon(Icons.person_outline,
-                  size: 18, color: AppColors.ink600),
-            ),
-            onSelected: (action) {
-              switch (action) {
-                case _ProfileMenuAction.profile:
-                  context.push('/profile');
-                case _ProfileMenuAction.logout:
-                  confirmAndLogout(context, ref, allDevices: false);
-              }
-            },
-            itemBuilder: (context) => [
-              PopupMenuItem(
-                value: _ProfileMenuAction.profile,
-                child: ListTile(
-                  leading: const Icon(Icons.account_circle_outlined),
-                  title: Text(l10n.profile),
-                  contentPadding: EdgeInsets.zero,
-                ),
-              ),
-              PopupMenuItem(
-                value: _ProfileMenuAction.logout,
-                child: ListTile(
-                  leading: const Icon(Icons.logout,
-                      color: AppColors.statusDanger),
-                  title: Text(l10n.logout,
-                      style: const TextStyle(color: AppColors.statusDanger)),
-                  contentPadding: EdgeInsets.zero,
-                ),
-              ),
-            ],
-          ),
-        ],
+        actions: const [ProfileMenuButton()],
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () => context.push('/vehicles/new'),

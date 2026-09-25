@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/auth_controller.dart';
 import '../../features/auth/presentation/otp_screen.dart';
 import '../../features/auth/presentation/phone_entry_screen.dart';
+import '../../features/home/presentation/home_screen.dart';
+import '../../features/notifications/presentation/notifications_screen.dart';
 import '../../features/profile/presentation/profile_screen.dart';
 import '../../features/vehicles/presentation/vehicle_detail_screen.dart';
 import '../../features/vehicles/presentation/vehicle_form_screen.dart';
@@ -27,7 +29,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       if (authState is AuthUnauthenticated) return loggingIn ? null : '/login';
       if (authState is AuthAuthenticated &&
           (loggingIn || state.matchedLocation == '/')) {
-        return '/vehicles';
+        return '/home';
       }
       return null;
     },
@@ -41,6 +43,10 @@ final routerProvider = Provider<GoRouter>((ref) {
         builder: (context, state) =>
             OtpScreen(phone: state.extra as String? ?? ''),
       ),
+      GoRoute(path: '/home', builder: (context, state) => const HomeScreen()),
+      GoRoute(
+          path: '/notifications',
+          builder: (context, state) => const NotificationsScreen()),
       GoRoute(
           path: '/vehicles',
           builder: (context, state) => const VehicleListScreen()),

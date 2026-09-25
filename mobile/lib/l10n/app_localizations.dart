@@ -170,6 +170,66 @@ abstract class AppLocalizations {
   /// **'رمز التحقق غير صحيح'**
   String get invalidOtp;
 
+  /// No description provided for @homeGreetingWithName.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرحبًا، {name}'**
+  String homeGreetingWithName(String name);
+
+  /// No description provided for @homeGreetingNoName.
+  ///
+  /// In ar, this message translates to:
+  /// **'مرحبًا بك'**
+  String get homeGreetingNoName;
+
+  /// No description provided for @quickActions.
+  ///
+  /// In ar, this message translates to:
+  /// **'إجراءات سريعة'**
+  String get quickActions;
+
+  /// No description provided for @notifications.
+  ///
+  /// In ar, this message translates to:
+  /// **'التنبيهات'**
+  String get notifications;
+
+  /// No description provided for @notificationsComingSoonTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإشعارات قريبًا'**
+  String get notificationsComingSoonTitle;
+
+  /// No description provided for @notificationsComingSoonSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'نعمل على إضافة مركز إشعارات كامل لعمليات المسح والنشاط.'**
+  String get notificationsComingSoonSubtitle;
+
+  /// No description provided for @vehicleProtected.
+  ///
+  /// In ar, this message translates to:
+  /// **'محمية'**
+  String get vehicleProtected;
+
+  /// No description provided for @vehicleNotProtectedYet.
+  ///
+  /// In ar, this message translates to:
+  /// **'غير محمية بعد'**
+  String get vehicleNotProtectedYet;
+
+  /// No description provided for @noVehicleYetHomeTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'أضف مركبتك الأولى'**
+  String get noVehicleYetHomeTitle;
+
+  /// No description provided for @noVehicleYetHomeSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'أضف مركبة للبدء في استخدام SmartTag.'**
+  String get noVehicleYetHomeSubtitle;
+
   /// No description provided for @myVehicles.
   ///
   /// In ar, this message translates to:

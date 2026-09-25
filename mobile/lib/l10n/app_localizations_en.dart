@@ -50,6 +50,40 @@ class AppLocalizationsEn extends AppLocalizations {
   String get invalidOtp => 'Invalid verification code';
 
   @override
+  String homeGreetingWithName(String name) {
+    return 'Hello, $name';
+  }
+
+  @override
+  String get homeGreetingNoName => 'Welcome back';
+
+  @override
+  String get quickActions => 'Quick actions';
+
+  @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get notificationsComingSoonTitle => 'Notifications are coming soon';
+
+  @override
+  String get notificationsComingSoonSubtitle =>
+      'We\'re building a full notification center for scan and activity alerts.';
+
+  @override
+  String get vehicleProtected => 'Protected';
+
+  @override
+  String get vehicleNotProtectedYet => 'Not protected yet';
+
+  @override
+  String get noVehicleYetHomeTitle => 'Add your first vehicle';
+
+  @override
+  String get noVehicleYetHomeSubtitle =>
+      'Add a vehicle to start using SmartTag.';
+
+  @override
   String get myVehicles => 'My Vehicles';
 
   @override
