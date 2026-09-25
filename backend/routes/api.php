@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\Auth\OtpAuthController;
+use App\Http\Controllers\Api\V1\DeviceController;
 use App\Http\Controllers\Api\V1\TagController;
 use App\Http\Controllers\Api\V1\VehicleController;
 use Illuminate\Support\Facades\Route;
@@ -24,5 +25,7 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::post('tags/activate', [TagController::class, 'activate'])
             ->middleware('throttle:qr-activation')->name('tags.activate');
         Route::get('tags/{token}', [TagController::class, 'show'])->name('tags.show');
+
+        Route::put('devices/push-token', [DeviceController::class, 'updatePushToken'])->name('devices.push-token');
     });
 });

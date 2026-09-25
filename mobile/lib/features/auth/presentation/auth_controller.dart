@@ -36,6 +36,10 @@ class AuthController extends Notifier<AuthState> {
     state = hasSession
         ? const AuthAuthenticated(_placeholderUser)
         : const AuthUnauthenticated();
+
+    if (hasSession) {
+      ref.read(pushNotificationServiceProvider).registerForPushNotifications();
+    }
   }
 
   // A stored token implies a prior successful login, but we don't persist
@@ -60,6 +64,7 @@ class AuthController extends Notifier<AuthState> {
           deviceName: 'Mobile device',
         );
     state = AuthAuthenticated(user);
+    ref.read(pushNotificationServiceProvider).registerForPushNotifications();
   }
 
   Future<void> logout() async {

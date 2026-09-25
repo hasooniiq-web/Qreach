@@ -11,7 +11,7 @@
 | Authentication | Phone+OTP login; device-level biometric/PIN gating before exposing a stored session | OTP flow **implemented** end-to-end (request/verify screens, resend cooldown, structured error handling for `TAG_*`/`OTP_*` codes). Biometric/PIN re-gating of an already-stored session is **not implemented** — a stored token currently grants access on app open with no additional local gate |
 | Code quality | No secrets embedded in the app bundle | **Satisfied by design** — Sanctum auth needs no client secret, so there was nothing to embed |
 | Resilience | Certificate pinning | **Deliberately deferred** per spec section 26 ("evaluate only when justified") — no production TLS/rotation strategy exists yet to pin against |
-| Push notifications | Device registration | **Partially implemented** — the app sends `device_name`/`platform` at OTP-verify time; `push_token` is always `null` since no FCM/APNs SDK is integrated (see `ARCHITECTURE_DECISIONS.md` for why Firebase was deliberately left out rather than half-wired) |
+| Push notifications | Device registration | **Client-side implemented (Android only); server-side sending is not.** `firebase_messaging`/`firebase_core` are integrated against a real Firebase project (`google-services.json`, package `com.Qreach`); the app requests notification permission, retrieves an FCM token, and registers/refreshes it via `PUT /api/v1/devices/push-token`. No backend code sends a push yet — that needs a separate Firebase service-account credential, not yet provided. See `ARCHITECTURE_DECISIONS.md`. iOS has no Firebase config registered (no `GoogleService-Info.plist`), so `Firebase.initializeApp()` is skipped on iOS to avoid a startup crash. |
 
 ## Real issues found and fixed while building this app
 
@@ -21,7 +21,7 @@
 
 ## What's still missing before this is production-ready
 
-- Real FCM/APNs integration (see `ARCHITECTURE_DECISIONS.md`)
+- Server-side FCM sending (Firebase service-account credential + an FCM-sending notification channel — see `ARCHITECTURE_DECISIONS.md`); APNs/iOS Firebase config entirely
 - Network-security-config (Android) / ATS exceptions review (iOS) for release builds specifically
 - Biometric/PIN re-authentication for an already-stored session
 - Testing on an actual Android/iOS device or emulator — this environment had no AVD image and no connected device; verification here was `flutter analyze` (clean), `flutter build apk --debug` (succeeds, real APK produced), `flutter test` (passes), and manual interaction via `flutter run -d web-server` in a browser (confirmed correct RTL/Arabic rendering and caught the layout bug above) — real, but not a substitute for on-device testing

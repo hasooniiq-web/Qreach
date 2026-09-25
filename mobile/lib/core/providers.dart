@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'network/api_client.dart';
+import 'notifications/push_notification_service.dart';
 import 'storage/secure_storage_service.dart';
 import '../features/auth/data/auth_repository.dart';
 import '../features/tags/data/tag_repository.dart';
@@ -24,4 +25,8 @@ final vehicleRepositoryProvider = Provider<VehicleRepository>((ref) {
 
 final tagRepositoryProvider = Provider<TagRepository>((ref) {
   return TagRepository(ref.watch(apiClientProvider));
+});
+
+final pushNotificationServiceProvider = Provider<PushNotificationService>((ref) {
+  return PushNotificationService(ref.watch(apiClientProvider));
 });

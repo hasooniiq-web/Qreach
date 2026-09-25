@@ -6,6 +6,12 @@
       "runtimeExecutable": "cmd",
       "runtimeArgs": ["/c", "cd /d D:\\Qreach\\backend && php artisan serve --host=127.0.0.1 --port=8000"],
       "port": 8000
+    },
+    {
+      "name": "qreach-mobile-web",
+      "runtimeExecutable": "cmd",
+      "runtimeArgs": ["/c", "cd /d D:\\Qreach\\mobile\\build\\web && php -S 127.0.0.1:5299"],
+      "port": 5299
     }
   ]
 }

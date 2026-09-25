@@ -2,10 +2,14 @@ plugins {
     id("com.android.application")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+    id("com.google.gms.google-services")
 }
 
 android {
-    namespace = "com.qreach.qreach_smarttag"
+    // Must match google-services.json's client.client_info.android_client_info.package_name
+    // exactly, or the Google Services Gradle plugin fails the build (see
+    // docs/MOBILE_SECURITY.md's push notification section).
+    namespace = "com.Qreach"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
 
@@ -15,8 +19,7 @@ android {
     }
 
     defaultConfig {
-        // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.qreach.qreach_smarttag"
+        applicationId = "com.Qreach"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

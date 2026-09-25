@@ -125,7 +125,7 @@ abstract class AppLocalizations {
   /// No description provided for @phoneHint.
   ///
   /// In ar, this message translates to:
-  /// **'5xxxxxxxx'**
+  /// **'7xxxxxxxxx'**
   String get phoneHint;
 
   /// No description provided for @sendCode.

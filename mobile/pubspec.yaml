@@ -28,6 +28,10 @@ dependencies:
   # QR scanning
   mobile_scanner: ^6.0.6
 
+  # Push notifications (Firebase Cloud Messaging)
+  firebase_core: ^3.8.0
+  firebase_messaging: ^15.1.6
+
   # Icons: Material Icons (bundled with Flutter, no external package —
   # avoids the phosphor_flutter incompatibility found during development,
   # see docs/ARCHITECTURE_DECISIONS.md). No emoji as structural icons.

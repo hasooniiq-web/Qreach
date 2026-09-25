@@ -21,7 +21,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get phoneLabel => 'رقم الهاتف';
 
   @override
-  String get phoneHint => '5xxxxxxxx';
+  String get phoneHint => '7xxxxxxxxx';
 
   @override
   String get sendCode => 'إرسال رمز التحقق';

@@ -34,9 +34,13 @@ The dashboard lets an admin assign an existing (seeded) role to another admin, b
 
 `analytics_daily_stats` exists as a table but nothing currently writes to it — no `php artisan schedule` job aggregates `scans`/`audit_logs` into it yet. Building the aggregation job without also building the reporting UI that would consume it was judged not worth the partial-completion risk this session; both are deferred together.
 
-## Mobile: Firebase/FCM deliberately left out rather than half-wired
+## Mobile: Firebase/FCM — client-side wired once a real Firebase project existed; server-side sending still isn't
 
-Adding `firebase_messaging`/`firebase_core` to the Flutter app without an actual Firebase project (real `google-services.json`/`GoogleService-Info.plist`) would produce code that compiles but crashes or silently no-ops at runtime — worse than not having the dependency, because it looks done. The app registers a device (`device_name`, `platform`) at login with `push_token` left `null`, and the real integration is documented as an explicit gap in `docs/MOBILE_SECURITY.md` rather than stubbed in a way that could be mistaken for working.
+The previous decision here deferred `firebase_messaging`/`firebase_core` entirely because there was no real Firebase project to configure them against — adding the packages without one would compile but crash or silently no-op at runtime. That precondition changed once a real `google-services.json` (project `qreach-3d577`, package `com.Qreach`) was provided. The Android app's `applicationId`/`namespace` were changed from `com.qreach.qreach_smarttag` to `com.Qreach` to match it exactly (the Google Services Gradle plugin fails the build otherwise) — verified with a real `flutter build apk --release`, not just `flutter analyze`.
+
+What's now real: the app requests notification permission, retrieves an FCM token, and registers/refreshes it against a new `PUT /api/v1/devices/push-token` endpoint (added because none existed — `Device` rows were previously only created once, at OTP-verify time, with no way to update a rotated token later).
+
+What's still a stub: **no backend code actually sends a push through FCM.** `google-services.json` is a client-side config; dispatching a real push from Laravel needs a separate Firebase *service account* credential (server-side, not yet provided) plus an FCM-sending implementation (e.g. `kreait/firebase-php`) wired into the existing notification classes (`TagActionNotification`, `ContactRequestNotification`), which today only use the `database` channel. Building that sending path without credentials to actually test it against would repeat the same "looks done but isn't" risk this decision originally avoided — so it's called out here explicitly rather than half-built.
 
 ## Mobile: Material Icons instead of a third-party icon package
 

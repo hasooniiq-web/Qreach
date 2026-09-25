@@ -22,7 +22,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get phoneLabel => 'Phone number';
 
   @override
-  String get phoneHint => '5xxxxxxxx';
+  String get phoneHint => '7xxxxxxxxx';
 
   @override
   String get sendCode => 'Send verification code';

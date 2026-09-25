@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1087046194403",
+    "project_id": "qreach-3d577",
+    "storage_bucket": "qreach-3d577.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1087046194403:android:db9c88add3e9c5d66721d6",
+        "android_client_info": {
+          "package_name": "com.Qreach"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5enK-8lu5nWaggwj75J4S19KWMri20jQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
