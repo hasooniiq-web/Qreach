@@ -186,5 +186,16 @@
     "tagTypeNfc": "رمز NFC",
     "vehicleFormIdentity": "هوية المركبة",
     "vehicleFormMore": "تفاصيل إضافية",
-    "vehicleFormNicknameHint": "اسم يميّز مركبتك عن غيرها"
+    "vehicleFormNicknameHint": "اسم يميّز مركبتك عن غيرها",
+    "notificationsEmptyTitle": "لا توجد إشعارات بعد",
+    "notificationsEmptySubtitle": "ستظهر هنا تنبيهات عندما يتفاعل أحدهم مع رمز مركبتك.",
+    "markAllRead": "تحديد الكل كمقروء",
+    "groupToday": "اليوم",
+    "groupYesterday": "أمس",
+    "groupEarlier": "سابقًا",
+    "recentActivity": "آخر النشاط",
+    "viewAll": "عرض الكل",
+    "unreadLabel": "غير مقروء",
+    "emergencyLabel": "طارئ",
+    "noRecentActivity": "لا يوجد نشاط بعد. عندما يمسح أحدهم رمز مركبتك ستراه هنا."
 }

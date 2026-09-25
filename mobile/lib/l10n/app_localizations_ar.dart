@@ -396,4 +396,39 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get vehicleFormNicknameHint => 'اسم يميّز مركبتك عن غيرها';
+
+  @override
+  String get notificationsEmptyTitle => 'لا توجد إشعارات بعد';
+
+  @override
+  String get notificationsEmptySubtitle =>
+      'ستظهر هنا تنبيهات عندما يتفاعل أحدهم مع رمز مركبتك.';
+
+  @override
+  String get markAllRead => 'تحديد الكل كمقروء';
+
+  @override
+  String get groupToday => 'اليوم';
+
+  @override
+  String get groupYesterday => 'أمس';
+
+  @override
+  String get groupEarlier => 'سابقًا';
+
+  @override
+  String get recentActivity => 'آخر النشاط';
+
+  @override
+  String get viewAll => 'عرض الكل';
+
+  @override
+  String get unreadLabel => 'غير مقروء';
+
+  @override
+  String get emergencyLabel => 'طارئ';
+
+  @override
+  String get noRecentActivity =>
+      'لا يوجد نشاط بعد. عندما يمسح أحدهم رمز مركبتك ستراه هنا.';
 }

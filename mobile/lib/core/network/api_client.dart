@@ -48,7 +48,8 @@ class ApiClient {
     final response = error.response;
 
     if (response == null) {
-      return error.copyWith(error: ApiException.network());
+      return error.copyWith(
+          error: ApiException.network(Uri.tryParse(apiBaseUrl)?.authority));
     }
 
     final data = response.data;

@@ -32,7 +32,7 @@
             ],
             'التفاعل' => [
                 ['icon' => 'contact', 'label' => 'طلبات التواصل', 'route' => 'admin.contact-requests.index'],
-                ['icon' => 'bell', 'label' => 'التنبيهات والإشعارات', 'route' => 'admin.coming-soon', 'arg' => 'notifications'],
+                ['icon' => 'warning', 'label' => 'التنبيهات الطارئة', 'route' => 'admin.emergencies.index'],
             ],
             'التحليلات' => [
                 ['icon' => 'chart', 'label' => 'التحليلات', 'route' => 'admin.analytics.index'],

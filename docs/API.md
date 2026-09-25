@@ -43,6 +43,7 @@ All routes below require Sanctum auth and enforce ownership via `VehiclePolicy` 
 ## Devices, subscription, and public contact (all `auth:sanctum`)
 
 - `PUT /devices/push-token` — register/refresh this device's FCM token (keyed to the current access token).
+- `GET /notifications` — the owner's feed (newest first, 20/page): id, type, title, message, vehicle name, `read`, time; plus `unread_count`. `PUT /notifications/{id}/read` and `PUT /notifications/read-all` mark read; both are scoped to the caller (another user's id returns 404).
 - `GET /subscription` — the plan in force (`basic` when there is no active subscription), its price/currency/period, `source` (`default`|`subscription`), the latest subscription's `status`/`current_period_ends_at` (so a lapsed Pro can be explained), all active plans, and `pending_upgrade`.
 - `POST /subscription/upgrade-requests` `{plan}` — ask for Pro (there is no payment gateway; an admin approves). Errors: `ALREADY_ON_PLAN` (409), `UPGRADE_PENDING` (409), `PLAN_NOT_AVAILABLE` (422).
 - `GET /public-contact` — the details the owner shows visitors, plus `editable` (true only if the plan allows it).
@@ -60,7 +61,7 @@ All routes below require Sanctum auth and enforce ownership via `VehiclePolicy` 
 
 ## Not yet built
 
-- Profile / emergency-contacts endpoints (schema exists, no controllers yet); customer notification feed
+- Profile / emergency-contacts endpoints (schema exists, no controllers yet)
 - Admin API (the dashboard is server-rendered Blade, not a separate JSON API)
 - NFC provisioning endpoints
 - Reports/export endpoints

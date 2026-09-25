@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AuditLogController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\ContactRequestController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\EmergencyController;
 use App\Http\Controllers\Admin\PasswordController;
 use App\Http\Controllers\Admin\PlanController;
 use App\Http\Controllers\Admin\ProfileController;
@@ -75,6 +76,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
                 return view('admin.coming-soon', ['title' => $titles[$section]]);
             })->name('coming-soon');
+
+            Route::get('emergencies', [EmergencyController::class, 'index'])
+                ->middleware('admin.permission:emergency.view')->name('emergencies.index');
 
             Route::get('reports', [ReportController::class, 'index'])
                 ->middleware('admin.permission:reports.view')->name('reports.index');

@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ContactRequest;
+use App\Models\Scan;
 use App\Models\SecurityEvent;
 use App\Models\Tag;
 use App\Models\User;
 use App\Models\Vehicle;
+use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\View\View;
 
 /**
@@ -37,6 +40,42 @@ class DashboardController extends Controller
                 ->count(),
         ];
 
-        return view('admin.dashboard.index', compact('stats'));
+        return view('admin.dashboard.index', ['stats' => $stats, 'activity' => $this->recentActivity()]);
+    }
+
+    /**
+     * The latest things a person actually did — visitor actions on tags
+     * (page views are excluded as noise) and contact requests — newest
+     * first. Real rows only; an empty platform shows an empty feed.
+     *
+     * @return Collection<int, array{at: Carbon, label: string, vehicle: ?string, urgent: bool}>
+     */
+    private function recentActivity(): Collection
+    {
+        $labels = [
+            'vehicle_block' => 'إعاقة الطريق',
+            'lights_on' => 'الأضواء مضاءة',
+            'important_message' => 'رسالة مهمة',
+            'emergency' => 'حالة طارئة',
+            'contact_owner' => 'مراسلة المالك',
+        ];
+
+        $scans = Scan::with('vehicle')->where('action_type', '!=', 'view')->latest('id')->limit(8)->get()
+            ->map(fn ($s) => [
+                'at' => $s->created_at,
+                'label' => $labels[$s->action_type] ?? $s->action_type,
+                'vehicle' => $s->vehicle?->nickname ?: $s->vehicle?->plate_number,
+                'urgent' => $s->action_type === 'emergency',
+            ]);
+
+        $requests = ContactRequest::with('vehicle')->latest('id')->limit(8)->get()
+            ->map(fn ($r) => [
+                'at' => $r->created_at,
+                'label' => 'طلب تواصل جديد',
+                'vehicle' => $r->vehicle?->nickname ?: $r->vehicle?->plate_number,
+                'urgent' => false,
+            ]);
+
+        return $scans->concat($requests)->sortByDesc('at')->take(8)->values();
     }
 }

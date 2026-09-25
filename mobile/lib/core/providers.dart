@@ -4,6 +4,7 @@ import 'network/api_client.dart';
 import 'notifications/push_notification_service.dart';
 import 'storage/secure_storage_service.dart';
 import '../features/auth/data/auth_repository.dart';
+import '../features/notifications/data/notification_repository.dart';
 import '../features/subscription/data/subscription_repository.dart';
 import '../features/tags/data/tag_repository.dart';
 import '../features/vehicles/data/vehicle_repository.dart';
@@ -35,4 +36,8 @@ final pushNotificationServiceProvider =
 
 final subscriptionRepositoryProvider = Provider<SubscriptionRepository>((ref) {
   return SubscriptionRepository(ref.watch(apiClientProvider));
+});
+
+final notificationRepositoryProvider = Provider<NotificationRepository>((ref) {
+  return NotificationRepository(ref.watch(apiClientProvider));
 });

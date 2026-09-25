@@ -1,27 +1,109 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_spacing.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/empty_state.dart';
+import '../../../shared/widgets/error_state.dart';
+import '../../../shared/widgets/skeleton.dart';
+import '../data/notification_model.dart';
+import 'notification_controller.dart';
+import 'notification_tile.dart';
 
-/// No customer-facing notifications API exists yet (see docs/API.md and
-/// docs/UI_UX_DESIGN_SYSTEM_V2.md) — this ships as an honest "coming soon"
-/// state rather than a screen that fabricates data or calls an endpoint
-/// that doesn't exist, matching the admin dashboard's existing pattern for
-/// not-yet-built nav destinations.
-class NotificationsScreen extends StatelessWidget {
+/// The notification center: grouped by day (today / yesterday / earlier),
+/// unread items marked, tap to mark one read, or mark everything read.
+class NotificationsScreen extends ConsumerWidget {
   const NotificationsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
+    final async = ref.watch(notificationsProvider);
+    final unread = async.valueOrNull?.unreadCount ?? 0;
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.notifications)),
-      body: EmptyState(
-        icon: Icons.notifications_outlined,
-        title: l10n.notificationsComingSoonTitle,
-        subtitle: l10n.notificationsComingSoonSubtitle,
+      appBar: AppBar(
+        title: Text(l10n.notifications),
+        actions: [
+          if (unread > 0)
+            TextButton(
+              onPressed: () =>
+                  ref.read(notificationsProvider.notifier).markAllRead(),
+              child: Text(l10n.markAllRead),
+            ),
+        ],
+      ),
+      body: async.when(
+        loading: () => const SkeletonList(count: 5),
+        error: (error, _) => ErrorState(
+            error: error,
+            onRetry: () => ref.read(notificationsProvider.notifier).refresh()),
+        data: (feed) => RefreshIndicator(
+          onRefresh: () => ref.read(notificationsProvider.notifier).refresh(),
+          child: feed.items.isEmpty
+              ? ListView(children: [
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.7,
+                    child: EmptyState(
+                      icon: Icons.notifications_none,
+                      title: l10n.notificationsEmptyTitle,
+                      subtitle: l10n.notificationsEmptySubtitle,
+                    ),
+                  ),
+                ])
+              : _GroupedList(items: feed.items),
+        ),
       ),
     );
+  }
+}
+
+class _GroupedList extends ConsumerWidget {
+  const _GroupedList({required this.items});
+
+  final List<NotificationModel> items;
+
+  String _group(BuildContext context, DateTime time) {
+    final l10n = AppLocalizations.of(context)!;
+    final now = DateTime.now();
+    final today = DateTime(now.year, now.month, now.day);
+    final day =
+        DateTime(time.toLocal().year, time.toLocal().month, time.toLocal().day);
+    final diff = today.difference(day).inDays;
+    if (diff <= 0) return l10n.groupToday;
+    if (diff == 1) return l10n.groupYesterday;
+    return l10n.groupEarlier;
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    // Items arrive newest-first, so consecutive rows share a group.
+    final rows = <Widget>[];
+    String? current;
+
+    for (final n in items) {
+      final group = _group(context, n.createdAt);
+      if (group != current) {
+        current = group;
+        rows.add(Padding(
+          padding: const EdgeInsets.fromLTRB(
+              AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, AppSpacing.xs),
+          child: Text(group,
+              style: const TextStyle(
+                  color: AppColors.ink500,
+                  fontWeight: FontWeight.w700,
+                  fontSize: 13)),
+        ));
+      }
+      rows.add(NotificationTile(
+        notification: n,
+        onTap: () => ref.read(notificationsProvider.notifier).markRead(n),
+      ));
+      rows.add(const Divider(
+          height: 1, indent: AppSpacing.lg, endIndent: AppSpacing.lg));
+    }
+
+    return ListView(children: rows);
   }
 }

@@ -823,6 +823,72 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'اسم يميّز مركبتك عن غيرها'**
   String get vehicleFormNicknameHint;
+
+  /// No description provided for @notificationsEmptyTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد إشعارات بعد'**
+  String get notificationsEmptyTitle;
+
+  /// No description provided for @notificationsEmptySubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'ستظهر هنا تنبيهات عندما يتفاعل أحدهم مع رمز مركبتك.'**
+  String get notificationsEmptySubtitle;
+
+  /// No description provided for @markAllRead.
+  ///
+  /// In ar, this message translates to:
+  /// **'تحديد الكل كمقروء'**
+  String get markAllRead;
+
+  /// No description provided for @groupToday.
+  ///
+  /// In ar, this message translates to:
+  /// **'اليوم'**
+  String get groupToday;
+
+  /// No description provided for @groupYesterday.
+  ///
+  /// In ar, this message translates to:
+  /// **'أمس'**
+  String get groupYesterday;
+
+  /// No description provided for @groupEarlier.
+  ///
+  /// In ar, this message translates to:
+  /// **'سابقًا'**
+  String get groupEarlier;
+
+  /// No description provided for @recentActivity.
+  ///
+  /// In ar, this message translates to:
+  /// **'آخر النشاط'**
+  String get recentActivity;
+
+  /// No description provided for @viewAll.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض الكل'**
+  String get viewAll;
+
+  /// No description provided for @unreadLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'غير مقروء'**
+  String get unreadLabel;
+
+  /// No description provided for @emergencyLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'طارئ'**
+  String get emergencyLabel;
+
+  /// No description provided for @noRecentActivity.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يوجد نشاط بعد. عندما يمسح أحدهم رمز مركبتك ستراه هنا.'**
+  String get noRecentActivity;
 }
 
 class _AppLocalizationsDelegate

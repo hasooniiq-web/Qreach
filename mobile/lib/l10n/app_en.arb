@@ -186,5 +186,16 @@
     "tagTypeNfc": "NFC tag",
     "vehicleFormIdentity": "Vehicle identity",
     "vehicleFormMore": "More details",
-    "vehicleFormNicknameHint": "A name to tell your vehicles apart"
+    "vehicleFormNicknameHint": "A name to tell your vehicles apart",
+    "notificationsEmptyTitle": "No notifications yet",
+    "notificationsEmptySubtitle": "Alerts appear here when someone interacts with your vehicle tag.",
+    "markAllRead": "Mark all as read",
+    "groupToday": "Today",
+    "groupYesterday": "Yesterday",
+    "groupEarlier": "Earlier",
+    "recentActivity": "Recent activity",
+    "viewAll": "View all",
+    "unreadLabel": "Unread",
+    "emergencyLabel": "Emergency",
+    "noRecentActivity": "No activity yet. When someone scans your vehicle tag, you will see it here."
 }

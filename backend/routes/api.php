@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\Auth\OtpAuthController;
 use App\Http\Controllers\Api\V1\DeviceController;
+use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\PublicContactController;
 use App\Http\Controllers\Api\V1\SubscriptionController;
 use App\Http\Controllers\Api\V1\TagController;
@@ -29,6 +30,10 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::get('tags/{token}', [TagController::class, 'show'])->name('tags.show');
 
         Route::put('devices/push-token', [DeviceController::class, 'updatePushToken'])->name('devices.push-token');
+
+        Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
+        Route::put('notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.read-all');
+        Route::put('notifications/{id}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
 
         Route::get('subscription', [SubscriptionController::class, 'show'])->name('subscription.show');
         Route::post('subscription/upgrade-requests', [SubscriptionController::class, 'requestUpgrade'])

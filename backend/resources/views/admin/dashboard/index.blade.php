@@ -53,6 +53,27 @@
         </x-card>
     </div>
 
+    <x-card class="mb-8" padding="p-0">
+        <div class="flex items-center justify-between border-b border-ink-100 px-5 py-4">
+            <h3 class="text-sm font-semibold text-ink-900">آخر النشاط</h3>
+            <a href="{{ route('admin.reports.index') }}" class="text-xs font-medium text-ink-500 hover:text-ink-900 hover:underline">التقارير ←</a>
+        </div>
+        @forelse ($activity as $item)
+            <div class="flex items-center gap-3 border-b border-ink-100 px-5 py-3 last:border-0">
+                <span class="flex size-8 shrink-0 items-center justify-center rounded-full {{ $item['urgent'] ? 'bg-brand-yellow' : 'bg-ink-100' }}">
+                    <x-icon :name="$item['urgent'] ? 'warning' : 'contact'" class="size-4 text-ink-800" />
+                </span>
+                <div class="min-w-0 flex-1">
+                    <p class="truncate text-sm {{ $item['urgent'] ? 'font-semibold' : 'font-medium' }} text-ink-900">{{ $item['label'] }}</p>
+                    @if ($item['vehicle'])<p class="truncate text-xs text-ink-400">{{ $item['vehicle'] }}</p>@endif
+                </div>
+                <time class="shrink-0 text-xs text-ink-400" datetime="{{ $item['at']->toIso8601String() }}">{{ $item['at']->diffForHumans() }}</time>
+            </div>
+        @empty
+            <p class="px-5 py-8 text-center text-sm text-ink-400">لا يوجد نشاط بعد. تظهر هنا تفاعلات الزوار مع الرموز فور حدوثها.</p>
+        @endforelse
+    </x-card>
+
     {{-- Contextual link into the real analytics/charts page instead of
          duplicating charts on the home page (audit finding: charts exist
          but were unreachable from the dashboard home). --}}

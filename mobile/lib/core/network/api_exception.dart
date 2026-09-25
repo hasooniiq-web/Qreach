@@ -14,9 +14,13 @@ class ApiException implements Exception {
   final int? statusCode;
   final Map<String, List<String>>? fieldErrors;
 
-  factory ApiException.network() => const ApiException(
+  /// [host] is shown so a failed connection says *where* it tried to go —
+  /// the usual cause on a phone is a wrong or unreachable server address.
+  factory ApiException.network([String? host]) => ApiException(
         code: 'NETWORK_ERROR',
-        message: 'تعذر الاتصال بالخادم. تحقق من اتصالك بالإنترنت.',
+        message: host == null
+            ? 'تعذر الاتصال بالخادم. تحقق من اتصالك بالإنترنت.'
+            : 'تعذر الاتصال بالخادم ($host). تحقق من الشبكة وأن الخادم يعمل.',
       );
 
   factory ApiException.unknown([String? detail]) => ApiException(

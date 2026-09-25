@@ -400,4 +400,39 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get vehicleFormNicknameHint => 'A name to tell your vehicles apart';
+
+  @override
+  String get notificationsEmptyTitle => 'No notifications yet';
+
+  @override
+  String get notificationsEmptySubtitle =>
+      'Alerts appear here when someone interacts with your vehicle tag.';
+
+  @override
+  String get markAllRead => 'Mark all as read';
+
+  @override
+  String get groupToday => 'Today';
+
+  @override
+  String get groupYesterday => 'Yesterday';
+
+  @override
+  String get groupEarlier => 'Earlier';
+
+  @override
+  String get recentActivity => 'Recent activity';
+
+  @override
+  String get viewAll => 'View all';
+
+  @override
+  String get unreadLabel => 'Unread';
+
+  @override
+  String get emergencyLabel => 'Emergency';
+
+  @override
+  String get noRecentActivity =>
+      'No activity yet. When someone scans your vehicle tag, you will see it here.';
 }

@@ -11,6 +11,8 @@ import '../../../shared/widgets/plate_badge.dart';
 import '../../../shared/widgets/skeleton.dart';
 import '../../auth/presentation/auth_controller.dart';
 import '../../auth/presentation/profile_menu_button.dart';
+import '../../notifications/presentation/notification_controller.dart';
+import '../../notifications/presentation/notification_tile.dart';
 import '../../subscription/data/subscription_models.dart';
 import '../../subscription/presentation/subscription_controller.dart';
 import '../../vehicles/data/vehicle_model.dart';
@@ -29,6 +31,7 @@ class HomeScreen extends ConsumerWidget {
     final authState = ref.watch(authControllerProvider);
     final vehiclesAsync = ref.watch(vehicleListControllerProvider);
     final subscription = ref.watch(subscriptionProvider).valueOrNull;
+    final feed = ref.watch(notificationsProvider).valueOrNull;
 
     final name = authState is AuthAuthenticated ? authState.user.name : null;
     final greeting = (name != null && name.isNotEmpty)
@@ -40,6 +43,7 @@ class HomeScreen extends ConsumerWidget {
         child: RefreshIndicator(
           onRefresh: () async {
             ref.invalidate(subscriptionProvider);
+            ref.invalidate(notificationsProvider);
             await ref.read(vehicleListControllerProvider.notifier).refresh();
           },
           child: ListView(
@@ -110,6 +114,7 @@ class HomeScreen extends ConsumerWidget {
                   _QuickAction(
                     icon: Icons.notifications_outlined,
                     label: l10n.notifications,
+                    badge: feed?.unreadCount ?? 0,
                     onTap: () => context.push('/notifications'),
                   ),
                   _QuickAction(
@@ -119,6 +124,49 @@ class HomeScreen extends ConsumerWidget {
                   ),
                 ],
               ),
+              const SizedBox(height: AppSpacing.xl),
+              Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      l10n.recentActivity,
+                      style: Theme.of(context)
+                          .textTheme
+                          .titleMedium
+                          ?.copyWith(fontWeight: FontWeight.w700),
+                    ),
+                  ),
+                  if (feed != null && feed.items.isNotEmpty)
+                    TextButton(
+                      onPressed: () => context.push('/notifications'),
+                      child: Text(l10n.viewAll),
+                    ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.sm),
+              if (feed == null)
+                const SkeletonBox(height: 64, radius: 12)
+              else if (feed.items.isEmpty)
+                Text(l10n.noRecentActivity,
+                    style: const TextStyle(color: AppColors.ink500))
+              else
+                AppCard(
+                  padding: EdgeInsets.zero,
+                  child: Column(
+                    children: [
+                      for (final n in feed.items.take(3))
+                        NotificationTile(
+                          notification: n,
+                          onTap: () {
+                            ref
+                                .read(notificationsProvider.notifier)
+                                .markRead(n);
+                            context.push('/notifications');
+                          },
+                        ),
+                    ],
+                  ),
+                ),
             ],
           ),
         ),
@@ -318,11 +366,13 @@ class _QuickAction extends StatelessWidget {
     required this.icon,
     required this.label,
     required this.onTap,
+    this.badge = 0,
   });
 
   final IconData icon;
   final String label;
   final VoidCallback onTap;
+  final int badge;
 
   @override
   Widget build(BuildContext context) {
@@ -342,7 +392,13 @@ class _QuickAction extends StatelessWidget {
                   shape: BoxShape.circle,
                   border: Border.all(color: AppColors.ink200),
                 ),
-                child: Icon(icon, color: AppColors.brandBlack),
+                child: Badge(
+                  isLabelVisible: badge > 0,
+                  label: Text('$badge'),
+                  backgroundColor: AppColors.brandYellow,
+                  textColor: AppColors.brandBlack,
+                  child: Icon(icon, color: AppColors.brandBlack),
+                ),
               ),
               const SizedBox(height: AppSpacing.sm),
               Text(label,
