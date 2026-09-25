@@ -11,29 +11,38 @@
 </head>
 <body class="min-h-dvh bg-ink-50 text-ink-900">
     @php
+        // Grouped by function rather than by "everything that isn't
+        // analytics or security" (see docs/UI_UX_REDESIGN_AUDIT.md finding
+        // #1) — platform data (users/vehicles/tags/batches) is separate
+        // from visitor interaction (contact requests, notifications), which
+        // is separate from analytics, security, and admin/system settings.
+        // Every entry below routes to a real screen or an explicit,
+        // honestly-labeled "coming soon" page — none are invented.
         $nav = [
-            'عام' => [
+            'الرئيسية' => [
                 ['icon' => 'dashboard', 'label' => 'لوحة التحكم', 'route' => 'admin.dashboard'],
             ],
-            'الإدارة' => [
+            'إدارة المنصة' => [
                 ['icon' => 'users', 'label' => 'المستخدمون', 'route' => 'admin.users.index'],
                 ['icon' => 'car', 'label' => 'المركبات', 'route' => 'admin.vehicles.index'],
                 ['icon' => 'qrcode', 'label' => 'رموز QR', 'route' => 'admin.tags.index'],
                 ['icon' => 'nfc', 'label' => 'رموز NFC', 'route' => 'admin.tags.index', 'query' => ['type' => 'nfc']],
                 ['icon' => 'batch', 'label' => 'دفعات الرموز', 'route' => 'admin.tag-batches.index'],
+            ],
+            'التفاعل' => [
                 ['icon' => 'contact', 'label' => 'طلبات التواصل', 'route' => 'admin.contact-requests.index'],
                 ['icon' => 'bell', 'label' => 'التنبيهات والإشعارات', 'route' => 'admin.coming-soon', 'arg' => 'notifications'],
             ],
             'التحليلات' => [
-                ['icon' => 'chart', 'label' => 'التقارير والتحليلات', 'route' => 'admin.analytics.index'],
+                ['icon' => 'chart', 'label' => 'التحليلات والتقارير', 'route' => 'admin.analytics.index'],
             ],
             'الأمان' => [
-                ['icon' => 'shield', 'label' => 'الأمان', 'route' => 'admin.security.index'],
+                ['icon' => 'shield', 'label' => 'الأحداث الأمنية', 'route' => 'admin.security.index'],
                 ['icon' => 'audit', 'label' => 'سجلات التدقيق', 'route' => 'admin.audit.index'],
-                ['icon' => 'users', 'label' => 'المسؤولون والصلاحيات', 'route' => 'admin.admins.index'],
             ],
-            'النظام' => [
-                ['icon' => 'settings', 'label' => 'الإعدادات', 'route' => 'admin.settings.index'],
+            'الإدارة' => [
+                ['icon' => 'users', 'label' => 'المسؤولون والصلاحيات', 'route' => 'admin.admins.index'],
+                ['icon' => 'settings', 'label' => 'إعدادات النظام', 'route' => 'admin.settings.index'],
             ],
         ];
     @endphp

@@ -10,8 +10,8 @@
             </select>
             <select name="status" class="rounded-md border border-ink-200 px-3 py-2 text-sm" onchange="this.form.submit()">
                 <option value="">كل الحالات</option>
-                @foreach (['generated','available','assigned','revoked','replaced'] as $s)
-                    <option value="{{ $s }}" @selected(request('status') === $s)>{{ $s }}</option>
+                @foreach (['generated' => 'مُنشأ', 'available' => 'متاح', 'assigned' => 'مربوط', 'revoked' => 'ملغى', 'replaced' => 'مستبدل'] as $value => $label)
+                    <option value="{{ $value }}" @selected(request('status') === $value)>{{ $label }}</option>
                 @endforeach
             </select>
             <button type="submit" class="rounded-md bg-brand-black text-white text-sm font-medium px-4 py-2">بحث</button>
@@ -21,9 +21,9 @@
         </a>
     </div>
 
-    <div class="rounded-lg border border-ink-200 bg-white overflow-hidden">
+    <x-card padding="p-0" class="overflow-hidden">
         <table class="w-full text-sm">
-            <thead class="bg-ink-50 text-ink-500 text-xs">
+            <thead class="bg-ink-50 text-ink-500 text-xs sticky top-0">
                 <tr>
                     <th class="text-start font-medium px-4 py-3">الرقم التسلسلي</th>
                     <th class="text-start font-medium px-4 py-3">النوع</th>
@@ -70,7 +70,7 @@
                 @endforelse
             </tbody>
         </table>
-    </div>
+    </x-card>
 
     <div class="mt-4">{{ $tags->links() }}</div>
 </x-layouts.admin>

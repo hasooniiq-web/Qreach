@@ -9,9 +9,9 @@
         </select>
     </form>
 
-    <div class="rounded-lg border border-ink-200 bg-white overflow-hidden">
+    <x-card padding="p-0" class="overflow-hidden">
         <table class="w-full text-sm">
-            <thead class="bg-ink-50 text-ink-500 text-xs">
+            <thead class="bg-ink-50 text-ink-500 text-xs sticky top-0">
                 <tr>
                     <th class="text-start font-medium px-4 py-3">الزائر</th>
                     <th class="text-start font-medium px-4 py-3">المركبة</th>
@@ -40,7 +40,7 @@
                 @endforelse
             </tbody>
         </table>
-    </div>
+    </x-card>
 
     <div class="mt-4">{{ $requests->links() }}</div>
 </x-layouts.admin>
