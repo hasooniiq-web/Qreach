@@ -57,3 +57,26 @@ document.addEventListener('keydown', (event) => {
         menu.querySelector('summary')?.focus();
     });
 });
+
+// Sidebar badges (new contact requests, pending upgrades) refresh on their own.
+const pollUrl = document.querySelector('meta[name="poll-url"]')?.content;
+
+async function refreshBadges() {
+    if (!pollUrl || document.hidden) return;
+    try {
+        const response = await fetch(pollUrl, { headers: { Accept: 'application/json' }, cache: 'no-store' });
+        if (!response.ok) return;
+        const counts = await response.json();
+        document.querySelectorAll('[data-badge]').forEach((badge) => {
+            const n = Number(counts[badge.dataset.badge] || 0);
+            badge.textContent = n > 99 ? '99+' : String(n);
+            badge.hidden = n === 0;
+        });
+    } catch (e) {
+        // Offline: keep the last known counts.
+    }
+}
+
+refreshBadges();
+setInterval(refreshBadges, 15000);
+document.addEventListener('visibilitychange', refreshBadges);

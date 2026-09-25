@@ -18,3 +18,30 @@ document.getElementById('mobile-nav-backdrop')?.addEventListener('click', () => 
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape') setMobileNavOpen(false);
 });
+
+// Desktop sidebar show/hide. The choice is remembered per browser; the sidebar
+// and the main column scroll independently (see the admin layout).
+const sidebar = document.getElementById('desktop-sidebar');
+const sidebarToggle = document.getElementById('sidebar-toggle');
+const SIDEBAR_KEY = 'admin.sidebar.collapsed';
+
+function setSidebarCollapsed(collapsed) {
+    sidebar?.classList.toggle('lg:hidden!', collapsed);
+    sidebarToggle?.setAttribute('aria-expanded', String(!collapsed));
+}
+
+try {
+    setSidebarCollapsed(localStorage.getItem(SIDEBAR_KEY) === '1');
+} catch (e) {
+    // Storage blocked: the sidebar simply stays open.
+}
+
+sidebarToggle?.addEventListener('click', () => {
+    const collapsed = !sidebar?.classList.contains('lg:hidden!');
+    setSidebarCollapsed(collapsed);
+    try {
+        localStorage.setItem(SIDEBAR_KEY, collapsed ? '1' : '0');
+    } catch (e) {
+        // Not persisted; still toggles for this page view.
+    }
+});

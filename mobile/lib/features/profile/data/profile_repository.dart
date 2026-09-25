@@ -10,38 +10,66 @@ class ProfileRepository {
 
   final ApiClient _client;
 
-  Future<ProfileModel> fetch() async {
-    final response = await _client.dio.get<Map<String, dynamic>>('/profile');
-    return ProfileModel.fromJson(response.data!);
-  }
+  Future<ProfileModel> _parse(
+          Future<Response<Map<String, dynamic>>> call) async =>
+      ProfileModel.fromJson((await call).data!);
 
-  Future<ProfileModel> updateName(String name) async {
-    final response = await _client.dio
-        .put<Map<String, dynamic>>('/profile', data: {'name': name});
-    return ProfileModel.fromJson(response.data!);
-  }
+  Future<ProfileModel> fetch() =>
+      _parse(_client.dio.get<Map<String, dynamic>>('/profile'));
 
-  /// Saves all three details at once. An empty value clears that detail;
-  /// `visible` defaults to hidden. The server rejects `visible: true`
-  /// (PLAN_REQUIRED) unless the plan allows showing it.
-  Future<ProfileModel> updateContact({
+  Future<ProfileModel> updateName(String name) => _parse(
+      _client.dio.put<Map<String, dynamic>>('/profile', data: {'name': name}));
+
+  /// Whether visitors see the owner's name (hidden by default).
+  Future<ProfileModel> setShowName(bool value) =>
+      _parse(_client.dio.put<Map<String, dynamic>>('/profile/visibility',
+          data: {'show_name': value}));
+
+  /// The phone number shown to visitors (a Basic feature). An empty value
+  /// removes it.
+  Future<ProfileModel> updatePhone(
+          {required String phone, required bool visible}) =>
+      _parse(_client.dio.put<Map<String, dynamic>>('/profile/contact', data: {
+        'phone': {'value': phone, 'visible': visible},
+      }));
+
+  /// Plus only — the server answers 403 PLAN_REQUIRED otherwise.
+  Future<ProfileModel> addMethod({
+    required String type,
+    required String value,
+    String? label,
+    bool visible = false,
+  }) =>
+      _parse(_client.dio.post<Map<String, dynamic>>('/profile/methods', data: {
+        'type': type,
+        'value': value,
+        if (label != null && label.isNotEmpty) 'label': label,
+        'visible': visible,
+      }));
+
+  Future<ProfileModel> setMethodVisible(int id, bool visible) =>
+      _parse(_client.dio.put<Map<String, dynamic>>('/profile/methods/$id',
+          data: {'visible': visible}));
+
+  Future<ProfileModel> removeMethod(int id) =>
+      _parse(_client.dio.delete<Map<String, dynamic>>('/profile/methods/$id'));
+
+  Future<ProfileModel> saveEmergency({
+    required String name,
+    required String? relationship,
     required String phone,
-    required bool phoneVisible,
-    required String instagram,
-    required bool instagramVisible,
-    required String extra,
-    required bool extraVisible,
-  }) async {
-    final response = await _client.dio.put<Map<String, dynamic>>(
-      '/profile/contact',
-      data: {
-        'phone': {'value': phone, 'visible': phoneVisible},
-        'instagram': {'value': instagram, 'visible': instagramVisible},
-        'extra': {'value': extra, 'visible': extraVisible},
-      },
-    );
-    return ProfileModel.fromJson(response.data!);
-  }
+    required bool visible,
+  }) =>
+      _parse(_client.dio.put<Map<String, dynamic>>('/profile/emergency', data: {
+        'name': name,
+        if (relationship != null && relationship.isNotEmpty)
+          'relationship': relationship,
+        'phone': phone,
+        'visible': visible,
+      }));
+
+  Future<ProfileModel> removeEmergency() =>
+      _parse(_client.dio.delete<Map<String, dynamic>>('/profile/emergency'));
 
   /// The account photo, or null when none is set.
   Future<Uint8List?> fetchAvatar() async {
@@ -59,14 +87,10 @@ class ProfileRepository {
     final form = FormData.fromMap({
       'avatar': await MultipartFile.fromFile(filePath, filename: 'avatar.jpg'),
     });
-    final response = await _client.dio
-        .post<Map<String, dynamic>>('/profile/avatar', data: form);
-    return ProfileModel.fromJson(response.data!);
+    return _parse(
+        _client.dio.post<Map<String, dynamic>>('/profile/avatar', data: form));
   }
 
-  Future<ProfileModel> removeAvatar() async {
-    final response =
-        await _client.dio.delete<Map<String, dynamic>>('/profile/avatar');
-    return ProfileModel.fromJson(response.data!);
-  }
+  Future<ProfileModel> removeAvatar() =>
+      _parse(_client.dio.delete<Map<String, dynamic>>('/profile/avatar'));
 }

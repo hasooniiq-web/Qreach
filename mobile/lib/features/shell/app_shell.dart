@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -5,17 +7,61 @@ import 'package:go_router/go_router.dart';
 import '../../core/theme/app_colors.dart';
 import '../../l10n/app_localizations.dart';
 import '../contacts/presentation/contact_controller.dart';
+import '../home/presentation/home_controller.dart';
+import '../notifications/presentation/notification_controller.dart';
 
 /// The four top-level tabs: Home, Vehicles, Contacts, Profile. Each tab
 /// keeps its own scroll position and navigation stack; detail screens
 /// (vehicle, scan, notifications, subscription...) open full-screen over it.
-class AppShell extends ConsumerWidget {
+class AppShell extends ConsumerStatefulWidget {
   const AppShell({super.key, required this.navigationShell});
 
   final StatefulNavigationShell navigationShell;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<AppShell> createState() => _AppShellState();
+}
+
+/// Keeps the app current without any manual refresh: while the app is in the
+/// foreground it re-reads notifications, conversations and the home feed every
+/// few seconds, and again the moment the app returns from the background.
+/// (True push needs the Firebase server key; until then this is the
+/// near-real-time path.)
+class _AppShellState extends ConsumerState<AppShell>
+    with WidgetsBindingObserver {
+  static const _interval = Duration(seconds: 12);
+  Timer? _timer;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    _timer = Timer.periodic(_interval, (_) => _refresh());
+  }
+
+  void _refresh() {
+    if (!mounted) return;
+    ref.invalidate(notificationsProvider);
+    ref.invalidate(contactsProvider);
+    ref.invalidate(homeProvider);
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) _refresh();
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  StatefulNavigationShell get navigationShell => widget.navigationShell;
+
+  @override
+  Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final newMessages =
         ref.watch(contactsProvider).valueOrNull?.unreadCount ?? 0;

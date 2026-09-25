@@ -22,7 +22,7 @@ const _basic = PlanModel(
   currency: 'IQD',
   isFree: true,
   billingPeriodDays: 365,
-  publicContacts: [],
+  publicContacts: ['phone'],
 );
 
 const _pro = PlanModel(
@@ -34,6 +34,7 @@ const _pro = PlanModel(
   isFree: false,
   billingPeriodDays: 365,
   publicContacts: ['phone', 'instagram', 'other'],
+  extraContactMethods: true,
 );
 
 class FakeSubscriptionRepository implements SubscriptionRepository {
@@ -55,7 +56,7 @@ class FakeProfileRepository implements ProfileRepository {
   FakeProfileRepository(this.profile);
 
   ProfileModel profile;
-  bool saved = false;
+  int saves = 0;
 
   @override
   Future<ProfileModel> fetch() async => profile;
@@ -73,27 +74,67 @@ class FakeProfileRepository implements ProfileRepository {
   Future<ProfileModel> updateName(String name) async => profile;
 
   @override
-  Future<ProfileModel> updateContact({
-    required String phone,
-    required bool phoneVisible,
-    required String instagram,
-    required bool instagramVisible,
-    required String extra,
-    required bool extraVisible,
-  }) async {
-    saved = true;
+  Future<ProfileModel> setShowName(bool value) async => profile;
+
+  @override
+  Future<ProfileModel> updatePhone(
+      {required String phone, required bool visible}) async {
+    saves++;
     return profile;
   }
+
+  @override
+  Future<ProfileModel> addMethod({
+    required String type,
+    required String value,
+    String? label,
+    bool visible = false,
+  }) async {
+    saves++;
+    return profile;
+  }
+
+  @override
+  Future<ProfileModel> setMethodVisible(int id, bool visible) async => profile;
+
+  @override
+  Future<ProfileModel> removeMethod(int id) async => profile;
+
+  @override
+  Future<ProfileModel> saveEmergency({
+    required String name,
+    required String? relationship,
+    required String phone,
+    required bool visible,
+  }) async {
+    saves++;
+    return profile;
+  }
+
+  @override
+  Future<ProfileModel> removeEmergency() async => profile;
 }
 
-ProfileModel _profile({required bool canShow, String? phone, String? insta}) =>
-    ProfileModel(
+ProfileModel _profile({required bool plus, String? phone}) => ProfileModel(
       name: 'علي',
       phone: '+9647700000000',
-      plan: canShow ? 'pro' : 'basic',
-      phoneField: ContactField(value: phone, canShow: canShow),
-      instagram: ContactField(value: insta, canShow: canShow),
-      extra: ContactField(canShow: canShow),
+      plan: plus ? 'plus' : 'basic',
+      phoneField: ContactField(value: phone, canShow: true),
+      canAddMethods: plus,
+      platforms: const [
+        PlatformInfo(type: 'instagram', label: 'إنستغرام', hint: 'username'),
+      ],
+      methods: plus
+          ? const [
+              ContactMethodModel(
+                  id: 1,
+                  type: 'instagram',
+                  label: 'إنستغرام',
+                  value: 'my.car',
+                  visible: false,
+                  canShow: true),
+            ]
+          : const [],
     );
 
 SubscriptionInfo _info({
@@ -160,7 +201,7 @@ void main() {
       expect(find.text('مجاني'), findsWidgets);
       expect(find.text('الباقة الافتراضية المجانية'), findsOneWidget);
       // Phone, Instagram and extra info are locked on Basic.
-      expect(find.byIcon(Icons.lock_outline), findsNWidgets(3));
+      expect(find.byIcon(Icons.lock_outline), findsNWidgets(2));
       expect(find.text('طلب الترقية'), findsOneWidget);
     });
 
@@ -233,65 +274,47 @@ void main() {
   });
 
   group('VisibilityScreen', () {
-    testWidgets('Basic owner sees a locked explanation and a link to the plans',
-        (tester) async {
-      _tall(tester);
+    Future<void> open(WidgetTester tester, ProfileModel p) async {
+      tester.view.physicalSize = const Size(800, 3600);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
       final repo = FakeSubscriptionRepository(info: _info(plan: _basic));
-      final profileRepo = FakeProfileRepository(_profile(canShow: false));
-
-      await tester.pumpWidget(
-          _app(repo, const VisibilityScreen(), profileRepo: profileRepo));
+      await tester.pumpWidget(_app(repo, const VisibilityScreen(),
+          profileRepo: FakeProfileRepository(p)));
       await tester.pumpAndSettle();
+    }
 
-      expect(find.byIcon(Icons.lock_outline), findsWidgets);
-      final switches = tester
-          .widgetList<SwitchListTile>(find.byType(SwitchListTile))
-          .toList();
-      expect(switches, hasLength(3));
-      expect(switches.every((s) => s.onChanged == null), isTrue,
-          reason: 'switches are locked on Basic');
-    });
-
-    testWidgets('Pro owner gets the form pre-filled with saved details',
+    testWidgets('Basic: extra methods are locked behind an upgrade to Plus',
         (tester) async {
-      _tall(tester);
-      final repo = FakeSubscriptionRepository(
-          info: _info(plan: _pro, isDefault: false, status: 'active'));
-      final profileRepo = FakeProfileRepository(
-          _profile(canShow: true, phone: '+9647701234567', insta: 'my.car'));
+      await open(tester, _profile(plus: false, phone: '+9647701234567'));
 
-      await tester.pumpWidget(
-          _app(repo, const VisibilityScreen(), profileRepo: profileRepo));
-      await tester.pumpAndSettle();
-
-      expect(find.byType(TextFormField), findsNWidgets(3));
+      expect(find.text('متاح في باقة Plus'), findsOneWidget);
+      expect(find.text('إضافة طريقة تواصل'), findsNothing);
       expect(find.text('+9647701234567'), findsOneWidget);
-      expect(find.text('my.car'), findsOneWidget);
-      final switches = tester
-          .widgetList<SwitchListTile>(find.byType(SwitchListTile))
-          .toList();
-      expect(switches.every((s) => s.value == false), isTrue,
-          reason: 'everything is hidden by default');
+
+      await tester.tap(find.text('متاح في باقة Plus'));
+      await tester.pumpAndSettle();
+      expect(find.text('subscription-route'), findsOneWidget);
     });
 
-    testWidgets('an invalid Instagram handle is rejected before saving',
+    testWidgets('Plus: sees the add button and existing methods, all hidden',
         (tester) async {
-      _tall(tester);
-      final repo = FakeSubscriptionRepository(
-          info: _info(plan: _pro, isDefault: false, status: 'active'));
-      final profileRepo = FakeProfileRepository(_profile(canShow: true));
+      await open(tester, _profile(plus: true));
 
-      await tester.pumpWidget(
-          _app(repo, const VisibilityScreen(), profileRepo: profileRepo));
-      await tester.pumpAndSettle();
+      expect(find.text('إضافة طريقة تواصل'), findsOneWidget);
+      expect(find.text('my.car'), findsOneWidget);
+      expect(find.text('متاح في باقة Plus'), findsNothing);
+    });
 
-      await tester.enterText(find.byType(TextFormField).at(1), 'not a handle!');
-      await tester.ensureVisible(find.text('حفظ'));
-      await tester.tap(find.text('حفظ'));
-      await tester.pumpAndSettle();
+    testWidgets('everything is hidden by default', (tester) async {
+      await open(tester, _profile(plus: true, phone: '+9647701234567'));
 
-      expect(find.text('اسم مستخدم غير صالح'), findsOneWidget);
-      expect(profileRepo.saved, isFalse);
+      final switches = tester.widgetList<Switch>(find.byType(Switch)).toList();
+      expect(switches.every((s) => s.value == false), isTrue);
+      final tiles = tester
+          .widgetList<SwitchListTile>(find.byType(SwitchListTile))
+          .toList();
+      expect(tiles.every((s) => s.value == false), isTrue);
     });
   });
 }

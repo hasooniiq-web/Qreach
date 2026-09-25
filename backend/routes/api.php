@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\Auth\OtpAuthController;
 use App\Http\Controllers\Api\V1\ContactRequestController;
 use App\Http\Controllers\Api\V1\DeviceController;
+use App\Http\Controllers\Api\V1\HomeController;
 use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\ProfileController;
 use App\Http\Controllers\Api\V1\SubscriptionController;
@@ -41,6 +42,7 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::put('contact-requests/{uuid}/read', [ContactRequestController::class, 'markRead'])->name('contact-requests.read');
         Route::put('contact-requests/{uuid}/responded', [ContactRequestController::class, 'markResponded'])->name('contact-requests.responded');
 
+        Route::get('home', [HomeController::class, 'show'])->name('home');
         Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
         Route::put('notifications/read-all', [NotificationController::class, 'markAllRead'])->name('notifications.read-all');
         Route::put('notifications/{id}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
@@ -55,5 +57,11 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::post('profile/avatar', [ProfileController::class, 'storeAvatar'])->name('profile.avatar.store');
         Route::delete('profile/avatar', [ProfileController::class, 'destroyAvatar'])->name('profile.avatar.destroy');
         Route::put('profile/contact', [ProfileController::class, 'updateContact'])->name('profile.contact');
+        Route::put('profile/visibility', [ProfileController::class, 'updateVisibility'])->name('profile.visibility');
+        Route::post('profile/methods', [ProfileController::class, 'storeMethod'])->name('profile.methods.store');
+        Route::put('profile/methods/{method}', [ProfileController::class, 'updateMethod'])->name('profile.methods.update');
+        Route::delete('profile/methods/{method}', [ProfileController::class, 'destroyMethod'])->name('profile.methods.destroy');
+        Route::put('profile/emergency', [ProfileController::class, 'updateEmergency'])->name('profile.emergency');
+        Route::delete('profile/emergency', [ProfileController::class, 'destroyEmergency'])->name('profile.emergency.destroy');
     });
 });

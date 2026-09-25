@@ -251,10 +251,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get featurePublicPhone => 'Show your phone number to visitors';
 
   @override
-  String get featurePublicInstagram => 'Show your Instagram account';
+  String get featurePublicInstagram =>
+      'Add social accounts (Instagram, Facebook, Snapchat...)';
 
   @override
-  String get featurePublicExtra => 'Extra contact info';
+  String get featurePublicExtra => 'Control what visitors see per account';
 
   @override
   String get plansTitle => 'Plans';
@@ -316,7 +317,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Shown to anyone who scans your vehicle tag. Choose what to share.';
 
   @override
-  String get publicContactLockedTitle => 'Available on the Pro plan';
+  String get publicContactLockedTitle => 'Available on the Plus plan';
 
   @override
   String get publicContactLockedBody =>
@@ -362,11 +363,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loadErrorTitle => 'Couldn\'t load data';
 
   @override
-  String get homeUpgradeTitle => 'Show your contact details to visitors';
+  String get homeUpgradeTitle => 'Add your social accounts with Plus';
 
   @override
   String get homeUpgradeBody =>
-      'The Pro plan shows your number and Instagram when your tag is scanned.';
+      'Plus lets you add Instagram, Facebook, Snapchat and more, and show them to visitors.';
 
   @override
   String tagsLinkedCount(int count) {
@@ -537,7 +538,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get showToVisitors => 'Show to visitors';
 
   @override
-  String get proBadge => 'Pro';
+  String get proBadge => 'Plus';
 
   @override
   String get visibilityNoneShown =>
@@ -550,7 +551,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get visibilityLockedHint =>
-      'Showing details to visitors is available on the Pro plan.';
+      'Adding more contact accounts is available on the Plus plan.';
 
   @override
   String get scanManualTitle => 'Enter the code manually';
@@ -645,4 +646,115 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get languageEnglish => 'English';
+
+  @override
+  String get plateTypeTitle => 'Plate type';
+
+  @override
+  String get plateLetter => 'Letter';
+
+  @override
+  String get plateGovernorate => 'Governorate';
+
+  @override
+  String get plateTypePrivate => 'Private';
+
+  @override
+  String get plateTypeGovernment => 'Government';
+
+  @override
+  String get plateTypeTruck => 'Truck';
+
+  @override
+  String get plateTypeTaxi => 'Taxi';
+
+  @override
+  String get plateTypeAgricultural => 'Agricultural';
+
+  @override
+  String get homeLinked => 'Linked';
+
+  @override
+  String get homeNotLinked => 'Not linked';
+
+  @override
+  String get homeOwnerLabel => 'Owner';
+
+  @override
+  String get homeConversations => 'Latest conversations';
+
+  @override
+  String get homeConversationsEmpty => 'No conversations yet.';
+
+  @override
+  String get homeActivities => 'Activities';
+
+  @override
+  String get actLatest => 'Latest activity';
+
+  @override
+  String get actCommunication => 'Latest messages';
+
+  @override
+  String get actAccount => 'My account';
+
+  @override
+  String get actReports => 'Reports';
+
+  @override
+  String get actNone => 'Nothing yet';
+
+  @override
+  String get youPrefix => 'You: ';
+
+  @override
+  String get visShowName => 'Show my name to visitors';
+
+  @override
+  String get visNameHint =>
+      'Hidden by default. Visitors only see your name if you turn this on.';
+
+  @override
+  String get emergencySection => 'Emergency contact';
+
+  @override
+  String get emergencyHint =>
+      'Such as a parent — shown to visitors only if you turn it on.';
+
+  @override
+  String get emergencyName => 'Name';
+
+  @override
+  String get emergencyRelation => 'Relationship (father, mother...)';
+
+  @override
+  String get emergencyPhone => 'Phone number';
+
+  @override
+  String get methodsSection => 'More contact methods';
+
+  @override
+  String get addMethod => 'Add a contact method';
+
+  @override
+  String get methodValue => 'Account or number';
+
+  @override
+  String get methodLabel => 'Display name';
+
+  @override
+  String get methodsLockedTitle => 'Available on Plus';
+
+  @override
+  String get methodsLockedBody =>
+      'Add Instagram, Facebook, Snapchat, TikTok, WhatsApp and more, and choose what visitors see.';
+
+  @override
+  String get upgradeToPlus => 'Upgrade to Plus';
+
+  @override
+  String get removeMethod => 'Remove';
+
+  @override
+  String get methodsEmpty => 'You have not added any contact method yet.';
 }

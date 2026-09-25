@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class EmergencyContact extends Model
 {
-    protected $fillable = ['user_id', 'name', 'relationship', 'phone', 'priority', 'status'];
+    protected $fillable = ['user_id', 'name', 'relationship', 'phone', 'priority', 'status', 'is_public'];
 
     public function user(): BelongsTo
     {

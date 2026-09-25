@@ -11,6 +11,7 @@ export default defineConfig({
                 'resources/js/admin-nav.js',
                 'resources/js/admin-ui.js',
                 'resources/js/print-batch.js',
+                'resources/js/public-thread.js',
                 'resources/js/analytics-charts.js',
             ],
             refresh: true,

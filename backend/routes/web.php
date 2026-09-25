@@ -42,6 +42,8 @@ Route::prefix('t')->name('public.scan.')->group(function () {
 
     Route::get('{token}/c/{uuid}', [ScanController::class, 'thread'])
         ->middleware('throttle:public-scan')->name('thread');
+    Route::get('{token}/c/{uuid}/messages', [ScanController::class, 'threadMessages'])
+        ->middleware('throttle:120,1')->name('thread.messages');
     Route::post('{token}/c/{uuid}', [ScanController::class, 'threadReply'])
         ->middleware('throttle:contact-request')->name('thread.reply');
 });
@@ -64,6 +66,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         Route::middleware('admin.2fa')->group(function () {
             Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+            Route::get('poll', [DashboardController::class, 'poll'])->name('poll');
 
             // Own profile only — none of these take an admin id, so there is no
             // way to view or change someone else's profile through them.

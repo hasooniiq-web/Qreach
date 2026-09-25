@@ -5,6 +5,7 @@ import 'notifications/push_notification_service.dart';
 import 'storage/secure_storage_service.dart';
 import '../features/auth/data/auth_repository.dart';
 import '../features/contacts/data/contact_request_repository.dart';
+import '../features/home/data/home_repository.dart';
 import '../features/notifications/data/notification_repository.dart';
 import '../features/profile/data/profile_repository.dart';
 import '../features/subscription/data/subscription_repository.dart';
@@ -51,4 +52,8 @@ final contactRequestRepositoryProvider =
 
 final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
   return ProfileRepository(ref.watch(apiClientProvider));
+});
+
+final homeRepositoryProvider = Provider<HomeRepository>((ref) {
+  return HomeRepository(ref.watch(apiClientProvider));
 });

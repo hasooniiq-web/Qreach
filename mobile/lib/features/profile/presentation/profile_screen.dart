@@ -327,7 +327,9 @@ class ProfileScreen extends ConsumerWidget {
   String _sharedItems(AppLocalizations l10n, ProfileModel p) => [
         if (p.phoneField.visible && p.phoneField.canShow)
           l10n.featurePublicPhone,
-        if (p.instagram.visible && p.instagram.canShow) l10n.instagramLabel,
-        if (p.extra.visible && p.extra.canShow) l10n.extraLabel,
+        if (p.showName) l10n.homeOwnerLabel,
+        if (p.emergency?.visible == true) l10n.emergencySection,
+        for (final m in p.methods)
+          if (m.visible && m.canShow) m.label,
       ].join('، ');
 }

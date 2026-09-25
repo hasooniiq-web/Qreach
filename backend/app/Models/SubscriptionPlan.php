@@ -9,13 +9,13 @@ class SubscriptionPlan extends Model
 {
     public const BASIC = 'basic';
 
-    public const PRO = 'pro';
+    public const PLUS = 'plus';
 
     /**
-     * Contact-method types a plan may show publicly on the scan page.
-     * Basic shows none — visitors can only message the owner.
+     * Contact-method types that exist. Basic may show only its phone; Plus may add
+     * and show all of them (what a plan allows lives in its `features` JSON).
      */
-    public const PUBLIC_CONTACT_TYPES = ['phone', 'instagram', 'facebook', 'website', 'email', 'other'];
+    public const PUBLIC_CONTACT_TYPES = ['phone', 'whatsapp', 'telegram', 'instagram', 'facebook', 'snapchat', 'tiktok', 'twitter', 'linkedin', 'youtube', 'website', 'email', 'other'];
 
     protected $fillable = [
         'slug', 'name_ar', 'name_en', 'description_ar', 'price_cents', 'currency', 'billing_period_days',
@@ -46,6 +46,17 @@ class SubscriptionPlan extends Model
     public function allowsPublicContact(string $type): bool
     {
         return in_array($type, $this->publicContactTypes(), true);
+    }
+
+    /** Plus: may create contact methods beyond the phone number. */
+    public function allowsExtraMethods(): bool
+    {
+        return (bool) ($this->features['extra_contact_methods'] ?? false);
+    }
+
+    public function allowsEmergencyContact(): bool
+    {
+        return (bool) ($this->features['emergency_contact'] ?? true);
     }
 
     public function isFree(): bool

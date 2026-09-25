@@ -33,7 +33,7 @@ class SubscriptionTest extends TestCase
     {
         return Subscription::create([
             'user_id' => $user->id,
-            'plan_id' => SubscriptionPlan::where('slug', 'pro')->value('id'),
+            'plan_id' => SubscriptionPlan::where('slug', 'plus')->value('id'),
             'status' => $status,
             'current_period_starts_at' => now()->subDay(),
             'current_period_ends_at' => $endsAt ?? now()->addYear(),
@@ -65,7 +65,8 @@ class SubscriptionTest extends TestCase
             ->assertJsonPath('plan.slug', 'basic')
             ->assertJsonPath('plan.is_free', true)
             ->assertJsonPath('plan.features.messaging', true)
-            ->assertJsonPath('plan.features.public_contacts', [])
+            ->assertJsonPath('plan.features.public_contacts', ['phone'])
+            ->assertJsonPath('plan.features.extra_contact_methods', false)
             ->assertJsonPath('source', 'default')
             ->assertJsonPath('pending_upgrade', false)
             ->assertJsonCount(2, 'plans');
@@ -78,7 +79,7 @@ class SubscriptionTest extends TestCase
 
         $this->getJson('/api/v1/subscription', $this->bearer($user))
             ->assertOk()
-            ->assertJsonPath('plan.slug', 'pro')
+            ->assertJsonPath('plan.slug', 'plus')
             ->assertJsonPath('plan.price', 25000)
             ->assertJsonPath('plan.currency', 'IQD')
             ->assertJsonPath('source', 'subscription')
@@ -101,10 +102,10 @@ class SubscriptionTest extends TestCase
         $user = User::factory()->create();
         $headers = $this->bearer($user);
 
-        $this->postJson('/api/v1/subscription/upgrade-requests', ['plan' => 'pro'], $headers)->assertCreated();
+        $this->postJson('/api/v1/subscription/upgrade-requests', ['plan' => 'plus'], $headers)->assertCreated();
         $this->assertDatabaseHas('plan_upgrade_requests', ['user_id' => $user->id, 'status' => 'pending']);
 
-        $this->postJson('/api/v1/subscription/upgrade-requests', ['plan' => 'pro'], $headers)
+        $this->postJson('/api/v1/subscription/upgrade-requests', ['plan' => 'plus'], $headers)
             ->assertStatus(409)->assertJsonPath('error.code', 'UPGRADE_PENDING');
         $this->assertSame(1, PlanUpgradeRequest::count());
     }
@@ -115,7 +116,7 @@ class SubscriptionTest extends TestCase
         $this->grantPro($user);
         $headers = $this->bearer($user);
 
-        $this->postJson('/api/v1/subscription/upgrade-requests', ['plan' => 'pro'], $headers)
+        $this->postJson('/api/v1/subscription/upgrade-requests', ['plan' => 'plus'], $headers)
             ->assertStatus(409)->assertJsonPath('error.code', 'ALREADY_ON_PLAN');
         $this->postJson('/api/v1/subscription/upgrade-requests', ['plan' => 'basic'], $headers)
             ->assertStatus(422)->assertJsonPath('error.code', 'PLAN_NOT_AVAILABLE');
@@ -137,25 +138,26 @@ class SubscriptionTest extends TestCase
             ->assertDontSee('private@example.com');
     }
 
-    public function test_scan_page_hides_contact_details_for_a_basic_owner_even_if_stored(): void
+    public function test_basic_owner_shows_only_the_phone_and_extra_platforms_stay_hidden_even_if_stored(): void
     {
         $owner = User::factory()->create();
         ContactMethod::create(['user_id' => $owner->id, 'type' => 'phone', 'value' => '+9647701234567', 'privacy_state' => 'public']);
+        ContactMethod::create(['user_id' => $owner->id, 'type' => 'instagram', 'value' => 'my.car', 'privacy_state' => 'public']);
         $tag = $this->assignedTagFor($owner);
 
         $this->get("/t/{$tag->public_token}")
             ->assertOk()
-            ->assertDontSee('9647701234567')
-            ->assertDontSee('تواصل مباشر مع المالك');
+            ->assertSee('9647701234567')
+            ->assertDontSee('my.car');
     }
 
-    public function test_scan_page_hides_contact_details_once_the_pro_subscription_lapses(): void
+    public function test_extra_platforms_disappear_once_the_plus_subscription_lapses(): void
     {
         $owner = User::factory()->create();
         $this->grantPro($owner, now()->subMinute());
-        ContactMethod::create(['user_id' => $owner->id, 'type' => 'phone', 'value' => '+9647701234567', 'privacy_state' => 'public']);
+        ContactMethod::create(['user_id' => $owner->id, 'type' => 'instagram', 'value' => 'my.car', 'privacy_state' => 'public']);
         $tag = $this->assignedTagFor($owner);
 
-        $this->get("/t/{$tag->public_token}")->assertOk()->assertDontSee('9647701234567');
+        $this->get("/t/{$tag->public_token}")->assertOk()->assertDontSee('my.car');
     }
 }

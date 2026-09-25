@@ -72,3 +72,7 @@ html[dir='rtl'] body {
         @apply inline-flex items-center justify-center gap-2 rounded-md border border-status-danger bg-white px-4 py-2 text-sm font-medium text-status-danger transition-colors hover:bg-status-danger/5;
     }
 }
+
+/* Menus scroll but never show a scrollbar. */
+.scrollbar-none { scrollbar-width: none; -ms-overflow-style: none; }
+.scrollbar-none::-webkit-scrollbar { display: none; }

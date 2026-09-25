@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../shared/widgets/iraqi_plate.dart';
+import '../../../shared/widgets/plate_labels.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_colors.dart';
@@ -24,13 +26,17 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
   final _makeController = TextEditingController();
   final _modelController = TextEditingController();
   final _colorController = TextEditingController();
+  final _letterController = TextEditingController();
   String _vehicleType = 'sedan';
+  String _plateType = 'private';
+  String? _governorate;
   bool _submitting = false;
   String? _error;
 
   @override
   void dispose() {
     _plateController.dispose();
+    _letterController.dispose();
     _nicknameController.dispose();
     _makeController.dispose();
     _modelController.dispose();
@@ -50,6 +56,9 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
       final vehicle = VehicleModel(
         id: '',
         plateNumber: _plateController.text.trim(),
+        plateType: _plateType,
+        plateLetter: _letterController.text.trim(),
+        plateGovernorate: _governorate,
         nickname: _nicknameController.text.trim(),
         make: _makeController.text.trim().isEmpty
             ? null
@@ -97,6 +106,66 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
             children: [
               if (_error != null) ErrorBanner(message: _error!),
               Text(l10n.vehicleFormIdentity, style: sectionStyle),
+              const SizedBox(height: AppSpacing.md),
+              // Live preview: the plate looks like the real one as it is typed.
+              Center(
+                child: ListenableBuilder(
+                  listenable:
+                      Listenable.merge([_plateController, _letterController]),
+                  builder: (context, _) => IraqiPlate(
+                    number: _plateController.text.trim(),
+                    letter: _letterController.text.trim(),
+                    governorate: _governorate,
+                    type: PlateType.fromCode(_plateType),
+                    width: 260,
+                  ),
+                ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              Text(l10n.plateTypeTitle,
+                  style: const TextStyle(fontWeight: FontWeight.w600)),
+              const SizedBox(height: AppSpacing.sm),
+              Wrap(
+                spacing: AppSpacing.sm,
+                runSpacing: AppSpacing.sm,
+                children: [
+                  for (final t in PlateType.values)
+                    ChoiceChip(
+                      label: Text(plateTypeLabel(l10n, t)),
+                      selected: _plateType == t.code,
+                      onSelected: (_) => setState(() => _plateType = t.code),
+                    ),
+                ],
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              Row(
+                children: [
+                  Expanded(
+                    child: TextFormField(
+                      controller: _letterController,
+                      maxLength: 4,
+                      textInputAction: TextInputAction.next,
+                      decoration: InputDecoration(
+                          labelText: l10n.plateLetter, counterText: ''),
+                    ),
+                  ),
+                  const SizedBox(width: AppSpacing.md),
+                  Expanded(
+                    flex: 2,
+                    child: DropdownButtonFormField<String>(
+                      value: _governorate,
+                      isExpanded: true,
+                      decoration:
+                          InputDecoration(labelText: l10n.plateGovernorate),
+                      items: [
+                        for (final g in iraqGovernorates)
+                          DropdownMenuItem(value: g, child: Text(g)),
+                      ],
+                      onChanged: (v) => setState(() => _governorate = v),
+                    ),
+                  ),
+                ],
+              ),
               const SizedBox(height: AppSpacing.md),
               TextFormField(
                 controller: _plateController,

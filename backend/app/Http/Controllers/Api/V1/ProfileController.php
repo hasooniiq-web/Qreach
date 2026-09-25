@@ -3,10 +3,14 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\EmergencyContactRequest;
+use App\Http\Requests\Api\StoreContactMethodRequest;
+use App\Http\Requests\Api\UpdateContactMethodRequest;
 use App\Models\ContactMethod;
 use App\Rules\PlainTextOnly;
 use App\Services\AuditLogger;
 use App\Services\AvatarProcessor;
+use App\Services\ContactPlatforms;
 use App\Services\PlanEntitlements;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -14,19 +18,227 @@ use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * The customer's own profile: display name and the contact details they can
- * store. Storing a detail is open to everyone; *showing* it to people who
- * scan their tag is what needs the Pro plan, and nothing is shown unless the
- * owner switches it on — the default is hidden, so a visitor only ever gets
- * to send a message. Visibility is enforced here on write and again on every
- * scan-page render (see PublicContacts).
+ * The customer's own profile and what visitors may see of it.
+ *
+ * Default: visitors see nothing (not the name, not the phone, no methods) and
+ * can only send a message. The owner switches items on one by one.
+ *   - Basic: the name, the phone number and one emergency contact can be shown.
+ *   - Plus:  also any number of extra contact platforms (Instagram, WhatsApp...).
+ * Every rule is enforced here on write and again on every scan-page render
+ * (see PublicContacts) — the app only mirrors it.
  */
 class ProfileController extends Controller
 {
-    /** request key => contact_methods.type */
-    private const FIELDS = ['phone' => 'phone', 'instagram' => 'instagram', 'extra' => 'other'];
+    private const MAX_METHODS = 15;
 
     public function __construct(private readonly PlanEntitlements $plans, private readonly AvatarProcessor $avatars) {}
+
+    public function show(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $plan = $this->plans->planFor($user);
+        $methods = $user->contactMethods()->orderBy('id')->get();
+        $phone = $methods->firstWhere('type', 'phone');
+        $emergency = $user->emergencyContacts()->where('status', 'active')->orderBy('priority')->first();
+
+        return response()->json([
+            'name' => $user->name,
+            'phone' => $user->phone,
+            'plan' => $plan->slug,
+            'plan_name' => $plan->name_ar,
+            'has_avatar' => (bool) $user->avatar_path,
+            'avatar_version' => $user->updated_at?->timestamp,
+            'show_name' => (bool) $user->show_name_publicly,
+            'can_add_methods' => $plan->allowsExtraMethods(),
+            'contact' => [
+                'phone' => [
+                    'value' => $phone?->value,
+                    'visible' => $phone?->privacy_state === 'public',
+                    'can_show' => $plan->allowsPublicContact('phone'),
+                ],
+            ],
+            'methods' => $methods->where('type', '!=', 'phone')->values()->map(fn (ContactMethod $m) => [
+                'id' => $m->id,
+                'type' => $m->type,
+                'label' => ContactPlatforms::label($m->type, $m->label),
+                'value' => $m->value,
+                'visible' => $m->privacy_state === 'public',
+                'can_show' => $plan->allowsPublicContact($m->type),
+            ]),
+            'platforms' => collect(ContactPlatforms::all())
+                ->except('phone')
+                ->map(fn ($p, $type) => ['type' => $type, 'label' => $p['label'], 'hint' => $p['hint']])
+                ->values(),
+            'emergency' => $emergency ? [
+                'name' => $emergency->name,
+                'relationship' => $emergency->relationship,
+                'phone' => $emergency->phone,
+                'visible' => (bool) $emergency->is_public,
+                'can_show' => $plan->allowsEmergencyContact(),
+            ] : null,
+        ]);
+    }
+
+    public function updateName(Request $request): JsonResponse
+    {
+        $data = $request->validate(['name' => ['required', 'string', 'min:2', 'max:100', new PlainTextOnly]]);
+
+        $request->user()->update(['name' => trim($data['name'])]);
+        AuditLogger::log('profile.name_updated', 'customer', $request->user()->id, 'User', $request->user()->id, 'success', [], $request);
+
+        return $this->show($request);
+    }
+
+    /** Whether visitors may see the owner's name. Off by default. */
+    public function updateVisibility(Request $request): JsonResponse
+    {
+        $data = $request->validate(['show_name' => ['required', 'boolean']]);
+
+        $request->user()->update(['show_name_publicly' => (bool) $data['show_name']]);
+        AuditLogger::log('profile.visibility_updated', 'customer', $request->user()->id, 'User', $request->user()->id, 'success', $data, $request);
+
+        return $this->show($request);
+    }
+
+    /** The phone number shown to visitors (a Basic feature). Empty value removes it. */
+    public function updateContact(Request $request): JsonResponse
+    {
+        $user = $request->user();
+        $plan = $this->plans->planFor($user);
+
+        $data = $request->validate([
+            'phone' => ['required', 'array'],
+            'phone.value' => ['nullable', 'string'],
+            'phone.visible' => ['sometimes', 'boolean'],
+        ]);
+
+        $value = trim((string) ($data['phone']['value'] ?? ''));
+        $visible = (bool) ($data['phone']['visible'] ?? false);
+        $existing = ContactMethod::where('user_id', $user->id)->where('type', 'phone')->first();
+
+        if ($value === '') {
+            $existing?->delete();
+
+            return $this->show($request);
+        }
+
+        $clean = ContactPlatforms::normalize('phone', $value);
+        if ($clean === null) {
+            return response()->json(['message' => 'رقم الهاتف غير صالح.', 'errors' => ['phone.value' => ['رقم الهاتف غير صالح.']]], 422);
+        }
+        if ($visible && ! $plan->allowsPublicContact('phone')) {
+            return $this->planRequired();
+        }
+
+        ContactMethod::updateOrCreate(
+            ['user_id' => $user->id, 'type' => 'phone'],
+            ['value' => $clean, 'privacy_state' => $visible ? 'public' : 'private']
+        );
+        AuditLogger::log('profile.contact_updated', 'customer', $user->id, 'User', $user->id, 'success', [], $request);
+
+        return $this->show($request);
+    }
+
+    /** Adds a contact platform. Plus only — checked here, not just hidden in the app. */
+    public function storeMethod(StoreContactMethodRequest $request): JsonResponse
+    {
+        $user = $request->user();
+        $plan = $this->plans->planFor($user);
+
+        if (! $plan->allowsExtraMethods()) {
+            return $this->planRequired();
+        }
+        if ($user->contactMethods()->count() >= self::MAX_METHODS) {
+            return response()->json(['error' => ['code' => 'LIMIT_REACHED', 'message' => 'وصلت إلى الحد الأقصى من طرق التواصل.']], 422);
+        }
+
+        $type = $request->validated('type');
+        $visible = (bool) ($request->validated('visible') ?? false);
+
+        // One entry per platform, except "other" which may repeat with its own label.
+        if ($type !== 'other' && $user->contactMethods()->where('type', $type)->exists()) {
+            return response()->json(['error' => ['code' => 'ALREADY_EXISTS', 'message' => 'أضفت هذه المنصة مسبقًا. عدّلها بدل إضافتها من جديد.']], 422);
+        }
+        if ($visible && ! $plan->allowsPublicContact($type)) {
+            return $this->planRequired();
+        }
+
+        $user->contactMethods()->create([
+            'type' => $type,
+            'value' => $request->cleanValue(),
+            'label' => $type === 'other' ? $request->validated('label') : null,
+            'privacy_state' => $visible ? 'public' : 'private',
+        ]);
+        AuditLogger::log('profile.method_added', 'customer', $user->id, 'User', $user->id, 'success', ['type' => $type], $request);
+
+        return $this->show($request);
+    }
+
+    public function updateMethod(UpdateContactMethodRequest $request, int $method): JsonResponse
+    {
+        $contact = $this->ownedMethod($request, $method);
+        $this->authorize('update', $contact);
+        $plan = $this->plans->planFor($request->user());
+
+        $visible = $request->validated('visible');
+        if ($visible === true && ! $plan->allowsPublicContact($contact->type)) {
+            return $this->planRequired();
+        }
+        // Editing a value counts as changing extra methods, which needs Plus.
+        if ($request->filled('value') && $contact->type !== 'phone' && ! $plan->allowsExtraMethods()) {
+            return $this->planRequired();
+        }
+
+        $update = [];
+        if ($request->filled('value')) {
+            $update['value'] = $request->cleanValue($contact->type);
+        }
+        if ($visible !== null) {
+            $update['privacy_state'] = $visible ? 'public' : 'private';
+        }
+        $contact->update($update);
+
+        return $this->show($request);
+    }
+
+    /** Removing is always allowed, even after a downgrade. */
+    public function destroyMethod(Request $request, int $method): JsonResponse
+    {
+        $contact = $this->ownedMethod($request, $method);
+        $this->authorize('delete', $contact);
+        $contact->delete();
+
+        return $this->show($request);
+    }
+
+    public function updateEmergency(EmergencyContactRequest $request): JsonResponse
+    {
+        $user = $request->user();
+        $plan = $this->plans->planFor($user);
+        $visible = (bool) ($request->validated('visible') ?? false);
+
+        if ($visible && ! $plan->allowsEmergencyContact()) {
+            return $this->planRequired();
+        }
+
+        $user->emergencyContacts()->updateOrCreate(['priority' => 1], [
+            'name' => trim($request->validated('name')),
+            'relationship' => $request->validated('relationship'),
+            'phone' => $request->validated('phone'),
+            'status' => 'active',
+            'is_public' => $visible,
+        ]);
+        AuditLogger::log('profile.emergency_updated', 'customer', $user->id, 'User', $user->id, 'success', [], $request);
+
+        return $this->show($request);
+    }
+
+    public function destroyEmergency(Request $request): JsonResponse
+    {
+        $request->user()->emergencyContacts()->delete();
+
+        return $this->show($request);
+    }
 
     public function avatar(Request $request): Response
     {
@@ -74,95 +286,16 @@ class ProfileController extends Controller
         return $this->show($request);
     }
 
-    public function show(Request $request): JsonResponse
+    private function ownedMethod(Request $request, int $id): ContactMethod
     {
-        $user = $request->user();
-        $plan = $this->plans->planFor($user);
-        $stored = $user->contactMethods()->whereIn('type', array_values(self::FIELDS))->get()->keyBy('type');
-
-        $contact = [];
-        foreach (self::FIELDS as $key => $type) {
-            $method = $stored->get($type);
-            $contact[$key] = [
-                'value' => $method?->value,
-                'visible' => $method?->privacy_state === 'public',
-                // false on Basic: the owner may store the detail but cannot show it.
-                'can_show' => $plan->allowsPublicContact($type),
-            ];
-        }
-
-        return response()->json([
-            'name' => $user->name,
-            'phone' => $user->phone,
-            'plan' => $plan->slug,
-            'has_avatar' => (bool) $user->avatar_path,
-            'avatar_version' => $user->updated_at?->timestamp,
-            'contact' => $contact,
-        ]);
+        return $request->user()->contactMethods()->findOrFail($id);
     }
 
-    public function updateName(Request $request): JsonResponse
+    private function planRequired(): JsonResponse
     {
-        $data = $request->validate(['name' => ['required', 'string', 'min:2', 'max:100', new PlainTextOnly]]);
-
-        $request->user()->update(['name' => trim($data['name'])]);
-        AuditLogger::log('profile.name_updated', 'customer', $request->user()->id, 'User', $request->user()->id, 'success', [], $request);
-
-        return $this->show($request);
-    }
-
-    public function updateContact(Request $request): JsonResponse
-    {
-        $user = $request->user();
-        $plan = $this->plans->planFor($user);
-
-        $data = $request->validate([
-            'phone' => ['sometimes', 'array'],
-            'phone.value' => ['nullable', 'string', 'regex:/^\+?[1-9]\d{7,14}$/'],
-            'phone.visible' => ['sometimes', 'boolean'],
-            'instagram' => ['sometimes', 'array'],
-            'instagram.value' => ['nullable', 'string', 'regex:/^@?[A-Za-z0-9._]{1,30}$/'],
-            'instagram.visible' => ['sometimes', 'boolean'],
-            'extra' => ['sometimes', 'array'],
-            'extra.value' => ['nullable', 'string', 'max:200', new PlainTextOnly],
-            'extra.visible' => ['sometimes', 'boolean'],
-        ]);
-
-        // Check every requested change before saving any, so a refusal never leaves a half-applied update.
-        foreach (self::FIELDS as $key => $type) {
-            if (($data[$key]['visible'] ?? false) && ! $plan->allowsPublicContact($type)) {
-                return response()->json(['error' => [
-                    'code' => 'PLAN_REQUIRED',
-                    'message' => 'إظهار بيانات التواصل للزوار متاح في الباقة الاحترافية فقط.',
-                ]], 403);
-            }
-        }
-
-        foreach (self::FIELDS as $key => $type) {
-            if (! isset($data[$key])) {
-                continue;
-            }
-
-            $existing = ContactMethod::where('user_id', $user->id)->where('type', $type)->first();
-            $value = array_key_exists('value', $data[$key]) ? trim((string) $data[$key]['value']) : ($existing?->value ?? '');
-            $value = $key === 'instagram' ? ltrim($value, '@') : $value;
-
-            if ($value === '') {
-                $existing?->delete();
-
-                continue;
-            }
-
-            $visible = array_key_exists('visible', $data[$key]) ? (bool) $data[$key]['visible'] : ($existing?->privacy_state === 'public');
-
-            ContactMethod::updateOrCreate(
-                ['user_id' => $user->id, 'type' => $type],
-                ['value' => $value, 'label' => $type === 'other' ? 'معلومات إضافية' : null, 'privacy_state' => $visible ? 'public' : 'private']
-            );
-        }
-
-        AuditLogger::log('profile.contact_updated', 'customer', $user->id, 'User', $user->id, 'success', [], $request);
-
-        return $this->show($request);
+        return response()->json(['error' => [
+            'code' => 'PLAN_REQUIRED',
+            'message' => 'هذه الميزة متاحة في باقة Plus. رقّ اشتراكك لتفعيلها.',
+        ]], 403);
     }
 }

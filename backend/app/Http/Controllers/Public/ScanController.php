@@ -14,6 +14,7 @@ use App\Notifications\TagActionNotification;
 use App\Rules\PlainTextOnly;
 use App\Services\PublicContacts;
 use App\Services\SecurityEventLogger;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -49,6 +50,8 @@ class ScanController extends Controller
             'vehicle' => $tag->vehicle,
             'publicAttributes' => $tag->vehicle->publicAttributes(),
             'ownerContacts' => app(PublicContacts::class)->visibleTo($tag->vehicle->user),
+            'ownerName' => app(PublicContacts::class)->nameFor($tag->vehicle->user),
+            'emergency' => app(PublicContacts::class)->emergencyFor($tag->vehicle->user),
         ]);
     }
 
@@ -98,6 +101,7 @@ class ScanController extends Controller
             'tag_id' => $tag->id,
             'visitor_name' => $request->validated('visitor_name'),
             'visitor_phone' => $request->validated('visitor_phone'),
+            'reason' => $request->validated('reason'),
             'message' => $message,
             'request_ip' => $request->ip(),
             'user_agent' => $request->userAgent(),
@@ -122,6 +126,24 @@ class ScanController extends Controller
         }
 
         return view('public.thread', ['tag' => $tag, 'thread' => $contactRequest->load('messages')]);
+    }
+
+    /** Polled by the thread page so replies appear without a manual refresh. */
+    public function threadMessages(Request $request, string $token, string $uuid): JsonResponse
+    {
+        $tag = $this->resolveActiveTag($token, $request);
+        $contactRequest = $tag ? $this->findThread($tag, $uuid) : null;
+        abort_if(! $contactRequest, 404);
+
+        $items = collect([['sender' => 'visitor', 'body' => $contactRequest->message, 'at' => $contactRequest->created_at]])
+            ->concat($contactRequest->messages->map(fn ($m) => ['sender' => $m->sender, 'body' => $m->body, 'at' => $m->created_at]));
+
+        return response()->json([
+            'status' => $contactRequest->status,
+            'messages' => $items->map(fn ($i) => [
+                'sender' => $i['sender'], 'body' => $i['body'], 'at' => $i['at']->format('Y-m-d H:i'),
+            ])->values(),
+        ])->header('Cache-Control', 'no-store');
     }
 
     public function threadReply(Request $request, string $token, string $uuid): RedirectResponse
@@ -155,6 +177,9 @@ class ScanController extends Controller
     {
         $labels = [
             'damage' => 'لاحظت ضررًا في المركبة',
+            'malfunction' => 'يوجد عطل',
+            'safety' => 'توجد مشكلة تتعلق بالسلامة',
+            'assistance' => 'أحتاج إلى مساعدة',
             'open' => 'باب أو نافذة المركبة مفتوحة',
             'question' => 'لدي استفسار بخصوص المركبة',
             'other' => 'سبب آخر',

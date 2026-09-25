@@ -41,7 +41,7 @@ class PlanEntitlements
             [
                 'name_ar' => 'الأساسية', 'name_en' => 'Basic', 'price_cents' => 0, 'currency' => 'IQD',
                 'billing_period_days' => 365, 'is_active' => true, 'sort_order' => 1,
-                'features' => ['messaging' => true, 'public_contacts' => []],
+                'features' => ['messaging' => true, 'emergency_contact' => true, 'extra_contact_methods' => false, 'public_contacts' => ['phone']],
             ]
         );
     }
@@ -56,8 +56,8 @@ class PlanEntitlements
         return $this->planFor($user)->allowsPublicContact($contactType);
     }
 
-    public function hasProFeatures(User $user): bool
+    public function canAddExtraMethods(User $user): bool
     {
-        return $this->planFor($user)->publicContactTypes() !== [];
+        return $this->planFor($user)->allowsExtraMethods();
     }
 }

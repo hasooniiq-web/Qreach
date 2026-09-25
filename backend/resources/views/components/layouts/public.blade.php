@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css'])
+    @stack('head')
 </head>
 <body class="min-h-dvh bg-ink-50 text-ink-900">
     <div class="mx-auto max-w-md min-h-dvh flex flex-col">

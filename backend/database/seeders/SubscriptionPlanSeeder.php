@@ -25,18 +25,18 @@ class SubscriptionPlanSeeder extends Seeder
     {
         SubscriptionPlan::updateOrCreate(['slug' => SubscriptionPlan::BASIC], [
             'name_ar' => 'الأساسية', 'name_en' => 'Basic',
-            'description_ar' => 'التواصل عبر الرسائل فقط — يراسلك الزائر دون أن يرى أي بيانات تواصل مباشرة.',
+            'description_ar' => 'استخدام التطبيق + الرسائل + عرض اسمك ورقمك وجهة اتصال الطوارئ حسب اختيارك.',
             'currency' => 'IQD', 'billing_period_days' => 365,
             'max_vehicles' => 1, 'max_tags' => 1, 'is_active' => true, 'sort_order' => 1,
-            'features' => ['messaging' => true, 'public_contacts' => []],
+            'features' => ['messaging' => true, 'emergency_contact' => true, 'extra_contact_methods' => false, 'public_contacts' => ['phone']],
         ] + (SubscriptionPlan::where('slug', SubscriptionPlan::BASIC)->exists() ? [] : ['price_cents' => 0]));
 
-        SubscriptionPlan::updateOrCreate(['slug' => SubscriptionPlan::PRO], [
-            'name_ar' => 'الاحترافية', 'name_en' => 'Pro',
-            'description_ar' => 'الرسائل + عرض رقم هاتفك وحساب إنستغرام ومعلومات تواصل إضافية للزائر مباشرة.',
+        SubscriptionPlan::updateOrCreate(['slug' => SubscriptionPlan::PLUS], [
+            'name_ar' => 'بلس', 'name_en' => 'Plus',
+            'description_ar' => 'كل ما في الأساسية + إضافة حسابات وطرق تواصل (إنستغرام، فيسبوك، سناب، تيك توك، واتساب...) والتحكم بما يراه الزائر.',
             'currency' => 'IQD', 'billing_period_days' => 365,
             'max_vehicles' => 5, 'max_tags' => 10, 'is_active' => true, 'sort_order' => 2,
-            'features' => ['messaging' => true, 'public_contacts' => SubscriptionPlan::PUBLIC_CONTACT_TYPES],
-        ] + (SubscriptionPlan::where('slug', SubscriptionPlan::PRO)->exists() ? [] : ['price_cents' => 25000]));
+            'features' => ['messaging' => true, 'emergency_contact' => true, 'extra_contact_methods' => true, 'public_contacts' => SubscriptionPlan::PUBLIC_CONTACT_TYPES],
+        ] + (SubscriptionPlan::where('slug', SubscriptionPlan::PLUS)->exists() ? [] : ['price_cents' => 25000]));
     }
 }

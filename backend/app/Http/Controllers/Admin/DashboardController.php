@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\ContactRequest;
+use App\Models\PlanUpgradeRequest;
 use App\Models\Scan;
 use App\Models\SecurityEvent;
 use App\Models\Tag;
 use App\Models\User;
 use App\Models\Vehicle;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\View\View;
@@ -19,6 +21,15 @@ use Illuminate\View\View;
  */
 class DashboardController extends Controller
 {
+    /** Counts for the sidebar badges; polled so admins see new work without reloading. */
+    public function poll(): JsonResponse
+    {
+        return response()->json([
+            'contact_requests' => ContactRequest::where('status', 'new')->count(),
+            'upgrade_requests' => PlanUpgradeRequest::where('status', 'pending')->count(),
+        ])->header('Cache-Control', 'no-store');
+    }
+
     public function index(): View
     {
         $stats = [

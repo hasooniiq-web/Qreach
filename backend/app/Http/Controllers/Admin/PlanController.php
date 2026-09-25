@@ -58,7 +58,13 @@ class PlanController extends Controller
             'price_cents' => $data['price_cents'],
             'billing_period_days' => $data['billing_period_days'],
             'is_active' => (bool) ($data['is_active'] ?? false),
-            'features' => ['messaging' => true, 'public_contacts' => array_values($data['public_contacts'] ?? [])],
+            'features' => [
+                'messaging' => true,
+                'emergency_contact' => $plan->allowsEmergencyContact(),
+                // Any platform beyond the phone number means the plan may create extra methods.
+                'extra_contact_methods' => array_diff($data['public_contacts'] ?? [], ['phone']) !== [],
+                'public_contacts' => array_values($data['public_contacts'] ?? []),
+            ],
         ]);
 
         AuditLogger::log('admin.plan_updated', 'admin', $request->user('admin')->id, 'SubscriptionPlan', $plan->id, 'success', [

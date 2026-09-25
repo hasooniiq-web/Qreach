@@ -8,6 +8,9 @@ class VehicleModel extends Equatable {
     this.nickname,
     required this.plateNumber,
     this.plateCountry,
+    this.plateType = 'private',
+    this.plateLetter,
+    this.plateGovernorate,
     this.make,
     this.model,
     this.year,
@@ -22,6 +25,11 @@ class VehicleModel extends Equatable {
   final String? nickname;
   final String plateNumber;
   final String? plateCountry;
+
+  /// private | government | truck | taxi | agricultural
+  final String plateType;
+  final String? plateLetter;
+  final String? plateGovernorate;
   final String? make;
   final String? model;
   final int? year;
@@ -39,6 +47,9 @@ class VehicleModel extends Equatable {
         nickname: json['nickname'] as String?,
         plateNumber: json['plate_number'] as String,
         plateCountry: json['plate_country'] as String?,
+        plateType: json['plate_type'] as String? ?? 'private',
+        plateLetter: json['plate_letter'] as String?,
+        plateGovernorate: json['plate_governorate'] as String?,
         make: json['make'] as String?,
         model: json['model'] as String?,
         year: json['year'] as int?,
@@ -55,6 +66,11 @@ class VehicleModel extends Equatable {
         'plate_number': plateNumber,
         if (nickname != null && nickname!.isNotEmpty) 'nickname': nickname,
         if (plateCountry != null) 'plate_country': plateCountry,
+        'plate_type': plateType,
+        if (plateLetter != null && plateLetter!.isNotEmpty)
+          'plate_letter': plateLetter,
+        if (plateGovernorate != null && plateGovernorate!.isNotEmpty)
+          'plate_governorate': plateGovernorate,
         if (make != null) 'make': make,
         if (model != null) 'model': model,
         if (year != null) 'year': year,
@@ -69,6 +85,9 @@ class VehicleModel extends Equatable {
         nickname,
         plateNumber,
         plateCountry,
+        plateType,
+        plateLetter,
+        plateGovernorate,
         make,
         model,
         year,

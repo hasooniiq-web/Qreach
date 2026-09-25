@@ -551,13 +551,13 @@ abstract class AppLocalizations {
   /// No description provided for @featurePublicInstagram.
   ///
   /// In ar, this message translates to:
-  /// **'عرض حساب إنستغرام'**
+  /// **'إضافة حسابات التواصل (إنستغرام، فيسبوك، سناب...)'**
   String get featurePublicInstagram;
 
   /// No description provided for @featurePublicExtra.
   ///
   /// In ar, this message translates to:
-  /// **'معلومات تواصل إضافية'**
+  /// **'التحكم بما يراه الزائر من كل حساب'**
   String get featurePublicExtra;
 
   /// No description provided for @plansTitle.
@@ -665,7 +665,7 @@ abstract class AppLocalizations {
   /// No description provided for @publicContactLockedTitle.
   ///
   /// In ar, this message translates to:
-  /// **'متاحة في الباقة الاحترافية'**
+  /// **'متاحة في باقة Plus'**
   String get publicContactLockedTitle;
 
   /// No description provided for @publicContactLockedBody.
@@ -755,13 +755,13 @@ abstract class AppLocalizations {
   /// No description provided for @homeUpgradeTitle.
   ///
   /// In ar, this message translates to:
-  /// **'أظهر بيانات تواصلك للزوار'**
+  /// **'أضف حسابات التواصل مع Plus'**
   String get homeUpgradeTitle;
 
   /// No description provided for @homeUpgradeBody.
   ///
   /// In ar, this message translates to:
-  /// **'الباقة الاحترافية تعرض رقمك وإنستغرام عند مسح الرمز.'**
+  /// **'باقة Plus تتيح إضافة إنستغرام وفيسبوك وسناب وغيرها وعرضها للزائر.'**
   String get homeUpgradeBody;
 
   /// No description provided for @tagsLinkedCount.
@@ -1079,7 +1079,7 @@ abstract class AppLocalizations {
   /// No description provided for @proBadge.
   ///
   /// In ar, this message translates to:
-  /// **'احترافية'**
+  /// **'Plus'**
   String get proBadge;
 
   /// No description provided for @visibilityNoneShown.
@@ -1097,7 +1097,7 @@ abstract class AppLocalizations {
   /// No description provided for @visibilityLockedHint.
   ///
   /// In ar, this message translates to:
-  /// **'إظهار المعلومات للزوار متاح في الباقة الاحترافية.'**
+  /// **'إضافة حسابات تواصل أخرى متاحة في باقة Plus.'**
   String get visibilityLockedHint;
 
   /// No description provided for @scanManualTitle.
@@ -1279,6 +1279,222 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'English'**
   String get languageEnglish;
+
+  /// No description provided for @plateTypeTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'نوع اللوحة'**
+  String get plateTypeTitle;
+
+  /// No description provided for @plateLetter.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحرف'**
+  String get plateLetter;
+
+  /// No description provided for @plateGovernorate.
+  ///
+  /// In ar, this message translates to:
+  /// **'المحافظة'**
+  String get plateGovernorate;
+
+  /// No description provided for @plateTypePrivate.
+  ///
+  /// In ar, this message translates to:
+  /// **'خصوصي'**
+  String get plateTypePrivate;
+
+  /// No description provided for @plateTypeGovernment.
+  ///
+  /// In ar, this message translates to:
+  /// **'حكومي'**
+  String get plateTypeGovernment;
+
+  /// No description provided for @plateTypeTruck.
+  ///
+  /// In ar, this message translates to:
+  /// **'حمل'**
+  String get plateTypeTruck;
+
+  /// No description provided for @plateTypeTaxi.
+  ///
+  /// In ar, this message translates to:
+  /// **'أجرة'**
+  String get plateTypeTaxi;
+
+  /// No description provided for @plateTypeAgricultural.
+  ///
+  /// In ar, this message translates to:
+  /// **'زراعي'**
+  String get plateTypeAgricultural;
+
+  /// No description provided for @homeLinked.
+  ///
+  /// In ar, this message translates to:
+  /// **'مربوطة'**
+  String get homeLinked;
+
+  /// No description provided for @homeNotLinked.
+  ///
+  /// In ar, this message translates to:
+  /// **'غير مربوطة'**
+  String get homeNotLinked;
+
+  /// No description provided for @homeOwnerLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'المالك'**
+  String get homeOwnerLabel;
+
+  /// No description provided for @homeConversations.
+  ///
+  /// In ar, this message translates to:
+  /// **'آخر المحادثات'**
+  String get homeConversations;
+
+  /// No description provided for @homeConversationsEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد محادثات بعد.'**
+  String get homeConversationsEmpty;
+
+  /// No description provided for @homeActivities.
+  ///
+  /// In ar, this message translates to:
+  /// **'النشاطات'**
+  String get homeActivities;
+
+  /// No description provided for @actLatest.
+  ///
+  /// In ar, this message translates to:
+  /// **'آخر النشاطات'**
+  String get actLatest;
+
+  /// No description provided for @actCommunication.
+  ///
+  /// In ar, this message translates to:
+  /// **'آخر تواصل'**
+  String get actCommunication;
+
+  /// No description provided for @actAccount.
+  ///
+  /// In ar, this message translates to:
+  /// **'حسابي'**
+  String get actAccount;
+
+  /// No description provided for @actReports.
+  ///
+  /// In ar, this message translates to:
+  /// **'البلاغات'**
+  String get actReports;
+
+  /// No description provided for @actNone.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا شيء بعد'**
+  String get actNone;
+
+  /// No description provided for @youPrefix.
+  ///
+  /// In ar, this message translates to:
+  /// **'أنت: '**
+  String get youPrefix;
+
+  /// No description provided for @visShowName.
+  ///
+  /// In ar, this message translates to:
+  /// **'إظهار اسمي للزائر'**
+  String get visShowName;
+
+  /// No description provided for @visNameHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مخفي افتراضيًا. الزائر لا يرى اسمك إلا إذا فعّلت هذا.'**
+  String get visNameHint;
+
+  /// No description provided for @emergencySection.
+  ///
+  /// In ar, this message translates to:
+  /// **'جهة اتصال الطوارئ'**
+  String get emergencySection;
+
+  /// No description provided for @emergencyHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثل الأب أو الأم — تظهر للزائر فقط إذا فعّلت العرض.'**
+  String get emergencyHint;
+
+  /// No description provided for @emergencyName.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاسم'**
+  String get emergencyName;
+
+  /// No description provided for @emergencyRelation.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصلة (أب، أم...)'**
+  String get emergencyRelation;
+
+  /// No description provided for @emergencyPhone.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الهاتف'**
+  String get emergencyPhone;
+
+  /// No description provided for @methodsSection.
+  ///
+  /// In ar, this message translates to:
+  /// **'طرق التواصل الإضافية'**
+  String get methodsSection;
+
+  /// No description provided for @addMethod.
+  ///
+  /// In ar, this message translates to:
+  /// **'إضافة طريقة تواصل'**
+  String get addMethod;
+
+  /// No description provided for @methodValue.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحساب أو الرقم'**
+  String get methodValue;
+
+  /// No description provided for @methodLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاسم الظاهر'**
+  String get methodLabel;
+
+  /// No description provided for @methodsLockedTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'متاح في باقة Plus'**
+  String get methodsLockedTitle;
+
+  /// No description provided for @methodsLockedBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'أضف إنستغرام وفيسبوك وسناب وتيك توك وواتساب وغيرها، وتحكّم بما يراه الزائر.'**
+  String get methodsLockedBody;
+
+  /// No description provided for @upgradeToPlus.
+  ///
+  /// In ar, this message translates to:
+  /// **'الترقية إلى Plus'**
+  String get upgradeToPlus;
+
+  /// No description provided for @removeMethod.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف'**
+  String get removeMethod;
+
+  /// No description provided for @methodsEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم تضف أي طريقة تواصل بعد.'**
+  String get methodsEmpty;
 }
 
 class _AppLocalizationsDelegate

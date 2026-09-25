@@ -46,7 +46,9 @@ All routes below require Sanctum auth and enforce ownership via `VehiclePolicy` 
 - `GET /notifications` — the owner's feed (newest first, 20/page): id, type, title, message, vehicle name, `read`, time; plus `unread_count`. `PUT /notifications/{id}/read` and `PUT /notifications/read-all` mark read; both are scoped to the caller (another user's id returns 404).
 - `GET /subscription` — the plan in force (`basic` when there is no active subscription), its price/currency/period, `source` (`default`|`subscription`), the latest subscription's `status`/`current_period_ends_at` (so a lapsed Pro can be explained), all active plans, and `pending_upgrade`.
 - `POST /subscription/upgrade-requests` `{plan}` — ask for Pro (there is no payment gateway; an admin approves). Errors: `ALREADY_ON_PLAN` (409), `UPGRADE_PENDING` (409), `PLAN_NOT_AVAILABLE` (422).
-- `GET /profile` — name, login phone, plan, and `contact.{phone|instagram|extra}` = `{value, visible, can_show}`. Everything is hidden by default.
+- `GET /profile` — name, plan, `show_name`, `contact.phone`, `methods[]`, `platforms[]`, `emergency`, `can_add_methods`. Everything is hidden by default.
+- `PUT /profile/visibility {show_name}`, `PUT /profile/contact {phone:{value,visible}}`, `POST /profile/methods` (Plus only), `PUT|DELETE /profile/methods/{id}`, `PUT|DELETE /profile/emergency`.
+- `GET /home` — latest 3 conversations + activity areas (latest, communication, account, reports).
 - `PUT /profile` `{name}` — rename.
 - `PUT /profile/contact` `{phone?, instagram?, extra?}` each `{value, visible}` — empty value clears; `visible:true` on Basic returns `403 PLAN_REQUIRED`. Values are kept if the plan lapses but stop being shown.
 - `DELETE /vehicles/{vehicle}/tag` — remove the vehicle's single code (404 `NO_TAG`). Activating a second code returns `422 VEHICLE_ALREADY_HAS_TAG`.

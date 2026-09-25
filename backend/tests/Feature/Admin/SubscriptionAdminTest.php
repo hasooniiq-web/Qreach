@@ -39,7 +39,7 @@ class SubscriptionAdminTest extends TestCase
 
     private function pro(): SubscriptionPlan
     {
-        return SubscriptionPlan::where('slug', 'pro')->firstOrFail();
+        return SubscriptionPlan::where('slug', 'plus')->firstOrFail();
     }
 
     public function test_super_admin_sees_subscribers_with_plan_price_and_status(): void
@@ -54,7 +54,7 @@ class SubscriptionAdminTest extends TestCase
         $this->actingAs($super, 'admin')->get('/admin/subscriptions')
             ->assertOk()
             ->assertSee('المشترك التجريبي')
-            ->assertSee('الاحترافية')
+            ->assertSee('بلس')
             ->assertSee('25,000')
             ->assertSee('فعّال');
     }
@@ -80,7 +80,7 @@ class SubscriptionAdminTest extends TestCase
         $this->actingAs($support, 'admin')->get('/admin/subscriptions')->assertOk();
         $this->actingAs($support, 'admin')->get('/admin/plans')->assertOk();
 
-        $this->actingAs($support, 'admin')->post("/admin/users/{$user->uuid}/subscription", ['plan' => 'pro'])->assertForbidden();
+        $this->actingAs($support, 'admin')->post("/admin/users/{$user->uuid}/subscription", ['plan' => 'plus'])->assertForbidden();
         $this->assertSame(0, Subscription::count());
 
         $this->actingAs($support, 'admin')->put("/admin/plans/{$this->pro()->id}", [
@@ -103,7 +103,7 @@ class SubscriptionAdminTest extends TestCase
         $user = User::factory()->create();
 
         $this->actingAs($super, 'admin')
-            ->post("/admin/users/{$user->uuid}/subscription", ['plan' => 'pro'])
+            ->post("/admin/users/{$user->uuid}/subscription", ['plan' => 'plus'])
             ->assertRedirect();
 
         $sub = Subscription::where('user_id', $user->id)->firstOrFail();
@@ -117,9 +117,9 @@ class SubscriptionAdminTest extends TestCase
         $super = $this->adminWithRole('super_admin');
         $user = User::factory()->create();
 
-        $this->actingAs($super, 'admin')->post("/admin/users/{$user->uuid}/subscription", ['plan' => 'pro', 'days' => 30]);
+        $this->actingAs($super, 'admin')->post("/admin/users/{$user->uuid}/subscription", ['plan' => 'plus', 'days' => 30]);
         $end = Subscription::firstOrFail()->current_period_ends_at->copy();
-        $this->actingAs($super, 'admin')->post("/admin/users/{$user->uuid}/subscription", ['plan' => 'pro', 'days' => 30]);
+        $this->actingAs($super, 'admin')->post("/admin/users/{$user->uuid}/subscription", ['plan' => 'plus', 'days' => 30]);
 
         $this->assertSame(1, Subscription::count());
         $this->assertEquals($end->copy()->addDays(30)->toDateString(), Subscription::firstOrFail()->current_period_ends_at->toDateString());
@@ -163,7 +163,7 @@ class SubscriptionAdminTest extends TestCase
 
         $this->assertSame('approved', $request->fresh()->status);
         $this->assertSame($super->id, $request->fresh()->handled_by);
-        $this->assertSame('pro', app(PlanEntitlements::class)->planFor($user)->slug);
+        $this->assertSame('plus', app(PlanEntitlements::class)->planFor($user)->slug);
 
         // A handled request can't be processed twice.
         $this->actingAs($super, 'admin')->post("/admin/subscriptions/requests/{$request->id}/approve")->assertStatus(409);
@@ -189,7 +189,7 @@ class SubscriptionAdminTest extends TestCase
         $basic = SubscriptionPlan::where('slug', 'basic')->firstOrFail();
 
         $this->actingAs($super, 'admin')->put("/admin/plans/{$pro->id}", [
-            'name_ar' => 'الاحترافية', 'price_cents' => 40000, 'billing_period_days' => 365, 'is_active' => 1,
+            'name_ar' => 'بلس', 'price_cents' => 40000, 'billing_period_days' => 365, 'is_active' => 1,
             'public_contacts' => ['phone', 'instagram'],
         ])->assertRedirect();
 
@@ -215,7 +215,7 @@ class SubscriptionAdminTest extends TestCase
             'current_period_starts_at' => now(), 'current_period_ends_at' => now()->addYear(),
         ]);
 
-        $this->actingAs($super, 'admin')->get("/admin/users/{$user->uuid}")->assertOk()->assertSee('الاشتراك')->assertSee('الاحترافية');
-        $this->actingAs($super, 'admin')->get('/admin/users')->assertOk()->assertSee('الاحترافية');
+        $this->actingAs($super, 'admin')->get("/admin/users/{$user->uuid}")->assertOk()->assertSee('الاشتراك')->assertSee('بلس');
+        $this->actingAs($super, 'admin')->get('/admin/users')->assertOk()->assertSee('بلس');
     }
 }

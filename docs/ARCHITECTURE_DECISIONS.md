@@ -60,3 +60,9 @@ Basic lets visitors only message the owner. Pro also lets the owner show a phone
 
 ## One code per vehicle
 A vehicle has at most one assigned code. `TagLifecycleService::activate` locks the vehicle row and refuses a second (`VEHICLE_ALREADY_HAS_TAG`); to change it the owner removes the code (`DELETE /vehicles/{id}/tag`, which revokes it) and links a new one.
+
+## Basic / Plus and visitor visibility
+Visitors see nothing about the owner by default — not the name, phone, emergency contact or any contact method. The owner switches items on individually. Basic may show the name, the phone number and one emergency contact; Plus additionally lets the owner add contact platforms (Instagram, WhatsApp, Snapchat, TikTok, X, Telegram, Facebook, LinkedIn, YouTube, website, email, other). What a plan allows lives in `subscription_plans.features` (`extra_contact_methods`, `emergency_contact`, `public_contacts`); `App\Services\PlanEntitlements` decides, the API refuses with `403 PLAN_REQUIRED` (`POST /profile/methods`, `visible:true` on a disallowed item) and `PublicContacts` re-checks on every scan-page render. Plus is activated by an admin (dashboard) or via the upgrade-request flow; there is no payment gateway yet.
+
+## Near-real-time updates
+Until server-side FCM is configured, freshness is polling: the app re-reads notifications, conversations and the home feed every 12 s while in the foreground (and on resume); the visitor's conversation page polls its JSON endpoint every 6 s; the dashboard sidebar badges poll `admin/poll` every 15 s.

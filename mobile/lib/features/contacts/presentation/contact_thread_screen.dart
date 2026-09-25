@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -30,9 +32,22 @@ class ContactThreadScreen extends ConsumerStatefulWidget {
 class _ContactThreadScreenState extends ConsumerState<ContactThreadScreen> {
   final _input = TextEditingController();
   bool _sending = false;
+  Timer? _live;
+
+  @override
+  void initState() {
+    super.initState();
+    // New visitor messages appear on their own while the conversation is open.
+    _live = Timer.periodic(const Duration(seconds: 6), (_) {
+      if (mounted && !_sending) {
+        ref.invalidate(contactThreadProvider(widget.requestId));
+      }
+    });
+  }
 
   @override
   void dispose() {
+    _live?.cancel();
     _input.dispose();
     super.dispose();
   }

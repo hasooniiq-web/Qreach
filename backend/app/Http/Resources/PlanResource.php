@@ -20,6 +20,8 @@ class PlanResource extends JsonResource
             'features' => [
                 'messaging' => $this->allowsMessaging(),
                 'public_contacts' => $this->publicContactTypes(),
+                'extra_contact_methods' => $this->allowsExtraMethods(),
+                'emergency_contact' => $this->allowsEmergencyContact(),
             ],
         ];
     }

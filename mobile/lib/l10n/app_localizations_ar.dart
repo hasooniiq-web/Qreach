@@ -247,10 +247,11 @@ class AppLocalizationsAr extends AppLocalizations {
   String get featurePublicPhone => 'عرض رقم هاتفك للزوار';
 
   @override
-  String get featurePublicInstagram => 'عرض حساب إنستغرام';
+  String get featurePublicInstagram =>
+      'إضافة حسابات التواصل (إنستغرام، فيسبوك، سناب...)';
 
   @override
-  String get featurePublicExtra => 'معلومات تواصل إضافية';
+  String get featurePublicExtra => 'التحكم بما يراه الزائر من كل حساب';
 
   @override
   String get plansTitle => 'الباقات';
@@ -312,7 +313,7 @@ class AppLocalizationsAr extends AppLocalizations {
       'تظهر لأي شخص يمسح رمز مركبتك. اختر ما تريد مشاركته.';
 
   @override
-  String get publicContactLockedTitle => 'متاحة في الباقة الاحترافية';
+  String get publicContactLockedTitle => 'متاحة في باقة Plus';
 
   @override
   String get publicContactLockedBody =>
@@ -358,11 +359,11 @@ class AppLocalizationsAr extends AppLocalizations {
   String get loadErrorTitle => 'تعذّر تحميل البيانات';
 
   @override
-  String get homeUpgradeTitle => 'أظهر بيانات تواصلك للزوار';
+  String get homeUpgradeTitle => 'أضف حسابات التواصل مع Plus';
 
   @override
   String get homeUpgradeBody =>
-      'الباقة الاحترافية تعرض رقمك وإنستغرام عند مسح الرمز.';
+      'باقة Plus تتيح إضافة إنستغرام وفيسبوك وسناب وغيرها وعرضها للزائر.';
 
   @override
   String tagsLinkedCount(int count) {
@@ -533,7 +534,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get showToVisitors => 'إظهار للزوار';
 
   @override
-  String get proBadge => 'احترافية';
+  String get proBadge => 'Plus';
 
   @override
   String get visibilityNoneShown =>
@@ -546,7 +547,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get visibilityLockedHint =>
-      'إظهار المعلومات للزوار متاح في الباقة الاحترافية.';
+      'إضافة حسابات تواصل أخرى متاحة في باقة Plus.';
 
   @override
   String get scanManualTitle => 'إدخال الرمز يدويًا';
@@ -640,4 +641,115 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get languageEnglish => 'English';
+
+  @override
+  String get plateTypeTitle => 'نوع اللوحة';
+
+  @override
+  String get plateLetter => 'الحرف';
+
+  @override
+  String get plateGovernorate => 'المحافظة';
+
+  @override
+  String get plateTypePrivate => 'خصوصي';
+
+  @override
+  String get plateTypeGovernment => 'حكومي';
+
+  @override
+  String get plateTypeTruck => 'حمل';
+
+  @override
+  String get plateTypeTaxi => 'أجرة';
+
+  @override
+  String get plateTypeAgricultural => 'زراعي';
+
+  @override
+  String get homeLinked => 'مربوطة';
+
+  @override
+  String get homeNotLinked => 'غير مربوطة';
+
+  @override
+  String get homeOwnerLabel => 'المالك';
+
+  @override
+  String get homeConversations => 'آخر المحادثات';
+
+  @override
+  String get homeConversationsEmpty => 'لا توجد محادثات بعد.';
+
+  @override
+  String get homeActivities => 'النشاطات';
+
+  @override
+  String get actLatest => 'آخر النشاطات';
+
+  @override
+  String get actCommunication => 'آخر تواصل';
+
+  @override
+  String get actAccount => 'حسابي';
+
+  @override
+  String get actReports => 'البلاغات';
+
+  @override
+  String get actNone => 'لا شيء بعد';
+
+  @override
+  String get youPrefix => 'أنت: ';
+
+  @override
+  String get visShowName => 'إظهار اسمي للزائر';
+
+  @override
+  String get visNameHint =>
+      'مخفي افتراضيًا. الزائر لا يرى اسمك إلا إذا فعّلت هذا.';
+
+  @override
+  String get emergencySection => 'جهة اتصال الطوارئ';
+
+  @override
+  String get emergencyHint =>
+      'مثل الأب أو الأم — تظهر للزائر فقط إذا فعّلت العرض.';
+
+  @override
+  String get emergencyName => 'الاسم';
+
+  @override
+  String get emergencyRelation => 'الصلة (أب، أم...)';
+
+  @override
+  String get emergencyPhone => 'رقم الهاتف';
+
+  @override
+  String get methodsSection => 'طرق التواصل الإضافية';
+
+  @override
+  String get addMethod => 'إضافة طريقة تواصل';
+
+  @override
+  String get methodValue => 'الحساب أو الرقم';
+
+  @override
+  String get methodLabel => 'الاسم الظاهر';
+
+  @override
+  String get methodsLockedTitle => 'متاح في باقة Plus';
+
+  @override
+  String get methodsLockedBody =>
+      'أضف إنستغرام وفيسبوك وسناب وتيك توك وواتساب وغيرها، وتحكّم بما يراه الزائر.';
+
+  @override
+  String get upgradeToPlus => 'الترقية إلى Plus';
+
+  @override
+  String get removeMethod => 'حذف';
+
+  @override
+  String get methodsEmpty => 'لم تضف أي طريقة تواصل بعد.';
 }

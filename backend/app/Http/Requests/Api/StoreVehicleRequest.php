@@ -14,6 +14,9 @@ class StoreVehicleRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'plate_type' => ['nullable', 'in:private,government,truck,taxi,agricultural'],
+            'plate_letter' => ['nullable', 'string', 'max:4', 'regex:/^[\p{L}]{1,4}$/u'],
+            'plate_governorate' => ['nullable', 'string', 'max:40'],
             'nickname' => ['nullable', 'string', 'max:100'],
             'plate_number' => ['required', 'string', 'max:32'],
             'plate_country' => ['nullable', 'string', 'size:2'],

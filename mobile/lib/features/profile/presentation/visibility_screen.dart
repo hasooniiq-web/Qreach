@@ -8,16 +8,32 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/app_card.dart';
-import '../../../shared/widgets/error_banner.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/skeleton.dart';
 import '../data/profile_models.dart';
 import 'profile_controller.dart';
 
-/// Where the owner adds their details and chooses, one by one, what a
-/// visitor who scans their code can see. Everything starts hidden — a
-/// visitor can only send a message. Showing a detail is a Pro feature: on
-/// Basic the switches are locked (the server refuses them regardless).
+IconData platformIcon(String type) => switch (type) {
+      'phone' => Icons.phone_outlined,
+      'whatsapp' => Icons.chat_outlined,
+      'telegram' => Icons.send_outlined,
+      'instagram' => Icons.camera_alt_outlined,
+      'facebook' => Icons.facebook_outlined,
+      'snapchat' => Icons.photo_camera_front_outlined,
+      'tiktok' => Icons.music_note_outlined,
+      'twitter' => Icons.alternate_email,
+      'linkedin' => Icons.work_outline,
+      'youtube' => Icons.play_circle_outline,
+      'website' => Icons.language,
+      'email' => Icons.mail_outline,
+      _ => Icons.link,
+    };
+
+/// What a visitor who scans the owner's code can see. Everything starts
+/// hidden — a visitor can only send a message — and the owner switches items
+/// on one at a time. Basic can show the name, phone and an emergency contact;
+/// adding other platforms (Instagram, WhatsApp...) is Plus. The server
+/// enforces this; the app only mirrors it and offers the upgrade.
 class VisibilityScreen extends ConsumerWidget {
   const VisibilityScreen({super.key});
 
@@ -29,199 +45,289 @@ class VisibilityScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.visibilityTitle)),
       body: async.when(
-        loading: () => const SkeletonList(count: 3),
+        loading: () => const SkeletonList(count: 4),
         error: (error, _) => ErrorState(
             error: error, onRetry: () => ref.invalidate(profileProvider)),
-        data: (profile) => _VisibilityForm(initial: profile),
+        data: (profile) => _VisibilityBody(profile: profile),
       ),
     );
   }
 }
 
-class _VisibilityForm extends ConsumerStatefulWidget {
-  const _VisibilityForm({required this.initial});
+class _VisibilityBody extends ConsumerWidget {
+  const _VisibilityBody({required this.profile});
 
-  final ProfileModel initial;
+  final ProfileModel profile;
 
-  @override
-  ConsumerState<_VisibilityForm> createState() => _VisibilityFormState();
-}
-
-class _VisibilityFormState extends ConsumerState<_VisibilityForm> {
-  final _formKey = GlobalKey<FormState>();
-  late final _phone =
-      TextEditingController(text: widget.initial.phoneField.value ?? '');
-  late final _instagram =
-      TextEditingController(text: widget.initial.instagram.value ?? '');
-  late final _extra =
-      TextEditingController(text: widget.initial.extra.value ?? '');
-  late bool _phoneVisible = widget.initial.phoneField.visible;
-  late bool _instagramVisible = widget.initial.instagram.visible;
-  late bool _extraVisible = widget.initial.extra.visible;
-  bool _saving = false;
-  String? _error;
-
-  bool get _canShow => widget.initial.phoneField.canShow;
-
-  @override
-  void dispose() {
-    _phone.dispose();
-    _instagram.dispose();
-    _extra.dispose();
-    super.dispose();
-  }
-
-  Future<void> _save() async {
-    if (!_formKey.currentState!.validate()) return;
-    final l10n = AppLocalizations.of(context)!;
+  /// Runs a change, refreshes the profile, and shows the server's message on failure.
+  Future<void> _run(BuildContext context, WidgetRef ref,
+      Future<ProfileModel> Function() action) async {
     final messenger = ScaffoldMessenger.of(context);
-
-    setState(() {
-      _saving = true;
-      _error = null;
-    });
     try {
-      await ref.read(profileRepositoryProvider).updateContact(
-            phone: _phone.text.trim(),
-            phoneVisible: _phoneVisible && _phone.text.trim().isNotEmpty,
-            instagram: _instagram.text.trim().replaceFirst('@', ''),
-            instagramVisible:
-                _instagramVisible && _instagram.text.trim().isNotEmpty,
-            extra: _extra.text.trim(),
-            extraVisible: _extraVisible && _extra.text.trim().isNotEmpty,
-          );
+      await action();
       ref.invalidate(profileProvider);
-      messenger.showSnackBar(SnackBar(content: Text(l10n.saved)));
     } catch (e) {
-      setState(() => _error = asApiException(e).message);
-    } finally {
-      if (mounted) setState(() => _saving = false);
+      messenger
+          .showSnackBar(SnackBar(content: Text(asApiException(e).message)));
     }
   }
 
+  Future<void> _addMethod(BuildContext context, WidgetRef ref) async {
+    final result = await showModalBottomSheet<_NewMethod>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (_) => _AddMethodSheet(platforms: profile.platforms),
+    );
+    if (result == null || !context.mounted) return;
+
+    await _run(
+        context,
+        ref,
+        () => ref.read(profileRepositoryProvider).addMethod(
+              type: result.type,
+              value: result.value,
+              label: result.label,
+              visible: result.visible,
+            ));
+  }
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
+    final repo = ref.read(profileRepositoryProvider);
+    final titleStyle = Theme.of(context)
+        .textTheme
+        .titleMedium
+        ?.copyWith(fontWeight: FontWeight.w800);
+
     final shown = [
-      if (_phoneVisible && _phone.text.trim().isNotEmpty)
-        l10n.featurePublicPhone,
-      if (_instagramVisible && _instagram.text.trim().isNotEmpty)
-        l10n.instagramLabel,
-      if (_extraVisible && _extra.text.trim().isNotEmpty) l10n.extraLabel,
+      if (profile.showName) l10n.homeOwnerLabel,
+      if (profile.phoneField.visible && profile.phoneField.canShow)
+        l10n.phoneShownLabel,
+      if (profile.emergency?.visible == true) l10n.emergencySection,
+      for (final m in profile.methods)
+        if (m.visible && m.canShow) m.label,
     ];
 
-    return Form(
-      key: _formKey,
-      child: ListView(
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        children: [
-          Text(l10n.visibilitySubtitle,
-              style: const TextStyle(color: AppColors.ink500, height: 1.5)),
-          const SizedBox(height: AppSpacing.lg),
-          // What a visitor will actually see, stated plainly.
-          Container(
-            padding: const EdgeInsets.all(AppSpacing.lg),
-            decoration: BoxDecoration(
-              color: AppColors.brandBlack,
-              borderRadius: BorderRadius.circular(16),
-            ),
+    return ListView(
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      children: [
+        Container(
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          decoration: BoxDecoration(
+            color: AppColors.brandBlack,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Row(
+            children: [
+              Icon(
+                  shown.isEmpty
+                      ? Icons.visibility_off_outlined
+                      : Icons.visibility_outlined,
+                  color: AppColors.brandYellow),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Text(
+                  shown.isEmpty
+                      ? l10n.visibilityNoneShown
+                      : l10n.visibilitySharing(shown.join('، ')),
+                  style:
+                      const TextStyle(color: AppColors.brandWhite, height: 1.4),
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: AppSpacing.xl),
+
+        // Name
+        AppCard(
+          child: SwitchListTile(
+            contentPadding: EdgeInsets.zero,
+            title: Text(l10n.visShowName,
+                style: const TextStyle(fontWeight: FontWeight.w700)),
+            subtitle: Text(
+                profile.name?.isNotEmpty == true
+                    ? '${profile.name} — ${l10n.visNameHint}'
+                    : l10n.visNameHint,
+                style: const TextStyle(fontSize: 12)),
+            value: profile.showName,
+            onChanged: (v) => _run(context, ref, () => repo.setShowName(v)),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+
+        // Phone (Basic)
+        _PhoneCard(
+          key: ValueKey('phone-${profile.phoneField.value}'),
+          field: profile.phoneField,
+          onSave: (value, visible) => _run(context, ref,
+              () => repo.updatePhone(phone: value, visible: visible)),
+        ),
+        const SizedBox(height: AppSpacing.xl),
+
+        // Emergency contact (Basic)
+        Text(l10n.emergencySection, style: titleStyle),
+        const SizedBox(height: 4),
+        Text(l10n.emergencyHint,
+            style: const TextStyle(color: AppColors.ink500, fontSize: 13)),
+        const SizedBox(height: AppSpacing.md),
+        _EmergencyCard(
+          key: ValueKey(
+              'em-${profile.emergency?.phone}-${profile.emergency?.visible}'),
+          emergency: profile.emergency,
+          onSave: (name, relation, phone, visible) => _run(
+              context,
+              ref,
+              () => repo.saveEmergency(
+                  name: name,
+                  relationship: relation,
+                  phone: phone,
+                  visible: visible)),
+          onRemove: () => _run(context, ref, repo.removeEmergency),
+        ),
+        const SizedBox(height: AppSpacing.xl),
+
+        // Extra contact methods (Plus)
+        Text(l10n.methodsSection, style: titleStyle),
+        const SizedBox(height: AppSpacing.md),
+        if (!profile.canAddMethods)
+          AppCard(
+            onTap: () => context.push('/subscription'),
             child: Row(
               children: [
-                Icon(
-                    shown.isEmpty
-                        ? Icons.visibility_off_outlined
-                        : Icons.visibility_outlined,
-                    color: AppColors.brandYellow),
+                const Icon(Icons.lock_outline),
                 const SizedBox(width: AppSpacing.md),
                 Expanded(
-                  child: Text(
-                    shown.isEmpty
-                        ? l10n.visibilityNoneShown
-                        : l10n.visibilitySharing(shown.join('، ')),
-                    style: const TextStyle(
-                        color: AppColors.brandWhite, height: 1.4),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(l10n.methodsLockedTitle,
+                          style: const TextStyle(fontWeight: FontWeight.w800)),
+                      const SizedBox(height: 2),
+                      Text(l10n.methodsLockedBody,
+                          style: const TextStyle(
+                              color: AppColors.ink600, fontSize: 13)),
+                    ],
                   ),
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                Text(l10n.upgradeToPlus,
+                    style: const TextStyle(fontWeight: FontWeight.w800)),
+              ],
+            ),
+          ),
+        for (final m in profile.methods) ...[
+          AppCard(
+            padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
+            child: Row(
+              children: [
+                Icon(platformIcon(m.type), color: AppColors.ink700),
+                const SizedBox(width: AppSpacing.md),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(m.label,
+                          style: const TextStyle(fontWeight: FontWeight.w700)),
+                      Text(m.value,
+                          textDirection: TextDirection.ltr,
+                          style: const TextStyle(
+                              color: AppColors.ink500, fontSize: 12)),
+                    ],
+                  ),
+                ),
+                Switch(
+                  value: m.visible && m.canShow,
+                  onChanged: m.canShow
+                      ? (v) => _run(
+                          context, ref, () => repo.setMethodVisible(m.id, v))
+                      : null,
+                ),
+                IconButton(
+                  tooltip: l10n.removeMethod,
+                  icon: const Icon(Icons.delete_outline,
+                      color: AppColors.statusDanger),
+                  onPressed: () =>
+                      _run(context, ref, () => repo.removeMethod(m.id)),
                 ),
               ],
             ),
           ),
-          if (!_canShow) ...[
-            const SizedBox(height: AppSpacing.md),
-            AppCard(
-              onTap: () => context.push('/subscription'),
-              child: Row(
-                children: [
-                  const Icon(Icons.lock_outline),
-                  const SizedBox(width: AppSpacing.md),
-                  Expanded(child: Text(l10n.visibilityLockedHint)),
-                  Text(l10n.viewPlans,
-                      style: const TextStyle(fontWeight: FontWeight.w700)),
-                ],
+          const SizedBox(height: AppSpacing.sm),
+        ],
+        if (profile.canAddMethods) ...[
+          if (profile.methods.isEmpty)
+            Padding(
+              padding: const EdgeInsets.only(bottom: AppSpacing.md),
+              child: Text(l10n.methodsEmpty,
+                  style: const TextStyle(color: AppColors.ink500)),
+            ),
+          OutlinedButton.icon(
+            onPressed: () => _addMethod(context, ref),
+            icon: const Icon(Icons.add),
+            label: Text(l10n.addMethod),
+          ),
+        ],
+        const SizedBox(height: AppSpacing.xl),
+      ],
+    );
+  }
+}
+
+class _PhoneCard extends StatefulWidget {
+  const _PhoneCard({super.key, required this.field, required this.onSave});
+
+  final ContactField field;
+  final void Function(String value, bool visible) onSave;
+
+  @override
+  State<_PhoneCard> createState() => _PhoneCardState();
+}
+
+class _PhoneCardState extends State<_PhoneCard> {
+  late final _controller =
+      TextEditingController(text: widget.field.value ?? '');
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final has = _controller.text.trim().isNotEmpty;
+
+    return AppCard(
+      child: Column(
+        children: [
+          TextField(
+            controller: _controller,
+            keyboardType: TextInputType.phone,
+            textDirection: TextDirection.ltr,
+            onChanged: (_) => setState(() {}),
+            decoration: InputDecoration(
+              labelText: l10n.phoneShownLabel,
+              hintText: '+9647XXXXXXXXX',
+              prefixIcon: const Icon(Icons.phone_outlined),
+              suffixIcon: TextButton(
+                onPressed: () => widget.onSave(
+                    _controller.text.trim(), widget.field.visible),
+                child: Text(l10n.save),
               ),
             ),
-          ],
-          const SizedBox(height: AppSpacing.xl),
-          if (_error != null) ErrorBanner(message: _error!),
-          _FieldCard(
-            icon: Icons.phone_outlined,
-            controller: _phone,
-            label: l10n.phoneShownLabel,
-            hint: '+9647XXXXXXXXX',
-            ltr: true,
-            keyboardType: TextInputType.phone,
-            visible: _phoneVisible,
-            enabled: _canShow,
-            onVisible: (v) => setState(() => _phoneVisible = v),
-            onChanged: () => setState(() {}),
-            validator: (v) {
-              final t = v?.trim() ?? '';
-              if (t.isEmpty) return null;
-              return RegExp(r'^\+?[1-9]\d{7,14}$').hasMatch(t)
-                  ? null
-                  : l10n.invalidPhone;
-            },
           ),
-          const SizedBox(height: AppSpacing.md),
-          _FieldCard(
-            icon: Icons.alternate_email,
-            controller: _instagram,
-            label: l10n.instagramLabel,
-            hint: l10n.instagramHint,
-            ltr: true,
-            visible: _instagramVisible,
-            enabled: _canShow,
-            onVisible: (v) => setState(() => _instagramVisible = v),
-            onChanged: () => setState(() {}),
-            validator: (v) {
-              final t = (v?.trim() ?? '').replaceFirst('@', '');
-              if (t.isEmpty) return null;
-              return RegExp(r'^[A-Za-z0-9._]{1,30}$').hasMatch(t)
-                  ? null
-                  : l10n.invalidInstagram;
-            },
-          ),
-          const SizedBox(height: AppSpacing.md),
-          _FieldCard(
-            icon: Icons.info_outline,
-            controller: _extra,
-            label: l10n.extraLabel,
-            hint: l10n.extraHint,
-            maxLength: 200,
-            visible: _extraVisible,
-            enabled: _canShow,
-            onVisible: (v) => setState(() => _extraVisible = v),
-            onChanged: () => setState(() {}),
-          ),
-          const SizedBox(height: AppSpacing.xl),
-          ElevatedButton(
-            onPressed: _saving ? null : _save,
-            child: _saving
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                        strokeWidth: 2, color: AppColors.brandWhite))
-                : Text(l10n.save),
+          SwitchListTile(
+            contentPadding: EdgeInsets.zero,
+            value: widget.field.visible && widget.field.canShow,
+            onChanged: has && widget.field.canShow
+                ? (v) => widget.onSave(_controller.text.trim(), v)
+                : null,
+            title: Text(l10n.showToVisitors),
           ),
         ],
       ),
@@ -229,65 +335,210 @@ class _VisibilityFormState extends ConsumerState<_VisibilityForm> {
   }
 }
 
-class _FieldCard extends StatelessWidget {
-  const _FieldCard({
-    required this.icon,
-    required this.controller,
-    required this.label,
-    required this.hint,
-    required this.visible,
-    required this.enabled,
-    required this.onVisible,
-    required this.onChanged,
-    this.validator,
-    this.ltr = false,
-    this.maxLength,
-    this.keyboardType,
+class _EmergencyCard extends StatefulWidget {
+  const _EmergencyCard({
+    super.key,
+    required this.emergency,
+    required this.onSave,
+    required this.onRemove,
   });
 
-  final IconData icon;
-  final TextEditingController controller;
-  final String label;
-  final String hint;
-  final bool visible;
-  final bool enabled;
-  final ValueChanged<bool> onVisible;
-  final VoidCallback onChanged;
-  final FormFieldValidator<String>? validator;
-  final bool ltr;
-  final int? maxLength;
-  final TextInputType? keyboardType;
+  final EmergencyModel? emergency;
+  final void Function(String name, String? relation, String phone, bool visible)
+      onSave;
+  final VoidCallback onRemove;
+
+  @override
+  State<_EmergencyCard> createState() => _EmergencyCardState();
+}
+
+class _EmergencyCardState extends State<_EmergencyCard> {
+  late final _name = TextEditingController(text: widget.emergency?.name ?? '');
+  late final _relation =
+      TextEditingController(text: widget.emergency?.relationship ?? '');
+  late final _phone =
+      TextEditingController(text: widget.emergency?.phone ?? '');
+  final _form = GlobalKey<FormState>();
+
+  @override
+  void dispose() {
+    _name.dispose();
+    _relation.dispose();
+    _phone.dispose();
+    super.dispose();
+  }
+
+  void _save(bool visible) {
+    if (!_form.currentState!.validate()) return;
+    widget.onSave(
+        _name.text.trim(), _relation.text.trim(), _phone.text.trim(), visible);
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final e = widget.emergency;
 
     return AppCard(
-      child: Column(
-        children: [
-          TextFormField(
-            controller: controller,
-            keyboardType: keyboardType,
-            textDirection: ltr ? TextDirection.ltr : null,
-            maxLength: maxLength,
-            onChanged: (_) => onChanged(),
-            validator: validator,
-            decoration: InputDecoration(
-              labelText: label,
-              hintText: hint,
-              prefixIcon: Icon(icon),
+      child: Form(
+        key: _form,
+        child: Column(
+          children: [
+            TextFormField(
+              controller: _name,
+              decoration: InputDecoration(labelText: l10n.emergencyName),
+              validator: (v) => (v == null || v.trim().length < 2)
+                  ? l10n.requiredField
+                  : null,
             ),
-          ),
-          SwitchListTile(
-            contentPadding: EdgeInsets.zero,
-            value: visible && enabled,
-            onChanged: enabled ? onVisible : null,
-            title: Text(l10n.showToVisitors),
-            secondary: enabled
-                ? null
-                : const Icon(Icons.lock_outline, color: AppColors.ink400),
-          ),
-        ],
+            const SizedBox(height: AppSpacing.md),
+            TextFormField(
+              controller: _relation,
+              decoration: InputDecoration(labelText: l10n.emergencyRelation),
+            ),
+            const SizedBox(height: AppSpacing.md),
+            TextFormField(
+              controller: _phone,
+              keyboardType: TextInputType.phone,
+              textDirection: TextDirection.ltr,
+              decoration: InputDecoration(
+                  labelText: l10n.emergencyPhone, hintText: '+9647XXXXXXXXX'),
+              validator: (v) =>
+                  RegExp(r'^\+?[1-9]\d{7,14}$').hasMatch(v?.trim() ?? '')
+                      ? null
+                      : l10n.invalidPhone,
+            ),
+            SwitchListTile(
+              contentPadding: EdgeInsets.zero,
+              value: e?.visible == true && e?.canShow == true,
+              onChanged: e != null && e.canShow ? _save : null,
+              title: Text(l10n.showToVisitors),
+            ),
+            Row(
+              children: [
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => _save(e?.visible ?? false),
+                    child: Text(l10n.save),
+                  ),
+                ),
+                if (e != null) ...[
+                  const SizedBox(width: AppSpacing.sm),
+                  IconButton(
+                    tooltip: l10n.removeMethod,
+                    onPressed: widget.onRemove,
+                    icon: const Icon(Icons.delete_outline,
+                        color: AppColors.statusDanger),
+                  ),
+                ],
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _NewMethod {
+  const _NewMethod(this.type, this.value, this.label, this.visible);
+
+  final String type;
+  final String value;
+  final String? label;
+  final bool visible;
+}
+
+class _AddMethodSheet extends StatefulWidget {
+  const _AddMethodSheet({required this.platforms});
+
+  final List<PlatformInfo> platforms;
+
+  @override
+  State<_AddMethodSheet> createState() => _AddMethodSheetState();
+}
+
+class _AddMethodSheetState extends State<_AddMethodSheet> {
+  final _value = TextEditingController();
+  final _label = TextEditingController();
+  PlatformInfo? _platform;
+  bool _visible = false;
+
+  @override
+  void dispose() {
+    _value.dispose();
+    _label.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final p = _platform;
+    final ready = p != null &&
+        _value.text.trim().isNotEmpty &&
+        (p.type != 'other' || _label.text.trim().isNotEmpty);
+
+    return Padding(
+      padding: EdgeInsets.fromLTRB(AppSpacing.xl, 0, AppSpacing.xl,
+          MediaQuery.of(context).viewInsets.bottom + AppSpacing.xl),
+      child: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Text(l10n.addMethod,
+                style:
+                    const TextStyle(fontWeight: FontWeight.w800, fontSize: 18)),
+            const SizedBox(height: AppSpacing.lg),
+            Wrap(
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.sm,
+              children: [
+                for (final pl in widget.platforms)
+                  ChoiceChip(
+                    avatar: Icon(platformIcon(pl.type), size: 18),
+                    label: Text(pl.label),
+                    selected: p?.type == pl.type,
+                    onSelected: (_) => setState(() => _platform = pl),
+                  ),
+              ],
+            ),
+            if (p != null) ...[
+              const SizedBox(height: AppSpacing.lg),
+              TextField(
+                controller: _value,
+                autofocus: true,
+                textDirection: p.type == 'other' ? null : TextDirection.ltr,
+                onChanged: (_) => setState(() {}),
+                decoration: InputDecoration(
+                    labelText: l10n.methodValue, hintText: p.hint),
+              ),
+              if (p.type == 'other') ...[
+                const SizedBox(height: AppSpacing.md),
+                TextField(
+                  controller: _label,
+                  maxLength: 40,
+                  onChanged: (_) => setState(() {}),
+                  decoration: InputDecoration(labelText: l10n.methodLabel),
+                ),
+              ],
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                value: _visible,
+                onChanged: (v) => setState(() => _visible = v),
+                title: Text(l10n.showToVisitors),
+              ),
+              ElevatedButton(
+                onPressed: ready
+                    ? () => Navigator.of(context).pop(_NewMethod(p.type,
+                        _value.text.trim(), _label.text.trim(), _visible))
+                    : null,
+                child: Text(l10n.save),
+              ),
+            ],
+          ],
+        ),
       ),
     );
   }

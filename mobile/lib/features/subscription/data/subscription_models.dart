@@ -18,6 +18,7 @@ class PlanModel extends Equatable {
     required this.isFree,
     required this.billingPeriodDays,
     required this.publicContacts,
+    this.extraContactMethods = false,
   });
 
   final String slug;
@@ -29,10 +30,14 @@ class PlanModel extends Equatable {
   final int billingPeriodDays;
   final List<String> publicContacts;
 
+  /// Plus: may add contact platforms beyond the phone number.
+  final bool extraContactMethods;
+
   bool allows(String contactType) => publicContacts.contains(contactType);
 
-  /// A plan that shows any contact detail publicly is the "Pro" tier.
-  bool get showsPublicContacts => publicContacts.isNotEmpty;
+  /// Plus is the tier that can add extra contact methods (Basic shows only
+  /// name, phone and emergency contact).
+  bool get showsPublicContacts => extraContactMethods;
 
   factory PlanModel.fromJson(Map<String, dynamic> json) {
     final features = json['features'] as Map<String, dynamic>? ?? const {};
@@ -48,6 +53,7 @@ class PlanModel extends Equatable {
           (features['public_contacts'] as List<dynamic>? ?? const [])
               .map((e) => e as String)
               .toList(),
+      extraContactMethods: features['extra_contact_methods'] as bool? ?? false,
     );
   }
 
@@ -61,6 +67,7 @@ class PlanModel extends Equatable {
         isFree,
         billingPeriodDays,
         publicContacts,
+        extraContactMethods,
       ];
 }
 

@@ -16,8 +16,8 @@ class ContactOwnerRequest extends FormRequest
     {
         return [
             // A reason chip alone is enough — the free-text message is optional when one is chosen.
-            'reason' => ['nullable', 'in:damage,open,question,other'],
-            'message' => ['required_without:reason', 'nullable', 'string', 'max:500', new PlainTextOnly],
+            'reason' => ['nullable', 'in:damage,malfunction,safety,assistance,other,open,question'],
+            'message' => ['required_without:reason', 'required_if:reason,other', 'nullable', 'string', 'max:500', new PlainTextOnly],
             'visitor_name' => ['nullable', 'string', 'max:100', new PlainTextOnly],
             'visitor_phone' => ['nullable', 'string', 'max:32', 'regex:/^\+?[1-9]\d{7,14}$/'],
         ];
