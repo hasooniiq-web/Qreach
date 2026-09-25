@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\ContactRequestController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PasswordController;
 use App\Http\Controllers\Admin\PlanController;
+use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\SecurityEventController;
 use App\Http\Controllers\Admin\SubscriptionController;
 use App\Http\Controllers\Admin\SystemSettingController;
@@ -56,6 +57,15 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
         Route::middleware('admin.2fa')->group(function () {
             Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+            // Own profile only — none of these take an admin id, so there is no
+            // way to view or change someone else's profile through them.
+            Route::get('profile', [ProfileController::class, 'edit'])->name('profile.edit');
+            Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
+            Route::get('profile/avatar', [ProfileController::class, 'avatar'])->name('profile.avatar');
+            Route::post('profile/avatar', [ProfileController::class, 'storeAvatar'])->name('profile.avatar.store');
+            Route::delete('profile/avatar', [ProfileController::class, 'destroyAvatar'])->name('profile.avatar.destroy');
+            Route::put('profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
 
             Route::get('sections/{section}', function (string $section) {
                 $titles = ['notifications' => 'التنبيهات والإشعارات'];

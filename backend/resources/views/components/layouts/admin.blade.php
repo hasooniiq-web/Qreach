@@ -61,16 +61,6 @@
             <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-6 text-sm">
                 @include('components.layouts.partials.admin-nav-items')
             </nav>
-
-            <div class="border-t border-white/10 p-3">
-                <form method="POST" action="{{ route('admin.logout') }}">
-                    @csrf
-                    <button type="submit" class="flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm text-white/80 hover:bg-white/10 hover:text-white transition-colors">
-                        <x-icon name="logout" class="size-5" />
-                        تسجيل الخروج
-                    </button>
-                </form>
-            </div>
         </aside>
 
         <!-- Mobile/tablet drawer -->
@@ -90,15 +80,6 @@
             <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-6 text-sm">
                 @include('components.layouts.partials.admin-nav-items')
             </nav>
-            <div class="border-t border-white/10 p-3">
-                <form method="POST" action="{{ route('admin.logout') }}">
-                    @csrf
-                    <button type="submit" class="flex w-full items-center gap-3 rounded-md px-3 py-2.5 text-sm text-white/80 hover:bg-white/10 hover:text-white transition-colors">
-                        <x-icon name="logout" class="size-5" />
-                        تسجيل الخروج
-                    </button>
-                </form>
-            </div>
         </aside>
 
         <div class="flex-1 flex flex-col min-w-0">
@@ -109,12 +90,30 @@
                     </button>
                     <h1 class="text-base font-semibold text-ink-900">{{ $title ?? 'لوحة التحكم' }}</h1>
                 </div>
-                <div class="flex items-center gap-3">
-                    <span class="hidden sm:inline text-sm text-ink-500">{{ auth('admin')->user()->name }}</span>
-                    <div class="size-8 rounded-full bg-ink-100 flex items-center justify-center text-xs font-medium text-ink-600">
-                        {{ mb_substr(auth('admin')->user()->name, 0, 1) }}
+                @php $me = auth('admin')->user(); @endphp
+                <details data-menu class="relative">
+                    <summary class="flex cursor-pointer list-none items-center gap-2.5 rounded-full py-1 ps-3 pe-1 hover:bg-ink-50" aria-label="قائمة الحساب">
+                        <span class="hidden text-sm font-medium text-ink-700 sm:inline">{{ $me->name }}</span>
+                        <x-admin-avatar :admin="$me" />
+                    </summary>
+                    <div class="absolute end-0 top-full z-30 mt-2 w-60 overflow-hidden rounded-lg border border-ink-200 bg-white shadow-lg">
+                        <div class="border-b border-ink-100 px-4 py-3">
+                            <p class="truncate text-sm font-semibold text-ink-900">{{ $me->name }}</p>
+                            <p class="truncate text-xs text-ink-400" dir="ltr">{{ $me->email }}</p>
+                        </div>
+                        <a href="{{ route('admin.profile.edit') }}" class="flex items-center gap-3 px-4 py-2.5 text-sm text-ink-800 hover:bg-ink-50">
+                            <x-icon name="users" class="size-4 text-ink-500" />
+                            الملف الشخصي
+                        </a>
+                        <form method="POST" action="{{ route('admin.logout') }}" class="border-t border-ink-100">
+                            @csrf
+                            <button type="submit" class="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-status-danger hover:bg-status-danger/5">
+                                <x-icon name="logout" class="size-4" />
+                                تسجيل الخروج
+                            </button>
+                        </form>
                     </div>
-                </div>
+                </details>
             </header>
 
             <main class="flex-1 p-4 sm:p-6">

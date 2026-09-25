@@ -66,6 +66,7 @@ class AdminPagesRenderTest extends TestCase
             'subscriptions' => '/admin/subscriptions',
             'upgrade requests' => '/admin/subscriptions/requests',
             'plans' => '/admin/plans',
+            'profile' => '/admin/profile',
         ];
     }
 
