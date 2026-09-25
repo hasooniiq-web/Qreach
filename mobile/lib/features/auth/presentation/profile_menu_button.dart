@@ -20,6 +20,7 @@ class ProfileMenuButton extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return PopupMenuButton<_ProfileMenuAction>(
+      tooltip: l10n.profile,
       icon: const CircleAvatar(
         radius: 16,
         backgroundColor: AppColors.ink100,

@@ -15,19 +15,23 @@ class PushNotificationService {
   Future<void> registerForPushNotifications() async {
     if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) return;
 
-    final messaging = FirebaseMessaging.instance;
-    final settings = await messaging.requestPermission();
-    if (settings.authorizationStatus == AuthorizationStatus.denied) return;
+    try {
+      final messaging = FirebaseMessaging.instance;
+      final settings = await messaging.requestPermission();
+      if (settings.authorizationStatus == AuthorizationStatus.denied) return;
 
-    final token = await messaging.getToken();
-    if (token != null) {
-      await _sendTokenToBackend(token);
+      final token = await messaging.getToken();
+      if (token != null) {
+        await _sendTokenToBackend(token);
+      }
+
+      // FCM tokens rotate (app reinstall, data clear, or periodic refresh) —
+      // without this, a device would silently stop receiving pushes after a
+      // rotation until the next login.
+      messaging.onTokenRefresh.listen(_sendTokenToBackend);
+    } catch (_) {
+      // Push is optional; never let it break login or app start.
     }
-
-    // FCM tokens rotate (app reinstall, data clear, or periodic refresh) —
-    // without this, a device would silently stop receiving pushes after a
-    // rotation until the next login.
-    messaging.onTokenRefresh.listen(_sendTokenToBackend);
   }
 
   Future<void> _sendTokenToBackend(String token) async {

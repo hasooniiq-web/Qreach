@@ -805,6 +805,24 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'رمز NFC'**
   String get tagTypeNfc;
+
+  /// No description provided for @vehicleFormIdentity.
+  ///
+  /// In ar, this message translates to:
+  /// **'هوية المركبة'**
+  String get vehicleFormIdentity;
+
+  /// No description provided for @vehicleFormMore.
+  ///
+  /// In ar, this message translates to:
+  /// **'تفاصيل إضافية'**
+  String get vehicleFormMore;
+
+  /// No description provided for @vehicleFormNicknameHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم يميّز مركبتك عن غيرها'**
+  String get vehicleFormNicknameHint;
 }
 
 class _AppLocalizationsDelegate

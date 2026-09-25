@@ -1,13 +1,14 @@
 <x-layouts.public title="رمز غير صالح">
-    <div class="flex flex-col items-center justify-center text-center py-20">
-        <div class="flex size-14 items-center justify-center rounded-full bg-status-danger/10 mb-4">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-7 text-status-danger">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m0 3.75h.008v.008H12v-.008ZM21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
-            </svg>
+    <div class="flex flex-col items-center justify-center py-16 text-center">
+        <div class="mb-6 flex size-16 items-center justify-center rounded-full bg-brand-black">
+            <x-icon name="warning" class="size-8 text-brand-yellow" />
         </div>
-        <h1 class="text-base font-semibold text-ink-900 mb-1.5">هذا الرمز غير صالح</h1>
-        <p class="text-sm text-ink-500 max-w-xs">
-            الرمز الذي قمت بمسحه غير موجود أو تم إلغاؤه أو لم يتم ربطه بمركبة بعد.
+        <h1 class="mb-2 text-xl font-bold text-ink-900">هذا الرمز غير صالح</h1>
+        <p class="max-w-xs text-sm text-ink-500">
+            الرمز الذي مسحته غير موجود، أو أُلغي، أو لم يُربط بمركبة بعد.
+        </p>
+        <p class="mt-6 max-w-xs text-xs text-ink-400">
+            إن كنت صاحب هذا الرمز، افتح تطبيق Qreach واربطه بمركبتك من صفحة المركبة.
         </p>
     </div>
 </x-layouts.public>

@@ -13,7 +13,13 @@ void main() async {
   // so an iOS/web build doesn't crash at startup with no native config file
   // for Firebase.initializeApp() to read.
   if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
-    await Firebase.initializeApp();
+    // Push is optional: if Firebase can't start (missing Play Services, bad
+    // config) the app must still open and work, just without notifications.
+    try {
+      await Firebase.initializeApp();
+    } catch (e) {
+      debugPrint('Firebase init failed, continuing without push: $e');
+    }
   }
 
   runApp(const ProviderScope(child: QreachApp()));

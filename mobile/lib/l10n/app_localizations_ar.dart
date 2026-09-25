@@ -387,4 +387,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get tagTypeNfc => 'رمز NFC';
+
+  @override
+  String get vehicleFormIdentity => 'هوية المركبة';
+
+  @override
+  String get vehicleFormMore => 'تفاصيل إضافية';
+
+  @override
+  String get vehicleFormNicknameHint => 'اسم يميّز مركبتك عن غيرها';
 }

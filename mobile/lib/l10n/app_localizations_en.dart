@@ -391,4 +391,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tagTypeNfc => 'NFC tag';
+
+  @override
+  String get vehicleFormIdentity => 'Vehicle identity';
+
+  @override
+  String get vehicleFormMore => 'More details';
+
+  @override
+  String get vehicleFormNicknameHint => 'A name to tell your vehicles apart';
 }

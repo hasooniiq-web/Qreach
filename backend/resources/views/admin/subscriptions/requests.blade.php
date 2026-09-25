@@ -43,7 +43,7 @@
                 </td>
             </tr>
         @empty
-            <x-table-empty :cols="6" icon="bell" title="لا توجد طلبات {{ ['pending' => 'قيد المراجعة', 'approved' => 'موافَق عليها', 'rejected' => 'مرفوضة'][$status] }}"
+            <x-table-empty :cols="6" icon="bell" :title="'لا توجد طلبات '.['pending' => 'قيد المراجعة', 'approved' => 'موافَق عليها', 'rejected' => 'مرفوضة'][$status]"
                            description="عندما يطلب عميل من التطبيق الترقية إلى الباقة الاحترافية يظهر طلبه هنا." />
         @endforelse
     </x-data-table>

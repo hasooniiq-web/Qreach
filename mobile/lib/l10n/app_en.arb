@@ -183,5 +183,8 @@
     "protectionStatus": "Protection status",
     "vehicleDetails": "Vehicle details",
     "tagTypeQr": "QR tag",
-    "tagTypeNfc": "NFC tag"
+    "tagTypeNfc": "NFC tag",
+    "vehicleFormIdentity": "Vehicle identity",
+    "vehicleFormMore": "More details",
+    "vehicleFormNicknameHint": "A name to tell your vehicles apart"
 }

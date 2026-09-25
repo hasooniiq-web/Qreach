@@ -10,6 +10,7 @@
     @vite(['resources/css/app.css', 'resources/js/admin-nav.js', 'resources/js/admin-ui.js'])
 </head>
 <body class="min-h-dvh bg-ink-50 text-ink-900">
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:start-4 focus:top-4 focus:z-[60] focus:rounded-md focus:bg-brand-yellow focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-brand-black">تخطّي إلى المحتوى</a>
     @php
         // Grouped by function rather than by "everything that isn't
         // analytics or security" (see docs/UI_UX_REDESIGN_AUDIT.md finding
@@ -34,7 +35,8 @@
                 ['icon' => 'bell', 'label' => 'التنبيهات والإشعارات', 'route' => 'admin.coming-soon', 'arg' => 'notifications'],
             ],
             'التحليلات' => [
-                ['icon' => 'chart', 'label' => 'التحليلات والتقارير', 'route' => 'admin.analytics.index'],
+                ['icon' => 'chart', 'label' => 'التحليلات', 'route' => 'admin.analytics.index'],
+                ['icon' => 'audit', 'label' => 'التقارير', 'route' => 'admin.reports.index'],
             ],
             'الأمان' => [
                 ['icon' => 'shield', 'label' => 'الأحداث الأمنية', 'route' => 'admin.security.index'],
@@ -58,7 +60,7 @@
                 <span class="font-semibold">Qreach <span class="text-white/50 font-normal text-sm">SmartTag</span></span>
             </div>
 
-            <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-6 text-sm">
+            <nav aria-label="التنقل الرئيسي" class="flex-1 overflow-y-auto py-4 px-3 space-y-6 text-sm">
                 @include('components.layouts.partials.admin-nav-items')
             </nav>
         </aside>
@@ -77,7 +79,7 @@
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
                 </button>
             </div>
-            <nav class="flex-1 overflow-y-auto py-4 px-3 space-y-6 text-sm">
+            <nav aria-label="التنقل الرئيسي" class="flex-1 overflow-y-auto py-4 px-3 space-y-6 text-sm">
                 @include('components.layouts.partials.admin-nav-items')
             </nav>
         </aside>
@@ -121,7 +123,7 @@
                 </details>
             </header>
 
-            <main class="flex-1 p-4 sm:p-6">
+            <main id="main-content" tabindex="-1" class="flex-1 p-4 outline-none sm:p-6">
                 @if (session('status'))
                     <div class="mb-6 rounded-md bg-status-success/10 border border-status-success/30 px-4 py-3 text-sm text-status-success">
                         {{ session('status') }}

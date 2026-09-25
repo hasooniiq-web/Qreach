@@ -183,5 +183,8 @@
     "protectionStatus": "حالة الحماية",
     "vehicleDetails": "تفاصيل المركبة",
     "tagTypeQr": "رمز QR",
-    "tagTypeNfc": "رمز NFC"
+    "tagTypeNfc": "رمز NFC",
+    "vehicleFormIdentity": "هوية المركبة",
+    "vehicleFormMore": "تفاصيل إضافية",
+    "vehicleFormNicknameHint": "اسم يميّز مركبتك عن غيرها"
 }

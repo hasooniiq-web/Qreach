@@ -90,18 +90,26 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
       body: Stack(
         children: [
           MobileScanner(controller: _controller, onDetect: _onDetect),
-          _ScanOverlay(),
+          const _ScanOverlay(),
           Positioned(
             left: 24,
             right: 24,
             bottom: 48,
             child: Column(
               children: [
-                Text(
-                  l10n.scanTagInstructions,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                      color: AppColors.brandWhite, fontSize: 15),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 18, vertical: 10),
+                  decoration: BoxDecoration(
+                    color: Colors.black.withValues(alpha: 0.6),
+                    borderRadius: BorderRadius.circular(999),
+                  ),
+                  child: Text(
+                    l10n.scanTagInstructions,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                        color: AppColors.brandWhite, fontSize: 15),
+                  ),
                 ),
                 if (_processing) ...[
                   const SizedBox(height: 16),
@@ -129,20 +137,61 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
   }
 }
 
+/// Dims everything outside a square viewfinder and draws yellow corner
+/// brackets — clearer than a plain outlined box about where to aim.
 class _ScanOverlay extends StatelessWidget {
+  const _ScanOverlay();
+
+  static const double _size = 250;
+
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: Container(
-        width: 240,
-        height: 240,
-        decoration: BoxDecoration(
-          border: Border.all(color: AppColors.brandYellow, width: 3),
-          borderRadius: BorderRadius.circular(16),
-        ),
+    return IgnorePointer(
+      child: CustomPaint(
+        size: Size.infinite,
+        painter: _ViewfinderPainter(),
+        child: const Center(child: SizedBox(width: _size, height: _size)),
       ),
     );
   }
+}
+
+class _ViewfinderPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    const side = _ScanOverlay._size;
+    final rect = Rect.fromCenter(
+        center: size.center(Offset.zero), width: side, height: side);
+    final rrect = RRect.fromRectAndRadius(rect, const Radius.circular(20));
+
+    final scrim = Path()
+      ..addRect(Offset.zero & size)
+      ..addRRect(rrect)
+      ..fillType = PathFillType.evenOdd;
+    canvas.drawPath(
+        scrim, Paint()..color = Colors.black.withValues(alpha: 0.55));
+
+    final bracket = Paint()
+      ..color = AppColors.brandYellow
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 5
+      ..strokeCap = StrokeCap.round;
+    const len = 34.0;
+    final r = rect;
+    for (final corner in [
+      (r.topLeft, const Offset(1, 0), const Offset(0, 1)),
+      (r.topRight, const Offset(-1, 0), const Offset(0, 1)),
+      (r.bottomLeft, const Offset(1, 0), const Offset(0, -1)),
+      (r.bottomRight, const Offset(-1, 0), const Offset(0, -1)),
+    ]) {
+      final p = corner.$1;
+      canvas.drawLine(p, p + corner.$2 * len, bracket);
+      canvas.drawLine(p, p + corner.$3 * len, bracket);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
 /// Confirms a successful tag activation with a short scale-in check — the

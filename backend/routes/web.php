@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\PasswordController;
 use App\Http\Controllers\Admin\PlanController;
 use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\ReportController;
 use App\Http\Controllers\Admin\SecurityEventController;
 use App\Http\Controllers\Admin\SubscriptionController;
 use App\Http\Controllers\Admin\SystemSettingController;
@@ -74,6 +75,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
                 return view('admin.coming-soon', ['title' => $titles[$section]]);
             })->name('coming-soon');
+
+            Route::get('reports', [ReportController::class, 'index'])
+                ->middleware('admin.permission:reports.view')->name('reports.index');
+            Route::get('reports/export', [ReportController::class, 'export'])
+                ->middleware(['admin.permission:reports.export', 'throttle:report-export'])->name('reports.export');
 
             Route::get('analytics', [AnalyticsController::class, 'index'])
                 ->middleware('admin.permission:analytics.view')->name('analytics.index');
