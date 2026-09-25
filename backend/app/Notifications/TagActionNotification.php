@@ -3,8 +3,6 @@
 namespace App\Notifications;
 
 use App\Models\Scan;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 
 /**
@@ -13,10 +11,8 @@ use Illuminate\Notifications\Notification;
  * delivery (section 15). Currently database-only — push delivery needs
  * real FCM/APNs credentials before production (see docs decision).
  */
-class TagActionNotification extends Notification implements ShouldQueue
+class TagActionNotification extends Notification
 {
-    use Queueable;
-
     private const TITLES = [
         'vehicle_block' => 'تنبيه: مركبتك تعيق المرور',
         'lights_on' => 'تنبيه: أضواء مركبتك مضاءة',

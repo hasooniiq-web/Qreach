@@ -91,9 +91,15 @@ class AppServiceProvider extends ServiceProvider
 
         RateLimiter::for('contact-request', function (Request $request) {
             return [
-                Limit::perHour(5)->by('contact-ip:'.$request->ip()),
-                Limit::perHour(3)->by('contact-token:'.$request->route('token')),
+                Limit::perHour(20)->by('contact-ip:'.$request->ip()),
+                Limit::perHour(15)->by('contact-token:'.$request->route('token')),
             ];
+        });
+
+        // Follow-ups inside an existing conversation are normal chat traffic,
+        // so they get their own, roomier limit instead of sharing the new-report one.
+        RateLimiter::for('thread-reply', function (Request $request) {
+            return Limit::perMinute(20)->by('thread-reply:'.$request->ip().':'.$request->route('uuid'));
         });
 
         RateLimiter::for('report-export', function (Request $request) {

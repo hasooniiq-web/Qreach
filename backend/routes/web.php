@@ -45,7 +45,7 @@ Route::prefix('t')->name('public.scan.')->group(function () {
     Route::get('{token}/c/{uuid}/messages', [ScanController::class, 'threadMessages'])
         ->middleware('throttle:120,1')->name('thread.messages');
     Route::post('{token}/c/{uuid}', [ScanController::class, 'threadReply'])
-        ->middleware('throttle:contact-request')->name('thread.reply');
+        ->middleware('throttle:thread-reply')->name('thread.reply');
 });
 
 Route::prefix('admin')->name('admin.')->group(function () {

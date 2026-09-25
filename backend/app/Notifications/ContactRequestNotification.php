@@ -3,18 +3,14 @@
 namespace App\Notifications;
 
 use App\Models\ContactRequest;
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Notification;
 
 /**
  * Section 14: the owner is notified of a contact request without the
  * visitor ever seeing the owner's real phone number.
  */
-class ContactRequestNotification extends Notification implements ShouldQueue
+class ContactRequestNotification extends Notification
 {
-    use Queueable;
-
     public function __construct(private readonly ContactRequest $contactRequest, private readonly ?string $followUp = null) {}
 
     public function via(object $notifiable): array
