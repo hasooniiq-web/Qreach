@@ -104,7 +104,7 @@ PEM;
 
         Http::assertSent(fn ($request) => str_contains($request->url(), 'fcm.googleapis.com/v1/projects/qreach-test/messages:send')
             && $request['message']['token'] === 'device-token-1'
-            && $request['message']['data']['type'] === 'contact_request'
+            && ((array) $request['message']['data'])['type'] === 'contact_request'
             && $request->hasHeader('Authorization', 'Bearer ya29.test'));
     }
 

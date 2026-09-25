@@ -75,7 +75,8 @@ class FcmSender
                 ['message' => [
                     'token' => $device->push_token,
                     'notification' => ['title' => $title, 'body' => mb_substr($body, 0, 180)],
-                    'data' => array_map('strval', $data),
+                    // FCM wants a JSON object; an empty PHP array would encode as a list and be rejected.
+                    'data' => (object) array_map('strval', $data),
                     'android' => ['priority' => 'HIGH', 'notification' => ['channel_id' => 'default']],
                 ]]
             );
