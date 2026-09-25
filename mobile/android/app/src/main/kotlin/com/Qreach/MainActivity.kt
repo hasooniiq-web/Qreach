@@ -1,4 +1,4 @@
-package com.qreach.qreach_smarttag
+package com.Qreach
 
 import io.flutter.embedding.android.FlutterActivity
 
