@@ -9,6 +9,7 @@ export default defineConfig({
                 'resources/css/app.css',
                 'resources/js/app.js',
                 'resources/js/admin-nav.js',
+                'resources/js/admin-ui.js',
                 'resources/js/print-batch.js',
                 'resources/js/analytics-charts.js',
             ],

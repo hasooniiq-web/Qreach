@@ -19,14 +19,17 @@ class SystemSettingController extends Controller
     private const DEFINITIONS = [
         'otp_code_ttl_minutes' => [
             'label' => 'مدة صلاحية رمز التحقق (دقائق)',
+            'hint' => 'كم يبقى رمز التحقق المرسل بالرسالة صالحًا قبل أن ينتهي.',
             'default' => 5, 'min' => 1, 'max' => 30,
         ],
         'otp_resend_cooldown_seconds' => [
             'label' => 'مدة الانتظار قبل إعادة إرسال رمز التحقق (ثواني)',
+            'hint' => 'الحد الأدنى بين طلبين متتاليين لرمز جديد لنفس الرقم، لمنع إساءة الاستخدام.',
             'default' => 60, 'min' => 15, 'max' => 600,
         ],
         'qr_batch_max_quantity' => [
             'label' => 'الحد الأقصى لعدد الرموز في الدفعة الواحدة',
+            'hint' => 'يطبَّق عند إنشاء دفعة QR أو NFC جديدة.',
             'default' => 1000, 'min' => 1, 'max' => 5000,
         ],
     ];

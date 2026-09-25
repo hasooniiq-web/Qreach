@@ -23,7 +23,15 @@ class SecurityEventController extends Controller
 
         $eventTypes = SecurityEvent::select('event_type')->distinct()->pluck('event_type');
 
-        return view('admin.security.index', compact('events', 'eventTypes'));
+        // Real counts only — an at-a-glance strip so an admin sees whether anything
+        // needs attention before reading the table (redesign brief §29).
+        $summary = [
+            'critical_open' => SecurityEvent::where('severity', 'critical')->where('resolved', false)->count(),
+            'warning_open' => SecurityEvent::where('severity', 'warning')->where('resolved', false)->count(),
+            'last_24h' => SecurityEvent::where('created_at', '>=', now()->subDay())->count(),
+        ];
+
+        return view('admin.security.index', compact('events', 'eventTypes', 'summary'));
     }
 
     public function resolve(Request $request, SecurityEvent $securityEvent): RedirectResponse

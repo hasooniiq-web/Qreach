@@ -8,14 +8,14 @@
             <label for="email" class="block text-sm font-medium text-ink-700 mb-1.5">البريد الإلكتروني</label>
             <input id="email" name="email" type="email" inputmode="email" autocomplete="username"
                    value="{{ old('email') }}" required autofocus
-                   class="block w-full rounded-md border border-ink-200 px-3 py-2.5 text-sm text-ink-900 placeholder:text-ink-400 focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/40 outline-none"
+                   class="form-control"
                    aria-describedby="email-error">
         </div>
 
         <div>
             <label for="password" class="block text-sm font-medium text-ink-700 mb-1.5">كلمة المرور</label>
             <input id="password" name="password" type="password" autocomplete="current-password" required
-                   class="block w-full rounded-md border border-ink-200 px-3 py-2.5 text-sm text-ink-900 focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/40 outline-none">
+                   class="form-control">
         </div>
 
         <label class="flex items-center gap-2 text-sm text-ink-600">

@@ -7,7 +7,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
-    @vite(['resources/css/app.css', 'resources/js/admin-nav.js'])
+    @vite(['resources/css/app.css', 'resources/js/admin-nav.js', 'resources/js/admin-ui.js'])
 </head>
 <body class="min-h-dvh bg-ink-50 text-ink-900">
     @php
@@ -127,5 +127,19 @@
             </main>
         </div>
     </div>
+
+    {{-- Confirmation dialog driven by admin-ui.js: any form with data-confirm
+         opens this instead of a native confirm(), so the wording can say what
+         will happen and whether it can be undone. --}}
+    <dialog id="confirm-dialog" class="m-auto w-[calc(100%-2rem)] max-w-sm rounded-lg border border-ink-200 bg-white p-0 text-ink-900 shadow-xl backdrop:bg-black/50">
+        <div class="p-6">
+            <h2 data-confirm-title class="text-base font-semibold"></h2>
+            <p data-confirm-message class="mt-2 text-sm text-ink-600"></p>
+        </div>
+        <div class="flex justify-end gap-2 border-t border-ink-100 bg-ink-50 px-6 py-3">
+            <button type="button" data-confirm-cancel class="btn-secondary">إلغاء</button>
+            <button type="button" data-confirm-accept class="btn-danger"></button>
+        </div>
+    </dialog>
 </body>
 </html>

@@ -1,20 +1,17 @@
 <x-layouts.admin :title="'تعديل صلاحيات '.$admin->name">
-    <div class="max-w-lg rounded-lg border border-ink-200 bg-white p-6">
-        <form method="POST" action="{{ route('admin.admins.update', $admin) }}" class="space-y-4">
-            @csrf
-            @method('PUT')
+    <x-page-header :title="$admin->name" :subtitle="$admin->email" :back="route('admin.admins.index')" backLabel="كل المسؤولين" />
 
-            <div>
-                <p class="text-sm font-medium text-ink-900">{{ $admin->name }}</p>
-                <p class="text-xs text-ink-400" dir="ltr">{{ $admin->email }}</p>
-            </div>
+    <form method="POST" action="{{ route('admin.admins.update', $admin) }}" class="max-w-lg space-y-4">
+        @csrf
+        @method('PUT')
 
-            <div>
-                <label class="block text-sm font-medium text-ink-700 mb-2">الأدوار</label>
-                <div class="space-y-2">
+        <x-card padding="p-6">
+            <fieldset>
+                <legend class="mb-3 text-sm font-semibold text-ink-900">الأدوار والصلاحيات</legend>
+                <div class="space-y-3">
                     @php $currentRoleIds = $admin->roles->pluck('id')->all(); @endphp
                     @foreach ($roles as $role)
-                        <label class="flex items-start gap-2 text-sm text-ink-700">
+                        <label class="flex items-start gap-2.5 text-sm text-ink-700">
                             <input type="checkbox" name="roles[]" value="{{ $role->id }}" @checked(in_array($role->id, old('roles', $currentRoleIds)))
                                    class="mt-0.5 rounded border-ink-300 text-brand-yellow focus:ring-brand-yellow">
                             <span>
@@ -26,12 +23,12 @@
                         </label>
                     @endforeach
                 </div>
-            </div>
+            </fieldset>
+        </x-card>
 
-            <div class="flex items-center gap-3 pt-2">
-                <button type="submit" class="rounded-md bg-brand-black text-white text-sm font-medium px-5 py-2.5 hover:bg-ink-800">حفظ التغييرات</button>
-                <a href="{{ route('admin.admins.index') }}" class="text-sm text-ink-500 hover:underline">إلغاء</a>
-            </div>
-        </form>
-    </div>
+        <div class="flex items-center gap-3">
+            <button type="submit" class="btn-primary">حفظ التغييرات</button>
+            <a href="{{ route('admin.admins.index') }}" class="text-sm text-ink-500 hover:underline">إلغاء</a>
+        </div>
+    </form>
 </x-layouts.admin>

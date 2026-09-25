@@ -47,3 +47,28 @@ html[dir='rtl'] body {
         outline-offset: 2px;
     }
 }
+
+/* Shared form/button recipes — the audit found every admin view hand-writing
+   these same class lists (see docs/UI_UX_REDESIGN_AUDIT.md). One definition
+   here means a change to input or button styling happens in one place. */
+@layer components {
+    .form-control {
+        @apply block w-full rounded-md border border-ink-200 bg-white px-3 py-2.5 text-sm text-ink-900 placeholder:text-ink-400 focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/40 outline-none;
+    }
+
+    .btn-primary {
+        @apply inline-flex items-center justify-center gap-2 rounded-md bg-brand-black px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-ink-800;
+    }
+
+    .btn-accent {
+        @apply inline-flex items-center justify-center gap-2 rounded-md bg-brand-yellow px-4 py-2 text-sm font-medium text-brand-black transition-opacity hover:opacity-90;
+    }
+
+    .btn-secondary {
+        @apply inline-flex items-center justify-center gap-2 rounded-md border border-ink-200 bg-white px-4 py-2 text-sm font-medium text-ink-700 transition-colors hover:bg-ink-50;
+    }
+
+    .btn-danger {
+        @apply inline-flex items-center justify-center gap-2 rounded-md border border-status-danger bg-white px-4 py-2 text-sm font-medium text-status-danger transition-colors hover:bg-status-danger/5;
+    }
+}

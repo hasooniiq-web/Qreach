@@ -1,24 +1,36 @@
-<x-layouts.admin title="الإعدادات">
-    <div class="max-w-xl rounded-lg border border-ink-200 bg-white p-6">
-        <form method="POST" action="{{ route('admin.settings.update') }}" class="space-y-5">
+<x-layouts.admin title="إعدادات النظام">
+    <p class="mb-6 text-sm text-ink-500">قيم تغيّر سلوك المنصة مباشرة. كل تغيير يُسجَّل في سجل التدقيق.</p>
+
+    <x-card class="max-w-xl" padding="p-6">
+        <form method="POST" action="{{ route('admin.settings.update') }}" class="space-y-6">
             @csrf
             @method('PUT')
 
-            @foreach ($settings as $setting)
-                <div>
-                    <label class="block text-sm font-medium text-ink-700 mb-1.5">{{ $setting['label'] }}</label>
-                    <input type="number" name="{{ $setting['key'] }}" min="{{ $setting['min'] }}" max="{{ $setting['max'] }}"
-                           value="{{ old($setting['key'], $setting['value']) }}" required
-                           class="block w-full rounded-md border border-ink-200 px-3 py-2.5 text-sm focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/40 outline-none">
-                    @error($setting['key'])
-                        <p class="mt-1 text-xs text-status-danger">{{ $message }}</p>
-                    @enderror
+            <div>
+                <h3 class="mb-4 text-sm font-semibold text-ink-900">أمان وتحقق الهوية</h3>
+                <div class="space-y-5">
+                    @foreach ($settings->only(['otp_code_ttl_minutes', 'otp_resend_cooldown_seconds']) as $setting)
+                        <x-field :label="$setting['label']" :name="$setting['key']" :hint="$setting['hint'] ?? null">
+                            <input type="number" id="{{ $setting['key'] }}" name="{{ $setting['key'] }}" min="{{ $setting['min'] }}" max="{{ $setting['max'] }}"
+                                   value="{{ old($setting['key'], $setting['value']) }}" required class="form-control">
+                        </x-field>
+                    @endforeach
                 </div>
-            @endforeach
+            </div>
 
-            <button type="submit" class="rounded-md bg-brand-black text-white text-sm font-medium px-5 py-2.5 hover:bg-ink-800">
-                حفظ الإعدادات
-            </button>
+            <div class="border-t border-ink-100 pt-6">
+                <h3 class="mb-4 text-sm font-semibold text-ink-900">الرموز والدفعات</h3>
+                <div class="space-y-5">
+                    @foreach ($settings->only(['qr_batch_max_quantity']) as $setting)
+                        <x-field :label="$setting['label']" :name="$setting['key']" :hint="$setting['hint'] ?? null">
+                            <input type="number" id="{{ $setting['key'] }}" name="{{ $setting['key'] }}" min="{{ $setting['min'] }}" max="{{ $setting['max'] }}"
+                                   value="{{ old($setting['key'], $setting['value']) }}" required class="form-control">
+                        </x-field>
+                    @endforeach
+                </div>
+            </div>
+
+            <button type="submit" class="btn-primary">حفظ الإعدادات</button>
         </form>
-    </div>
+    </x-card>
 </x-layouts.admin>
