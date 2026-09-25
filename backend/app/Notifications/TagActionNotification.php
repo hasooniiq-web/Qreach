@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\Scan;
+use App\Notifications\Channels\FcmChannel;
 use Illuminate\Notifications\Notification;
 
 /**
@@ -24,7 +25,17 @@ class TagActionNotification extends Notification
 
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database', FcmChannel::class];
+    }
+
+    /** @return array{title: string, body: string, data: array<string, string>} */
+    public function toFcm(object $notifiable): array
+    {
+        return [
+            'title' => self::TITLES[$this->scan->action_type] ?? 'تنبيه بخصوص مركبتك',
+            'body' => $this->scan->payload['message'] ?? 'افتح التطبيق للتفاصيل',
+            'data' => ['type' => 'tag_action', 'action_type' => $this->scan->action_type],
+        ];
     }
 
     public function toDatabase(object $notifiable): array

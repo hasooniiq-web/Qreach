@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'firebase' => [
+        // Service-account key (NOT google-services.json). See App\Services\FcmSender.
+        'credentials' => env('FIREBASE_CREDENTIALS'),
+    ],
+
 ];

@@ -3,6 +3,7 @@
 namespace App\Notifications;
 
 use App\Models\ContactRequest;
+use App\Notifications\Channels\FcmChannel;
 use Illuminate\Notifications\Notification;
 
 /**
@@ -15,7 +16,17 @@ class ContactRequestNotification extends Notification
 
     public function via(object $notifiable): array
     {
-        return ['database'];
+        return ['database', FcmChannel::class];
+    }
+
+    /** @return array{title: string, body: string, data: array<string, string>} */
+    public function toFcm(object $notifiable): array
+    {
+        return [
+            'title' => $this->followUp ? 'رد جديد من الزائر' : 'رسالة جديدة بخصوص مركبتك',
+            'body' => $this->followUp ?? $this->contactRequest->message,
+            'data' => ['type' => 'contact_request', 'contact_request_id' => $this->contactRequest->uuid],
+        ];
     }
 
     public function toDatabase(object $notifiable): array
