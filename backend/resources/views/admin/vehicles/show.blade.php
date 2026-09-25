@@ -17,7 +17,7 @@
             <h3 class="mb-3 text-sm font-semibold text-ink-900">الرموز المرتبطة ({{ $vehicle->tags->count() }})</h3>
             @forelse ($vehicle->tags as $tag)
                 <div class="flex items-center justify-between border-b border-ink-100 py-2 text-sm last:border-0">
-                    <span class="tabular-nums text-ink-900">{{ $tag->serial_number }}</span>
+                    <a href="{{ route('admin.tags.show', $tag) }}" class="tabular-nums text-ink-900 hover:underline">{{ $tag->serial_number }} <span class="text-xs uppercase text-ink-400">{{ $tag->type }}</span></a>
                     <x-status-badge :status="$tag->status" />
                 </div>
             @empty

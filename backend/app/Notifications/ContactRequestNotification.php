@@ -15,7 +15,7 @@ class ContactRequestNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct(private readonly ContactRequest $contactRequest) {}
+    public function __construct(private readonly ContactRequest $contactRequest, private readonly ?string $followUp = null) {}
 
     public function via(object $notifiable): array
     {
@@ -26,10 +26,11 @@ class ContactRequestNotification extends Notification implements ShouldQueue
     {
         return [
             'type' => 'contact_request',
-            'title' => 'طلب تواصل جديد',
+            'title' => $this->followUp ? 'رد جديد من الزائر' : 'طلب تواصل جديد',
+            'contact_request_uuid' => $this->contactRequest->uuid,
             'contact_request_id' => $this->contactRequest->id,
             'vehicle_id' => $this->contactRequest->vehicle_id,
-            'message' => $this->contactRequest->message,
+            'message' => $this->followUp ?? $this->contactRequest->message,
             'visitor_name' => $this->contactRequest->visitor_name,
         ];
     }

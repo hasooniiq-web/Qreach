@@ -14,7 +14,7 @@
     <x-data-table :headers="['الرقم التسلسلي', 'الرمز العام', 'الحالة', 'المركبة']">
         @foreach ($tags as $tag)
             <tr class="hover:bg-ink-50">
-                <td class="px-4 py-3 font-medium tabular-nums text-ink-900">{{ $tag->serial_number }}</td>
+                <td class="px-4 py-3 font-medium tabular-nums text-ink-900"><a href="{{ route('admin.tags.show', $tag) }}" class="hover:underline">{{ $tag->serial_number }}</a></td>
                 <td class="max-w-[200px] truncate px-4 py-3 font-mono text-xs text-ink-400" dir="ltr">{{ $tag->public_token }}</td>
                 <td class="px-4 py-3"><x-status-badge :status="$tag->status" /></td>
                 <td class="px-4 py-3 text-ink-600">

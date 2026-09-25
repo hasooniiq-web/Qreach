@@ -84,40 +84,16 @@
         </section>
     @endif
 
-    <h2 class="mb-3 text-base font-bold text-ink-900">كيف تريد المساعدة؟</h2>
-
-    {{-- Two one-tap actions: no form to fill, just a large, clear button each. --}}
-    <div class="mb-3 grid grid-cols-2 gap-3">
-        <form method="POST" action="{{ route('public.scan.vehicle-block', $tag->public_token) }}">
-            @csrf
-            <button type="submit" class="flex h-full min-h-32 w-full flex-col items-start justify-between gap-4 rounded-xl border border-ink-200 bg-white p-4 text-start transition-colors hover:border-brand-black active:bg-ink-50">
-                <x-icon name="car" class="size-7 text-ink-900" />
-                <span>
-                    <span class="block text-sm font-semibold text-ink-900">تعيق الطريق</span>
-                    <span class="mt-0.5 block text-xs text-ink-500">اطلب من المالك نقلها</span>
-                </span>
-            </button>
-        </form>
-        <form method="POST" action="{{ route('public.scan.lights-on', $tag->public_token) }}">
-            @csrf
-            <button type="submit" class="flex h-full min-h-32 w-full flex-col items-start justify-between gap-4 rounded-xl border border-ink-200 bg-white p-4 text-start transition-colors hover:border-brand-black active:bg-ink-50">
-                <x-icon name="bulb" class="size-7 text-ink-900" />
-                <span>
-                    <span class="block text-sm font-semibold text-ink-900">الأضواء مضاءة</span>
-                    <span class="mt-0.5 block text-xs text-ink-500">نبّه المالك لإطفائها</span>
-                </span>
-            </button>
-        </form>
-    </div>
+    <h2 class="mb-3 text-base font-bold text-ink-900">تواصل مع مالك المركبة</h2>
 
     {{-- Contact owner: pick a reason -> optional message -> send. The phone is optional and
          only used so the owner can reply; it's never shown back to anyone. --}}
-    <details class="group mb-3 overflow-hidden rounded-xl border border-ink-200 bg-white" @if ($errors->has('message') || $errors->has('visitor_phone') || old('reason')) open @endif>
+    <details class="group mb-3 overflow-hidden rounded-xl border-2 border-brand-black bg-white" open @if ($errors->has('message') || $errors->has('visitor_phone') || old('reason')) open @endif>
         <summary class="flex cursor-pointer list-none items-center gap-3 p-4">
             <x-icon name="contact" class="size-6 shrink-0 text-ink-900" />
             <span class="flex-1">
                 <span class="block text-sm font-semibold text-ink-900">مراسلة المالك</span>
-                <span class="block text-xs text-ink-500">أرسل رسالة قصيرة — بدون كشف رقمه</span>
+                <span class="block text-xs text-ink-500">أرسل رسالة وانتظر ردّه هنا — بدون كشف رقمه</span>
             </span>
             <span class="text-ink-400 transition-transform group-open:rotate-180" aria-hidden="true">⌄</span>
         </summary>
@@ -143,49 +119,8 @@
                 <input type="tel" name="visitor_phone" maxlength="20" value="{{ old('visitor_phone') }}" placeholder="رقمك للرد (اختياري)" aria-label="رقمك للرد (اختياري)" dir="ltr" class="form-control text-start">
             </div>
             <button type="submit" class="btn-primary w-full !py-3">٣. إرسال إلى المالك</button>
+            <p class="text-center text-xs text-ink-500">تُحذف المحادثة تلقائيًا بعد 15 يومًا من آخر رسالة.</p>
         </form>
     </details>
 
-    <details class="group mb-3 overflow-hidden rounded-xl border border-ink-200 bg-white">
-        <summary class="flex cursor-pointer list-none items-center gap-3 p-4">
-            <x-icon name="bell" class="size-6 shrink-0 text-ink-900" />
-            <span class="flex-1">
-                <span class="block text-sm font-semibold text-ink-900">رسالة مهمة</span>
-                <span class="block text-xs text-ink-500">ملاحظة نصية سريعة للمالك</span>
-            </span>
-            <span class="text-ink-400 transition-transform group-open:rotate-180" aria-hidden="true">⌄</span>
-        </summary>
-        <form method="POST" action="{{ route('public.scan.message', $tag->public_token) }}" class="space-y-3 border-t border-ink-100 p-4">
-            @csrf
-            <label for="important-message" class="sr-only">رسالتك</label>
-            <textarea id="important-message" name="message" rows="3" maxlength="300" required placeholder="اكتب رسالتك هنا..." class="form-control">{{ old('message') }}</textarea>
-            <button type="submit" class="btn-primary w-full !py-3">إرسال الرسالة</button>
-        </form>
-    </details>
-
-    {{-- Emergency: clearly distinct (dark outline + warning icon) but not a red wall —
-         the confirmation step and one plain sentence do the work, not alarm colors. --}}
-    <details class="group overflow-hidden rounded-xl border-2 border-brand-black bg-white">
-        <summary class="flex cursor-pointer list-none items-center gap-3 p-4">
-            <span class="flex size-9 shrink-0 items-center justify-center rounded-full bg-brand-yellow">
-                <x-icon name="warning" class="size-5 text-brand-black" />
-            </span>
-            <span class="flex-1">
-                <span class="block text-sm font-semibold text-ink-900">حالة طارئة</span>
-                <span class="block text-xs text-ink-500">حريق، حادث، أو خطر فعلي فقط</span>
-            </span>
-            <span class="text-ink-400 transition-transform group-open:rotate-180" aria-hidden="true">⌄</span>
-        </summary>
-        <form method="POST" action="{{ route('public.scan.emergency', $tag->public_token) }}" class="space-y-3 border-t border-ink-100 p-4">
-            @csrf
-            <p class="text-xs text-ink-600">سيصل تنبيه فوري إلى المالك، ويُسجَّل الحدث. لا تستخدم هذا الخيار للمراسلة العادية.</p>
-            <label for="emergency-message" class="sr-only">وصف مختصر للحالة</label>
-            <textarea id="emergency-message" name="message" rows="2" maxlength="300" placeholder="وصف مختصر للحالة (اختياري)" class="form-control">{{ old('message') }}</textarea>
-            <label class="flex items-start gap-2 text-sm text-ink-700">
-                <input type="checkbox" name="confirmed" value="1" required class="mt-0.5 rounded border-ink-300 text-brand-black focus:ring-brand-yellow">
-                <span>أؤكد أن هذه حالة طارئة فعلية بخصوص هذه المركبة</span>
-            </label>
-            <button type="submit" class="w-full rounded-md bg-brand-black py-3 text-sm font-medium text-white transition-colors hover:bg-ink-800">إرسال تنبيه الطوارئ</button>
-        </form>
-    </details>
 </x-layouts.public>

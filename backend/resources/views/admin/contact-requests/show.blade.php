@@ -31,6 +31,22 @@
             </div>
         </x-card>
 
+        @if ($contactRequest->messages->isNotEmpty())
+            <x-card class="mt-4">
+                <h3 class="mb-3 text-sm font-semibold text-ink-900">المحادثة</h3>
+                <ul class="space-y-2 text-sm">
+                    @foreach ($contactRequest->messages as $m)
+                        <li class="rounded-lg px-3 py-2 {{ $m->sender === 'owner' ? 'bg-ink-100' : 'bg-brand-yellow/20' }}">
+                            <span class="text-xs font-semibold text-ink-500">{{ $m->sender === 'owner' ? 'المالك' : 'الزائر' }} — {{ $m->created_at->format('Y-m-d H:i') }}</span>
+                            <p class="whitespace-pre-line text-ink-900">{{ $m->body }}</p>
+                        </li>
+                    @endforeach
+                </ul>
+            </x-card>
+        @endif
+
+        <p class="mt-3 text-xs text-ink-500">تُحذف هذه المحادثة تلقائيًا في {{ $contactRequest->expiresAt()->format('Y-m-d') }}.</p>
+
         @if ($contactRequest->status !== 'closed')
             <form method="POST" action="{{ route('admin.contact-requests.close', $contactRequest) }}" class="mt-4">
                 @csrf

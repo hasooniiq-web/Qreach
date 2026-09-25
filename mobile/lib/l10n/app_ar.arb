@@ -256,5 +256,32 @@
     "homeStatVehicles": "مركبات",
     "homeStatNewMessages": "رسائل جديدة",
     "homeLinkCode": "ربط رمز",
-    "homeNoCodeCta": "اربط رمز المركبة"
+    "homeNoCodeCta": "اربط رمز المركبة",
+    "sendMessage": "إرسال",
+    "replyHint": "اكتب ردّك...",
+    "threadExpires": "تُحذف هذه المحادثة تلقائيًا في {date}",
+    "@threadExpires": {
+        "placeholders": {
+            "date": {
+                "type": "String"
+            }
+        }
+    },
+    "threadEmpty": "لا توجد رسائل بعد.",
+    "scanModeQr": "QR",
+    "scanModeNfc": "NFC",
+    "nfcHoldPhone": "قرّب ظهر الهاتف من شريحة NFC على المركبة",
+    "nfcUnavailable": "هذا الجهاز لا يدعم NFC",
+    "nfcDisabled": "فعّل NFC من إعدادات الهاتف ثم عد إلى هنا",
+    "nfcNoLink": "لم نجد رابط Qreach في هذه الشريحة",
+    "showQr": "عرض رمز QR",
+    "codeLinkLabel": "الرابط المشفّر في الرمز",
+    "changePhoto": "تغيير الصورة",
+    "takePhoto": "التقاط صورة",
+    "chooseFromGallery": "اختيار من المعرض",
+    "removePhoto": "إزالة الصورة",
+    "photoUpdated": "تم تحديث الصورة",
+    "chooseLanguage": "اختر اللغة",
+    "languageArabic": "العربية",
+    "languageEnglish": "English"
 }

@@ -578,4 +578,66 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get homeNoCodeCta => 'اربط رمز المركبة';
+
+  @override
+  String get sendMessage => 'إرسال';
+
+  @override
+  String get replyHint => 'اكتب ردّك...';
+
+  @override
+  String threadExpires(String date) {
+    return 'تُحذف هذه المحادثة تلقائيًا في $date';
+  }
+
+  @override
+  String get threadEmpty => 'لا توجد رسائل بعد.';
+
+  @override
+  String get scanModeQr => 'QR';
+
+  @override
+  String get scanModeNfc => 'NFC';
+
+  @override
+  String get nfcHoldPhone => 'قرّب ظهر الهاتف من شريحة NFC على المركبة';
+
+  @override
+  String get nfcUnavailable => 'هذا الجهاز لا يدعم NFC';
+
+  @override
+  String get nfcDisabled => 'فعّل NFC من إعدادات الهاتف ثم عد إلى هنا';
+
+  @override
+  String get nfcNoLink => 'لم نجد رابط Qreach في هذه الشريحة';
+
+  @override
+  String get showQr => 'عرض رمز QR';
+
+  @override
+  String get codeLinkLabel => 'الرابط المشفّر في الرمز';
+
+  @override
+  String get changePhoto => 'تغيير الصورة';
+
+  @override
+  String get takePhoto => 'التقاط صورة';
+
+  @override
+  String get chooseFromGallery => 'اختيار من المعرض';
+
+  @override
+  String get removePhoto => 'إزالة الصورة';
+
+  @override
+  String get photoUpdated => 'تم تحديث الصورة';
+
+  @override
+  String get chooseLanguage => 'اختر اللغة';
+
+  @override
+  String get languageArabic => 'العربية';
+
+  @override
+  String get languageEnglish => 'English';
 }

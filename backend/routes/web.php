@@ -39,6 +39,11 @@ Route::prefix('t')->name('public.scan.')->group(function () {
 
     Route::post('{token}/contact', [ScanController::class, 'contactOwner'])
         ->middleware('throttle:contact-request')->name('contact');
+
+    Route::get('{token}/c/{uuid}', [ScanController::class, 'thread'])
+        ->middleware('throttle:public-scan')->name('thread');
+    Route::post('{token}/c/{uuid}', [ScanController::class, 'threadReply'])
+        ->middleware('throttle:contact-request')->name('thread.reply');
 });
 
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -124,6 +129,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
             Route::middleware('admin.permission:qr.view')->group(function () {
                 Route::get('qr', [TagController::class, 'index'])->name('tags.index');
+                Route::get('qr/{tag:public_token}', [TagController::class, 'show'])->name('tags.show');
                 Route::get('qr/{tag:public_token}/image.{format}', [TagController::class, 'image'])->name('tags.image');
             });
             Route::post('qr/{tag:public_token}/revoke', [TagController::class, 'revoke'])

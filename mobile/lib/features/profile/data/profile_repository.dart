@@ -1,3 +1,7 @@
+import 'dart:typed_data';
+
+import 'package:dio/dio.dart';
+
 import '../../../core/network/api_client.dart';
 import 'profile_models.dart';
 
@@ -36,6 +40,33 @@ class ProfileRepository {
         'extra': {'value': extra, 'visible': extraVisible},
       },
     );
+    return ProfileModel.fromJson(response.data!);
+  }
+
+  /// The account photo, or null when none is set.
+  Future<Uint8List?> fetchAvatar() async {
+    try {
+      final response = await _client.dio.get<List<int>>('/profile/avatar',
+          options: Options(responseType: ResponseType.bytes));
+      return Uint8List.fromList(response.data!);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404) return null;
+      rethrow;
+    }
+  }
+
+  Future<ProfileModel> uploadAvatar(String filePath) async {
+    final form = FormData.fromMap({
+      'avatar': await MultipartFile.fromFile(filePath, filename: 'avatar.jpg'),
+    });
+    final response = await _client.dio
+        .post<Map<String, dynamic>>('/profile/avatar', data: form);
+    return ProfileModel.fromJson(response.data!);
+  }
+
+  Future<ProfileModel> removeAvatar() async {
+    final response =
+        await _client.dio.delete<Map<String, dynamic>>('/profile/avatar');
     return ProfileModel.fromJson(response.data!);
   }
 }

@@ -53,3 +53,9 @@ final contactsProvider =
     AsyncNotifierProvider<ContactController, ContactRequestFeed>(
   ContactController.new,
 );
+
+/// One open conversation (first message + replies), refreshed on demand.
+final contactThreadProvider =
+    FutureProvider.autoDispose.family<ContactRequestModel, String>((ref, id) {
+  return ref.watch(contactRequestRepositoryProvider).fetchOne(id);
+});

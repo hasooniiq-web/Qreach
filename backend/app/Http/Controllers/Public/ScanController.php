@@ -11,6 +11,7 @@ use App\Models\Scan;
 use App\Models\Tag;
 use App\Notifications\ContactRequestNotification;
 use App\Notifications\TagActionNotification;
+use App\Rules\PlainTextOnly;
 use App\Services\PublicContacts;
 use App\Services\SecurityEventLogger;
 use Illuminate\Http\RedirectResponse;
@@ -106,7 +107,47 @@ class ScanController extends Controller
 
         $tag->vehicle->user->notify(new ContactRequestNotification($contactRequest));
 
-        return back()->with('scan_status', 'تم إرسال طلب التواصل الخاص بك.');
+        // The visitor's private conversation link: the request uuid is unguessable and is the only key.
+        return redirect()->route('public.scan.thread', [$tag->public_token, $contactRequest->uuid])
+            ->with('scan_status', 'تم إرسال رسالتك.');
+    }
+
+    public function thread(Request $request, string $token, string $uuid): View
+    {
+        $tag = $this->resolveActiveTag($token, $request);
+        $contactRequest = $tag ? $this->findThread($tag, $uuid) : null;
+
+        if (! $contactRequest) {
+            return view('public.invalid');
+        }
+
+        return view('public.thread', ['tag' => $tag, 'thread' => $contactRequest->load('messages')]);
+    }
+
+    public function threadReply(Request $request, string $token, string $uuid): RedirectResponse
+    {
+        $tag = $this->resolveActiveTagOrFail($token, $request);
+        $contactRequest = $this->findThread($tag, $uuid);
+        abort_if(! $contactRequest, 404);
+
+        $data = $request->validate(['body' => ['required', 'string', 'max:500', new PlainTextOnly]], [
+            'body.required' => 'اكتب رسالتك أولًا.',
+        ]);
+
+        if ($contactRequest->messages()->count() >= ContactRequest::MAX_MESSAGES) {
+            return back()->withErrors(['body' => 'وصلت المحادثة إلى الحد الأقصى من الرسائل.']);
+        }
+
+        $contactRequest->addMessage('visitor', trim($data['body']));
+        $contactRequest->update(['status' => 'new', 'read_at' => null]);
+        $tag->vehicle->user->notify(new ContactRequestNotification($contactRequest, trim($data['body'])));
+
+        return back()->with('scan_status', 'تم إرسال رسالتك.');
+    }
+
+    private function findThread(Tag $tag, string $uuid): ?ContactRequest
+    {
+        return ContactRequest::where('uuid', $uuid)->where('tag_id', $tag->id)->first();
     }
 
     /** Prepends the chosen reason label so the owner sees why, even when the visitor typed nothing. */

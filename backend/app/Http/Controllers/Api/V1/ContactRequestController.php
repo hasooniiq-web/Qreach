@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\ContactRequest;
+use App\Rules\PlainTextOnly;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -25,6 +26,36 @@ class ContactRequestController extends Controller
             'unread_count' => $this->owned($request)->where('status', 'new')->count(),
             'meta' => ['current_page' => $page->currentPage(), 'last_page' => $page->lastPage(), 'total' => $page->total()],
         ]);
+    }
+
+    public function show(Request $request, string $uuid): JsonResponse
+    {
+        $contact = $this->find($request, $uuid);
+
+        if ($contact->status === 'new') {
+            $contact->update(['status' => 'read', 'read_at' => now()]);
+        }
+
+        return response()->json($this->present($contact->fresh(['vehicle', 'messages']), withMessages: true));
+    }
+
+    public function reply(Request $request, string $uuid): JsonResponse
+    {
+        $contact = $this->find($request, $uuid);
+        $data = $request->validate(['body' => ['required', 'string', 'max:500', new PlainTextOnly]]);
+
+        if ($contact->messages()->count() >= ContactRequest::MAX_MESSAGES) {
+            return response()->json(['error' => ['code' => 'THREAD_FULL', 'message' => 'وصلت المحادثة إلى الحد الأقصى من الرسائل.']], 422);
+        }
+
+        $contact->addMessage('owner', trim($data['body']));
+        $contact->update([
+            'status' => 'responded',
+            'responded_at' => now(),
+            'read_at' => $contact->read_at ?? now(),
+        ]);
+
+        return response()->json($this->present($contact->fresh(['vehicle', 'messages']), withMessages: true), 201);
     }
 
     public function markRead(Request $request, string $uuid): JsonResponse
@@ -65,9 +96,9 @@ class ContactRequestController extends Controller
     }
 
     /** @return array<string, mixed> */
-    private function present(ContactRequest $r): array
+    private function present(ContactRequest $r, bool $withMessages = false): array
     {
-        return [
+        $out = [
             'id' => $r->uuid,
             'visitor_name' => $r->visitor_name,
             'visitor_phone' => $r->visitor_phone,
@@ -75,6 +106,17 @@ class ContactRequestController extends Controller
             'status' => $r->status,
             'vehicle' => $r->vehicle?->nickname ?: $r->vehicle?->plate_number,
             'created_at' => $r->created_at->toIso8601String(),
+            'expires_at' => $r->expiresAt()->toIso8601String(),
         ];
+
+        if ($withMessages) {
+            $out['messages'] = $r->messages->map(fn ($m) => [
+                'sender' => $m->sender,
+                'body' => $m->body,
+                'created_at' => $m->created_at->toIso8601String(),
+            ])->values();
+        }
+
+        return $out;
     }
 }

@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:image_picker/image_picker.dart';
 
+import '../../../core/locale/locale_controller.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/providers.dart';
 import '../../../core/theme/app_colors.dart';
@@ -9,6 +11,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/notification_bell.dart';
 import '../../../shared/widgets/settings_group.dart';
+import '../../../shared/widgets/user_avatar.dart';
 import '../../auth/presentation/logout_confirm.dart';
 import '../../subscription/presentation/subscription_controller.dart';
 import '../data/profile_models.dart';
@@ -70,6 +73,99 @@ class ProfileScreen extends ConsumerWidget {
     }
   }
 
+  Future<void> _changePhoto(
+      BuildContext context, WidgetRef ref, ProfileModel profile) async {
+    final l10n = AppLocalizations.of(context)!;
+    final choice = await showModalBottomSheet<String>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_camera_outlined),
+              title: Text(l10n.takePhoto),
+              onTap: () => Navigator.of(context).pop('camera'),
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library_outlined),
+              title: Text(l10n.chooseFromGallery),
+              onTap: () => Navigator.of(context).pop('gallery'),
+            ),
+            if (profile.hasAvatar)
+              ListTile(
+                leading: const Icon(Icons.delete_outline,
+                    color: AppColors.statusDanger),
+                title: Text(l10n.removePhoto,
+                    style: const TextStyle(color: AppColors.statusDanger)),
+                onTap: () => Navigator.of(context).pop('remove'),
+              ),
+          ],
+        ),
+      ),
+    );
+    if (choice == null || !context.mounted) return;
+
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      if (choice == 'remove') {
+        await ref.read(profileRepositoryProvider).removeAvatar();
+      } else {
+        final picked = await ImagePicker().pickImage(
+          source: choice == 'camera' ? ImageSource.camera : ImageSource.gallery,
+          maxWidth: 1024,
+          maxHeight: 1024,
+          imageQuality: 85,
+        );
+        if (picked == null) return;
+        await ref.read(profileRepositoryProvider).uploadAvatar(picked.path);
+      }
+      ref.invalidate(profileProvider);
+      messenger.showSnackBar(SnackBar(content: Text(l10n.photoUpdated)));
+    } catch (e) {
+      messenger
+          .showSnackBar(SnackBar(content: Text(asApiException(e).message)));
+    }
+  }
+
+  Future<void> _chooseLanguage(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context)!;
+    final current = ref.read(localeProvider).languageCode;
+    final picked = await showModalBottomSheet<String>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(AppSpacing.md),
+              child: Text(l10n.chooseLanguage,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w800, fontSize: 16)),
+            ),
+            for (final entry in {
+              'ar': l10n.languageArabic,
+              'en': l10n.languageEnglish
+            }.entries)
+              ListTile(
+                title: Text(entry.value),
+                trailing: entry.key == current
+                    ? const Icon(Icons.check_circle,
+                        color: AppColors.brandBlack)
+                    : null,
+                onTap: () => Navigator.of(context).pop(entry.key),
+              ),
+          ],
+        ),
+      ),
+    );
+    if (picked != null) {
+      await ref.read(localeProvider.notifier).setLocale(Locale(picked));
+    }
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
@@ -77,8 +173,6 @@ class ProfileScreen extends ConsumerWidget {
     final subscription = ref.watch(subscriptionProvider).valueOrNull;
 
     final name = profile?.name;
-    final initial =
-        (name != null && name.isNotEmpty) ? name.characters.first : '؟';
     final sharing = profile?.sharesAnything ?? false;
 
     return Scaffold(
@@ -97,14 +191,31 @@ class ProfileScreen extends ConsumerWidget {
             ),
             child: Row(
               children: [
-                CircleAvatar(
-                  radius: 32,
-                  backgroundColor: AppColors.brandYellow,
-                  child: Text(initial,
-                      style: const TextStyle(
-                          color: AppColors.brandBlack,
-                          fontSize: 26,
-                          fontWeight: FontWeight.w800)),
+                GestureDetector(
+                  onTap: profile == null
+                      ? null
+                      : () => _changePhoto(context, ref, profile),
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      UserAvatar(name: name, radius: 34),
+                      PositionedDirectional(
+                        bottom: -2,
+                        end: -2,
+                        child: Container(
+                          padding: const EdgeInsets.all(5),
+                          decoration: BoxDecoration(
+                            color: AppColors.brandWhite,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                                color: AppColors.brandBlack, width: 1.5),
+                          ),
+                          child: const Icon(Icons.photo_camera,
+                              size: 14, color: AppColors.brandBlack),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
                 const SizedBox(width: AppSpacing.lg),
                 Expanded(
@@ -186,6 +297,7 @@ class ProfileScreen extends ConsumerWidget {
                 icon: Icons.language,
                 label: l10n.language,
                 value: l10n.languageName,
+                onTap: () => _chooseLanguage(context, ref),
               ),
             ],
           ),

@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../features/auth/presentation/auth_controller.dart';
 import '../../features/auth/presentation/otp_screen.dart';
 import '../../features/auth/presentation/phone_entry_screen.dart';
+import '../../features/contacts/presentation/contact_thread_screen.dart';
 import '../../features/contacts/presentation/contacts_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/notifications/presentation/notifications_screen.dart';
@@ -75,6 +76,11 @@ final routerProvider = Provider<GoRouter>((ref) {
                 builder: (context, state) => const ProfileScreen()),
           ]),
         ],
+      ),
+      GoRoute(
+        path: '/contacts/:id',
+        builder: (context, state) =>
+            ContactThreadScreen(requestId: state.pathParameters['id']!),
       ),
       GoRoute(
           path: '/notifications',

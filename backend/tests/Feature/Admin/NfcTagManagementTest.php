@@ -4,6 +4,7 @@ namespace Tests\Feature\Admin;
 
 use App\Models\Admin;
 use App\Models\Role;
+use App\Models\Tag;
 use App\Services\QrBatchService;
 use Database\Seeders\RolesAndPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -62,5 +63,21 @@ class NfcTagManagementTest extends TestCase
         $response = $this->actingAs($admin, 'admin')->get("/admin/batches/{$batch->id}");
 
         $response->assertStatus(200)->assertDontSee('طباعة الرموز');
+    }
+
+    public function test_admin_can_view_a_tag_and_get_its_qr_image_for_both_types(): void
+    {
+        $admin = $this->actingSuperAdmin();
+        config(['app.url' => 'https://qreach.example']);
+
+        foreach (['qr', 'nfc'] as $type) {
+            $tag = Tag::where('id', app(QrBatchService::class)->createBatch(1, $admin->id, $type)->tags()->value('id'))->first();
+
+            $this->actingAs($admin, 'admin')->get("/admin/qr/{$tag->public_token}")
+                ->assertOk()->assertSee("https://qreach.example/t/{$tag->public_token}");
+
+            $this->actingAs($admin, 'admin')->get("/admin/qr/{$tag->public_token}/image.png")
+                ->assertOk()->assertHeader('Content-Type', 'image/png');
+        }
     }
 }

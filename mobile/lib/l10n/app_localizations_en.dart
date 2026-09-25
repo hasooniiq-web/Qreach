@@ -356,7 +356,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsPreferences => 'Preferences';
 
   @override
-  String get languageName => 'Arabic';
+  String get languageName => 'English';
 
   @override
   String get loadErrorTitle => 'Couldn\'t load data';
@@ -582,4 +582,67 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get homeNoCodeCta => 'Link your vehicle code';
+
+  @override
+  String get sendMessage => 'Send';
+
+  @override
+  String get replyHint => 'Write your reply...';
+
+  @override
+  String threadExpires(String date) {
+    return 'This conversation is deleted automatically on $date';
+  }
+
+  @override
+  String get threadEmpty => 'No messages yet.';
+
+  @override
+  String get scanModeQr => 'QR';
+
+  @override
+  String get scanModeNfc => 'NFC';
+
+  @override
+  String get nfcHoldPhone => 'Hold the back of your phone against the NFC tag';
+
+  @override
+  String get nfcUnavailable => 'This device does not support NFC';
+
+  @override
+  String get nfcDisabled =>
+      'Turn NFC on in your phone settings, then come back';
+
+  @override
+  String get nfcNoLink => 'No Qreach link was found on this tag';
+
+  @override
+  String get showQr => 'Show QR code';
+
+  @override
+  String get codeLinkLabel => 'Link stored in the code';
+
+  @override
+  String get changePhoto => 'Change photo';
+
+  @override
+  String get takePhoto => 'Take a photo';
+
+  @override
+  String get chooseFromGallery => 'Choose from gallery';
+
+  @override
+  String get removePhoto => 'Remove photo';
+
+  @override
+  String get photoUpdated => 'Photo updated';
+
+  @override
+  String get chooseLanguage => 'Choose language';
+
+  @override
+  String get languageArabic => 'العربية';
+
+  @override
+  String get languageEnglish => 'English';
 }

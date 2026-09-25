@@ -28,7 +28,7 @@ class ContactRequestController extends Controller
             $contactRequest->update(['status' => 'read', 'read_at' => now()]);
         }
 
-        $contactRequest->load('vehicle.user');
+        $contactRequest->load('vehicle.user', 'messages');
 
         return view('admin.contact-requests.show', ['contactRequest' => $contactRequest]);
     }

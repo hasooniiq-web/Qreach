@@ -6,9 +6,12 @@ use App\Http\Controllers\Controller;
 use App\Models\ContactMethod;
 use App\Rules\PlainTextOnly;
 use App\Services\AuditLogger;
+use App\Services\AvatarProcessor;
 use App\Services\PlanEntitlements;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * The customer's own profile: display name and the contact details they can
@@ -23,7 +26,53 @@ class ProfileController extends Controller
     /** request key => contact_methods.type */
     private const FIELDS = ['phone' => 'phone', 'instagram' => 'instagram', 'extra' => 'other'];
 
-    public function __construct(private readonly PlanEntitlements $plans) {}
+    public function __construct(private readonly PlanEntitlements $plans, private readonly AvatarProcessor $avatars) {}
+
+    public function avatar(Request $request): Response
+    {
+        $path = $request->user()->avatar_path;
+
+        abort_unless($path && Storage::disk('local')->exists($path), 404);
+
+        return Storage::disk('local')->response($path, null, [
+            'Content-Type' => 'image/jpeg',
+            'Cache-Control' => 'private, max-age=300',
+        ]);
+    }
+
+    public function storeAvatar(Request $request): JsonResponse
+    {
+        $request->validate([
+            'avatar' => ['required', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:4096', 'dimensions:min_width=64,min_height=64'],
+        ]);
+
+        $user = $request->user();
+        $jpeg = $this->avatars->normalize($request->file('avatar'));
+
+        if ($jpeg === null) {
+            return response()->json(['error' => ['code' => 'INVALID_IMAGE', 'message' => 'تعذّرت معالجة الصورة. جرّب صورة أخرى.']], 422);
+        }
+
+        $path = "user-avatars/{$user->uuid}.jpg";
+        Storage::disk('local')->put($path, $jpeg);
+        $user->update(['avatar_path' => $path]);
+
+        AuditLogger::log('profile.avatar_updated', 'customer', $user->id, 'User', $user->id, 'success', [], $request);
+
+        return $this->show($request);
+    }
+
+    public function destroyAvatar(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        if ($user->avatar_path) {
+            Storage::disk('local')->delete($user->avatar_path);
+            $user->update(['avatar_path' => null]);
+        }
+
+        return $this->show($request);
+    }
 
     public function show(Request $request): JsonResponse
     {
@@ -46,6 +95,8 @@ class ProfileController extends Controller
             'name' => $user->name,
             'phone' => $user->phone,
             'plan' => $plan->slug,
+            'has_avatar' => (bool) $user->avatar_path,
+            'avatar_version' => $user->updated_at?->timestamp,
             'contact' => $contact,
         ]);
     }

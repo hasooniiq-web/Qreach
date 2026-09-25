@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -57,6 +59,15 @@ class FakeProfileRepository implements ProfileRepository {
 
   @override
   Future<ProfileModel> fetch() async => profile;
+
+  @override
+  Future<Uint8List?> fetchAvatar() async => null;
+
+  @override
+  Future<ProfileModel> uploadAvatar(String filePath) async => profile;
+
+  @override
+  Future<ProfileModel> removeAvatar() async => profile;
 
   @override
   Future<ProfileModel> updateName(String name) async => profile;

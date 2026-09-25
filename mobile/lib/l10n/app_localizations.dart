@@ -1159,6 +1159,126 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'اربط رمز المركبة'**
   String get homeNoCodeCta;
+
+  /// No description provided for @sendMessage.
+  ///
+  /// In ar, this message translates to:
+  /// **'إرسال'**
+  String get sendMessage;
+
+  /// No description provided for @replyHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتب ردّك...'**
+  String get replyHint;
+
+  /// No description provided for @threadExpires.
+  ///
+  /// In ar, this message translates to:
+  /// **'تُحذف هذه المحادثة تلقائيًا في {date}'**
+  String threadExpires(String date);
+
+  /// No description provided for @threadEmpty.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد رسائل بعد.'**
+  String get threadEmpty;
+
+  /// No description provided for @scanModeQr.
+  ///
+  /// In ar, this message translates to:
+  /// **'QR'**
+  String get scanModeQr;
+
+  /// No description provided for @scanModeNfc.
+  ///
+  /// In ar, this message translates to:
+  /// **'NFC'**
+  String get scanModeNfc;
+
+  /// No description provided for @nfcHoldPhone.
+  ///
+  /// In ar, this message translates to:
+  /// **'قرّب ظهر الهاتف من شريحة NFC على المركبة'**
+  String get nfcHoldPhone;
+
+  /// No description provided for @nfcUnavailable.
+  ///
+  /// In ar, this message translates to:
+  /// **'هذا الجهاز لا يدعم NFC'**
+  String get nfcUnavailable;
+
+  /// No description provided for @nfcDisabled.
+  ///
+  /// In ar, this message translates to:
+  /// **'فعّل NFC من إعدادات الهاتف ثم عد إلى هنا'**
+  String get nfcDisabled;
+
+  /// No description provided for @nfcNoLink.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم نجد رابط Qreach في هذه الشريحة'**
+  String get nfcNoLink;
+
+  /// No description provided for @showQr.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض رمز QR'**
+  String get showQr;
+
+  /// No description provided for @codeLinkLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرابط المشفّر في الرمز'**
+  String get codeLinkLabel;
+
+  /// No description provided for @changePhoto.
+  ///
+  /// In ar, this message translates to:
+  /// **'تغيير الصورة'**
+  String get changePhoto;
+
+  /// No description provided for @takePhoto.
+  ///
+  /// In ar, this message translates to:
+  /// **'التقاط صورة'**
+  String get takePhoto;
+
+  /// No description provided for @chooseFromGallery.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختيار من المعرض'**
+  String get chooseFromGallery;
+
+  /// No description provided for @removePhoto.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزالة الصورة'**
+  String get removePhoto;
+
+  /// No description provided for @photoUpdated.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تحديث الصورة'**
+  String get photoUpdated;
+
+  /// No description provided for @chooseLanguage.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر اللغة'**
+  String get chooseLanguage;
+
+  /// No description provided for @languageArabic.
+  ///
+  /// In ar, this message translates to:
+  /// **'العربية'**
+  String get languageArabic;
+
+  /// No description provided for @languageEnglish.
+  ///
+  /// In ar, this message translates to:
+  /// **'English'**
+  String get languageEnglish;
 }
 
 class _AppLocalizationsDelegate

@@ -36,6 +36,8 @@ class ProfileModel extends Equatable {
     required this.phoneField,
     required this.instagram,
     required this.extra,
+    this.hasAvatar = false,
+    this.avatarVersion,
   });
 
   final String? name;
@@ -46,6 +48,10 @@ class ProfileModel extends Equatable {
   final ContactField phoneField;
   final ContactField instagram;
   final ContactField extra;
+  final bool hasAvatar;
+
+  /// Changes whenever the account is updated; lets the photo be re-fetched.
+  final int? avatarVersion;
 
   /// True if any detail is currently switched on for visitors.
   bool get sharesAnything =>
@@ -65,9 +71,20 @@ class ProfileModel extends Equatable {
       phoneField: field('phone'),
       instagram: field('instagram'),
       extra: field('extra'),
+      hasAvatar: json['has_avatar'] as bool? ?? false,
+      avatarVersion: (json['avatar_version'] as num?)?.toInt(),
     );
   }
 
   @override
-  List<Object?> get props => [name, phone, plan, phoneField, instagram, extra];
+  List<Object?> get props => [
+        name,
+        phone,
+        plan,
+        phoneField,
+        instagram,
+        extra,
+        hasAvatar,
+        avatarVersion
+      ];
 }

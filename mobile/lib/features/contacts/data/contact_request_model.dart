@@ -1,5 +1,23 @@
 import 'package:equatable/equatable.dart';
 
+class ThreadMessage extends Equatable {
+  const ThreadMessage(
+      {required this.fromOwner, required this.body, required this.createdAt});
+
+  final bool fromOwner;
+  final String body;
+  final DateTime createdAt;
+
+  factory ThreadMessage.fromJson(Map<String, dynamic> json) => ThreadMessage(
+        fromOwner: json['sender'] == 'owner',
+        body: json['body'] as String? ?? '',
+        createdAt: DateTime.parse(json['created_at'] as String),
+      );
+
+  @override
+  List<Object?> get props => [fromOwner, body, createdAt];
+}
+
 /// A message a visitor sent after scanning one of the owner's vehicle tags.
 class ContactRequestModel extends Equatable {
   const ContactRequestModel({
@@ -10,6 +28,8 @@ class ContactRequestModel extends Equatable {
     required this.status,
     required this.vehicle,
     required this.createdAt,
+    this.expiresAt,
+    this.messages = const [],
   });
 
   final String id;
@@ -24,6 +44,14 @@ class ContactRequestModel extends Equatable {
   final String? vehicle;
   final DateTime createdAt;
 
+  /// The conversation is deleted automatically at this time (15 days after
+  /// the last message).
+  final DateTime? expiresAt;
+
+  /// Follow-up messages after the first one (`message`); only loaded when the
+  /// conversation is opened.
+  final List<ThreadMessage> messages;
+
   bool get isNew => status == 'new';
   bool get isHandled => status == 'responded' || status == 'closed';
 
@@ -35,6 +63,8 @@ class ContactRequestModel extends Equatable {
         status: status ?? this.status,
         vehicle: vehicle,
         createdAt: createdAt,
+        expiresAt: expiresAt,
+        messages: messages,
       );
 
   factory ContactRequestModel.fromJson(Map<String, dynamic> json) =>
@@ -46,11 +76,26 @@ class ContactRequestModel extends Equatable {
         status: json['status'] as String? ?? 'new',
         vehicle: json['vehicle'] as String?,
         createdAt: DateTime.parse(json['created_at'] as String),
+        expiresAt: json['expires_at'] != null
+            ? DateTime.tryParse(json['expires_at'] as String)
+            : null,
+        messages: (json['messages'] as List<dynamic>? ?? const [])
+            .map((e) => ThreadMessage.fromJson(e as Map<String, dynamic>))
+            .toList(),
       );
 
   @override
-  List<Object?> get props =>
-      [id, visitorName, visitorPhone, message, status, vehicle, createdAt];
+  List<Object?> get props => [
+        id,
+        visitorName,
+        visitorPhone,
+        message,
+        status,
+        vehicle,
+        createdAt,
+        expiresAt,
+        messages
+      ];
 }
 
 class ContactRequestFeed extends Equatable {

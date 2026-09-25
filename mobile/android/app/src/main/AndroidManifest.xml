@@ -5,6 +5,10 @@
          declaring it here is required regardless of platform version. -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <uses-feature android:name="android.hardware.camera" android:required="false"/>
+    <!-- Reading an NFC tag to link it to a vehicle. Optional: phones without
+         NFC can still link a code by scanning its QR. -->
+    <uses-permission android:name="android.permission.NFC"/>
+    <uses-feature android:name="android.hardware.nfc" android:required="false"/>
 
     <application
         android:label="Qreach SmartTag"

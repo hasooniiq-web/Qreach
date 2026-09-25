@@ -4,9 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Services\AuditLogger;
+use App\Services\AvatarProcessor;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
@@ -24,7 +24,7 @@ use Symfony\Component\HttpFoundation\Response;
  */
 class ProfileController extends Controller
 {
-    private const AVATAR_SIZE = 256;
+    public function __construct(private readonly AvatarProcessor $avatars) {}
 
     public function edit(): View
     {
@@ -66,7 +66,7 @@ class ProfileController extends Controller
         ], [], ['avatar' => 'الصورة']);
 
         $admin = auth('admin')->user();
-        $jpeg = $this->normalize($request->file('avatar'));
+        $jpeg = $this->avatars->normalize($request->file('avatar'));
 
         if ($jpeg === null) {
             return back()->withErrors(['avatar' => 'تعذّرت معالجة الصورة. جرّب صورة أخرى.']);
@@ -111,33 +111,5 @@ class ProfileController extends Controller
         AuditLogger::log('admin.password_changed', 'admin', $admin->id, 'Admin', $admin->id, 'success', [], $request);
 
         return back()->with('status', 'تم تغيير كلمة المرور.');
-    }
-
-    /** Decode -> center-crop to a square -> resize -> re-encode as JPEG. */
-    private function normalize(UploadedFile $file): ?string
-    {
-        $source = @imagecreatefromstring((string) file_get_contents($file->getRealPath()));
-
-        if (! $source) {
-            return null;
-        }
-
-        $width = imagesx($source);
-        $height = imagesy($source);
-        $side = min($width, $height);
-
-        $canvas = imagecreatetruecolor(self::AVATAR_SIZE, self::AVATAR_SIZE);
-        // Transparent PNG/WebP areas become white rather than black.
-        imagefill($canvas, 0, 0, imagecolorallocate($canvas, 255, 255, 255));
-        imagecopyresampled(
-            $canvas, $source, 0, 0, intdiv($width - $side, 2), intdiv($height - $side, 2),
-            self::AVATAR_SIZE, self::AVATAR_SIZE, $side, $side
-        );
-
-        ob_start();
-        imagejpeg($canvas, null, 85);
-        $bytes = ob_get_clean();
-
-        return $bytes !== false && $bytes !== '' ? $bytes : null;
     }
 }

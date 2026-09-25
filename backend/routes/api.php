@@ -35,6 +35,9 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::put('devices/push-token', [DeviceController::class, 'updatePushToken'])->name('devices.push-token');
 
         Route::get('contact-requests', [ContactRequestController::class, 'index'])->name('contact-requests.index');
+        Route::get('contact-requests/{uuid}', [ContactRequestController::class, 'show'])->name('contact-requests.show');
+        Route::post('contact-requests/{uuid}/reply', [ContactRequestController::class, 'reply'])
+            ->middleware('throttle:30,1')->name('contact-requests.reply');
         Route::put('contact-requests/{uuid}/read', [ContactRequestController::class, 'markRead'])->name('contact-requests.read');
         Route::put('contact-requests/{uuid}/responded', [ContactRequestController::class, 'markResponded'])->name('contact-requests.responded');
 
@@ -48,6 +51,9 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
 
         Route::get('profile', [ProfileController::class, 'show'])->name('profile.show');
         Route::put('profile', [ProfileController::class, 'updateName'])->name('profile.name');
+        Route::get('profile/avatar', [ProfileController::class, 'avatar'])->name('profile.avatar');
+        Route::post('profile/avatar', [ProfileController::class, 'storeAvatar'])->name('profile.avatar.store');
+        Route::delete('profile/avatar', [ProfileController::class, 'destroyAvatar'])->name('profile.avatar.destroy');
         Route::put('profile/contact', [ProfileController::class, 'updateContact'])->name('profile.contact');
     });
 });

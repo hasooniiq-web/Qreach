@@ -1,12 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../core/providers.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../tags/data/tag_model.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/plate_badge.dart';
@@ -142,6 +144,57 @@ class _CodeSectionState extends ConsumerState<_CodeSection> {
     }
   }
 
+  /// The code as a QR image plus the link stored in it — for both QR and NFC
+  /// codes (an NFC tag holds the same link, so its QR is a working fallback).
+  void _showQr(BuildContext context, TagModel tag) {
+    final l10n = AppLocalizations.of(context)!;
+
+    showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      showDragHandle: true,
+      builder: (context) => SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+              AppSpacing.xl, 0, AppSpacing.xl, AppSpacing.xl),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(
+                  '${tag.type == 'nfc' ? l10n.tagTypeNfc : l10n.tagTypeQr}  ·  ${tag.serialNumber}',
+                  textDirection: TextDirection.ltr,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w800, fontSize: 16)),
+              const SizedBox(height: AppSpacing.lg),
+              Container(
+                padding: const EdgeInsets.all(AppSpacing.md),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: AppColors.ink200),
+                ),
+                child: QrImageView(
+                  data: tag.publicUrl,
+                  size: 240,
+                  errorCorrectionLevel: QrErrorCorrectLevel.H,
+                ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              Text(l10n.codeLinkLabel,
+                  style:
+                      const TextStyle(color: AppColors.ink500, fontSize: 12)),
+              const SizedBox(height: 4),
+              SelectableText(tag.publicUrl,
+                  textDirection: TextDirection.ltr,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(fontSize: 12)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -210,6 +263,12 @@ class _CodeSectionState extends ConsumerState<_CodeSection> {
               ),
             ],
           ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        OutlinedButton.icon(
+          onPressed: () => _showQr(context, tag),
+          icon: const Icon(Icons.qr_code_2),
+          label: Text(l10n.showQr),
         ),
         const SizedBox(height: AppSpacing.md),
         Text(l10n.oneCodeNote,

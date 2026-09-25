@@ -22,7 +22,7 @@
     <x-data-table :headers="['الرقم التسلسلي', 'النوع', 'المركبة', 'الحالة', 'تاريخ الإنشاء', '']">
         @forelse ($tags as $tag)
             <tr class="hover:bg-ink-50">
-                <td class="px-4 py-3 font-medium tabular-nums text-ink-900">{{ $tag->serial_number }}</td>
+                <td class="px-4 py-3 font-medium tabular-nums text-ink-900"><a href="{{ route('admin.tags.show', $tag) }}" class="hover:underline">{{ $tag->serial_number }}</a></td>
                 <td class="px-4 py-3 uppercase text-ink-600">{{ $tag->type }}</td>
                 <td class="px-4 py-3 text-ink-600">
                     @if ($tag->vehicle)

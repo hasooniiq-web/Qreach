@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -85,7 +85,7 @@ class _ContactCard extends ConsumerWidget {
     return AppCard(
       onTap: () {
         ref.read(contactsProvider.notifier).markRead(r);
-        _showDetail(context, r);
+        context.push('/contacts/${r.id}');
       },
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -148,81 +148,6 @@ class _ContactCard extends ConsumerWidget {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  void _showDetail(BuildContext context, ContactRequestModel r) {
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      showDragHandle: true,
-      builder: (_) => _ContactDetail(id: r.id),
-    );
-  }
-}
-
-class _ContactDetail extends ConsumerWidget {
-  const _ContactDetail({required this.id});
-
-  final String id;
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
-    final feed = ref.watch(contactsProvider).valueOrNull;
-    final r = feed?.items.where((e) => e.id == id).firstOrNull;
-    if (r == null) return const SizedBox.shrink();
-
-    return SafeArea(
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(
-            AppSpacing.xl, 0, AppSpacing.xl, AppSpacing.xl),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            Text(
-              r.visitorName?.isNotEmpty == true
-                  ? r.visitorName!
-                  : l10n.visitorAnonymous,
-              style: Theme.of(context)
-                  .textTheme
-                  .titleLarge
-                  ?.copyWith(fontWeight: FontWeight.w800),
-            ),
-            if (r.vehicle != null)
-              Text(l10n.contactAboutVehicle(r.vehicle!),
-                  style: const TextStyle(color: AppColors.ink500)),
-            const SizedBox(height: AppSpacing.lg),
-            Container(
-              padding: const EdgeInsets.all(AppSpacing.lg),
-              decoration: BoxDecoration(
-                color: AppColors.ink50,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Text(r.message, style: const TextStyle(height: 1.5)),
-            ),
-            const SizedBox(height: AppSpacing.lg),
-            if (r.visitorPhone != null && r.visitorPhone!.isNotEmpty)
-              OutlinedButton.icon(
-                onPressed: () =>
-                    launchUrl(Uri(scheme: 'tel', path: r.visitorPhone)),
-                icon: const Icon(Icons.call_outlined),
-                label: Text('${l10n.callVisitor}  ${r.visitorPhone}',
-                    textDirection: TextDirection.ltr),
-              ),
-            if (!r.isHandled) ...[
-              const SizedBox(height: AppSpacing.md),
-              ElevatedButton.icon(
-                onPressed: () =>
-                    ref.read(contactsProvider.notifier).markResponded(r),
-                icon: const Icon(Icons.check_rounded),
-                label: Text(l10n.markResponded),
-              ),
-            ],
-          ],
-        ),
       ),
     );
   }

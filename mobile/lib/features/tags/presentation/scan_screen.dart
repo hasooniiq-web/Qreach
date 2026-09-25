@@ -8,6 +8,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/providers.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../vehicles/presentation/vehicle_controller.dart';
+import '../data/nfc_reader.dart';
 import '../data/tag_repository.dart';
 
 class ScanScreen extends ConsumerStatefulWidget {
@@ -21,11 +22,14 @@ class ScanScreen extends ConsumerStatefulWidget {
 
 class _ScanScreenState extends ConsumerState<ScanScreen> {
   final _controller = MobileScannerController();
+  final _nfc = const NfcReader();
   bool _processing = false;
+  bool _nfcMode = false;
   String? _error;
 
   @override
   void dispose() {
+    _nfc.stop();
     _controller.dispose();
     super.dispose();
   }
@@ -36,6 +40,48 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
     final rawValue = capture.barcodes.first.rawValue;
     if (rawValue == null) return;
     await _activate(rawValue);
+  }
+
+  Future<void> _setMode({required bool nfc}) async {
+    if (_nfcMode == nfc || _processing) return;
+    final l10n = AppLocalizations.of(context)!;
+
+    setState(() {
+      _nfcMode = nfc;
+      _error = null;
+    });
+
+    if (!nfc) {
+      await _nfc.stop();
+      try {
+        await _controller.start();
+      } catch (_) {}
+      return;
+    }
+
+    try {
+      await _controller.stop();
+    } catch (_) {}
+    final state = await _nfc.state();
+    if (!mounted) return;
+    if (state != NfcState.ready) {
+      setState(() => _error =
+          state == NfcState.disabled ? l10n.nfcDisabled : l10n.nfcUnavailable);
+      return;
+    }
+    await _startNfc();
+  }
+
+  Future<void> _startNfc() async {
+    final l10n = AppLocalizations.of(context)!;
+    await _nfc.start(onLink: (link) {
+      if (!mounted) return;
+      if (link == null) {
+        setState(() => _error = l10n.nfcNoLink);
+        return;
+      }
+      _activate(link);
+    });
   }
 
   Future<void> _enterManually() async {
@@ -74,6 +120,7 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
     try {
       await _controller.stop();
     } catch (_) {}
+    await _nfc.stop();
 
     final token = TagRepository.extractToken(rawValue);
 
@@ -97,9 +144,13 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
         _error = _messageForCode(apiError.code) ?? apiError.message;
         _processing = false;
       });
-      try {
-        await _controller.start();
-      } catch (_) {}
+      if (_nfcMode) {
+        await _startNfc();
+      } else {
+        try {
+          await _controller.start();
+        } catch (_) {}
+      }
     }
   }
 
@@ -136,33 +187,37 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
           ]),
       body: Stack(
         children: [
-          MobileScanner(
-            controller: _controller,
-            onDetect: _onDetect,
-            errorBuilder: (context, error, child) => Center(
-              child: Padding(
-                padding: const EdgeInsets.all(32),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const Icon(Icons.no_photography_outlined,
-                        color: AppColors.brandWhite, size: 48),
-                    const SizedBox(height: 16),
-                    Text(l10n.scanCameraError,
-                        style: const TextStyle(
-                            color: AppColors.brandWhite,
-                            fontSize: 18,
-                            fontWeight: FontWeight.w700)),
-                    const SizedBox(height: 8),
-                    Text(l10n.scanCameraPermission,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(color: Colors.white70)),
-                  ],
+          if (_nfcMode)
+            const _NfcPrompt()
+          else ...[
+            MobileScanner(
+              controller: _controller,
+              onDetect: _onDetect,
+              errorBuilder: (context, error, child) => Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(32),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.no_photography_outlined,
+                          color: AppColors.brandWhite, size: 48),
+                      const SizedBox(height: 16),
+                      Text(l10n.scanCameraError,
+                          style: const TextStyle(
+                              color: AppColors.brandWhite,
+                              fontSize: 18,
+                              fontWeight: FontWeight.w700)),
+                      const SizedBox(height: 8),
+                      Text(l10n.scanCameraPermission,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(color: Colors.white70)),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          const _ScanOverlay(),
+            const _ScanOverlay(),
+          ],
           Positioned(
             left: 24,
             right: 24,
@@ -177,13 +232,35 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
                     borderRadius: BorderRadius.circular(999),
                   ),
                   child: Text(
-                    l10n.scanTagInstructions,
+                    _nfcMode ? l10n.nfcHoldPhone : l10n.scanTagInstructions,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                         color: AppColors.brandWhite, fontSize: 15),
                   ),
                 ),
                 const SizedBox(height: 12),
+                SegmentedButton<bool>(
+                  showSelectedIcon: false,
+                  style: SegmentedButton.styleFrom(
+                    backgroundColor: Colors.black.withValues(alpha: 0.6),
+                    foregroundColor: AppColors.brandWhite,
+                    selectedBackgroundColor: AppColors.brandYellow,
+                    selectedForegroundColor: AppColors.brandBlack,
+                  ),
+                  segments: [
+                    ButtonSegment(
+                        value: false,
+                        icon: const Icon(Icons.qr_code_scanner),
+                        label: Text(l10n.scanModeQr)),
+                    ButtonSegment(
+                        value: true,
+                        icon: const Icon(Icons.nfc),
+                        label: Text(l10n.scanModeNfc)),
+                  ],
+                  selected: {_nfcMode},
+                  onSelectionChanged: (v) => _setMode(nfc: v.first),
+                ),
+                const SizedBox(height: 4),
                 TextButton.icon(
                   onPressed: _processing ? null : _enterManually,
                   icon: const Icon(Icons.keyboard_alt_outlined,
@@ -323,6 +400,45 @@ class _ActivationSuccessDialog extends StatelessWidget {
           child: Text(l10n.done),
         ),
       ],
+    );
+  }
+}
+
+/// What the NFC mode shows instead of the camera: an unmistakable "tap the
+/// tag on the back of the phone" prompt.
+class _NfcPrompt extends StatelessWidget {
+  const _NfcPrompt();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(32),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 120,
+              height: 120,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                border: Border.all(color: AppColors.brandYellow, width: 4),
+              ),
+              child:
+                  const Icon(Icons.nfc, size: 56, color: AppColors.brandYellow),
+            ),
+            const SizedBox(height: 24),
+            Text(l10n.nfcHoldPhone,
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                    color: AppColors.brandWhite,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w700)),
+          ],
+        ),
+      ),
     );
   }
 }

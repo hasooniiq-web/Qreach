@@ -166,7 +166,7 @@
     "settingsAccount": "Account",
     "settingsSecurity": "Security",
     "settingsPreferences": "Preferences",
-    "languageName": "Arabic",
+    "languageName": "English",
     "loadErrorTitle": "Couldn't load data",
     "homeUpgradeTitle": "Show your contact details to visitors",
     "homeUpgradeBody": "The Pro plan shows your number and Instagram when your tag is scanned.",
@@ -256,5 +256,32 @@
     "homeStatVehicles": "Vehicles",
     "homeStatNewMessages": "New messages",
     "homeLinkCode": "Link a code",
-    "homeNoCodeCta": "Link your vehicle code"
+    "homeNoCodeCta": "Link your vehicle code",
+    "sendMessage": "Send",
+    "replyHint": "Write your reply...",
+    "threadExpires": "This conversation is deleted automatically on {date}",
+    "@threadExpires": {
+        "placeholders": {
+            "date": {
+                "type": "String"
+            }
+        }
+    },
+    "threadEmpty": "No messages yet.",
+    "scanModeQr": "QR",
+    "scanModeNfc": "NFC",
+    "nfcHoldPhone": "Hold the back of your phone against the NFC tag",
+    "nfcUnavailable": "This device does not support NFC",
+    "nfcDisabled": "Turn NFC on in your phone settings, then come back",
+    "nfcNoLink": "No Qreach link was found on this tag",
+    "showQr": "Show QR code",
+    "codeLinkLabel": "Link stored in the code",
+    "changePhoto": "Change photo",
+    "takePhoto": "Take a photo",
+    "chooseFromGallery": "Choose from gallery",
+    "removePhoto": "Remove photo",
+    "photoUpdated": "Photo updated",
+    "chooseLanguage": "Choose language",
+    "languageArabic": "العربية",
+    "languageEnglish": "English"
 }

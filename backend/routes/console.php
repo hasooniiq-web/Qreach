@@ -18,3 +18,6 @@ Schedule::command('analytics:aggregate')->dailyAt('00:15');
 // to be set — the command refuses to run without it rather than silently
 // writing an unencrypted dump.
 Schedule::command('backup:database')->dailyAt('02:00');
+
+// Visitor conversations live 15 days after their last message.
+Schedule::command('contacts:purge')->dailyAt('03:00');
