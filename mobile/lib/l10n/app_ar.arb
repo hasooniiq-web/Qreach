@@ -1,73 +1,187 @@
 {
-  "@@locale": "ar",
-  "appName": "Qreach SmartTag",
-  "welcomeTitle": "مرحبًا بك في Qreach",
-  "welcomeSubtitle": "أضف رمز SmartTag إلى مركبتك للتواصل بأمان",
-  "phoneLabel": "رقم الهاتف",
-  "phoneHint": "7xxxxxxxxx",
-  "sendCode": "إرسال رمز التحقق",
-  "otpTitle": "أدخل رمز التحقق",
-  "otpSubtitle": "أرسلنا رمزًا مكونًا من 6 أرقام إلى {phone}",
-  "@otpSubtitle": { "placeholders": { "phone": { "type": "String" } } },
-  "verify": "تحقق",
-  "resendCode": "إعادة إرسال الرمز",
-  "resendIn": "إعادة الإرسال بعد {seconds} ثانية",
-  "@resendIn": { "placeholders": { "seconds": { "type": "int" } } },
-  "invalidOtp": "رمز التحقق غير صحيح",
-  "homeGreetingWithName": "مرحبًا، {name}",
-  "@homeGreetingWithName": { "placeholders": { "name": { "type": "String" } } },
-  "homeGreetingNoName": "مرحبًا بك",
-  "quickActions": "إجراءات سريعة",
-  "notifications": "التنبيهات",
-  "notificationsComingSoonTitle": "الإشعارات قريبًا",
-  "notificationsComingSoonSubtitle": "نعمل على إضافة مركز إشعارات كامل لعمليات المسح والنشاط.",
-  "vehicleProtected": "محمية",
-  "vehicleNotProtectedYet": "غير محمية بعد",
-  "noVehicleYetHomeTitle": "أضف مركبتك الأولى",
-  "noVehicleYetHomeSubtitle": "أضف مركبة للبدء في استخدام SmartTag.",
-  "myVehicles": "مركباتي",
-  "addVehicle": "إضافة مركبة",
-  "noVehiclesTitle": "لا توجد مركبات بعد",
-  "noVehiclesSubtitle": "أضف مركبتك الأولى للبدء في استخدام SmartTag",
-  "plateNumber": "رقم اللوحة",
-  "nickname": "الاسم (اختياري)",
-  "make": "الشركة المصنعة",
-  "model": "الطراز",
-  "year": "سنة الصنع",
-  "color": "اللون",
-  "vehicleType": "نوع المركبة",
-  "save": "حفظ",
-  "cancel": "إلغاء",
-  "linkedTags": "الرموز المرتبطة",
-  "noTagsYet": "لا توجد رموز مرتبطة بهذه المركبة",
-  "linkNewTag": "ربط رمز جديد",
-  "scanTagInstructions": "وجّه الكاميرا نحو رمز QR الموجود على الملصق",
-  "activating": "جارٍ الربط...",
-  "activationSuccess": "تم ربط الرمز بنجاح",
-  "tagAlreadyActivated": "هذا الرمز مُفعّل بالفعل",
-  "tagRevoked": "تم إلغاء هذا الرمز",
-  "tagNotFound": "الرمز غير صالح",
-  "profile": "الملف الشخصي",
-  "logout": "تسجيل الخروج",
-  "logoutAllDevices": "تسجيل الخروج من جميع الأجهزة",
-  "logoutConfirm": "هل أنت متأكد من تسجيل الخروج؟",
-  "settings": "الإعدادات",
-  "language": "اللغة",
-  "sedan": "سيدان",
-  "suv": "دفع رباعي",
-  "truck": "شاحنة",
-  "motorcycle": "دراجة نارية",
-  "van": "فان",
-  "other": "أخرى",
-  "statusActive": "نشط",
-  "statusAssigned": "مربوط",
-  "statusRevoked": "ملغى",
-  "genericError": "حدث خطأ ما. حاول مرة أخرى.",
-  "networkError": "تعذر الاتصال بالخادم. تحقق من اتصالك بالإنترنت.",
-  "retry": "إعادة المحاولة",
-  "loading": "جارٍ التحميل...",
-  "delete": "حذف",
-  "deleteVehicleConfirm": "هل أنت متأكد من حذف هذه المركبة؟",
-  "requiredField": "هذا الحقل مطلوب",
-  "invalidPhone": "رقم هاتف غير صالح"
+    "@@locale": "ar",
+    "appName": "Qreach SmartTag",
+    "welcomeTitle": "مرحبًا بك في Qreach",
+    "welcomeSubtitle": "أضف رمز SmartTag إلى مركبتك للتواصل بأمان",
+    "phoneLabel": "رقم الهاتف",
+    "phoneHint": "7xxxxxxxxx",
+    "sendCode": "إرسال رمز التحقق",
+    "otpTitle": "أدخل رمز التحقق",
+    "otpSubtitle": "أرسلنا رمزًا مكونًا من 6 أرقام إلى {phone}",
+    "@otpSubtitle": {
+        "placeholders": {
+            "phone": {
+                "type": "String"
+            }
+        }
+    },
+    "verify": "تحقق",
+    "resendCode": "إعادة إرسال الرمز",
+    "resendIn": "إعادة الإرسال بعد {seconds} ثانية",
+    "@resendIn": {
+        "placeholders": {
+            "seconds": {
+                "type": "int"
+            }
+        }
+    },
+    "invalidOtp": "رمز التحقق غير صحيح",
+    "homeGreetingWithName": "مرحبًا، {name}",
+    "@homeGreetingWithName": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            }
+        }
+    },
+    "homeGreetingNoName": "مرحبًا بك",
+    "quickActions": "إجراءات سريعة",
+    "notifications": "التنبيهات",
+    "notificationsComingSoonTitle": "الإشعارات قريبًا",
+    "notificationsComingSoonSubtitle": "نعمل على إضافة مركز إشعارات كامل لعمليات المسح والنشاط.",
+    "vehicleProtected": "محمية",
+    "vehicleNotProtectedYet": "غير محمية بعد",
+    "noVehicleYetHomeTitle": "أضف مركبتك الأولى",
+    "noVehicleYetHomeSubtitle": "أضف مركبة للبدء في استخدام SmartTag.",
+    "myVehicles": "مركباتي",
+    "addVehicle": "إضافة مركبة",
+    "noVehiclesTitle": "لا توجد مركبات بعد",
+    "noVehiclesSubtitle": "أضف مركبتك الأولى للبدء في استخدام SmartTag",
+    "plateNumber": "رقم اللوحة",
+    "nickname": "الاسم (اختياري)",
+    "make": "الشركة المصنعة",
+    "model": "الطراز",
+    "year": "سنة الصنع",
+    "color": "اللون",
+    "vehicleType": "نوع المركبة",
+    "save": "حفظ",
+    "cancel": "إلغاء",
+    "linkedTags": "الرموز المرتبطة",
+    "noTagsYet": "لا توجد رموز مرتبطة بهذه المركبة",
+    "linkNewTag": "ربط رمز جديد",
+    "scanTagInstructions": "وجّه الكاميرا نحو رمز QR الموجود على الملصق",
+    "activating": "جارٍ الربط...",
+    "activationSuccess": "تم ربط الرمز بنجاح",
+    "tagAlreadyActivated": "هذا الرمز مُفعّل بالفعل",
+    "tagRevoked": "تم إلغاء هذا الرمز",
+    "tagNotFound": "الرمز غير صالح",
+    "profile": "الملف الشخصي",
+    "logout": "تسجيل الخروج",
+    "logoutAllDevices": "تسجيل الخروج من جميع الأجهزة",
+    "logoutConfirm": "هل أنت متأكد من تسجيل الخروج؟",
+    "settings": "الإعدادات",
+    "language": "اللغة",
+    "sedan": "سيدان",
+    "suv": "دفع رباعي",
+    "truck": "شاحنة",
+    "motorcycle": "دراجة نارية",
+    "van": "فان",
+    "other": "أخرى",
+    "statusActive": "نشط",
+    "statusAssigned": "مربوط",
+    "statusRevoked": "ملغى",
+    "genericError": "حدث خطأ ما. حاول مرة أخرى.",
+    "networkError": "تعذر الاتصال بالخادم. تحقق من اتصالك بالإنترنت.",
+    "retry": "إعادة المحاولة",
+    "loading": "جارٍ التحميل...",
+    "delete": "حذف",
+    "deleteVehicleConfirm": "هل أنت متأكد من حذف هذه المركبة؟",
+    "requiredField": "هذا الحقل مطلوب",
+    "invalidPhone": "رقم هاتف غير صالح",
+    "subscriptionTitle": "الاشتراك",
+    "currentPlan": "باقتك الحالية",
+    "planDefaultFree": "الباقة الافتراضية المجانية",
+    "planEndsOn": "ينتهي في {date}",
+    "@planEndsOn": {
+        "placeholders": {
+            "date": {
+                "type": "String"
+            }
+        }
+    },
+    "planExpiredBanner": "انتهى اشتراكك في {date}. عدت إلى الباقة الأساسية.",
+    "@planExpiredBanner": {
+        "placeholders": {
+            "date": {
+                "type": "String"
+            }
+        }
+    },
+    "planFeaturesTitle": "ما تتيحه باقتك",
+    "featureMessaging": "استقبال رسائل الزوار",
+    "featurePublicPhone": "عرض رقم هاتفك للزوار",
+    "featurePublicInstagram": "عرض حساب إنستغرام",
+    "featurePublicExtra": "معلومات تواصل إضافية",
+    "plansTitle": "الباقات",
+    "planYourPlan": "باقتك",
+    "priceFree": "مجاني",
+    "priceAmountYear": "{amount} د.ع / سنة",
+    "@priceAmountYear": {
+        "placeholders": {
+            "amount": {
+                "type": "String"
+            }
+        }
+    },
+    "priceAmountDays": "{amount} د.ع / {days} يومًا",
+    "@priceAmountDays": {
+        "placeholders": {
+            "amount": {
+                "type": "String"
+            },
+            "days": {
+                "type": "int"
+            }
+        }
+    },
+    "requestUpgrade": "طلب الترقية",
+    "upgradePending": "طلبك قيد المراجعة",
+    "upgradeConfirmTitle": "طلب الترقية إلى {plan}؟",
+    "@upgradeConfirmTitle": {
+        "placeholders": {
+            "plan": {
+                "type": "String"
+            }
+        }
+    },
+    "upgradeConfirmBody": "سيراجع فريق Qreach طلبك ويتواصل معك لإتمام الاشتراك وتفعيل الباقة.",
+    "upgradeSent": "تم إرسال طلب الترقية",
+    "subStatusActive": "فعّال",
+    "subStatusExpired": "منتهي",
+    "subStatusCanceled": "ملغى",
+    "subStatusPastDue": "متأخر السداد",
+    "subStatusTrialing": "تجريبي",
+    "publicContactTitle": "بيانات التواصل العامة",
+    "publicContactSubtitle": "تظهر لأي شخص يمسح رمز مركبتك. اختر ما تريد مشاركته.",
+    "publicContactLockedTitle": "متاحة في الباقة الاحترافية",
+    "publicContactLockedBody": "في الباقة الأساسية يستطيع الزوار مراسلتك فقط. رقم هاتفك وحسابك لا يظهران لهم.",
+    "viewPlans": "عرض الباقات",
+    "phoneShownLabel": "رقم الهاتف الذي يظهر للزوار",
+    "instagramLabel": "حساب إنستغرام",
+    "instagramHint": "اسم المستخدم فقط",
+    "extraLabel": "معلومات إضافية",
+    "extraHint": "مثال: متاح بعد الخامسة مساءً",
+    "saved": "تم الحفظ",
+    "invalidInstagram": "اسم مستخدم غير صالح",
+    "settingsAccount": "الحساب",
+    "settingsSecurity": "الأمان",
+    "settingsPreferences": "التفضيلات",
+    "languageName": "العربية",
+    "loadErrorTitle": "تعذّر تحميل البيانات",
+    "homeUpgradeTitle": "أظهر بيانات تواصلك للزوار",
+    "homeUpgradeBody": "الباقة الاحترافية تعرض رقمك وإنستغرام عند مسح الرمز.",
+    "tagsLinkedCount": "{count} رمز مرتبط",
+    "@tagsLinkedCount": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "activationSuccessSubtitle": "أصبح بإمكان أي شخص مسح الرمز والتواصل معك.",
+    "done": "تم",
+    "protectionStatus": "حالة الحماية",
+    "vehicleDetails": "تفاصيل المركبة",
+    "tagTypeQr": "رمز QR",
+    "tagTypeNfc": "رمز NFC"
 }

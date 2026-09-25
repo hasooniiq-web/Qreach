@@ -2,11 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_spacing.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/empty_state.dart';
-import '../../../shared/widgets/error_banner.dart';
+import '../../../shared/widgets/error_state.dart';
+import '../../../shared/widgets/plate_badge.dart';
+import '../../../shared/widgets/skeleton.dart';
+import '../../../shared/widgets/status_badge.dart';
 import '../../auth/presentation/profile_menu_button.dart';
 import 'vehicle_controller.dart';
 
@@ -34,10 +38,11 @@ class VehicleListScreen extends ConsumerWidget {
         onRefresh: () =>
             ref.read(vehicleListControllerProvider.notifier).refresh(),
         child: vehiclesAsync.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, _) => ListView(
-            padding: const EdgeInsets.all(16),
-            children: [ErrorBanner(message: asApiException(error).message)],
+          loading: () => const SkeletonList(count: 4),
+          error: (error, _) => ErrorState(
+            error: error,
+            onRetry: () =>
+                ref.read(vehicleListControllerProvider.notifier).refresh(),
           ),
           data: (vehicles) {
             if (vehicles.isEmpty) {
@@ -56,34 +61,52 @@ class VehicleListScreen extends ConsumerWidget {
             }
 
             return ListView.separated(
-              padding: const EdgeInsets.all(16),
+              // Bottom padding keeps the last card clear of the FAB.
+              padding: const EdgeInsets.fromLTRB(
+                  AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, 96),
               itemCount: vehicles.length,
-              separatorBuilder: (_, __) => const SizedBox(height: 12),
+              separatorBuilder: (_, __) =>
+                  const SizedBox(height: AppSpacing.md),
               itemBuilder: (context, index) {
                 final vehicle = vehicles[index];
-                return Card(
-                  child: ListTile(
-                    contentPadding:
-                        const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                    leading: const CircleAvatar(
-                      backgroundColor: AppColors.ink100,
-                      child: Icon(Icons.directions_car_outlined,
-                          color: AppColors.ink600),
-                    ),
-                    title: Text(vehicle.displayName,
-                        style: const TextStyle(fontWeight: FontWeight.w600)),
-                    subtitle: Text(
-                      [
-                        if (vehicle.make != null) vehicle.make,
-                        if (vehicle.model != null) vehicle.model,
-                      ].whereType<String>().join(' '),
-                    ),
-                    trailing: vehicle.tags.isNotEmpty
-                        ? const Icon(Icons.qr_code,
-                            size: 18, color: AppColors.statusSuccess)
-                        : const Icon(Icons.chevron_left,
-                            size: 18, color: AppColors.ink300),
-                    onTap: () => context.push('/vehicles/${vehicle.id}'),
+                final isProtected =
+                    vehicle.tags.any((tag) => tag.status == 'assigned');
+
+                return AppCard(
+                  onTap: () => context.push('/vehicles/${vehicle.id}'),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(vehicle.displayName,
+                                style: const TextStyle(
+                                    fontWeight: FontWeight.w700, fontSize: 16)),
+                          ),
+                          StatusBadge(
+                            label: isProtected
+                                ? l10n.vehicleProtected
+                                : l10n.vehicleNotProtectedYet,
+                            tone: isProtected
+                                ? StatusTone.success
+                                : StatusTone.warning,
+                          ),
+                        ],
+                      ),
+                      if (vehicle.make != null || vehicle.model != null)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 2),
+                          child: Text(
+                            [vehicle.make, vehicle.model]
+                                .whereType<String>()
+                                .join(' '),
+                            style: const TextStyle(color: AppColors.ink500),
+                          ),
+                        ),
+                      const SizedBox(height: AppSpacing.md),
+                      PlateBadge(plate: vehicle.plateNumber),
+                    ],
                   ),
                 );
               },

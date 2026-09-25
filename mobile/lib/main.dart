@@ -12,7 +12,7 @@ void main() async {
   // services.json) so far — see docs/MOBILE_SECURITY.md. Guard by platform
   // so an iOS/web build doesn't crash at startup with no native config file
   // for Firebase.initializeApp() to read.
-  if (defaultTargetPlatform == TargetPlatform.android) {
+  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
     await Firebase.initializeApp();
   }
 

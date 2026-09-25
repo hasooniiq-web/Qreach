@@ -7,6 +7,8 @@ import '../../features/auth/presentation/phone_entry_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/notifications/presentation/notifications_screen.dart';
 import '../../features/profile/presentation/profile_screen.dart';
+import '../../features/subscription/presentation/public_contact_screen.dart';
+import '../../features/subscription/presentation/subscription_screen.dart';
 import '../../features/vehicles/presentation/vehicle_detail_screen.dart';
 import '../../features/vehicles/presentation/vehicle_form_screen.dart';
 import '../../features/vehicles/presentation/vehicle_list_screen.dart';
@@ -65,6 +67,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
           path: '/profile', builder: (context, state) => const ProfileScreen()),
+      GoRoute(
+          path: '/subscription',
+          builder: (context, state) => const SubscriptionScreen()),
+      GoRoute(
+          path: '/public-contact',
+          builder: (context, state) => const PublicContactScreen()),
     ],
   );
 });

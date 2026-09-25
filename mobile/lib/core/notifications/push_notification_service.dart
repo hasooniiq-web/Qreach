@@ -13,7 +13,7 @@ class PushNotificationService {
   final ApiClient _client;
 
   Future<void> registerForPushNotifications() async {
-    if (defaultTargetPlatform != TargetPlatform.android) return;
+    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) return;
 
     final messaging = FirebaseMessaging.instance;
     final settings = await messaging.requestPermission();

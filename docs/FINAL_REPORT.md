@@ -155,7 +155,7 @@ including an explicit "not yet modeled" section for what wasn't built.
 
 ## 17. Testing results
 
-**49/49 backend tests pass** (`php artisan test`), covering IDOR/BOLA,
+**90/90 backend tests pass** (`php artisan test`), covering IDOR/BOLA,
 OTP replay and brute force, admin RBAC including direct-URL bypass attempts,
 QR duplicate/revoked/concurrent activation, public-endpoint rate limiting,
 XSS rejection, analytics aggregation idempotency, backup safety checks, and

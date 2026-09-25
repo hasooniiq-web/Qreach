@@ -217,4 +217,174 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get invalidPhone => 'رقم هاتف غير صالح';
+
+  @override
+  String get subscriptionTitle => 'الاشتراك';
+
+  @override
+  String get currentPlan => 'باقتك الحالية';
+
+  @override
+  String get planDefaultFree => 'الباقة الافتراضية المجانية';
+
+  @override
+  String planEndsOn(String date) {
+    return 'ينتهي في $date';
+  }
+
+  @override
+  String planExpiredBanner(String date) {
+    return 'انتهى اشتراكك في $date. عدت إلى الباقة الأساسية.';
+  }
+
+  @override
+  String get planFeaturesTitle => 'ما تتيحه باقتك';
+
+  @override
+  String get featureMessaging => 'استقبال رسائل الزوار';
+
+  @override
+  String get featurePublicPhone => 'عرض رقم هاتفك للزوار';
+
+  @override
+  String get featurePublicInstagram => 'عرض حساب إنستغرام';
+
+  @override
+  String get featurePublicExtra => 'معلومات تواصل إضافية';
+
+  @override
+  String get plansTitle => 'الباقات';
+
+  @override
+  String get planYourPlan => 'باقتك';
+
+  @override
+  String get priceFree => 'مجاني';
+
+  @override
+  String priceAmountYear(String amount) {
+    return '$amount د.ع / سنة';
+  }
+
+  @override
+  String priceAmountDays(String amount, int days) {
+    return '$amount د.ع / $days يومًا';
+  }
+
+  @override
+  String get requestUpgrade => 'طلب الترقية';
+
+  @override
+  String get upgradePending => 'طلبك قيد المراجعة';
+
+  @override
+  String upgradeConfirmTitle(String plan) {
+    return 'طلب الترقية إلى $plan؟';
+  }
+
+  @override
+  String get upgradeConfirmBody =>
+      'سيراجع فريق Qreach طلبك ويتواصل معك لإتمام الاشتراك وتفعيل الباقة.';
+
+  @override
+  String get upgradeSent => 'تم إرسال طلب الترقية';
+
+  @override
+  String get subStatusActive => 'فعّال';
+
+  @override
+  String get subStatusExpired => 'منتهي';
+
+  @override
+  String get subStatusCanceled => 'ملغى';
+
+  @override
+  String get subStatusPastDue => 'متأخر السداد';
+
+  @override
+  String get subStatusTrialing => 'تجريبي';
+
+  @override
+  String get publicContactTitle => 'بيانات التواصل العامة';
+
+  @override
+  String get publicContactSubtitle =>
+      'تظهر لأي شخص يمسح رمز مركبتك. اختر ما تريد مشاركته.';
+
+  @override
+  String get publicContactLockedTitle => 'متاحة في الباقة الاحترافية';
+
+  @override
+  String get publicContactLockedBody =>
+      'في الباقة الأساسية يستطيع الزوار مراسلتك فقط. رقم هاتفك وحسابك لا يظهران لهم.';
+
+  @override
+  String get viewPlans => 'عرض الباقات';
+
+  @override
+  String get phoneShownLabel => 'رقم الهاتف الذي يظهر للزوار';
+
+  @override
+  String get instagramLabel => 'حساب إنستغرام';
+
+  @override
+  String get instagramHint => 'اسم المستخدم فقط';
+
+  @override
+  String get extraLabel => 'معلومات إضافية';
+
+  @override
+  String get extraHint => 'مثال: متاح بعد الخامسة مساءً';
+
+  @override
+  String get saved => 'تم الحفظ';
+
+  @override
+  String get invalidInstagram => 'اسم مستخدم غير صالح';
+
+  @override
+  String get settingsAccount => 'الحساب';
+
+  @override
+  String get settingsSecurity => 'الأمان';
+
+  @override
+  String get settingsPreferences => 'التفضيلات';
+
+  @override
+  String get languageName => 'العربية';
+
+  @override
+  String get loadErrorTitle => 'تعذّر تحميل البيانات';
+
+  @override
+  String get homeUpgradeTitle => 'أظهر بيانات تواصلك للزوار';
+
+  @override
+  String get homeUpgradeBody =>
+      'الباقة الاحترافية تعرض رقمك وإنستغرام عند مسح الرمز.';
+
+  @override
+  String tagsLinkedCount(int count) {
+    return '$count رمز مرتبط';
+  }
+
+  @override
+  String get activationSuccessSubtitle =>
+      'أصبح بإمكان أي شخص مسح الرمز والتواصل معك.';
+
+  @override
+  String get done => 'تم';
+
+  @override
+  String get protectionStatus => 'حالة الحماية';
+
+  @override
+  String get vehicleDetails => 'تفاصيل المركبة';
+
+  @override
+  String get tagTypeQr => 'رمز QR';
+
+  @override
+  String get tagTypeNfc => 'رمز NFC';
 }

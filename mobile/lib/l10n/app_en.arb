@@ -1,73 +1,187 @@
 {
-  "@@locale": "en",
-  "appName": "Qreach SmartTag",
-  "welcomeTitle": "Welcome to Qreach",
-  "welcomeSubtitle": "Add a SmartTag to your vehicle to communicate safely",
-  "phoneLabel": "Phone number",
-  "phoneHint": "7xxxxxxxxx",
-  "sendCode": "Send verification code",
-  "otpTitle": "Enter verification code",
-  "otpSubtitle": "We sent a 6-digit code to {phone}",
-  "@otpSubtitle": { "placeholders": { "phone": { "type": "String" } } },
-  "verify": "Verify",
-  "resendCode": "Resend code",
-  "resendIn": "Resend in {seconds}s",
-  "@resendIn": { "placeholders": { "seconds": { "type": "int" } } },
-  "invalidOtp": "Invalid verification code",
-  "homeGreetingWithName": "Hello, {name}",
-  "@homeGreetingWithName": { "placeholders": { "name": { "type": "String" } } },
-  "homeGreetingNoName": "Welcome back",
-  "quickActions": "Quick actions",
-  "notifications": "Notifications",
-  "notificationsComingSoonTitle": "Notifications are coming soon",
-  "notificationsComingSoonSubtitle": "We're building a full notification center for scan and activity alerts.",
-  "vehicleProtected": "Protected",
-  "vehicleNotProtectedYet": "Not protected yet",
-  "noVehicleYetHomeTitle": "Add your first vehicle",
-  "noVehicleYetHomeSubtitle": "Add a vehicle to start using SmartTag.",
-  "myVehicles": "My Vehicles",
-  "addVehicle": "Add vehicle",
-  "noVehiclesTitle": "No vehicles yet",
-  "noVehiclesSubtitle": "Add your first vehicle to start using SmartTag",
-  "plateNumber": "Plate number",
-  "nickname": "Nickname (optional)",
-  "make": "Make",
-  "model": "Model",
-  "year": "Year",
-  "color": "Color",
-  "vehicleType": "Vehicle type",
-  "save": "Save",
-  "cancel": "Cancel",
-  "linkedTags": "Linked tags",
-  "noTagsYet": "No tags linked to this vehicle yet",
-  "linkNewTag": "Link a new tag",
-  "scanTagInstructions": "Point the camera at the QR code on the sticker",
-  "activating": "Activating...",
-  "activationSuccess": "Tag linked successfully",
-  "tagAlreadyActivated": "This tag is already activated",
-  "tagRevoked": "This tag has been revoked",
-  "tagNotFound": "Invalid tag",
-  "profile": "Profile",
-  "logout": "Log out",
-  "logoutAllDevices": "Log out of all devices",
-  "logoutConfirm": "Are you sure you want to log out?",
-  "settings": "Settings",
-  "language": "Language",
-  "sedan": "Sedan",
-  "suv": "SUV",
-  "truck": "Truck",
-  "motorcycle": "Motorcycle",
-  "van": "Van",
-  "other": "Other",
-  "statusActive": "Active",
-  "statusAssigned": "Assigned",
-  "statusRevoked": "Revoked",
-  "genericError": "Something went wrong. Please try again.",
-  "networkError": "Couldn't reach the server. Check your connection.",
-  "retry": "Retry",
-  "loading": "Loading...",
-  "delete": "Delete",
-  "deleteVehicleConfirm": "Are you sure you want to delete this vehicle?",
-  "requiredField": "This field is required",
-  "invalidPhone": "Invalid phone number"
+    "@@locale": "en",
+    "appName": "Qreach SmartTag",
+    "welcomeTitle": "Welcome to Qreach",
+    "welcomeSubtitle": "Add a SmartTag to your vehicle to communicate safely",
+    "phoneLabel": "Phone number",
+    "phoneHint": "7xxxxxxxxx",
+    "sendCode": "Send verification code",
+    "otpTitle": "Enter verification code",
+    "otpSubtitle": "We sent a 6-digit code to {phone}",
+    "@otpSubtitle": {
+        "placeholders": {
+            "phone": {
+                "type": "String"
+            }
+        }
+    },
+    "verify": "Verify",
+    "resendCode": "Resend code",
+    "resendIn": "Resend in {seconds}s",
+    "@resendIn": {
+        "placeholders": {
+            "seconds": {
+                "type": "int"
+            }
+        }
+    },
+    "invalidOtp": "Invalid verification code",
+    "homeGreetingWithName": "Hello, {name}",
+    "@homeGreetingWithName": {
+        "placeholders": {
+            "name": {
+                "type": "String"
+            }
+        }
+    },
+    "homeGreetingNoName": "Welcome back",
+    "quickActions": "Quick actions",
+    "notifications": "Notifications",
+    "notificationsComingSoonTitle": "Notifications are coming soon",
+    "notificationsComingSoonSubtitle": "We're building a full notification center for scan and activity alerts.",
+    "vehicleProtected": "Protected",
+    "vehicleNotProtectedYet": "Not protected yet",
+    "noVehicleYetHomeTitle": "Add your first vehicle",
+    "noVehicleYetHomeSubtitle": "Add a vehicle to start using SmartTag.",
+    "myVehicles": "My Vehicles",
+    "addVehicle": "Add vehicle",
+    "noVehiclesTitle": "No vehicles yet",
+    "noVehiclesSubtitle": "Add your first vehicle to start using SmartTag",
+    "plateNumber": "Plate number",
+    "nickname": "Nickname (optional)",
+    "make": "Make",
+    "model": "Model",
+    "year": "Year",
+    "color": "Color",
+    "vehicleType": "Vehicle type",
+    "save": "Save",
+    "cancel": "Cancel",
+    "linkedTags": "Linked tags",
+    "noTagsYet": "No tags linked to this vehicle yet",
+    "linkNewTag": "Link a new tag",
+    "scanTagInstructions": "Point the camera at the QR code on the sticker",
+    "activating": "Activating...",
+    "activationSuccess": "Tag linked successfully",
+    "tagAlreadyActivated": "This tag is already activated",
+    "tagRevoked": "This tag has been revoked",
+    "tagNotFound": "Invalid tag",
+    "profile": "Profile",
+    "logout": "Log out",
+    "logoutAllDevices": "Log out of all devices",
+    "logoutConfirm": "Are you sure you want to log out?",
+    "settings": "Settings",
+    "language": "Language",
+    "sedan": "Sedan",
+    "suv": "SUV",
+    "truck": "Truck",
+    "motorcycle": "Motorcycle",
+    "van": "Van",
+    "other": "Other",
+    "statusActive": "Active",
+    "statusAssigned": "Assigned",
+    "statusRevoked": "Revoked",
+    "genericError": "Something went wrong. Please try again.",
+    "networkError": "Couldn't reach the server. Check your connection.",
+    "retry": "Retry",
+    "loading": "Loading...",
+    "delete": "Delete",
+    "deleteVehicleConfirm": "Are you sure you want to delete this vehicle?",
+    "requiredField": "This field is required",
+    "invalidPhone": "Invalid phone number",
+    "subscriptionTitle": "Subscription",
+    "currentPlan": "Your current plan",
+    "planDefaultFree": "Default free plan",
+    "planEndsOn": "Ends on {date}",
+    "@planEndsOn": {
+        "placeholders": {
+            "date": {
+                "type": "String"
+            }
+        }
+    },
+    "planExpiredBanner": "Your subscription ended on {date}. You are back on Basic.",
+    "@planExpiredBanner": {
+        "placeholders": {
+            "date": {
+                "type": "String"
+            }
+        }
+    },
+    "planFeaturesTitle": "What your plan includes",
+    "featureMessaging": "Receive visitor messages",
+    "featurePublicPhone": "Show your phone number to visitors",
+    "featurePublicInstagram": "Show your Instagram account",
+    "featurePublicExtra": "Extra contact info",
+    "plansTitle": "Plans",
+    "planYourPlan": "Your plan",
+    "priceFree": "Free",
+    "priceAmountYear": "{amount} IQD / year",
+    "@priceAmountYear": {
+        "placeholders": {
+            "amount": {
+                "type": "String"
+            }
+        }
+    },
+    "priceAmountDays": "{amount} IQD / {days} days",
+    "@priceAmountDays": {
+        "placeholders": {
+            "amount": {
+                "type": "String"
+            },
+            "days": {
+                "type": "int"
+            }
+        }
+    },
+    "requestUpgrade": "Request upgrade",
+    "upgradePending": "Request under review",
+    "upgradeConfirmTitle": "Request an upgrade to {plan}?",
+    "@upgradeConfirmTitle": {
+        "placeholders": {
+            "plan": {
+                "type": "String"
+            }
+        }
+    },
+    "upgradeConfirmBody": "The Qreach team will review your request and contact you to complete the subscription and activate the plan.",
+    "upgradeSent": "Upgrade request sent",
+    "subStatusActive": "Active",
+    "subStatusExpired": "Expired",
+    "subStatusCanceled": "Canceled",
+    "subStatusPastDue": "Past due",
+    "subStatusTrialing": "Trial",
+    "publicContactTitle": "Public contact details",
+    "publicContactSubtitle": "Shown to anyone who scans your vehicle tag. Choose what to share.",
+    "publicContactLockedTitle": "Available on the Pro plan",
+    "publicContactLockedBody": "On Basic, visitors can only message you. Your phone number and accounts are not shown to them.",
+    "viewPlans": "View plans",
+    "phoneShownLabel": "Phone number shown to visitors",
+    "instagramLabel": "Instagram account",
+    "instagramHint": "Username only",
+    "extraLabel": "Extra information",
+    "extraHint": "e.g. Available after 5pm",
+    "saved": "Saved",
+    "invalidInstagram": "Invalid username",
+    "settingsAccount": "Account",
+    "settingsSecurity": "Security",
+    "settingsPreferences": "Preferences",
+    "languageName": "Arabic",
+    "loadErrorTitle": "Couldn't load data",
+    "homeUpgradeTitle": "Show your contact details to visitors",
+    "homeUpgradeBody": "The Pro plan shows your number and Instagram when your tag is scanned.",
+    "tagsLinkedCount": "{count} tags linked",
+    "@tagsLinkedCount": {
+        "placeholders": {
+            "count": {
+                "type": "int"
+            }
+        }
+    },
+    "activationSuccessSubtitle": "Anyone can now scan the tag and reach you.",
+    "done": "Done",
+    "protectionStatus": "Protection status",
+    "vehicleDetails": "Vehicle details",
+    "tagTypeQr": "QR tag",
+    "tagTypeNfc": "NFC tag"
 }

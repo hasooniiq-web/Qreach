@@ -499,6 +499,312 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'رقم هاتف غير صالح'**
   String get invalidPhone;
+
+  /// No description provided for @subscriptionTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاشتراك'**
+  String get subscriptionTitle;
+
+  /// No description provided for @currentPlan.
+  ///
+  /// In ar, this message translates to:
+  /// **'باقتك الحالية'**
+  String get currentPlan;
+
+  /// No description provided for @planDefaultFree.
+  ///
+  /// In ar, this message translates to:
+  /// **'الباقة الافتراضية المجانية'**
+  String get planDefaultFree;
+
+  /// No description provided for @planEndsOn.
+  ///
+  /// In ar, this message translates to:
+  /// **'ينتهي في {date}'**
+  String planEndsOn(String date);
+
+  /// No description provided for @planExpiredBanner.
+  ///
+  /// In ar, this message translates to:
+  /// **'انتهى اشتراكك في {date}. عدت إلى الباقة الأساسية.'**
+  String planExpiredBanner(String date);
+
+  /// No description provided for @planFeaturesTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'ما تتيحه باقتك'**
+  String get planFeaturesTitle;
+
+  /// No description provided for @featureMessaging.
+  ///
+  /// In ar, this message translates to:
+  /// **'استقبال رسائل الزوار'**
+  String get featureMessaging;
+
+  /// No description provided for @featurePublicPhone.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض رقم هاتفك للزوار'**
+  String get featurePublicPhone;
+
+  /// No description provided for @featurePublicInstagram.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض حساب إنستغرام'**
+  String get featurePublicInstagram;
+
+  /// No description provided for @featurePublicExtra.
+  ///
+  /// In ar, this message translates to:
+  /// **'معلومات تواصل إضافية'**
+  String get featurePublicExtra;
+
+  /// No description provided for @plansTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الباقات'**
+  String get plansTitle;
+
+  /// No description provided for @planYourPlan.
+  ///
+  /// In ar, this message translates to:
+  /// **'باقتك'**
+  String get planYourPlan;
+
+  /// No description provided for @priceFree.
+  ///
+  /// In ar, this message translates to:
+  /// **'مجاني'**
+  String get priceFree;
+
+  /// No description provided for @priceAmountYear.
+  ///
+  /// In ar, this message translates to:
+  /// **'{amount} د.ع / سنة'**
+  String priceAmountYear(String amount);
+
+  /// No description provided for @priceAmountDays.
+  ///
+  /// In ar, this message translates to:
+  /// **'{amount} د.ع / {days} يومًا'**
+  String priceAmountDays(String amount, int days);
+
+  /// No description provided for @requestUpgrade.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلب الترقية'**
+  String get requestUpgrade;
+
+  /// No description provided for @upgradePending.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلبك قيد المراجعة'**
+  String get upgradePending;
+
+  /// No description provided for @upgradeConfirmTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'طلب الترقية إلى {plan}؟'**
+  String upgradeConfirmTitle(String plan);
+
+  /// No description provided for @upgradeConfirmBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيراجع فريق Qreach طلبك ويتواصل معك لإتمام الاشتراك وتفعيل الباقة.'**
+  String get upgradeConfirmBody;
+
+  /// No description provided for @upgradeSent.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إرسال طلب الترقية'**
+  String get upgradeSent;
+
+  /// No description provided for @subStatusActive.
+  ///
+  /// In ar, this message translates to:
+  /// **'فعّال'**
+  String get subStatusActive;
+
+  /// No description provided for @subStatusExpired.
+  ///
+  /// In ar, this message translates to:
+  /// **'منتهي'**
+  String get subStatusExpired;
+
+  /// No description provided for @subStatusCanceled.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملغى'**
+  String get subStatusCanceled;
+
+  /// No description provided for @subStatusPastDue.
+  ///
+  /// In ar, this message translates to:
+  /// **'متأخر السداد'**
+  String get subStatusPastDue;
+
+  /// No description provided for @subStatusTrialing.
+  ///
+  /// In ar, this message translates to:
+  /// **'تجريبي'**
+  String get subStatusTrialing;
+
+  /// No description provided for @publicContactTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'بيانات التواصل العامة'**
+  String get publicContactTitle;
+
+  /// No description provided for @publicContactSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تظهر لأي شخص يمسح رمز مركبتك. اختر ما تريد مشاركته.'**
+  String get publicContactSubtitle;
+
+  /// No description provided for @publicContactLockedTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'متاحة في الباقة الاحترافية'**
+  String get publicContactLockedTitle;
+
+  /// No description provided for @publicContactLockedBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'في الباقة الأساسية يستطيع الزوار مراسلتك فقط. رقم هاتفك وحسابك لا يظهران لهم.'**
+  String get publicContactLockedBody;
+
+  /// No description provided for @viewPlans.
+  ///
+  /// In ar, this message translates to:
+  /// **'عرض الباقات'**
+  String get viewPlans;
+
+  /// No description provided for @phoneShownLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الهاتف الذي يظهر للزوار'**
+  String get phoneShownLabel;
+
+  /// No description provided for @instagramLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'حساب إنستغرام'**
+  String get instagramLabel;
+
+  /// No description provided for @instagramHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم المستخدم فقط'**
+  String get instagramHint;
+
+  /// No description provided for @extraLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'معلومات إضافية'**
+  String get extraLabel;
+
+  /// No description provided for @extraHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثال: متاح بعد الخامسة مساءً'**
+  String get extraHint;
+
+  /// No description provided for @saved.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم الحفظ'**
+  String get saved;
+
+  /// No description provided for @invalidInstagram.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسم مستخدم غير صالح'**
+  String get invalidInstagram;
+
+  /// No description provided for @settingsAccount.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحساب'**
+  String get settingsAccount;
+
+  /// No description provided for @settingsSecurity.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأمان'**
+  String get settingsSecurity;
+
+  /// No description provided for @settingsPreferences.
+  ///
+  /// In ar, this message translates to:
+  /// **'التفضيلات'**
+  String get settingsPreferences;
+
+  /// No description provided for @languageName.
+  ///
+  /// In ar, this message translates to:
+  /// **'العربية'**
+  String get languageName;
+
+  /// No description provided for @loadErrorTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر تحميل البيانات'**
+  String get loadErrorTitle;
+
+  /// No description provided for @homeUpgradeTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'أظهر بيانات تواصلك للزوار'**
+  String get homeUpgradeTitle;
+
+  /// No description provided for @homeUpgradeBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'الباقة الاحترافية تعرض رقمك وإنستغرام عند مسح الرمز.'**
+  String get homeUpgradeBody;
+
+  /// No description provided for @tagsLinkedCount.
+  ///
+  /// In ar, this message translates to:
+  /// **'{count} رمز مرتبط'**
+  String tagsLinkedCount(int count);
+
+  /// No description provided for @activationSuccessSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'أصبح بإمكان أي شخص مسح الرمز والتواصل معك.'**
+  String get activationSuccessSubtitle;
+
+  /// No description provided for @done.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم'**
+  String get done;
+
+  /// No description provided for @protectionStatus.
+  ///
+  /// In ar, this message translates to:
+  /// **'حالة الحماية'**
+  String get protectionStatus;
+
+  /// No description provided for @vehicleDetails.
+  ///
+  /// In ar, this message translates to:
+  /// **'تفاصيل المركبة'**
+  String get vehicleDetails;
+
+  /// No description provided for @tagTypeQr.
+  ///
+  /// In ar, this message translates to:
+  /// **'رمز QR'**
+  String get tagTypeQr;
+
+  /// No description provided for @tagTypeNfc.
+  ///
+  /// In ar, this message translates to:
+  /// **'رمز NFC'**
+  String get tagTypeNfc;
 }
 
 class _AppLocalizationsDelegate

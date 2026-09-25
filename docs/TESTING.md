@@ -20,7 +20,7 @@ flutter build apk --debug   # full compile to a real APK — catches issues anal
 
 The debug APK build matters as a distinct step: it caught a third-party package incompatibility (`phosphor_flutter`) that `flutter analyze` missed entirely. Treat "analyze is clean" and "it actually builds" as two separate claims — this project needed both to be checked.
 
-## What's covered (49 tests, all passing as of the last commit)
+## What's covered (90 tests, all passing as of the last commit; newer files for subscriptions, admin profile and admin page rendering are not itemized in the table below)
 
 | File | Covers |
 |---|---|

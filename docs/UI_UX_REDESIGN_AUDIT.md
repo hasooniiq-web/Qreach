@@ -144,3 +144,10 @@ scale, component inventory, and sidebar IA restructuring (Phase 3), then
 implementation proceeds screen-by-screen (Phases 4–12) as the brief
 specifies — mobile navigation/home first, since it's the single biggest
 structural gap found in this audit.
+
+
+## Status (updated after implementation)
+
+Done: mobile home, vehicle list/detail (hero + plate identity), login/OTP, grouped profile/settings, subscription and public-contact screens, skeleton loading and retry error states, activation-success motion; dashboard sidebar IA, KPI hierarchy, shared table/filter/form/empty-state components, security summary, subscriptions/plans management, header account menu + admin profile; public scan page. A real bug found along the way: inline `onchange`/`onsubmit` handlers were blocked by the CSP (filters never auto-submitted; the suspend-account confirmation never fired).
+
+Not done / honest gaps: no customer notification feed (no API), so the mobile Notifications screen is a "coming soon" state; no recent-activity section on mobile home for the same reason; mobile screens were verified by widget tests, `flutter analyze` and builds plus rendered layout images, not on a physical device (automated typing into Flutter web canvas isn't possible in this environment); no dark mode; RTL icon-mirroring and a formal accessibility audit tool run are still to do.

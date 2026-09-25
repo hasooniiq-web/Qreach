@@ -51,10 +51,12 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
       ref.invalidate(vehicleDetailProvider(widget.vehicleId));
 
       if (!mounted) return;
-      final l10n = AppLocalizations.of(context)!;
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(l10n.activationSuccess)));
-      context.pop();
+      await showDialog<void>(
+        context: context,
+        barrierDismissible: false,
+        builder: (_) => const _ActivationSuccessDialog(),
+      );
+      if (mounted) context.pop();
     } catch (e) {
       final apiError = asApiException(e);
       setState(() {
@@ -139,6 +141,59 @@ class _ScanOverlay extends StatelessWidget {
           borderRadius: BorderRadius.circular(16),
         ),
       ),
+    );
+  }
+}
+
+/// Confirms a successful tag activation with a short scale-in check — the
+/// one moment in the flow worth a little motion. Fast (450ms), one element,
+/// and no animation when the platform asks for reduced motion.
+class _ActivationSuccessDialog extends StatelessWidget {
+  const _ActivationSuccessDialog();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final reduceMotion = MediaQuery.of(context).disableAnimations;
+
+    return AlertDialog(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const SizedBox(height: 8),
+          TweenAnimationBuilder<double>(
+            tween: Tween(begin: reduceMotion ? 1 : 0, end: 1),
+            duration: const Duration(milliseconds: 450),
+            curve: Curves.easeOutBack,
+            builder: (context, scale, child) =>
+                Transform.scale(scale: scale, child: child),
+            child: Container(
+              width: 72,
+              height: 72,
+              decoration: const BoxDecoration(
+                  color: AppColors.brandYellow, shape: BoxShape.circle),
+              child: const Icon(Icons.check,
+                  size: 40, color: AppColors.brandBlack),
+            ),
+          ),
+          const SizedBox(height: 20),
+          Text(l10n.activationSuccess,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+              textAlign: TextAlign.center),
+          const SizedBox(height: 6),
+          Text(l10n.activationSuccessSubtitle,
+              style: const TextStyle(color: AppColors.ink500),
+              textAlign: TextAlign.center),
+        ],
+      ),
+      actionsAlignment: MainAxisAlignment.center,
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(l10n.done),
+        ),
+      ],
     );
   }
 }

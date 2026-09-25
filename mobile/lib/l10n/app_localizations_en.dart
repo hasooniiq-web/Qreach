@@ -221,4 +221,174 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get invalidPhone => 'Invalid phone number';
+
+  @override
+  String get subscriptionTitle => 'Subscription';
+
+  @override
+  String get currentPlan => 'Your current plan';
+
+  @override
+  String get planDefaultFree => 'Default free plan';
+
+  @override
+  String planEndsOn(String date) {
+    return 'Ends on $date';
+  }
+
+  @override
+  String planExpiredBanner(String date) {
+    return 'Your subscription ended on $date. You are back on Basic.';
+  }
+
+  @override
+  String get planFeaturesTitle => 'What your plan includes';
+
+  @override
+  String get featureMessaging => 'Receive visitor messages';
+
+  @override
+  String get featurePublicPhone => 'Show your phone number to visitors';
+
+  @override
+  String get featurePublicInstagram => 'Show your Instagram account';
+
+  @override
+  String get featurePublicExtra => 'Extra contact info';
+
+  @override
+  String get plansTitle => 'Plans';
+
+  @override
+  String get planYourPlan => 'Your plan';
+
+  @override
+  String get priceFree => 'Free';
+
+  @override
+  String priceAmountYear(String amount) {
+    return '$amount IQD / year';
+  }
+
+  @override
+  String priceAmountDays(String amount, int days) {
+    return '$amount IQD / $days days';
+  }
+
+  @override
+  String get requestUpgrade => 'Request upgrade';
+
+  @override
+  String get upgradePending => 'Request under review';
+
+  @override
+  String upgradeConfirmTitle(String plan) {
+    return 'Request an upgrade to $plan?';
+  }
+
+  @override
+  String get upgradeConfirmBody =>
+      'The Qreach team will review your request and contact you to complete the subscription and activate the plan.';
+
+  @override
+  String get upgradeSent => 'Upgrade request sent';
+
+  @override
+  String get subStatusActive => 'Active';
+
+  @override
+  String get subStatusExpired => 'Expired';
+
+  @override
+  String get subStatusCanceled => 'Canceled';
+
+  @override
+  String get subStatusPastDue => 'Past due';
+
+  @override
+  String get subStatusTrialing => 'Trial';
+
+  @override
+  String get publicContactTitle => 'Public contact details';
+
+  @override
+  String get publicContactSubtitle =>
+      'Shown to anyone who scans your vehicle tag. Choose what to share.';
+
+  @override
+  String get publicContactLockedTitle => 'Available on the Pro plan';
+
+  @override
+  String get publicContactLockedBody =>
+      'On Basic, visitors can only message you. Your phone number and accounts are not shown to them.';
+
+  @override
+  String get viewPlans => 'View plans';
+
+  @override
+  String get phoneShownLabel => 'Phone number shown to visitors';
+
+  @override
+  String get instagramLabel => 'Instagram account';
+
+  @override
+  String get instagramHint => 'Username only';
+
+  @override
+  String get extraLabel => 'Extra information';
+
+  @override
+  String get extraHint => 'e.g. Available after 5pm';
+
+  @override
+  String get saved => 'Saved';
+
+  @override
+  String get invalidInstagram => 'Invalid username';
+
+  @override
+  String get settingsAccount => 'Account';
+
+  @override
+  String get settingsSecurity => 'Security';
+
+  @override
+  String get settingsPreferences => 'Preferences';
+
+  @override
+  String get languageName => 'Arabic';
+
+  @override
+  String get loadErrorTitle => 'Couldn\'t load data';
+
+  @override
+  String get homeUpgradeTitle => 'Show your contact details to visitors';
+
+  @override
+  String get homeUpgradeBody =>
+      'The Pro plan shows your number and Instagram when your tag is scanned.';
+
+  @override
+  String tagsLinkedCount(int count) {
+    return '$count tags linked';
+  }
+
+  @override
+  String get activationSuccessSubtitle =>
+      'Anyone can now scan the tag and reach you.';
+
+  @override
+  String get done => 'Done';
+
+  @override
+  String get protectionStatus => 'Protection status';
+
+  @override
+  String get vehicleDetails => 'Vehicle details';
+
+  @override
+  String get tagTypeQr => 'QR tag';
+
+  @override
+  String get tagTypeNfc => 'NFC tag';
 }

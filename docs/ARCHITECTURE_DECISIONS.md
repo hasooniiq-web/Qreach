@@ -49,3 +49,10 @@ What's still a stub: **no backend code actually sends a push through FCM.** `goo
 ## Mobile: IBM Plex Sans Arabic via `google_fonts`, not bundled assets
 
 `google_fonts` fetches and caches the font at runtime rather than shipping the `.ttf` files in the app bundle. This is the faster path to a correct, on-brand result without needing to source and vendor font files by hand, at the cost of a first-run network dependency for text rendering. A fully offline-first production build should replace this with bundled font assets before shipping — noted as a specific, actionable gap in `mobile/README.md` rather than left implicit.
+
+
+## Plans: Basic (free default) and Pro, enforced server-side
+
+Basic lets visitors only message the owner. Pro also lets the owner show a phone number, Instagram handle and extra info on the public scan page. `subscription_plans.features` (JSON) says what a plan allows; `App\Services\PlanEntitlements` is the only place that decides, and both the API (`PUT /public-contact` refuses Basic owners) and the scan page (`PublicContacts` re-checks the plan on every render) go through it — the app and dashboard only display the result. A customer with no active paid subscription is on Basic, which has no subscription row; only explicit grants create rows. An "active" row past its end date is treated as expired everywhere (`Subscription::isCurrentlyActive`).
+
+**No payment gateway exists**, so upgrading is a request (`plan_upgrade_requests`) that an admin approves after taking payment out of band; approving/granting/canceling is manual, permission-gated (`subscriptions.view` / `subscriptions.manage`) and audit-logged. The dashboard's "value" KPI is the listed price of active subscriptions (expected value), not money received, and is labeled that way. **The Pro price (25,000 IQD/year) is a placeholder** — editable per plan in the dashboard; Basic is forced free and active.
