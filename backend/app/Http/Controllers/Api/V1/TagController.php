@@ -31,6 +31,26 @@ class TagController extends Controller
         return (new TagResource($tag))->response()->setStatusCode(201);
     }
 
+    /**
+     * The owner removes the vehicle's code ("delete, then add a new one").
+     * The old tag is revoked, not returned to stock: a code that has been
+     * detached can't be re-linked by anyone.
+     */
+    public function destroy(Request $request, Vehicle $vehicle): JsonResponse
+    {
+        $this->authorize('update', $vehicle);
+
+        $tag = $vehicle->tags()->where('status', 'assigned')->first();
+
+        if (! $tag) {
+            return response()->json(['error' => ['code' => 'NO_TAG', 'message' => 'لا يوجد رمز مرتبط بهذه المركبة.']], 404);
+        }
+
+        $this->lifecycle->revoke($tag, 'removed by owner', 'customer', $request->user()->id);
+
+        return response()->json(['message' => 'تم حذف الرمز من المركبة.']);
+    }
+
     public function show(Request $request, string $token): JsonResponse
     {
         $vehicle = Vehicle::where('user_id', $request->user()->id)

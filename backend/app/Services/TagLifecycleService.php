@@ -30,6 +30,10 @@ class TagLifecycleService
     public function activate(string $publicToken, Vehicle $vehicle, User $actor): Tag
     {
         return DB::transaction(function () use ($publicToken, $vehicle, $actor) {
+            // Serialize activations per vehicle so two tags can't both attach to one
+            // vehicle when scanned at the same moment.
+            Vehicle::where('id', $vehicle->id)->lockForUpdate()->first();
+
             $tag = Tag::where('public_token', $publicToken)->lockForUpdate()->first();
 
             if (! $tag) {
@@ -46,6 +50,11 @@ class TagLifecycleService
 
             if ($vehicle->user_id !== $actor->id) {
                 throw new TagActivationException('لا يمكنك ربط رمز بمركبة لا تملكها.', 'VEHICLE_NOT_OWNED');
+            }
+
+            // One code per vehicle: to change it, the owner removes the current one first.
+            if (Tag::where('vehicle_id', $vehicle->id)->where('status', 'assigned')->exists()) {
+                throw new TagActivationException('هذه المركبة مرتبطة برمز بالفعل. احذف الرمز الحالي أولاً ثم اربط الرمز الجديد.', 'VEHICLE_ALREADY_HAS_TAG');
             }
 
             $affected = Tag::where('id', $tag->id)

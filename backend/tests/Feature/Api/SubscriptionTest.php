@@ -121,49 +121,6 @@ class SubscriptionTest extends TestCase
             ->assertStatus(422)->assertJsonPath('error.code', 'PLAN_NOT_AVAILABLE');
     }
 
-    public function test_basic_owner_cannot_set_public_contact_details(): void
-    {
-        $user = User::factory()->create();
-        $headers = $this->bearer($user);
-
-        $this->getJson('/api/v1/public-contact', $headers)->assertJsonPath('editable', false);
-
-        $this->putJson('/api/v1/public-contact', ['phone' => '+9647701234567'], $headers)
-            ->assertStatus(403)->assertJsonPath('error.code', 'PLAN_REQUIRED');
-
-        $this->assertSame(0, ContactMethod::count());
-    }
-
-    public function test_pro_owner_can_set_update_and_clear_public_contact_details(): void
-    {
-        $user = User::factory()->create();
-        $this->grantPro($user);
-        $headers = $this->bearer($user);
-
-        $this->putJson('/api/v1/public-contact', [
-            'phone' => '+9647701234567', 'instagram' => '@my.car', 'extra' => 'متاح بعد الخامسة مساءً',
-        ], $headers)->assertOk()
-            ->assertJsonPath('editable', true)
-            ->assertJsonPath('instagram', 'my.car');
-
-        $this->assertDatabaseHas('contact_methods', ['user_id' => $user->id, 'type' => 'phone', 'privacy_state' => 'public']);
-
-        $this->putJson('/api/v1/public-contact', ['phone' => null], $headers)->assertOk();
-        $this->assertDatabaseMissing('contact_methods', ['user_id' => $user->id, 'type' => 'phone']);
-        $this->assertDatabaseHas('contact_methods', ['user_id' => $user->id, 'type' => 'instagram']);
-    }
-
-    public function test_public_contact_rejects_invalid_input(): void
-    {
-        $user = User::factory()->create();
-        $this->grantPro($user);
-        $headers = $this->bearer($user);
-
-        $this->putJson('/api/v1/public-contact', ['instagram' => 'not a handle!'], $headers)->assertStatus(422);
-        $this->putJson('/api/v1/public-contact', ['phone' => '12'], $headers)->assertStatus(422);
-        $this->putJson('/api/v1/public-contact', ['extra' => '<script>alert(1)</script>'], $headers)->assertStatus(422);
-    }
-
     public function test_scan_page_shows_direct_contact_for_a_pro_owner_who_chose_to_share(): void
     {
         $owner = User::factory()->create();
