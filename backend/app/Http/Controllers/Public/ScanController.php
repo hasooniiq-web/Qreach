@@ -88,21 +88,39 @@ class ScanController extends Controller
     {
         $tag = $this->resolveActiveTagOrFail($token, $request);
 
+        $message = $this->composeContactMessage($request);
+
         $contactRequest = ContactRequest::create([
             'vehicle_id' => $tag->vehicle_id,
             'tag_id' => $tag->id,
             'visitor_name' => $request->validated('visitor_name'),
             'visitor_phone' => $request->validated('visitor_phone'),
-            'message' => $request->validated('message'),
+            'message' => $message,
             'request_ip' => $request->ip(),
             'user_agent' => $request->userAgent(),
         ]);
 
-        $this->createScan($tag, 'contact_owner', ['message' => $request->validated('message')], $request);
+        $this->createScan($tag, 'contact_owner', ['message' => $message], $request);
 
         $tag->vehicle->user->notify(new ContactRequestNotification($contactRequest));
 
         return back()->with('scan_status', 'تم إرسال طلب التواصل الخاص بك.');
+    }
+
+    /** Prepends the chosen reason label so the owner sees why, even when the visitor typed nothing. */
+    private function composeContactMessage(ContactOwnerRequest $request): string
+    {
+        $labels = [
+            'damage' => 'لاحظت ضررًا في المركبة',
+            'open' => 'باب أو نافذة المركبة مفتوحة',
+            'question' => 'لدي استفسار بخصوص المركبة',
+            'other' => 'سبب آخر',
+        ];
+
+        $reason = $labels[$request->validated('reason')] ?? null;
+        $text = trim((string) $request->validated('message'));
+
+        return trim(($reason ? $reason.($text !== '' ? ': ' : '') : '').$text);
     }
 
     private function recordSimpleAction(Request $request, string $token, string $actionType, string $successMessage): RedirectResponse

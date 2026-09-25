@@ -141,6 +141,44 @@ class ScanTest extends TestCase
         $this->assertDatabaseHas('contact_requests', ['vehicle_id' => $vehicle->id, 'visitor_name' => 'زائر']);
     }
 
+    public function test_contact_owner_accepts_a_reason_without_a_typed_message_and_stores_its_label(): void
+    {
+        Notification::fake();
+        $tag = $this->makeAssignedTag();
+
+        $this->post("/t/{$tag->public_token}/contact", ['reason' => 'damage'])
+            ->assertSessionDoesntHaveErrors()
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('contact_requests', ['tag_id' => $tag->id, 'message' => 'لاحظت ضررًا في المركبة']);
+    }
+
+    public function test_contact_owner_combines_reason_label_and_typed_message(): void
+    {
+        Notification::fake();
+        $tag = $this->makeAssignedTag();
+
+        $this->post("/t/{$tag->public_token}/contact", ['reason' => 'question', 'message' => 'هل السيارة للبيع؟']);
+
+        $this->assertDatabaseHas('contact_requests', ['tag_id' => $tag->id, 'message' => 'لدي استفسار بخصوص المركبة: هل السيارة للبيع؟']);
+    }
+
+    public function test_contact_owner_with_neither_reason_nor_message_is_rejected(): void
+    {
+        $tag = $this->makeAssignedTag();
+
+        $this->post("/t/{$tag->public_token}/contact", [])->assertSessionHasErrors('message');
+        $this->assertDatabaseCount('contact_requests', 0);
+    }
+
+    public function test_contact_owner_rejects_an_unknown_reason(): void
+    {
+        $tag = $this->makeAssignedTag();
+
+        $this->post("/t/{$tag->public_token}/contact", ['reason' => '<script>', 'message' => 'x'])
+            ->assertSessionHasErrors('reason');
+    }
+
     public function test_public_action_rate_limit_blocks_excessive_requests_from_the_same_ip(): void
     {
         $tag = $this->makeAssignedTag();
