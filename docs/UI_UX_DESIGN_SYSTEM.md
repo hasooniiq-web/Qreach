@@ -1,5 +1,10 @@
 # UI/UX Design System
 
+> This document covers the original build's brand/RTL/component decisions
+> (still accurate). For the redesign's audit, updated component inventory,
+> and mobile navigation/IA changes, see `docs/UI_UX_REDESIGN_AUDIT.md` and
+> `docs/UI_UX_DESIGN_SYSTEM_V2.md`.
+
 ## Brand
 
 Only three colors, per spec section 5 — no exceptions:
@@ -36,4 +41,4 @@ Desktop is the primary admin experience (full sidebar, multi-column stat grids).
 
 ## Known gaps
 
-No dark mode. No charts yet (nothing to chart until the analytics aggregation job exists — see `ARCHITECTURE_DECISIONS.md`). No formal design tokens file for the (not yet built) Flutter app — the same three-color/typography rules would need to be re-expressed in Dart/Flutter theme data when that work starts.
+No dark mode. The Flutter app now exists with its own Dart theme tokens (`mobile/lib/core/theme/app_colors.dart`, `app_theme.dart`, `app_spacing.dart`) mirroring the same brand/neutral/status colors described here. Dashboard charts now exist (`admin/analytics/index.blade.php`, Chart.js) — see `docs/ANALYTICS.md`; the redesign audit's remaining complaint is that they aren't surfaced on the dashboard *home* page, not that they don't exist.
