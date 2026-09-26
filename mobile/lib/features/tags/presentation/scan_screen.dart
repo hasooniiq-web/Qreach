@@ -296,44 +296,98 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
 
 /// Dims everything outside a square viewfinder and draws yellow corner
 /// brackets — clearer than a plain outlined box about where to aim.
-class _ScanOverlay extends StatelessWidget {
+class _ScanOverlay extends StatefulWidget {
   const _ScanOverlay();
 
   static const double _size = 250;
 
   @override
+  State<_ScanOverlay> createState() => _ScanOverlayState();
+}
+
+class _ScanOverlayState extends State<_ScanOverlay>
+    with SingleTickerProviderStateMixin {
+  // A slow scan line travels down the frame and back, so the screen visibly
+  // "looks" for a code instead of sitting still.
+  late final AnimationController _sweep = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 2200),
+  )..repeat(reverse: true);
+
+  @override
+  void dispose() {
+    _sweep.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final reduce = MediaQuery.of(context).disableAnimations;
+    if (reduce && _sweep.isAnimating) _sweep.stop();
+
     return IgnorePointer(
-      child: CustomPaint(
-        size: Size.infinite,
-        painter: _ViewfinderPainter(),
-        child: const Center(child: SizedBox(width: _size, height: _size)),
+      child: AnimatedBuilder(
+        animation: _sweep,
+        builder: (context, _) => CustomPaint(
+          size: Size.infinite,
+          painter: _ViewfinderPainter(
+              reduce ? 0.5 : Curves.easeInOut.transform(_sweep.value)),
+        ),
       ),
     );
   }
 }
 
 class _ViewfinderPainter extends CustomPainter {
+  _ViewfinderPainter(this.t);
+
+  /// Scan-line position, 0 (top) to 1 (bottom).
+  final double t;
+
   @override
   void paint(Canvas canvas, Size size) {
     const side = _ScanOverlay._size;
     final rect = Rect.fromCenter(
         center: size.center(Offset.zero), width: side, height: side);
-    final rrect = RRect.fromRectAndRadius(rect, const Radius.circular(20));
+    final rrect = RRect.fromRectAndRadius(rect, const Radius.circular(26));
 
     final scrim = Path()
       ..addRect(Offset.zero & size)
       ..addRRect(rrect)
       ..fillType = PathFillType.evenOdd;
     canvas.drawPath(
-        scrim, Paint()..color = Colors.black.withValues(alpha: 0.55));
+        scrim, Paint()..color = Colors.black.withValues(alpha: 0.6));
+
+    // The scan line: a soft yellow band that fades out at both ends.
+    final y = rect.top + 14 + (rect.height - 28) * t;
+    final band = Rect.fromLTRB(rect.left + 18, y - 22, rect.right - 18, y + 2);
+    canvas.drawRect(
+      band,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            AppColors.brandYellow.withValues(alpha: 0),
+            AppColors.brandYellow.withValues(alpha: 0.28),
+          ],
+        ).createShader(band),
+    );
+    canvas.drawLine(
+      Offset(rect.left + 18, y + 2),
+      Offset(rect.right - 18, y + 2),
+      Paint()
+        ..color = AppColors.brandYellow
+        ..strokeWidth = 2.5
+        ..strokeCap = StrokeCap.round,
+    );
 
     final bracket = Paint()
       ..color = AppColors.brandYellow
       ..style = PaintingStyle.stroke
       ..strokeWidth = 5
       ..strokeCap = StrokeCap.round;
-    const len = 34.0;
+    const len = 38.0;
     final r = rect;
     for (final corner in [
       (r.topLeft, const Offset(1, 0), const Offset(0, 1)),
@@ -348,7 +402,7 @@ class _ViewfinderPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+  bool shouldRepaint(covariant _ViewfinderPainter old) => old.t != t;
 }
 
 /// Confirms a successful tag activation with a short scale-in check — the

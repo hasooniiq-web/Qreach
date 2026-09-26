@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../shared/widgets/app_button.dart';
 import 'package:go_router/go_router.dart';
 import '../../../shared/widgets/iraqi_plate.dart';
 import '../../../shared/widgets/plate_labels.dart';
@@ -115,7 +116,9 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
                   listenable:
                       Listenable.merge([_plateController, _letterController]),
                   builder: (context, _) => IraqiPlate(
-                    number: _plateController.text.trim(),
+                    number: _plateController.text.trim().isEmpty
+                        ? '00000'
+                        : _plateController.text.trim(),
                     letter: _letterController.text.trim(),
                     governorate: _governorate,
                     type: PlateType.fromCode(_plateType),
@@ -246,16 +249,10 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
                 decoration: InputDecoration(labelText: l10n.color),
               ),
               const SizedBox(height: AppSpacing.xxl),
-              ElevatedButton(
+              AppButton(
+                label: l10n.save,
+                loading: _submitting,
                 onPressed: _submitting ? null : _submit,
-                child: _submitting
-                    ? const SizedBox(
-                        width: 20,
-                        height: 20,
-                        child: CircularProgressIndicator(
-                            strokeWidth: 2, color: AppColors.brandWhite),
-                      )
-                    : Text(l10n.save),
               ),
             ],
           ),

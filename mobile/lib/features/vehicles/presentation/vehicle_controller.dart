@@ -10,7 +10,7 @@ class VehicleListController extends AsyncNotifier<List<VehicleModel>> {
   }
 
   Future<void> refresh() async {
-    state = const AsyncLoading();
+    state = const AsyncLoading<List<VehicleModel>>().copyWithPrevious(state);
     state = await AsyncValue.guard(
         () => ref.read(vehicleRepositoryProvider).list());
   }

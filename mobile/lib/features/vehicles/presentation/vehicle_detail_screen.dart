@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../shared/widgets/app_button.dart';
+import '../../../shared/widgets/app_sheet.dart';
 import 'package:go_router/go_router.dart';
 import '../../../shared/widgets/iraqi_plate.dart';
 import '../../../shared/widgets/vehicle_thumb.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+
+import '../../../core/design/motion.dart';
+import '../../../core/design/tokens.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../core/providers.dart';
@@ -67,7 +72,17 @@ class VehicleDetailScreen extends ConsumerWidget {
         ],
       ),
       body: vehicleAsync.when(
-        loading: () => const SkeletonList(count: 3),
+        loading: () => ListView(
+          physics: const NeverScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          children: const [
+            SkeletonBox(height: 250, radius: AppRadius.lg),
+            SizedBox(height: AppSpacing.xl),
+            SkeletonBox(width: 120, height: 18),
+            SizedBox(height: AppSpacing.md),
+            SkeletonBox(height: 96, radius: AppRadius.md),
+          ],
+        ),
         error: (error, _) => ErrorState(
           error: error,
           onRetry: () => ref.invalidate(vehicleDetailProvider(vehicleId)),
@@ -77,15 +92,20 @@ class VehicleDetailScreen extends ConsumerWidget {
           child: ListView(
             padding: const EdgeInsets.all(AppSpacing.lg),
             children: [
-              _VehicleHero(vehicle: vehicle),
+              FadeSlideIn(child: _VehicleHero(vehicle: vehicle)),
               const SizedBox(height: AppSpacing.xl),
-              Text(l10n.vehicleCodeTitle,
-                  style: Theme.of(context)
-                      .textTheme
-                      .titleMedium
-                      ?.copyWith(fontWeight: FontWeight.w700)),
-              const SizedBox(height: AppSpacing.md),
-              _CodeSection(vehicle: vehicle, vehicleId: vehicleId),
+              FadeSlideIn(
+                index: 1,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(l10n.vehicleCodeTitle,
+                        style: AppText.section(context).copyWith(fontSize: 18)),
+                    const SizedBox(height: AppSpacing.md),
+                    _CodeSection(vehicle: vehicle, vehicleId: vehicleId),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -150,10 +170,8 @@ class _CodeSectionState extends ConsumerState<_CodeSection> {
   void _showQr(BuildContext context, TagModel tag) {
     final l10n = AppLocalizations.of(context)!;
 
-    showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      showDragHandle: true,
+    showAppSheet<void>(
+      context,
       builder: (context) => SafeArea(
         child: Padding(
           padding: const EdgeInsets.fromLTRB(
@@ -226,10 +244,11 @@ class _CodeSectionState extends ConsumerState<_CodeSection> {
             ),
           ),
           const SizedBox(height: AppSpacing.lg),
-          ElevatedButton.icon(
+          AppButton(
+            label: l10n.linkNewTag,
+            icon: Icons.qr_code_scanner_rounded,
+            style: AppButtonStyle.accent,
             onPressed: () => context.push('/vehicles/${widget.vehicleId}/scan'),
-            icon: const Icon(Icons.qr_code_scanner),
-            label: Text(l10n.linkNewTag),
           ),
         ],
       );
@@ -265,27 +284,22 @@ class _CodeSectionState extends ConsumerState<_CodeSection> {
           ),
         ),
         const SizedBox(height: AppSpacing.md),
-        OutlinedButton.icon(
+        AppButton(
+          label: l10n.showQr,
+          icon: Icons.qr_code_2_rounded,
+          style: AppButtonStyle.secondary,
           onPressed: () => _showQr(context, tag),
-          icon: const Icon(Icons.qr_code_2),
-          label: Text(l10n.showQr),
         ),
         const SizedBox(height: AppSpacing.md),
         Text(l10n.oneCodeNote,
             style: TextStyle(color: AppColors.ink500, fontSize: 13)),
         const SizedBox(height: AppSpacing.lg),
-        OutlinedButton.icon(
+        AppButton(
+          label: l10n.removeCode,
+          icon: Icons.delete_outline_rounded,
+          style: AppButtonStyle.danger,
+          loading: _removing,
           onPressed: _removing ? null : _remove,
-          style: OutlinedButton.styleFrom(
-              foregroundColor: AppColors.statusDanger,
-              side: BorderSide(color: AppColors.statusDanger)),
-          icon: _removing
-              ? const SizedBox(
-                  width: 18,
-                  height: 18,
-                  child: CircularProgressIndicator(strokeWidth: 2))
-              : const Icon(Icons.delete_outline),
-          label: Text(l10n.removeCode),
         ),
       ],
     );
@@ -313,23 +327,28 @@ class _VehicleHero extends StatelessWidget {
       padding: const EdgeInsets.all(AppSpacing.xl),
       decoration: BoxDecoration(
         color: AppColors.brandBlack,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: AppRadius.rLg,
+        boxShadow: AppShadows.raised,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              Icon(isProtected ? Icons.verified_user : Icons.shield_outlined,
-                  size: 20,
-                  color: isProtected ? AppColors.brandYellow : Colors.white54),
+              Icon(isProtected ? Icons.link_rounded : Icons.link_off_rounded,
+                  size: 22,
+                  color: isProtected
+                      ? const Color(0xFF4CD264)
+                      : const Color(0xFFFF6B5E)),
               const SizedBox(width: AppSpacing.sm),
               Text(
                 isProtected
                     ? l10n.vehicleProtected
                     : l10n.vehicleNotProtectedYet,
                 style: TextStyle(
-                    color: isProtected ? AppColors.brandYellow : Colors.white70,
+                    color: isProtected
+                        ? const Color(0xFF4CD264)
+                        : const Color(0xFFFF6B5E),
                     fontWeight: FontWeight.w700),
               ),
             ],
@@ -352,12 +371,15 @@ class _VehicleHero extends StatelessWidget {
                 width: 84,
               ),
               const Spacer(),
-              IraqiPlate(
-                number: vehicle.plateNumber,
-                letter: vehicle.plateLetter,
-                governorate: vehicle.plateGovernorate,
-                type: PlateType.fromCode(vehicle.plateType),
-                width: 190,
+              Hero(
+                tag: 'plate-${vehicle.id}',
+                child: IraqiPlate(
+                  number: vehicle.plateNumber,
+                  letter: vehicle.plateLetter,
+                  governorate: vehicle.plateGovernorate,
+                  type: PlateType.fromCode(vehicle.plateType),
+                  width: 190,
+                ),
               ),
             ],
           ),

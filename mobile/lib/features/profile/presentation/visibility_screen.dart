@@ -7,7 +7,9 @@ import '../../../core/providers.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_card.dart';
+import '../../../shared/widgets/app_sheet.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/skeleton.dart';
 import '../data/profile_models.dart';
@@ -73,10 +75,8 @@ class _VisibilityBody extends ConsumerWidget {
   }
 
   Future<void> _addMethod(BuildContext context, WidgetRef ref) async {
-    final result = await showModalBottomSheet<_NewMethod>(
-      context: context,
-      isScrollControlled: true,
-      showDragHandle: true,
+    final result = await showAppSheet<_NewMethod>(
+      context,
       builder: (_) => _AddMethodSheet(platforms: profile.platforms),
     );
     if (result == null || !context.mounted) return;
@@ -265,10 +265,11 @@ class _VisibilityBody extends ConsumerWidget {
               child: Text(l10n.methodsEmpty,
                   style: TextStyle(color: AppColors.ink500)),
             ),
-          OutlinedButton.icon(
+          AppButton(
+            label: l10n.addMethod,
+            icon: Icons.add_rounded,
+            style: AppButtonStyle.secondary,
             onPressed: () => _addMethod(context, ref),
-            icon: const Icon(Icons.add),
-            label: Text(l10n.addMethod),
           ),
         ],
         const SizedBox(height: AppSpacing.xl),
@@ -417,9 +418,9 @@ class _EmergencyCardState extends State<_EmergencyCard> {
             Row(
               children: [
                 Expanded(
-                  child: ElevatedButton(
+                  child: AppButton(
+                    label: l10n.save,
                     onPressed: () => _save(e?.visible ?? false),
-                    child: Text(l10n.save),
                   ),
                 ),
                 if (e != null) ...[
@@ -529,12 +530,12 @@ class _AddMethodSheetState extends State<_AddMethodSheet> {
                 onChanged: (v) => setState(() => _visible = v),
                 title: Text(l10n.showToVisitors),
               ),
-              ElevatedButton(
+              AppButton(
+                label: l10n.save,
                 onPressed: ready
                     ? () => Navigator.of(context).pop(_NewMethod(p.type,
                         _value.text.trim(), _label.text.trim(), _visible))
                     : null,
-                child: Text(l10n.save),
               ),
             ],
           ],

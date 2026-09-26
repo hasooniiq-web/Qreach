@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
+import '../../../core/design/motion.dart';
+import '../../../core/design/tokens.dart';
 import '../../../core/locale/locale_controller.dart';
 import '../../../core/theme/theme_controller.dart';
 import '../../../core/network/api_client.dart';
@@ -10,6 +12,8 @@ import '../../../core/providers.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/widgets/app_sheet.dart';
+import '../../../shared/widgets/screen_header.dart';
 import '../../../shared/widgets/settings_group.dart';
 import '../../../shared/widgets/user_avatar.dart';
 import '../../auth/presentation/logout_confirm.dart';
@@ -76,9 +80,8 @@ class ProfileScreen extends ConsumerWidget {
   Future<void> _changePhoto(
       BuildContext context, WidgetRef ref, ProfileModel profile) async {
     final l10n = AppLocalizations.of(context)!;
-    final choice = await showModalBottomSheet<String>(
-      context: context,
-      showDragHandle: true,
+    final choice = await showAppSheet<String>(
+      context,
       builder: (context) => SafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -132,9 +135,8 @@ class ProfileScreen extends ConsumerWidget {
   Future<void> _chooseTheme(BuildContext context, WidgetRef ref) async {
     final l10n = AppLocalizations.of(context)!;
     final current = ref.read(themeModeProvider);
-    final picked = await showModalBottomSheet<ThemeMode>(
-      context: context,
-      showDragHandle: true,
+    final picked = await showAppSheet<ThemeMode>(
+      context,
       builder: (context) => SafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -170,9 +172,8 @@ class ProfileScreen extends ConsumerWidget {
   Future<void> _chooseLanguage(BuildContext context, WidgetRef ref) async {
     final l10n = AppLocalizations.of(context)!;
     final current = ref.read(localeProvider).languageCode;
-    final picked = await showModalBottomSheet<String>(
-      context: context,
-      showDragHandle: true,
+    final picked = await showAppSheet<String>(
+      context,
       builder: (context) => SafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -213,162 +214,177 @@ class ProfileScreen extends ConsumerWidget {
     final sharing = profile?.sharesAnything ?? false;
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.tabProfile)),
-      body: ListView(
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        children: [
-          Container(
-            padding: const EdgeInsets.all(AppSpacing.xl),
-            decoration: BoxDecoration(
-              color: AppColors.brandBlack,
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Row(
-              children: [
-                GestureDetector(
-                  onTap: profile == null
-                      ? null
-                      : () => _changePhoto(context, ref, profile),
-                  child: Stack(
-                    clipBehavior: Clip.none,
+      body: SafeArea(
+        bottom: false,
+        child: ListView(
+          padding: const EdgeInsets.only(bottom: 120),
+          children: [
+            FadeSlideIn(child: ScreenHeader(title: l10n.tabProfile)),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+              child: FadeSlideIn(
+                index: 1,
+                child: Container(
+                  clipBehavior: Clip.antiAlias,
+                  padding: const EdgeInsets.all(AppSpacing.xl),
+                  decoration: BoxDecoration(
+                    color: AppColors.brandBlack,
+                    borderRadius: AppRadius.rLg,
+                    boxShadow: AppShadows.raised,
+                  ),
+                  child: Row(
                     children: [
-                      UserAvatar(name: name, radius: 34),
-                      PositionedDirectional(
-                        bottom: -2,
-                        end: -2,
-                        child: Container(
-                          padding: const EdgeInsets.all(5),
-                          decoration: BoxDecoration(
-                            color: AppColors.surface,
-                            shape: BoxShape.circle,
-                            border: Border.all(
-                                color: AppColors.onSurface, width: 1.5),
-                          ),
-                          child: Icon(Icons.photo_camera,
-                              size: 14, color: AppColors.onSurface),
+                      GestureDetector(
+                        onTap: profile == null
+                            ? null
+                            : () => _changePhoto(context, ref, profile),
+                        child: Stack(
+                          clipBehavior: Clip.none,
+                          children: [
+                            UserAvatar(name: name, radius: 34),
+                            PositionedDirectional(
+                              bottom: -2,
+                              end: -2,
+                              child: Container(
+                                padding: const EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                  color: AppColors.surface,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                      color: AppColors.onSurface, width: 1.5),
+                                ),
+                                child: Icon(Icons.photo_camera,
+                                    size: 14, color: AppColors.onSurface),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: AppSpacing.lg),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              (name != null && name.isNotEmpty)
+                                  ? name
+                                  : l10n.notSet,
+                              style: const TextStyle(
+                                  color: AppColors.brandWhite,
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.w800),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(profile?.phone ?? '',
+                                textDirection: TextDirection.ltr,
+                                style: const TextStyle(color: Colors.white70)),
+                            if (subscription != null) ...[
+                              const SizedBox(height: AppSpacing.sm),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 10, vertical: 3),
+                                decoration: BoxDecoration(
+                                  color: subscription.plan.showsPublicContacts
+                                      ? AppColors.brandYellow
+                                      : Colors.white24,
+                                  borderRadius: BorderRadius.circular(999),
+                                ),
+                                child: Text(subscription.plan.name,
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w700,
+                                        color: subscription
+                                                .plan.showsPublicContacts
+                                            ? AppColors.brandBlack
+                                            : AppColors.brandWhite)),
+                              ),
+                            ],
+                          ],
                         ),
                       ),
                     ],
                   ),
                 ),
-                const SizedBox(width: AppSpacing.lg),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        (name != null && name.isNotEmpty) ? name : l10n.notSet,
-                        style: const TextStyle(
-                            color: AppColors.brandWhite,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w800),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(profile?.phone ?? '',
-                          textDirection: TextDirection.ltr,
-                          style: const TextStyle(color: Colors.white70)),
-                      if (subscription != null) ...[
-                        const SizedBox(height: AppSpacing.sm),
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 3),
-                          decoration: BoxDecoration(
-                            color: subscription.plan.showsPublicContacts
-                                ? AppColors.brandYellow
-                                : Colors.white24,
-                            borderRadius: BorderRadius.circular(999),
-                          ),
-                          child: Text(subscription.plan.name,
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.w700,
-                                  color: subscription.plan.showsPublicContacts
-                                      ? AppColors.brandBlack
-                                      : AppColors.brandWhite)),
-                        ),
-                      ],
-                    ],
-                  ),
+              ),
+            ),
+            const SizedBox(height: AppSpacing.xl),
+            SettingsGroup(
+              title: l10n.profileMyInfo,
+              rows: [
+                SettingsRow(
+                  icon: Icons.badge_outlined,
+                  label: l10n.profileName,
+                  value: (name != null && name.isNotEmpty) ? name : l10n.notSet,
+                  trailing: Icon(Icons.edit_outlined,
+                      size: 20, color: AppColors.ink400),
+                  onTap: profile == null
+                      ? null
+                      : () => _editName(context, ref, profile),
+                ),
+                SettingsRow(
+                  icon: Icons.visibility_outlined,
+                  label: l10n.visibilityTitle,
+                  value: sharing
+                      ? l10n.visibilitySharing(_sharedItems(l10n, profile!))
+                      : l10n.visibilityNoneShown,
+                  onTap: () => context.push('/visibility'),
                 ),
               ],
             ),
-          ),
-          const SizedBox(height: AppSpacing.xl),
-          SettingsGroup(
-            title: l10n.profileMyInfo,
-            rows: [
-              SettingsRow(
-                icon: Icons.badge_outlined,
-                label: l10n.profileName,
-                value: (name != null && name.isNotEmpty) ? name : l10n.notSet,
-                trailing: Icon(Icons.edit_outlined,
-                    size: 20, color: AppColors.ink400),
-                onTap: profile == null
-                    ? null
-                    : () => _editName(context, ref, profile),
-              ),
-              SettingsRow(
-                icon: Icons.visibility_outlined,
-                label: l10n.visibilityTitle,
-                value: sharing
-                    ? l10n.visibilitySharing(_sharedItems(l10n, profile!))
-                    : l10n.visibilityNoneShown,
-                onTap: () => context.push('/visibility'),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.xl),
-          SettingsGroup(
-            title: l10n.settingsAccount,
-            rows: [
-              SettingsRow(
-                icon: Icons.workspace_premium_outlined,
-                label: l10n.subscriptionTitle,
-                value: subscription?.plan.name,
-                onTap: () => context.push('/subscription'),
-              ),
-              SettingsRow(
-                icon: Icons.language,
-                label: l10n.language,
-                value: l10n.languageName,
-                onTap: () => _chooseLanguage(context, ref),
-              ),
-              SettingsRow(
-                icon: Icons.brightness_6_outlined,
-                label: l10n.appearance,
-                value: switch (ref.watch(themeModeProvider)) {
-                  ThemeMode.light => l10n.themeLight,
-                  ThemeMode.dark => l10n.themeDark,
-                  ThemeMode.system => l10n.themeSystem,
-                },
-                onTap: () => _chooseTheme(context, ref),
-              ),
-              SettingsRow(
-                icon: Icons.dns_outlined,
-                label: l10n.serverSetup,
-                onTap: () => context.push('/server'),
-              ),
-            ],
-          ),
-          const SizedBox(height: AppSpacing.xl),
-          SettingsGroup(
-            title: l10n.settingsSecurity,
-            rows: [
-              SettingsRow(
-                icon: Icons.logout,
-                label: l10n.logout,
-                destructive: true,
-                onTap: () => confirmAndLogout(context, ref, allDevices: false),
-              ),
-              SettingsRow(
-                icon: Icons.phone_android,
-                label: l10n.logoutAllDevices,
-                destructive: true,
-                onTap: () => confirmAndLogout(context, ref, allDevices: true),
-              ),
-            ],
-          ),
-        ],
+            const SizedBox(height: AppSpacing.xl),
+            SettingsGroup(
+              title: l10n.settingsAccount,
+              rows: [
+                SettingsRow(
+                  icon: Icons.workspace_premium_outlined,
+                  label: l10n.subscriptionTitle,
+                  value: subscription?.plan.name,
+                  onTap: () => context.push('/subscription'),
+                ),
+                SettingsRow(
+                  icon: Icons.language,
+                  label: l10n.language,
+                  value: l10n.languageName,
+                  onTap: () => _chooseLanguage(context, ref),
+                ),
+                SettingsRow(
+                  icon: Icons.brightness_6_outlined,
+                  label: l10n.appearance,
+                  value: switch (ref.watch(themeModeProvider)) {
+                    ThemeMode.light => l10n.themeLight,
+                    ThemeMode.dark => l10n.themeDark,
+                    ThemeMode.system => l10n.themeSystem,
+                  },
+                  onTap: () => _chooseTheme(context, ref),
+                ),
+                SettingsRow(
+                  icon: Icons.dns_outlined,
+                  label: l10n.serverSetup,
+                  onTap: () => context.push('/server'),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.xl),
+            SettingsGroup(
+              title: l10n.settingsSecurity,
+              rows: [
+                SettingsRow(
+                  icon: Icons.logout,
+                  label: l10n.logout,
+                  destructive: true,
+                  onTap: () =>
+                      confirmAndLogout(context, ref, allDevices: false),
+                ),
+                SettingsRow(
+                  icon: Icons.phone_android,
+                  label: l10n.logoutAllDevices,
+                  destructive: true,
+                  onTap: () => confirmAndLogout(context, ref, allDevices: true),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

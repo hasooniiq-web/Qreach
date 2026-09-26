@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../core/design/motion.dart';
+import '../../../core/design/tokens.dart';
+import '../../../shared/widgets/app_button.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../core/providers.dart';
@@ -27,7 +30,17 @@ class SubscriptionScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: Text(l10n.subscriptionTitle)),
       body: async.when(
-        loading: () => const SkeletonList(count: 3),
+        loading: () => ListView(
+          physics: const NeverScrollableScrollPhysics(),
+          padding: const EdgeInsets.all(AppSpacing.lg),
+          children: const [
+            SkeletonBox(height: 170, radius: AppRadius.lg),
+            SizedBox(height: AppSpacing.xl),
+            SkeletonBox(height: 150, radius: AppRadius.md),
+            SizedBox(height: AppSpacing.xl),
+            SkeletonBox(height: 150, radius: AppRadius.md),
+          ],
+        ),
         error: (error, _) => ErrorState(
             error: error, onRetry: () => ref.invalidate(subscriptionProvider)),
         data: (info) => RefreshIndicator(
@@ -39,16 +52,27 @@ class SubscriptionScreen extends ConsumerWidget {
                 _LapsedBanner(date: formatDate(info.endsAt!)),
                 const SizedBox(height: AppSpacing.md),
               ],
-              _CurrentPlanCard(info: info),
+              FadeSlideIn(child: _CurrentPlanCard(info: info)),
               const SizedBox(height: AppSpacing.xl),
-              _SectionTitle(l10n.planFeaturesTitle),
-              const SizedBox(height: AppSpacing.md),
-              _FeatureList(plan: info.plan),
+              FadeSlideIn(
+                index: 1,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _SectionTitle(l10n.planFeaturesTitle),
+                    const SizedBox(height: AppSpacing.md),
+                    _FeatureList(plan: info.plan),
+                  ],
+                ),
+              ),
               const SizedBox(height: AppSpacing.xl),
-              _SectionTitle(l10n.plansTitle),
+              FadeSlideIn(index: 2, child: _SectionTitle(l10n.plansTitle)),
               const SizedBox(height: AppSpacing.md),
-              for (final plan in info.plans) ...[
-                _PlanCard(plan: plan, info: info),
+              for (var i = 0; i < info.plans.length; i++) ...[
+                FadeSlideIn(
+                  index: 3 + i,
+                  child: _PlanCard(plan: info.plans[i], info: info),
+                ),
                 const SizedBox(height: AppSpacing.md),
               ],
             ],
@@ -65,11 +89,8 @@ class _SectionTitle extends StatelessWidget {
   final String text;
 
   @override
-  Widget build(BuildContext context) => Text(text,
-      style: Theme.of(context)
-          .textTheme
-          .titleMedium
-          ?.copyWith(fontWeight: FontWeight.w700));
+  Widget build(BuildContext context) =>
+      Text(text, style: AppText.section(context).copyWith(fontSize: 18));
 }
 
 class _LapsedBanner extends StatelessWidget {
@@ -111,7 +132,8 @@ class _CurrentPlanCard extends StatelessWidget {
       padding: const EdgeInsets.all(AppSpacing.xl),
       decoration: BoxDecoration(
         color: AppColors.brandBlack,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: AppRadius.rLg,
+        boxShadow: AppShadows.raised,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -322,22 +344,18 @@ class _UpgradeButtonState extends ConsumerState<_UpgradeButton> {
     final l10n = AppLocalizations.of(context)!;
 
     if (widget.pending) {
-      return OutlinedButton.icon(
+      return AppButton(
+        label: l10n.upgradePending,
+        icon: Icons.schedule_rounded,
+        style: AppButtonStyle.secondary,
         onPressed: null,
-        icon: const Icon(Icons.schedule, size: 18),
-        label: Text(l10n.upgradePending),
       );
     }
 
-    return ElevatedButton(
+    return AppButton(
+      label: l10n.requestUpgrade,
+      loading: _busy,
       onPressed: _busy ? null : _request,
-      child: _busy
-          ? const SizedBox(
-              width: 20,
-              height: 20,
-              child: CircularProgressIndicator(
-                  strokeWidth: 2, color: AppColors.brandWhite))
-          : Text(l10n.requestUpgrade),
     );
   }
 }

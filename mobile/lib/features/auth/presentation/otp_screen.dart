@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../shared/widgets/app_button.dart';
+import '../../../shared/widgets/otp_boxes.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_colors.dart';
@@ -92,37 +94,24 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
     return AuthScaffold(
       showBack: true,
       title: l10n.otpTitle,
-      subtitle: l10n.otpSubtitle(widget.phone),
+      // LRE...PDF keeps the leading + at the left of the number on an RTL screen.
+      subtitle: l10n.otpSubtitle('‪${widget.phone}‬'),
       child: Column(
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           if (_error != null) ErrorBanner(message: _error!),
-          TextField(
+          OtpBoxes(
             controller: _codeController,
-            keyboardType: TextInputType.number,
-            textAlign: TextAlign.center,
-            textDirection: TextDirection.ltr,
-            maxLength: 6,
-            autofocus: true,
-            style: const TextStyle(
-                fontSize: 28, letterSpacing: 10, fontWeight: FontWeight.w700),
-            decoration: const InputDecoration(counterText: ''),
             onChanged: (value) {
               if (value.length == 6) _verify();
             },
           ),
           const SizedBox(height: AppSpacing.lg),
-          ElevatedButton(
+          AppButton(
+            label: l10n.verify,
+            loading: _submitting,
             onPressed: _submitting ? null : _verify,
-            child: _submitting
-                ? const SizedBox(
-                    width: 20,
-                    height: 20,
-                    child: CircularProgressIndicator(
-                        strokeWidth: 2, color: AppColors.brandWhite),
-                  )
-                : Text(l10n.verify),
           ),
           const SizedBox(height: AppSpacing.md),
           Center(

@@ -17,6 +17,7 @@ import '../../features/tags/presentation/scan_screen.dart';
 import '../../features/vehicles/presentation/vehicle_detail_screen.dart';
 import '../../features/vehicles/presentation/vehicle_form_screen.dart';
 import '../../features/vehicles/presentation/vehicle_list_screen.dart';
+import '../design/page_transitions.dart';
 import '../splash_screen.dart';
 
 /// Rebuilding the whole router on auth-state change is a deliberate
@@ -49,12 +50,13 @@ final routerProvider = Provider<GoRouter>((ref) {
     routes: [
       GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
       GoRoute(
-          path: '/login',
-          builder: (context, state) => const PhoneEntryScreen()),
+        path: '/login',
+        pageBuilder: animatedPage((context, state) => const PhoneEntryScreen()),
+      ),
       GoRoute(
         path: '/login/otp',
-        builder: (context, state) =>
-            OtpScreen(phone: state.extra as String? ?? ''),
+        pageBuilder: animatedPage(
+            (context, state) => OtpScreen(phone: state.extra as String? ?? '')),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) =>
@@ -83,34 +85,43 @@ final routerProvider = Provider<GoRouter>((ref) {
       ),
       GoRoute(
         path: '/contacts/:id',
-        builder: (context, state) =>
-            ContactThreadScreen(requestId: state.pathParameters['id']!),
+        pageBuilder: animatedPage((context, state) =>
+            ContactThreadScreen(requestId: state.pathParameters['id']!)),
       ),
       GoRoute(
-          path: '/notifications',
-          builder: (context, state) => const NotificationsScreen()),
+        path: '/notifications',
+        pageBuilder:
+            animatedPage((context, state) => const NotificationsScreen()),
+      ),
       GoRoute(
-          path: '/vehicles/new',
-          builder: (context, state) => const VehicleFormScreen()),
+        path: '/vehicles/new',
+        pageBuilder:
+            animatedPage((context, state) => const VehicleFormScreen()),
+      ),
       GoRoute(
         path: '/vehicles/:id',
-        builder: (context, state) =>
-            VehicleDetailScreen(vehicleId: state.pathParameters['id']!),
+        pageBuilder: animatedPage((context, state) =>
+            VehicleDetailScreen(vehicleId: state.pathParameters['id']!)),
       ),
       GoRoute(
         path: '/vehicles/:id/scan',
-        builder: (context, state) =>
-            ScanScreen(vehicleId: state.pathParameters['id']!),
+        pageBuilder: animatedPage((context, state) =>
+            ScanScreen(vehicleId: state.pathParameters['id']!)),
       ),
       GoRoute(
-          path: '/subscription',
-          builder: (context, state) => const SubscriptionScreen()),
+        path: '/subscription',
+        pageBuilder:
+            animatedPage((context, state) => const SubscriptionScreen()),
+      ),
       GoRoute(
-          path: '/server',
-          builder: (context, state) => const ServerSetupScreen()),
+        path: '/server',
+        pageBuilder:
+            animatedPage((context, state) => const ServerSetupScreen()),
+      ),
       GoRoute(
-          path: '/visibility',
-          builder: (context, state) => const VisibilityScreen()),
+        path: '/visibility',
+        pageBuilder: animatedPage((context, state) => const VisibilityScreen()),
+      ),
     ],
   );
 });

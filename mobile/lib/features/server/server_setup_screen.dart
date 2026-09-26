@@ -8,6 +8,7 @@ import '../../core/providers.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../l10n/app_localizations.dart';
+import '../../shared/widgets/app_button.dart';
 
 /// Turns what the user typed into an API base URL, or null if it is not a
 /// usable address. Accepts `192.168.1.10:8000`, `myserver.com`, or a full
@@ -63,7 +64,12 @@ class _ServerSetupScreenState extends ConsumerState<ServerSetupScreen> {
   }
 
   Future<void> _load() async {
-    final saved = await ref.read(secureStorageProvider).readServerBaseUrl();
+    String? saved;
+    try {
+      saved = await ref.read(secureStorageProvider).readServerBaseUrl();
+    } catch (_) {
+      // Storage unavailable: fall back to the built-in address.
+    }
     final current = saved ?? apiBaseUrl;
     if (!mounted) return;
     _controller.text = current
@@ -206,22 +212,21 @@ class _ServerSetupScreenState extends ConsumerState<ServerSetupScreen> {
             ),
           ],
           const SizedBox(height: AppSpacing.xl),
-          OutlinedButton.icon(
+          AppButton(
+            label: l10n.serverTest,
+            icon: Icons.wifi_tethering_rounded,
+            style: AppButtonStyle.secondary,
+            loading: _busy,
             onPressed: _busy ? null : _test,
-            icon: _busy
-                ? const SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2))
-                : const Icon(Icons.wifi_tethering),
-            label: Text(l10n.serverTest),
           ),
           const SizedBox(height: AppSpacing.md),
-          ElevatedButton(
-              onPressed: _busy ? null : _save, child: Text(l10n.save)),
+          AppButton(label: l10n.save, onPressed: _busy ? null : _save),
           const SizedBox(height: AppSpacing.md),
-          TextButton(
-              onPressed: _busy ? null : _reset, child: Text(l10n.serverReset)),
+          AppButton(
+            label: l10n.serverReset,
+            style: AppButtonStyle.ghost,
+            onPressed: _busy ? null : _reset,
+          ),
         ],
       ),
     );

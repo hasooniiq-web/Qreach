@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../shared/widgets/app_button.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/network/api_client.dart';
@@ -85,16 +86,10 @@ class _PhoneEntryScreenState extends ConsumerState<PhoneEntryScreen> {
               },
             ),
             const SizedBox(height: AppSpacing.lg),
-            ElevatedButton(
+            AppButton(
+              label: l10n.sendCode,
+              loading: _submitting,
               onPressed: _submitting ? null : _submit,
-              child: _submitting
-                  ? const SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: CircularProgressIndicator(
-                          strokeWidth: 2, color: AppColors.brandWhite),
-                    )
-                  : Text(l10n.sendCode),
             ),
             const SizedBox(height: AppSpacing.md),
             TextButton.icon(

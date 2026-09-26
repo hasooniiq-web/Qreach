@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
 
+import '../../core/design/motion.dart';
+import '../../core/design/tokens.dart';
 import '../../core/network/api_client.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_spacing.dart';
 import '../../l10n/app_localizations.dart';
+import 'app_button.dart';
 
-/// Full-area error with a retry action (never a raw exception — the message
-/// comes from [ApiException]/generic copy). Use instead of a bare
-/// ErrorBanner when a whole screen or section failed to load.
+/// Full-area error with a retry action. Never shows a raw exception — the
+/// message comes from [ApiException] / generic copy — and always offers the
+/// next step.
 class ErrorState extends StatelessWidget {
   const ErrorState({super.key, required this.error, required this.onRetry});
 
@@ -20,34 +23,43 @@ class ErrorState extends StatelessWidget {
     final message = asApiException(error).message;
 
     return Center(
-      child: Padding(
+      child: SingleChildScrollView(
         padding: const EdgeInsets.all(AppSpacing.xxl),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(Icons.cloud_off_outlined, size: 40, color: AppColors.ink300),
-            const SizedBox(height: AppSpacing.lg),
-            Text(l10n.loadErrorTitle,
-                style: Theme.of(context)
-                    .textTheme
-                    .titleMedium
-                    ?.copyWith(fontWeight: FontWeight.w600),
-                textAlign: TextAlign.center),
-            const SizedBox(height: AppSpacing.xs),
-            Text(message,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyMedium
-                    ?.copyWith(color: AppColors.ink500),
-                textAlign: TextAlign.center),
-            const SizedBox(height: AppSpacing.xl),
-            OutlinedButton.icon(
-              onPressed: onRetry,
-              icon: const Icon(Icons.refresh, size: 18),
-              label: Text(l10n.retry),
-              style: OutlinedButton.styleFrom(minimumSize: const Size(160, 48)),
-            ),
-          ],
+        child: FadeSlideIn(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                width: 84,
+                height: 84,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.statusDanger.withValues(alpha: 0.12),
+                ),
+                child: Icon(Icons.wifi_off_rounded,
+                    size: 38, color: AppColors.statusDanger),
+              ),
+              const SizedBox(height: AppSpacing.xl),
+              Text(l10n.loadErrorTitle,
+                  style: AppText.title(context), textAlign: TextAlign.center),
+              const SizedBox(height: AppSpacing.sm),
+              ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 300),
+                child: Text(message,
+                    style:
+                        AppText.body(context).copyWith(color: AppColors.ink500),
+                    textAlign: TextAlign.center),
+              ),
+              const SizedBox(height: AppSpacing.xl),
+              AppButton(
+                label: l10n.retry,
+                icon: Icons.refresh_rounded,
+                onPressed: onRetry,
+                expand: false,
+                style: AppButtonStyle.secondary,
+              ),
+            ],
+          ),
         ),
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../design/tokens.dart';
 import 'app_colors.dart';
 
 /// Cairo throughout (bundled in assets/fonts, so it works offline), in light
@@ -28,6 +29,7 @@ abstract final class AppTheme {
 
     final base = ThemeData(
       useMaterial3: true,
+      splashFactory: InkSparkle.splashFactory,
       brightness: brightness,
       fontFamily: fontFamily,
       colorScheme: scheme,
@@ -44,22 +46,22 @@ abstract final class AppTheme {
       textTheme: textTheme,
       primaryTextTheme: textTheme,
       appBarTheme: AppBarTheme(
-        backgroundColor: AppColors.surface,
+        backgroundColor: AppColors.background,
         foregroundColor: AppColors.ink900,
         elevation: 0,
-        scrolledUnderElevation: 1,
+        scrolledUnderElevation: 0,
         surfaceTintColor: Colors.transparent,
         centerTitle: false,
-        titleTextStyle: textTheme.titleMedium
-            ?.copyWith(fontWeight: FontWeight.w600, color: AppColors.ink900),
+        titleTextStyle: textTheme.titleMedium?.copyWith(
+            fontWeight: FontWeight.w800, fontSize: 18, color: AppColors.ink900),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: dark ? AppColors.brandYellow : AppColors.brandBlack,
           foregroundColor: dark ? AppColors.brandBlack : AppColors.brandWhite,
           minimumSize: const Size.fromHeight(52),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppRadius.sm)),
           textStyle:
               textTheme.labelLarge?.copyWith(fontWeight: FontWeight.w600),
         ),
@@ -69,8 +71,8 @@ abstract final class AppTheme {
           minimumSize: const Size.fromHeight(52),
           foregroundColor: AppColors.ink900,
           side: BorderSide(color: AppColors.ink200),
-          shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppRadius.sm)),
         ),
       ),
       textButtonTheme: TextButtonThemeData(
@@ -83,19 +85,19 @@ abstract final class AppTheme {
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(AppRadius.sm),
           borderSide: BorderSide(color: AppColors.ink200),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(AppRadius.sm),
           borderSide: BorderSide(color: AppColors.ink200),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(AppRadius.sm),
           borderSide: const BorderSide(color: AppColors.brandYellow, width: 2),
         ),
         errorBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(AppRadius.sm),
           borderSide: BorderSide(color: AppColors.statusDanger),
         ),
         labelStyle: TextStyle(color: AppColors.ink500),
@@ -113,6 +115,7 @@ abstract final class AppTheme {
       ),
       dividerTheme: DividerThemeData(color: AppColors.ink100, thickness: 1),
       dialogTheme: DialogThemeData(
+        shape: RoundedRectangleBorder(borderRadius: AppRadius.rLg),
         backgroundColor: AppColors.surface,
         surfaceTintColor: Colors.transparent,
       ),

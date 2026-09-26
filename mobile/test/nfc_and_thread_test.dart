@@ -120,6 +120,7 @@ void main() {
         reason: 'the auto-delete date is shown');
 
     await tester.enterText(find.byType(TextField), 'أنا قادم');
+    await tester.pump(); // the send button enables once there is text
     await tester.tap(find.byIcon(Icons.send_rounded));
     await tester.pumpAndSettle();
 
