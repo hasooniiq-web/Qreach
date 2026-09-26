@@ -70,10 +70,10 @@ class SettingsRow extends StatelessWidget {
           style: TextStyle(color: color, fontWeight: FontWeight.w500)),
       subtitle: value == null
           ? null
-          : Text(value!, style: const TextStyle(color: AppColors.ink500)),
+          : Text(value!, style: TextStyle(color: AppColors.ink500)),
       trailing: trailing ??
           (onTap != null && !destructive
-              ? const Icon(Icons.chevron_left, color: AppColors.ink300)
+              ? Icon(Icons.chevron_left, color: AppColors.ink300)
               : null),
       onTap: onTap,
     );

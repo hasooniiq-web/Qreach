@@ -758,4 +758,51 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get bus => 'حافلة';
+
+  @override
+  String get serverSetup => 'إعداد الخادم';
+
+  @override
+  String get serverAddress => 'عنوان الخادم (IP:المنفذ)';
+
+  @override
+  String get serverSetupHelp =>
+      'أدخل عنوان الخادم الذي يتصل به التطبيق، مثل 192.168.1.10:8000 أو اسم نطاق. يُحفظ على هذا الهاتف فقط.';
+
+  @override
+  String get serverTest => 'اختبار الاتصال';
+
+  @override
+  String get serverOk => 'تم الاتصال بالخادم بنجاح';
+
+  @override
+  String get serverFail =>
+      'تعذّر الوصول إلى الخادم. تأكد من العنوان والمنفذ وأن الهاتف على نفس الشبكة.';
+
+  @override
+  String get serverInvalid => 'العنوان غير صالح';
+
+  @override
+  String get serverHttpsOnly => 'النسخة النهائية تقبل عناوين https فقط';
+
+  @override
+  String get serverSaved => 'تم حفظ عنوان الخادم';
+
+  @override
+  String get serverReset => 'إعادة الضبط إلى الافتراضي';
+
+  @override
+  String get serverResetDone => 'رجع العنوان إلى الافتراضي';
+
+  @override
+  String get appearance => 'المظهر';
+
+  @override
+  String get themeSystem => 'حسب الهاتف';
+
+  @override
+  String get themeLight => 'فاتح';
+
+  @override
+  String get themeDark => 'داكن';
 }

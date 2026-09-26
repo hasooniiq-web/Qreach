@@ -5,9 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="poll-url" content="{{ route('admin.poll') }}">
     <title>{{ $title ?? 'لوحة التحكم' }} — Qreach</title>
+    <script src="{{ asset('theme-init.js') }}"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/admin-nav.js', 'resources/js/admin-ui.js'])
 </head>
 <body class="h-dvh overflow-hidden bg-ink-50 text-ink-900">
@@ -98,6 +99,12 @@
                     <h1 class="text-base font-semibold text-ink-900">{{ $title ?? 'لوحة التحكم' }}</h1>
                 </div>
                 @php $me = auth('admin')->user(); @endphp
+                <div class="flex items-center gap-1">
+                <button type="button" id="theme-toggle" class="flex size-10 items-center justify-center rounded-md text-ink-600 hover:bg-ink-100" aria-label="المظهر" title="المظهر: حسب الجهاز / فاتح / داكن">
+                    <span data-theme-icon="system" class="text-lg" aria-hidden="true">◐</span>
+                    <span data-theme-icon="light" class="hidden text-lg" aria-hidden="true">☀</span>
+                    <span data-theme-icon="dark" class="hidden text-lg" aria-hidden="true">☾</span>
+                </button>
                 <details data-menu class="relative">
                     <summary class="flex cursor-pointer list-none items-center gap-2.5 rounded-full py-1 ps-3 pe-1 hover:bg-ink-50" aria-label="قائمة الحساب">
                         <span class="hidden text-sm font-medium text-ink-700 sm:inline">{{ $me->name }}</span>
@@ -126,6 +133,7 @@
                         </div>
                     </div>
                 </details>
+                </div>
             </header>
 
             <main id="main-content" tabindex="-1" class="min-h-0 flex-1 overflow-y-auto p-4 outline-none sm:p-6">

@@ -4,24 +4,61 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/locale/locale_controller.dart';
 import 'core/router/app_router.dart';
+import 'core/theme/app_colors.dart';
 import 'core/theme/app_theme.dart';
+import 'core/theme/theme_controller.dart';
 import 'l10n/app_localizations.dart';
 
-class QreachApp extends ConsumerWidget {
+class QreachApp extends ConsumerStatefulWidget {
   const QreachApp({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<QreachApp> createState() => _QreachAppState();
+}
+
+class _QreachAppState extends ConsumerState<QreachApp>
+    with WidgetsBindingObserver {
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  // The phone switched between light and dark while we follow "system".
+  @override
+  void didChangePlatformBrightness() => setState(() {});
+
+  @override
+  Widget build(BuildContext context) {
     final router = ref.watch(routerProvider);
     final locale = ref.watch(localeProvider);
+    final mode = ref.watch(themeModeProvider);
+
+    final dark = switch (mode) {
+      ThemeMode.light => false,
+      ThemeMode.dark => true,
+      ThemeMode.system =>
+        WidgetsBinding.instance.platformDispatcher.platformBrightness ==
+            Brightness.dark,
+    };
+
+    // Colours are read from AppColors while widgets build, so the palette flag
+    // must be right before the tree builds; the keyed wrapper below rebuilds
+    // everything when the mode flips.
+    final theme = AppTheme.build(dark: dark);
 
     return MaterialApp.router(
       title: 'Qreach SmartTag',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.light(),
+      theme: theme,
+      themeMode: ThemeMode.light,
       routerConfig: router,
-      // Arabic is the default and primary locale (spec section 5); English
-      // is supported through the same localization pipeline for later use.
       locale: locale,
       supportedLocales: LocaleController.supported,
       localizationsDelegates: const [
@@ -30,6 +67,10 @@ class QreachApp extends ConsumerWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
+      builder: (context, child) {
+        AppColors.dark = dark;
+        return KeyedSubtree(key: ValueKey(dark), child: child!);
+      },
     );
   }
 }

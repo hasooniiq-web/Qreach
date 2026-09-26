@@ -22,7 +22,7 @@ Future<void> confirmAndLogout(
         TextButton(
           onPressed: () => Navigator.of(context).pop(true),
           child: Text(l10n.logout,
-              style: const TextStyle(color: AppColors.statusDanger)),
+              style: TextStyle(color: AppColors.statusDanger)),
         ),
       ],
     ),

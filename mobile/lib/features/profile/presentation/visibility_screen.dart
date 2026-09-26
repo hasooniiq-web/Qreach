@@ -171,7 +171,7 @@ class _VisibilityBody extends ConsumerWidget {
         Text(l10n.emergencySection, style: titleStyle),
         const SizedBox(height: 4),
         Text(l10n.emergencyHint,
-            style: const TextStyle(color: AppColors.ink500, fontSize: 13)),
+            style: TextStyle(color: AppColors.ink500, fontSize: 13)),
         const SizedBox(height: AppSpacing.md),
         _EmergencyCard(
           key: ValueKey(
@@ -207,8 +207,8 @@ class _VisibilityBody extends ConsumerWidget {
                           style: const TextStyle(fontWeight: FontWeight.w800)),
                       const SizedBox(height: 2),
                       Text(l10n.methodsLockedBody,
-                          style: const TextStyle(
-                              color: AppColors.ink600, fontSize: 13)),
+                          style:
+                              TextStyle(color: AppColors.ink600, fontSize: 13)),
                     ],
                   ),
                 ),
@@ -234,8 +234,8 @@ class _VisibilityBody extends ConsumerWidget {
                           style: const TextStyle(fontWeight: FontWeight.w700)),
                       Text(m.value,
                           textDirection: TextDirection.ltr,
-                          style: const TextStyle(
-                              color: AppColors.ink500, fontSize: 12)),
+                          style:
+                              TextStyle(color: AppColors.ink500, fontSize: 12)),
                     ],
                   ),
                 ),
@@ -248,8 +248,8 @@ class _VisibilityBody extends ConsumerWidget {
                 ),
                 IconButton(
                   tooltip: l10n.removeMethod,
-                  icon: const Icon(Icons.delete_outline,
-                      color: AppColors.statusDanger),
+                  icon:
+                      Icon(Icons.delete_outline, color: AppColors.statusDanger),
                   onPressed: () =>
                       _run(context, ref, () => repo.removeMethod(m.id)),
                 ),
@@ -263,7 +263,7 @@ class _VisibilityBody extends ConsumerWidget {
             Padding(
               padding: const EdgeInsets.only(bottom: AppSpacing.md),
               child: Text(l10n.methodsEmpty,
-                  style: const TextStyle(color: AppColors.ink500)),
+                  style: TextStyle(color: AppColors.ink500)),
             ),
           OutlinedButton.icon(
             onPressed: () => _addMethod(context, ref),
@@ -427,7 +427,7 @@ class _EmergencyCardState extends State<_EmergencyCard> {
                   IconButton(
                     tooltip: l10n.removeMethod,
                     onPressed: widget.onRemove,
-                    icon: const Icon(Icons.delete_outline,
+                    icon: Icon(Icons.delete_outline,
                         color: AppColors.statusDanger),
                   ),
                 ],

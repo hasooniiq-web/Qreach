@@ -95,8 +95,9 @@ class _ContactCard extends ConsumerWidget {
                       : l10n.visitorAnonymous)
                   .characters
                   .first,
-              style: const TextStyle(
-                  color: AppColors.brandBlack, fontWeight: FontWeight.w800),
+              style: TextStyle(
+                  color: r.isNew ? AppColors.brandBlack : AppColors.ink900,
+                  fontWeight: FontWeight.w800),
             ),
           ),
           const SizedBox(width: AppSpacing.md),
@@ -117,14 +118,13 @@ class _ContactCard extends ConsumerWidget {
                       ),
                     ),
                     Text(notificationTime(r.createdAt),
-                        style: const TextStyle(
-                            color: AppColors.ink400, fontSize: 12)),
+                        style:
+                            TextStyle(color: AppColors.ink400, fontSize: 12)),
                   ],
                 ),
                 if (r.vehicle != null)
                   Text(l10n.contactAboutVehicle(r.vehicle!),
-                      style: const TextStyle(
-                          color: AppColors.ink500, fontSize: 12)),
+                      style: TextStyle(color: AppColors.ink500, fontSize: 12)),
                 const SizedBox(height: 4),
                 Text(r.message,
                     maxLines: 2,

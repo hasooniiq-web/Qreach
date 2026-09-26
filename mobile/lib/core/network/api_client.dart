@@ -28,6 +28,9 @@ class ApiClient {
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
+          // The server can be changed at runtime (server-setup screen), so the
+          // base URL is resolved for every request rather than fixed at start.
+          options.baseUrl = await _storage.readServerBaseUrl() ?? apiBaseUrl;
           final token = await _storage.readToken();
           if (token != null) {
             options.headers['Authorization'] = 'Bearer $token';

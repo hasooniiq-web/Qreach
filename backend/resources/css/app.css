@@ -6,7 +6,7 @@
 @source '../**/*.js';
 
 @theme {
-    --font-sans: 'IBM Plex Sans Arabic', 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+    --font-sans: 'Cairo', ui-sans-serif, system-ui, sans-serif;
 
     /* SmartTag / Qreach brand — only these three colors, per spec section 5. */
     --color-brand-yellow: #FFC107;
@@ -34,7 +34,6 @@
 }
 
 html[dir='rtl'] body {
-    font-feature-settings: 'ss01' on;
 }
 
 @layer base {
@@ -76,3 +75,43 @@ html[dir='rtl'] body {
 /* Menus scroll but never show a scrollbar. */
 .scrollbar-none { scrollbar-width: none; -ms-overflow-style: none; }
 .scrollbar-none::-webkit-scrollbar { display: none; }
+
+
+/* Dark mode. The neutral "ink" scale is flipped (ink900 stays the strongest
+   text colour, ink50 the faintest fill), and the few places that use white as a
+   *surface* are pointed at a dark surface. Brand yellow/black are unchanged.
+   The attribute is set by public/theme-init.js from the saved choice
+   (system / light / dark). */
+:root[data-theme='dark'] {
+    color-scheme: dark;
+    --color-ink-900: #F2F2F2;
+    --color-ink-800: #E4E4E4;
+    --color-ink-700: #D0D0D0;
+    --color-ink-600: #B8B8B8;
+    --color-ink-500: #9E9E9E;
+    --color-ink-400: #858585;
+    --color-ink-300: #626262;
+    --color-ink-200: #3B3B40;
+    --color-ink-100: #2A2A2E;
+    --color-ink-50: #121214;
+    --color-status-success: #4CAF62;
+    --color-status-danger: #EF6C62;
+    --color-status-warning: #E0A63A;
+}
+
+:root[data-theme='dark'] :is(.bg-white, .form-control, .btn-secondary, .btn-danger) {
+    background-color: #1E1E21;
+}
+
+:root[data-theme='dark'] .btn-primary {
+    background-color: var(--color-brand-yellow);
+    color: var(--color-brand-black);
+}
+
+:root[data-theme='dark'] .btn-primary:hover {
+    opacity: 0.9;
+}
+
+:root[data-theme='dark'] .btn-secondary:hover {
+    background-color: #2A2A2E;
+}

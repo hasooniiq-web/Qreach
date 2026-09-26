@@ -763,4 +763,52 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get bus => 'Bus';
+
+  @override
+  String get serverSetup => 'Server setup';
+
+  @override
+  String get serverAddress => 'Server address (IP:port)';
+
+  @override
+  String get serverSetupHelp =>
+      'Enter the server the app connects to, such as 192.168.1.10:8000 or a domain name. It is saved on this phone only.';
+
+  @override
+  String get serverTest => 'Test connection';
+
+  @override
+  String get serverOk => 'Connected to the server';
+
+  @override
+  String get serverFail =>
+      'Could not reach the server. Check the address and port, and that the phone is on the same network.';
+
+  @override
+  String get serverInvalid => 'Invalid address';
+
+  @override
+  String get serverHttpsOnly =>
+      'The release build only accepts https addresses';
+
+  @override
+  String get serverSaved => 'Server address saved';
+
+  @override
+  String get serverReset => 'Reset to default';
+
+  @override
+  String get serverResetDone => 'Address reset to default';
+
+  @override
+  String get appearance => 'Appearance';
+
+  @override
+  String get themeSystem => 'System';
+
+  @override
+  String get themeLight => 'Light';
+
+  @override
+  String get themeDark => 'Dark';
 }

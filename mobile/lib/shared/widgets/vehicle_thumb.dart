@@ -14,8 +14,22 @@ enum ThumbKind {
   motorcycle,
   taxi,
   tractor,
-  van
+  van,
+  other
 }
+
+/// The supplied illustrations (assets/vehicles). A taxi uses the sedan picture;
+/// motorcycle and tractor have no supplied picture yet and stay drawn in code.
+const _assetFor = {
+  ThumbKind.sedan: 'sedan',
+  ThumbKind.taxi: 'sedan',
+  ThumbKind.suv: 'suv',
+  ThumbKind.pickup: 'pickup',
+  ThumbKind.truck: 'truck',
+  ThumbKind.bus: 'bus',
+  ThumbKind.van: 'van',
+  ThumbKind.other: 'other',
+};
 
 ThumbKind thumbKindFor({String? vehicleType, String? plateType}) {
   if (plateType == PlateType.taxi.code) return ThumbKind.taxi;
@@ -28,7 +42,8 @@ ThumbKind thumbKindFor({String? vehicleType, String? plateType}) {
     'truck' => ThumbKind.truck,
     'bus' => ThumbKind.bus,
     'motorcycle' => ThumbKind.motorcycle,
-    _ => ThumbKind.van,
+    'van' => ThumbKind.van,
+    _ => ThumbKind.other,
   };
 }
 
@@ -56,6 +71,17 @@ class VehicleThumb extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final asset = _assetFor[kind];
+
+    if (asset != null) {
+      return SizedBox(
+        width: width,
+        height: width * 0.56,
+        child: Image.asset('assets/vehicles/$asset.png',
+            fit: BoxFit.contain, filterQuality: FilterQuality.medium),
+      );
+    }
+
     return SizedBox(
       width: width,
       height: width * 0.42,
@@ -183,6 +209,7 @@ class _ThumbPainter extends CustomPainter {
         wheel(22, 33, 6);
         wheel(78, 33, 6);
       case ThumbKind.van:
+      case ThumbKind.other:
         poly(const [
           Offset(3, 32),
           Offset(3, 8),

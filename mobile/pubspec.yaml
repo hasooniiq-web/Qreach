@@ -39,8 +39,6 @@ dependencies:
   # Typography — IBM Plex Sans Arabic via Google Fonts (fetched/cached at
   # runtime). For a fully offline-first build, replace with bundled .ttf
   # assets before shipping — see docs note in core/theme/app_theme.dart.
-  google_fonts: ^6.2.1
-
   # Utilities
   intl: ^0.20.2
   equatable: ^2.0.5
@@ -60,5 +58,20 @@ flutter:
   uses-material-design: true
   generate: true
 
+  fonts:
+    - family: Cairo
+      fonts:
+        - asset: assets/fonts/Cairo.ttf
+          weight: 400
+        - asset: assets/fonts/Cairo.ttf
+          weight: 500
+        - asset: assets/fonts/Cairo.ttf
+          weight: 600
+        - asset: assets/fonts/Cairo.ttf
+          weight: 700
+        - asset: assets/fonts/Cairo.ttf
+          weight: 800
+
   assets:
     - assets/images/
+    - assets/vehicles/

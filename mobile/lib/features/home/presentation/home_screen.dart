@@ -231,7 +231,7 @@ class _VehicleCarouselState extends State<VehicleCarousel> {
                   width: i == _page ? 20 : 6,
                   height: 6,
                   decoration: BoxDecoration(
-                    color: i == _page ? AppColors.brandBlack : AppColors.ink200,
+                    color: i == _page ? AppColors.onSurface : AppColors.ink200,
                     borderRadius: BorderRadius.circular(3),
                   ),
                 ),
@@ -407,7 +407,7 @@ class _Conversations extends StatelessWidget {
         child: Align(
           alignment: AlignmentDirectional.centerStart,
           child: Text(l10n.homeConversationsEmpty,
-              style: const TextStyle(color: AppColors.ink500)),
+              style: TextStyle(color: AppColors.ink500)),
         ),
       );
     }
@@ -458,7 +458,7 @@ class _Conversations extends StatelessWidget {
                               ),
                             ),
                             Text(notificationTime(c.at),
-                                style: const TextStyle(
+                                style: TextStyle(
                                     color: AppColors.ink400, fontSize: 11)),
                           ],
                         ),
@@ -481,8 +481,8 @@ class _Conversations extends StatelessWidget {
                       margin: const EdgeInsetsDirectional.only(start: 8),
                       width: 9,
                       height: 9,
-                      decoration: const BoxDecoration(
-                          color: AppColors.brandBlack, shape: BoxShape.circle),
+                      decoration: BoxDecoration(
+                          color: AppColors.onSurface, shape: BoxShape.circle),
                     ),
                 ],
               ),

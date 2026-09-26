@@ -80,3 +80,21 @@ async function refreshBadges() {
 refreshBadges();
 setInterval(refreshBadges, 15000);
 document.addEventListener('visibilitychange', refreshBadges);
+
+// Appearance toggle: system -> light -> dark -> system. theme-init.js applies it.
+const themeToggle = document.getElementById('theme-toggle');
+
+function showThemeIcon() {
+    const mode = document.documentElement.dataset.themeMode || 'system';
+    document.querySelectorAll('[data-theme-icon]').forEach((icon) => {
+        icon.classList.toggle('hidden', icon.dataset.themeIcon !== mode);
+    });
+}
+
+showThemeIcon();
+themeToggle?.addEventListener('click', () => {
+    const order = ['system', 'light', 'dark'];
+    const current = document.documentElement.dataset.themeMode || 'system';
+    window.__setThemeMode?.(order[(order.indexOf(current) + 1) % order.length]);
+    showThemeIcon();
+});

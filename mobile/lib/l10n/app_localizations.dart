@@ -1507,6 +1507,96 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'حافلة'**
   String get bus;
+
+  /// No description provided for @serverSetup.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعداد الخادم'**
+  String get serverSetup;
+
+  /// No description provided for @serverAddress.
+  ///
+  /// In ar, this message translates to:
+  /// **'عنوان الخادم (IP:المنفذ)'**
+  String get serverAddress;
+
+  /// No description provided for @serverSetupHelp.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل عنوان الخادم الذي يتصل به التطبيق، مثل 192.168.1.10:8000 أو اسم نطاق. يُحفظ على هذا الهاتف فقط.'**
+  String get serverSetupHelp;
+
+  /// No description provided for @serverTest.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختبار الاتصال'**
+  String get serverTest;
+
+  /// No description provided for @serverOk.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم الاتصال بالخادم بنجاح'**
+  String get serverOk;
+
+  /// No description provided for @serverFail.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر الوصول إلى الخادم. تأكد من العنوان والمنفذ وأن الهاتف على نفس الشبكة.'**
+  String get serverFail;
+
+  /// No description provided for @serverInvalid.
+  ///
+  /// In ar, this message translates to:
+  /// **'العنوان غير صالح'**
+  String get serverInvalid;
+
+  /// No description provided for @serverHttpsOnly.
+  ///
+  /// In ar, this message translates to:
+  /// **'النسخة النهائية تقبل عناوين https فقط'**
+  String get serverHttpsOnly;
+
+  /// No description provided for @serverSaved.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم حفظ عنوان الخادم'**
+  String get serverSaved;
+
+  /// No description provided for @serverReset.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة الضبط إلى الافتراضي'**
+  String get serverReset;
+
+  /// No description provided for @serverResetDone.
+  ///
+  /// In ar, this message translates to:
+  /// **'رجع العنوان إلى الافتراضي'**
+  String get serverResetDone;
+
+  /// No description provided for @appearance.
+  ///
+  /// In ar, this message translates to:
+  /// **'المظهر'**
+  String get appearance;
+
+  /// No description provided for @themeSystem.
+  ///
+  /// In ar, this message translates to:
+  /// **'حسب الهاتف'**
+  String get themeSystem;
+
+  /// No description provided for @themeLight.
+  ///
+  /// In ar, this message translates to:
+  /// **'فاتح'**
+  String get themeLight;
+
+  /// No description provided for @themeDark.
+  ///
+  /// In ar, this message translates to:
+  /// **'داكن'**
+  String get themeDark;
 }
 
 class _AppLocalizationsDelegate

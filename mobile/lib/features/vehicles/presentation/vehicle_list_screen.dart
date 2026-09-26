@@ -98,7 +98,7 @@ class VehicleListScreen extends ConsumerWidget {
                             [vehicle.make, vehicle.model]
                                 .whereType<String>()
                                 .join(' '),
-                            style: const TextStyle(color: AppColors.ink500),
+                            style: TextStyle(color: AppColors.ink500),
                           ),
                         ),
                       const SizedBox(height: AppSpacing.md),
@@ -109,7 +109,7 @@ class VehicleListScreen extends ConsumerWidget {
                                 vehicleType: vehicle.vehicleType,
                                 plateType: vehicle.plateType),
                             color: AppColors.ink700,
-                            cutout: AppColors.brandWhite,
+                            cutout: AppColors.surface,
                             width: 72,
                           ),
                           const Spacer(),

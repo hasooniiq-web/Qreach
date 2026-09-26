@@ -90,7 +90,7 @@ class _GroupedList extends ConsumerWidget {
           padding: const EdgeInsets.fromLTRB(
               AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, AppSpacing.xs),
           child: Text(group,
-              style: const TextStyle(
+              style: TextStyle(
                   color: AppColors.ink500,
                   fontWeight: FontWeight.w700,
                   fontSize: 13)),

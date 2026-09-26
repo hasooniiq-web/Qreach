@@ -36,7 +36,7 @@ class VehicleDetailScreen extends ConsumerWidget {
           TextButton(
             onPressed: () => context.pop(true),
             child: Text(l10n.delete,
-                style: const TextStyle(color: AppColors.statusDanger)),
+                style: TextStyle(color: AppColors.statusDanger)),
           ),
         ],
       ),
@@ -123,7 +123,7 @@ class _CodeSectionState extends ConsumerState<_CodeSection> {
           TextButton(
             onPressed: () => Navigator.of(context).pop(true),
             child: Text(l10n.removeCode,
-                style: const TextStyle(color: AppColors.statusDanger)),
+                style: TextStyle(color: AppColors.statusDanger)),
           ),
         ],
       ),
@@ -182,8 +182,7 @@ class _CodeSectionState extends ConsumerState<_CodeSection> {
               ),
               const SizedBox(height: AppSpacing.lg),
               Text(l10n.codeLinkLabel,
-                  style:
-                      const TextStyle(color: AppColors.ink500, fontSize: 12)),
+                  style: TextStyle(color: AppColors.ink500, fontSize: 12)),
               const SizedBox(height: 4),
               SelectableText(tag.publicUrl,
                   textDirection: TextDirection.ltr,
@@ -210,7 +209,7 @@ class _CodeSectionState extends ConsumerState<_CodeSection> {
             padding: const EdgeInsets.all(AppSpacing.xl),
             child: Row(
               children: [
-                const Icon(Icons.qr_code_2, size: 40, color: AppColors.ink300),
+                Icon(Icons.qr_code_2, size: 40, color: AppColors.ink300),
                 const SizedBox(width: AppSpacing.lg),
                 Expanded(
                   child: Column(
@@ -219,7 +218,7 @@ class _CodeSectionState extends ConsumerState<_CodeSection> {
                       Text(l10n.noCodeYetTitle,
                           style: const TextStyle(fontWeight: FontWeight.w700)),
                       Text(l10n.noCodeYetSubtitle,
-                          style: const TextStyle(color: AppColors.ink500)),
+                          style: TextStyle(color: AppColors.ink500)),
                     ],
                   ),
                 ),
@@ -253,8 +252,8 @@ class _CodeSectionState extends ConsumerState<_CodeSection> {
                         style: const TextStyle(fontWeight: FontWeight.w800),
                         textDirection: TextDirection.ltr),
                     Text(tag.type == 'nfc' ? l10n.tagTypeNfc : l10n.tagTypeQr,
-                        style: const TextStyle(
-                            color: AppColors.ink500, fontSize: 12)),
+                        style:
+                            TextStyle(color: AppColors.ink500, fontSize: 12)),
                   ],
                 ),
               ),
@@ -273,13 +272,13 @@ class _CodeSectionState extends ConsumerState<_CodeSection> {
         ),
         const SizedBox(height: AppSpacing.md),
         Text(l10n.oneCodeNote,
-            style: const TextStyle(color: AppColors.ink500, fontSize: 13)),
+            style: TextStyle(color: AppColors.ink500, fontSize: 13)),
         const SizedBox(height: AppSpacing.lg),
         OutlinedButton.icon(
           onPressed: _removing ? null : _remove,
           style: OutlinedButton.styleFrom(
               foregroundColor: AppColors.statusDanger,
-              side: const BorderSide(color: AppColors.statusDanger)),
+              side: BorderSide(color: AppColors.statusDanger)),
           icon: _removing
               ? const SizedBox(
                   width: 18,

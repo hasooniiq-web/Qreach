@@ -21,7 +21,7 @@ class ErrorBanner extends StatelessWidget {
       ),
       child: Text(
         message,
-        style: const TextStyle(color: AppColors.statusDanger, fontSize: 13),
+        style: TextStyle(color: AppColors.statusDanger, fontSize: 13),
         textAlign: TextAlign.start,
       ),
     );

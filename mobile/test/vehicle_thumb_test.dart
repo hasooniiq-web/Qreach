@@ -13,7 +13,8 @@ void main() {
     expect(thumbKindFor(vehicleType: 'truck'), ThumbKind.truck);
     expect(thumbKindFor(vehicleType: 'bus'), ThumbKind.bus);
     expect(thumbKindFor(vehicleType: 'motorcycle'), ThumbKind.motorcycle);
-    expect(thumbKindFor(vehicleType: 'other'), ThumbKind.van);
+    expect(thumbKindFor(vehicleType: 'van'), ThumbKind.van);
+    expect(thumbKindFor(vehicleType: 'other'), ThumbKind.other);
     expect(
         thumbKindFor(vehicleType: 'sedan', plateType: 'taxi'), ThumbKind.taxi);
     expect(thumbKindFor(vehicleType: 'truck', plateType: 'agricultural'),

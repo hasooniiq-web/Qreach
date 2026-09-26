@@ -21,7 +21,7 @@ class ProfileMenuButton extends ConsumerWidget {
 
     return PopupMenuButton<_ProfileMenuAction>(
       tooltip: l10n.profile,
-      icon: const CircleAvatar(
+      icon: CircleAvatar(
         radius: 16,
         backgroundColor: AppColors.ink100,
         child: Icon(Icons.person_outline, size: 18, color: AppColors.ink600),
@@ -46,9 +46,9 @@ class ProfileMenuButton extends ConsumerWidget {
         PopupMenuItem(
           value: _ProfileMenuAction.logout,
           child: ListTile(
-            leading: const Icon(Icons.logout, color: AppColors.statusDanger),
+            leading: Icon(Icons.logout, color: AppColors.statusDanger),
             title: Text(l10n.logout,
-                style: const TextStyle(color: AppColors.statusDanger)),
+                style: TextStyle(color: AppColors.statusDanger)),
             contentPadding: EdgeInsets.zero,
           ),
         ),

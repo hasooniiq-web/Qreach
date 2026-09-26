@@ -389,7 +389,7 @@ class _ActivationSuccessDialog extends StatelessWidget {
               textAlign: TextAlign.center),
           const SizedBox(height: 6),
           Text(l10n.activationSuccessSubtitle,
-              style: const TextStyle(color: AppColors.ink500),
+              style: TextStyle(color: AppColors.ink500),
               textAlign: TextAlign.center),
         ],
       ),

@@ -3,11 +3,11 @@
 <head>
     <meta charset="utf-8">
     <title>طباعة الدفعة {{ $batch->batch_code }}</title>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
     @vite(['resources/js/print-batch.js'])
     <style>
         * { box-sizing: border-box; }
-        body { font-family: 'IBM Plex Sans Arabic', sans-serif; margin: 0; padding: 16px; color: #000; }
+        body { font-family: 'Cairo', sans-serif; margin: 0; padding: 16px; color: #000; }
         .toolbar { margin-bottom: 16px; }
         .toolbar button { font-family: inherit; background: #FFC107; border: none; border-radius: 6px; padding: 10px 20px; font-size: 14px; font-weight: 500; cursor: pointer; }
         .grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }

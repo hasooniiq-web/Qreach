@@ -83,8 +83,8 @@ class AuthScaffold extends StatelessWidget {
                   Container(
                     padding: EdgeInsets.fromLTRB(AppSpacing.xl, AppSpacing.xxl,
                         AppSpacing.xl, AppSpacing.xxl + bottomInset),
-                    decoration: const BoxDecoration(
-                      color: AppColors.brandWhite,
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
                       borderRadius:
                           BorderRadius.vertical(top: Radius.circular(28)),
                     ),

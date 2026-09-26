@@ -174,7 +174,7 @@ class _Messages extends StatelessWidget {
         if (thread.vehicle != null)
           Center(
             child: Text(l10n.contactAboutVehicle(thread.vehicle!),
-                style: const TextStyle(color: AppColors.ink500, fontSize: 12)),
+                style: TextStyle(color: AppColors.ink500, fontSize: 12)),
           ),
         if (thread.expiresAt != null)
           Padding(
@@ -184,7 +184,7 @@ class _Messages extends StatelessWidget {
                 l10n.threadExpires(DateFormat('yyyy-MM-dd')
                     .format(thread.expiresAt!.toLocal())),
                 textAlign: TextAlign.center,
-                style: const TextStyle(color: AppColors.ink400, fontSize: 12),
+                style: TextStyle(color: AppColors.ink400, fontSize: 12),
               ),
             ),
           ),
@@ -221,12 +221,13 @@ class _Bubble extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(message.body,
-                style:
-                    const TextStyle(color: AppColors.brandBlack, height: 1.4)),
+                style: TextStyle(
+                    color: mine ? AppColors.brandBlack : AppColors.ink900,
+                    height: 1.4)),
             const SizedBox(height: 4),
             Text(
               DateFormat('MM-dd HH:mm').format(message.createdAt.toLocal()),
-              style: const TextStyle(color: AppColors.ink500, fontSize: 11),
+              style: TextStyle(color: AppColors.ink500, fontSize: 11),
             ),
           ],
         ),

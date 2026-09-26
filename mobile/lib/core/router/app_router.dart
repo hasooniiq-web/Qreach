@@ -10,6 +10,7 @@ import '../../features/home/presentation/home_screen.dart';
 import '../../features/notifications/presentation/notifications_screen.dart';
 import '../../features/profile/presentation/profile_screen.dart';
 import '../../features/profile/presentation/visibility_screen.dart';
+import '../../features/server/server_setup_screen.dart';
 import '../../features/shell/app_shell.dart';
 import '../../features/subscription/presentation/subscription_screen.dart';
 import '../../features/tags/presentation/scan_screen.dart';
@@ -35,7 +36,10 @@ final routerProvider = Provider<GoRouter>((ref) {
       final loggingIn = state.matchedLocation.startsWith('/login');
 
       if (authState is AuthUnknown) return '/';
-      if (authState is AuthUnauthenticated) return loggingIn ? null : '/login';
+      final onServer = state.matchedLocation == '/server';
+      if (authState is AuthUnauthenticated) {
+        return (loggingIn || onServer) ? null : '/login';
+      }
       if (authState is AuthAuthenticated &&
           (loggingIn || state.matchedLocation == '/')) {
         return '/home';
@@ -101,6 +105,9 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
           path: '/subscription',
           builder: (context, state) => const SubscriptionScreen()),
+      GoRoute(
+          path: '/server',
+          builder: (context, state) => const ServerSetupScreen()),
       GoRoute(
           path: '/visibility',
           builder: (context, state) => const VisibilityScreen()),

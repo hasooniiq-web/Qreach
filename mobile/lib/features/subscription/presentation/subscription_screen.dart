@@ -244,12 +244,11 @@ class _PlanCard extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   decoration: BoxDecoration(
-                    color: AppColors.brandBlack,
+                    color: AppColors.onSurface,
                     borderRadius: BorderRadius.circular(999),
                   ),
                   child: Text(l10n.planYourPlan,
-                      style: const TextStyle(
-                          color: AppColors.brandWhite, fontSize: 12)),
+                      style: TextStyle(color: AppColors.surface, fontSize: 12)),
                 ),
             ],
           ),
@@ -258,8 +257,7 @@ class _PlanCard extends StatelessWidget {
               style: const TextStyle(fontWeight: FontWeight.w700)),
           if (plan.description != null) ...[
             const SizedBox(height: AppSpacing.sm),
-            Text(plan.description!,
-                style: const TextStyle(color: AppColors.ink500)),
+            Text(plan.description!, style: TextStyle(color: AppColors.ink500)),
           ],
           if (!isCurrent && !plan.isFree) ...[
             const SizedBox(height: AppSpacing.lg),

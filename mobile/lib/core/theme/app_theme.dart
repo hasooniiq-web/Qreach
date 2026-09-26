@@ -1,45 +1,62 @@
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
 
 import 'app_colors.dart';
 
-/// IBM Plex Sans Arabic throughout, fetched via google_fonts. For a fully
-/// offline-first production build, replace [GoogleFonts.ibmPlexSansArabicTextTheme]
-/// with a bundled-asset [TextTheme] instead — see pubspec.yaml note.
+/// Cairo throughout (bundled in assets/fonts, so it works offline), in light
+/// and dark. Building a theme also sets [AppColors.dark] so every widget that
+/// reads the palette agrees with the theme being built.
 abstract final class AppTheme {
-  static ThemeData light() {
-    final base = ThemeData(
-      useMaterial3: true,
-      brightness: Brightness.light,
-      colorScheme: ColorScheme.fromSeed(
-        seedColor: AppColors.brandYellow,
-        brightness: Brightness.light,
-        primary: AppColors.brandBlack,
-        secondary: AppColors.brandYellow,
-        surface: AppColors.brandWhite,
-        error: AppColors.statusDanger,
-      ),
-      scaffoldBackgroundColor: AppColors.ink50,
+  static const fontFamily = 'Cairo';
+
+  static ThemeData build({required bool dark}) {
+    AppColors.dark = dark;
+    final brightness = dark ? Brightness.dark : Brightness.light;
+
+    final scheme = ColorScheme.fromSeed(
+      seedColor: AppColors.brandYellow,
+      brightness: brightness,
+      // On light, black is the primary; on dark the yellow takes over and the
+      // text on it stays black.
+      primary: dark ? AppColors.brandYellow : AppColors.brandBlack,
+      onPrimary: dark ? AppColors.brandBlack : AppColors.brandWhite,
+      secondary: AppColors.brandYellow,
+      onSecondary: AppColors.brandBlack,
+      surface: AppColors.surface,
+      onSurface: AppColors.ink900,
+      error: AppColors.statusDanger,
     );
 
-    final textTheme = GoogleFonts.ibmPlexSansArabicTextTheme(base.textTheme)
-        .apply(bodyColor: AppColors.ink900, displayColor: AppColors.ink900);
+    final base = ThemeData(
+      useMaterial3: true,
+      brightness: brightness,
+      fontFamily: fontFamily,
+      colorScheme: scheme,
+      scaffoldBackgroundColor: AppColors.background,
+    );
+
+    final textTheme = base.textTheme.apply(
+      fontFamily: fontFamily,
+      bodyColor: AppColors.ink900,
+      displayColor: AppColors.ink900,
+    );
 
     return base.copyWith(
       textTheme: textTheme,
+      primaryTextTheme: textTheme,
       appBarTheme: AppBarTheme(
-        backgroundColor: AppColors.brandWhite,
+        backgroundColor: AppColors.surface,
         foregroundColor: AppColors.ink900,
         elevation: 0,
         scrolledUnderElevation: 1,
+        surfaceTintColor: Colors.transparent,
         centerTitle: false,
-        titleTextStyle:
-            textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600),
+        titleTextStyle: textTheme.titleMedium
+            ?.copyWith(fontWeight: FontWeight.w600, color: AppColors.ink900),
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          backgroundColor: AppColors.brandBlack,
-          foregroundColor: AppColors.brandWhite,
+          backgroundColor: dark ? AppColors.brandYellow : AppColors.brandBlack,
+          foregroundColor: dark ? AppColors.brandBlack : AppColors.brandWhite,
           minimumSize: const Size.fromHeight(52),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
@@ -50,23 +67,28 @@ abstract final class AppTheme {
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
           minimumSize: const Size.fromHeight(52),
-          side: const BorderSide(color: AppColors.ink200),
+          foregroundColor: AppColors.ink900,
+          side: BorderSide(color: AppColors.ink200),
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         ),
       ),
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+            foregroundColor: dark ? AppColors.brandYellow : AppColors.ink900),
+      ),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
-        fillColor: AppColors.brandWhite,
+        fillColor: AppColors.surface,
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: AppColors.ink200),
+          borderSide: BorderSide(color: AppColors.ink200),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: AppColors.ink200),
+          borderSide: BorderSide(color: AppColors.ink200),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
@@ -74,24 +96,56 @@ abstract final class AppTheme {
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: AppColors.statusDanger),
+          borderSide: BorderSide(color: AppColors.statusDanger),
         ),
+        labelStyle: TextStyle(color: AppColors.ink500),
+        hintStyle: TextStyle(color: AppColors.ink400),
       ),
-      cardTheme: const CardThemeData(
-        color: AppColors.brandWhite,
+      cardTheme: CardThemeData(
+        color: AppColors.surface,
         elevation: 0,
+        surfaceTintColor: Colors.transparent,
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(12)),
+          borderRadius: const BorderRadius.all(Radius.circular(12)),
           side: BorderSide(color: AppColors.ink200),
         ),
         margin: EdgeInsets.zero,
       ),
-      dividerTheme:
-          const DividerThemeData(color: AppColors.ink100, thickness: 1),
+      dividerTheme: DividerThemeData(color: AppColors.ink100, thickness: 1),
+      dialogTheme: DialogThemeData(
+        backgroundColor: AppColors.surface,
+        surfaceTintColor: Colors.transparent,
+      ),
+      bottomSheetTheme: BottomSheetThemeData(
+        backgroundColor: AppColors.surface,
+        surfaceTintColor: Colors.transparent,
+      ),
+      chipTheme: ChipThemeData(
+        backgroundColor: AppColors.surface,
+        selectedColor: dark ? AppColors.brandYellow : AppColors.brandBlack,
+        side: BorderSide(color: AppColors.ink200),
+        labelStyle: TextStyle(color: AppColors.ink900, fontFamily: fontFamily),
+        secondaryLabelStyle: TextStyle(
+            color: dark ? AppColors.brandBlack : AppColors.brandWhite,
+            fontFamily: fontFamily),
+        checkmarkColor: dark ? AppColors.brandBlack : AppColors.brandWhite,
+      ),
+      switchTheme: SwitchThemeData(
+        thumbColor: WidgetStateProperty.resolveWith((s) =>
+            s.contains(WidgetState.selected)
+                ? AppColors.brandBlack
+                : AppColors.ink400),
+        trackColor: WidgetStateProperty.resolveWith((s) =>
+            s.contains(WidgetState.selected)
+                ? AppColors.brandYellow
+                : AppColors.ink100),
+        trackOutlineColor:
+            WidgetStateProperty.all(dark ? AppColors.ink200 : AppColors.ink200),
+      ),
       snackBarTheme: SnackBarThemeData(
-        backgroundColor: AppColors.ink900,
-        contentTextStyle:
-            textTheme.bodyMedium?.copyWith(color: AppColors.brandWhite),
+        backgroundColor: dark ? AppColors.ink100 : AppColors.ink900,
+        contentTextStyle: textTheme.bodyMedium
+            ?.copyWith(color: dark ? AppColors.ink900 : AppColors.brandWhite),
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
       ),

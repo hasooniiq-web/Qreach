@@ -71,7 +71,7 @@ class _AppShellState extends ConsumerState<AppShell>
       bottomNavigationBar: NavigationBarTheme(
         data: NavigationBarThemeData(
           height: 68,
-          backgroundColor: AppColors.brandWhite,
+          backgroundColor: AppColors.surface,
           indicatorColor: AppColors.brandYellow,
           surfaceTintColor: Colors.transparent,
           labelTextStyle: WidgetStateProperty.resolveWith((states) => TextStyle(
@@ -79,13 +79,13 @@ class _AppShellState extends ConsumerState<AppShell>
                 fontWeight: states.contains(WidgetState.selected)
                     ? FontWeight.w800
                     : FontWeight.w500,
-                color: AppColors.brandBlack,
+                color: AppColors.onSurface,
               )),
           iconTheme: WidgetStateProperty.all(
-              const IconThemeData(color: AppColors.brandBlack)),
+              IconThemeData(color: AppColors.onSurface)),
         ),
         child: DecoratedBox(
-          decoration: const BoxDecoration(
+          decoration: BoxDecoration(
             border: Border(top: BorderSide(color: AppColors.ink100)),
           ),
           child: NavigationBar(

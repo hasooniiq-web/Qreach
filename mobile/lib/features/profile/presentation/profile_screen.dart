@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
 import '../../../core/locale/locale_controller.dart';
+import '../../../core/theme/theme_controller.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/providers.dart';
 import '../../../core/theme/app_colors.dart';
@@ -94,10 +95,10 @@ class ProfileScreen extends ConsumerWidget {
             ),
             if (profile.hasAvatar)
               ListTile(
-                leading: const Icon(Icons.delete_outline,
-                    color: AppColors.statusDanger),
+                leading:
+                    Icon(Icons.delete_outline, color: AppColors.statusDanger),
                 title: Text(l10n.removePhoto,
-                    style: const TextStyle(color: AppColors.statusDanger)),
+                    style: TextStyle(color: AppColors.statusDanger)),
                 onTap: () => Navigator.of(context).pop('remove'),
               ),
           ],
@@ -128,6 +129,44 @@ class ProfileScreen extends ConsumerWidget {
     }
   }
 
+  Future<void> _chooseTheme(BuildContext context, WidgetRef ref) async {
+    final l10n = AppLocalizations.of(context)!;
+    final current = ref.read(themeModeProvider);
+    final picked = await showModalBottomSheet<ThemeMode>(
+      context: context,
+      showDragHandle: true,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(AppSpacing.md),
+              child: Text(l10n.appearance,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w800, fontSize: 16)),
+            ),
+            for (final entry in {
+              ThemeMode.system: (l10n.themeSystem, Icons.smartphone),
+              ThemeMode.light: (l10n.themeLight, Icons.light_mode_outlined),
+              ThemeMode.dark: (l10n.themeDark, Icons.dark_mode_outlined),
+            }.entries)
+              ListTile(
+                leading: Icon(entry.value.$2),
+                title: Text(entry.value.$1),
+                trailing: entry.key == current
+                    ? Icon(Icons.check_circle, color: AppColors.onSurface)
+                    : null,
+                onTap: () => Navigator.of(context).pop(entry.key),
+              ),
+          ],
+        ),
+      ),
+    );
+    if (picked != null) {
+      await ref.read(themeModeProvider.notifier).setMode(picked);
+    }
+  }
+
   Future<void> _chooseLanguage(BuildContext context, WidgetRef ref) async {
     final l10n = AppLocalizations.of(context)!;
     final current = ref.read(localeProvider).languageCode;
@@ -151,8 +190,7 @@ class ProfileScreen extends ConsumerWidget {
               ListTile(
                 title: Text(entry.value),
                 trailing: entry.key == current
-                    ? const Icon(Icons.check_circle,
-                        color: AppColors.brandBlack)
+                    ? Icon(Icons.check_circle, color: AppColors.onSurface)
                     : null,
                 onTap: () => Navigator.of(context).pop(entry.key),
               ),
@@ -201,13 +239,13 @@ class ProfileScreen extends ConsumerWidget {
                         child: Container(
                           padding: const EdgeInsets.all(5),
                           decoration: BoxDecoration(
-                            color: AppColors.brandWhite,
+                            color: AppColors.surface,
                             shape: BoxShape.circle,
                             border: Border.all(
-                                color: AppColors.brandBlack, width: 1.5),
+                                color: AppColors.onSurface, width: 1.5),
                           ),
-                          child: const Icon(Icons.photo_camera,
-                              size: 14, color: AppColors.brandBlack),
+                          child: Icon(Icons.photo_camera,
+                              size: 14, color: AppColors.onSurface),
                         ),
                       ),
                     ],
@@ -263,7 +301,7 @@ class ProfileScreen extends ConsumerWidget {
                 icon: Icons.badge_outlined,
                 label: l10n.profileName,
                 value: (name != null && name.isNotEmpty) ? name : l10n.notSet,
-                trailing: const Icon(Icons.edit_outlined,
+                trailing: Icon(Icons.edit_outlined,
                     size: 20, color: AppColors.ink400),
                 onTap: profile == null
                     ? null
@@ -294,6 +332,21 @@ class ProfileScreen extends ConsumerWidget {
                 label: l10n.language,
                 value: l10n.languageName,
                 onTap: () => _chooseLanguage(context, ref),
+              ),
+              SettingsRow(
+                icon: Icons.brightness_6_outlined,
+                label: l10n.appearance,
+                value: switch (ref.watch(themeModeProvider)) {
+                  ThemeMode.light => l10n.themeLight,
+                  ThemeMode.dark => l10n.themeDark,
+                  ThemeMode.system => l10n.themeSystem,
+                },
+                onTap: () => _chooseTheme(context, ref),
+              ),
+              SettingsRow(
+                icon: Icons.dns_outlined,
+                label: l10n.serverSetup,
+                onTap: () => context.push('/server'),
               ),
             ],
           ),

@@ -57,7 +57,7 @@ class NotificationTile extends StatelessWidget {
                 ),
                 child: Icon(notificationIcon(n),
                     color:
-                        n.isEmergency ? AppColors.brandBlack : AppColors.ink700,
+                        n.isEmergency ? AppColors.onSurface : AppColors.ink700,
                     size: 22),
               ),
               const SizedBox(width: AppSpacing.md),
@@ -75,7 +75,7 @@ class NotificationTile extends StatelessWidget {
                         child: Text(subtitle,
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
-                            style: const TextStyle(
+                            style: TextStyle(
                                 color: AppColors.ink500, fontSize: 13)),
                       ),
                   ],
@@ -86,15 +86,14 @@ class NotificationTile extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   Text(notificationTime(n.createdAt),
-                      style: const TextStyle(
-                          color: AppColors.ink400, fontSize: 12)),
+                      style: TextStyle(color: AppColors.ink400, fontSize: 12)),
                   const SizedBox(height: 6),
                   if (!n.read)
                     Container(
                       width: 10,
                       height: 10,
-                      decoration: const BoxDecoration(
-                          color: AppColors.brandBlack, shape: BoxShape.circle),
+                      decoration: BoxDecoration(
+                          color: AppColors.onSurface, shape: BoxShape.circle),
                     ),
                 ],
               ),

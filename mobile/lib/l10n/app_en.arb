@@ -321,5 +321,20 @@
     "removeMethod": "Remove",
     "methodsEmpty": "You have not added any contact method yet.",
     "pickup": "Pickup",
-    "bus": "Bus"
+    "bus": "Bus",
+    "serverSetup": "Server setup",
+    "serverAddress": "Server address (IP:port)",
+    "serverSetupHelp": "Enter the server the app connects to, such as 192.168.1.10:8000 or a domain name. It is saved on this phone only.",
+    "serverTest": "Test connection",
+    "serverOk": "Connected to the server",
+    "serverFail": "Could not reach the server. Check the address and port, and that the phone is on the same network.",
+    "serverInvalid": "Invalid address",
+    "serverHttpsOnly": "The release build only accepts https addresses",
+    "serverSaved": "Server address saved",
+    "serverReset": "Reset to default",
+    "serverResetDone": "Address reset to default",
+    "appearance": "Appearance",
+    "themeSystem": "System",
+    "themeLight": "Light",
+    "themeDark": "Dark"
 }

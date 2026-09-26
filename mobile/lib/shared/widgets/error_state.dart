@@ -25,8 +25,7 @@ class ErrorState extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.cloud_off_outlined,
-                size: 40, color: AppColors.ink300),
+            Icon(Icons.cloud_off_outlined, size: 40, color: AppColors.ink300),
             const SizedBox(height: AppSpacing.lg),
             Text(l10n.loadErrorTitle,
                 style: Theme.of(context)
