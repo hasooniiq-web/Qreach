@@ -27,6 +27,17 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        // Behind a tunnel or reverse proxy (Cloudflare, nginx) the proxy talks to us
+        // over http from a local/private address and reports the real scheme in
+        // X-Forwarded-*. Trusting those headers makes asset and form URLs https,
+        // which is what stops the browser blocking them as mixed content.
+        // Override with TRUSTED_PROXIES (comma separated, or "*") for a real deployment.
+        $middleware->trustProxies(
+            at: env('TRUSTED_PROXIES')
+                ? (env('TRUSTED_PROXIES') === '*' ? '*' : array_map('trim', explode(',', env('TRUSTED_PROXIES'))))
+                : ['127.0.0.1', '::1', '10.0.0.0/8', '172.16.0.0/12', '192.168.0.0/16'],
+        );
+
         $middleware->append(SecurityHeaders::class);
 
         $middleware->api(prepend: [
