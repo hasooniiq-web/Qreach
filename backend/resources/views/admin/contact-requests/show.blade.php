@@ -8,9 +8,11 @@
         <x-card class="space-y-4">
             <div>
                 <p class="mb-1 text-xs text-ink-400">المركبة</p>
-                <a href="{{ route('admin.vehicles.show', $contactRequest->vehicle) }}" class="text-sm font-medium text-ink-900 hover:underline">
-                    {{ $contactRequest->vehicle->plate_number }}
-                </a>
+                @if ($contactRequest->vehicle && ! $contactRequest->vehicle->trashed())
+                    <a href="{{ route('admin.vehicles.show', $contactRequest->vehicle) }}" class="text-sm font-medium text-ink-900 hover:underline">{{ $contactRequest->vehicle->plate_number }}</a>
+                @else
+                    <span class="text-sm text-ink-600">{{ $contactRequest->vehicle?->plate_number ?? '—' }} <span class="text-xs text-ink-400">(مركبة محذوفة)</span></span>
+                @endif
             </div>
 
             @if ($contactRequest->visitor_phone)

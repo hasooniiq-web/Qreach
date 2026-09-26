@@ -13,7 +13,8 @@ class ContactRequestController extends Controller
     public function index(Request $request): View
     {
         $requests = ContactRequest::query()
-            ->with('vehicle.user')
+            // A customer may have deleted the vehicle since; the request must still list.
+            ->with(['vehicle' => fn ($q) => $q->withTrashed()->with('user')])
             ->when($request->filled('status'), fn ($q) => $q->where('status', $request->string('status')))
             ->latest()
             ->paginate(20)
@@ -28,7 +29,7 @@ class ContactRequestController extends Controller
             $contactRequest->update(['status' => 'read', 'read_at' => now()]);
         }
 
-        $contactRequest->load('vehicle.user', 'messages');
+        $contactRequest->load(['vehicle' => fn ($q) => $q->withTrashed()->with('user'), 'messages']);
 
         return view('admin.contact-requests.show', ['contactRequest' => $contactRequest]);
     }

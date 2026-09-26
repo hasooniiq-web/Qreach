@@ -13,7 +13,7 @@
         @forelse ($requests as $request)
             <tr class="hover:bg-ink-50 {{ $request->status === 'new' ? 'font-medium' : '' }}">
                 <td class="px-4 py-3 text-ink-900">{{ $request->visitor_name ?? 'زائر' }}</td>
-                <td class="px-4 py-3 text-ink-600">{{ $request->vehicle->plate_number }}</td>
+                <td class="px-4 py-3 text-ink-600">{{ $request->vehicle?->plate_number ?? '—' }}@if ($request->vehicle?->trashed()) <span class="text-xs text-ink-400">(محذوفة)</span>@endif</td>
                 <td class="max-w-[250px] truncate px-4 py-3 text-ink-600">{{ $request->message }}</td>
                 <td class="px-4 py-3"><x-status-badge :status="$request->status" /></td>
                 <td class="px-4 py-3 text-ink-500">{{ $request->created_at->diffForHumans() }}</td>
