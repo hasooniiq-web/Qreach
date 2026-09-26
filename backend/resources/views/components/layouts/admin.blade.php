@@ -27,8 +27,7 @@
             'إدارة المنصة' => [
                 ['icon' => 'users', 'label' => 'المستخدمون', 'route' => 'admin.users.index'],
                 ['icon' => 'car', 'label' => 'المركبات', 'route' => 'admin.vehicles.index'],
-                ['icon' => 'qrcode', 'label' => 'رموز QR', 'route' => 'admin.tags.index'],
-                ['icon' => 'nfc', 'label' => 'رموز NFC', 'route' => 'admin.tags.index', 'query' => ['type' => 'nfc']],
+                ['icon' => 'qrcode', 'label' => 'رموز QR و NFC', 'route' => 'admin.tags.index'],
                 ['icon' => 'batch', 'label' => 'دفعات الرموز', 'route' => 'admin.tag-batches.index'],
             ],
             'التفاعل' => [
