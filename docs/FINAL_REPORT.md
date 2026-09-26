@@ -262,27 +262,20 @@ customer-facing flows.
 
 ## 25. Features not implemented
 
-Payment gateway integration, real SMS gateway integration, push notification
-delivery (FCM/APNs), general reporting system, data retention/anonymization
-pruning jobs, production deployment of any kind, external penetration
-testing, app store submission (Play Store / App Store).
+Updated after the later work (Basic/Plus plans, visitor conversations,
+server-side FCM push, retention job):
 
-## 26. Recommended next steps
-
-In rough priority order for reaching a real production launch:
-1. Decide on and integrate a real SMS provider (blocks all real-world OTP
-   delivery).
-2. Decide on and integrate a payment gateway if any paid tier is needed at
-   launch.
-3. Run the mobile app on real Android/iOS hardware and fix whatever that
-   surfaces — this project's own history shows real bugs hide from static
-   analysis until an actual build/run happens.
-4. Commission an external security review before handling real user PII at
-   scale — self-assessment has already caught and fixed real bugs, but it
-   has structural blind spots an outside reviewer wouldn't share.
-5. Stand up a staging environment and exercise the acceptance flow (spec
-   section 46) end to end against it, not just locally.
-6. Add the retention/anonymization job for raw scan/audit data.
-7. Wire up push notification delivery.
-8. Build the general reporting system (section 18) if the business need for
-   it materializes.
+- **Done since the original report:** push delivery through FCM HTTP v1
+  (needs the service-account key, verified against real FCM with one test
+  push); retention/anonymization job (`data:prune`, scheduled daily);
+  Basic/Plus plans with server-enforced visibility; two-way visitor
+  conversations that auto-delete 15 days after the last message.
+- **Still not done:** payment gateway (Plus is granted by an admin or through
+  an upgrade request), real SMS gateway (OTP codes are only written to the log
+  by `LogSmsGateway`), APNs/iOS push, dark mode in the mobile app, general
+  reporting system beyond the exports, production deployment, external
+  penetration test, app-store submission, and verification on a range of real
+  devices (the app has been built and run on one phone only).
+- **Needs a decision before launch:** which SMS provider and which payment
+  gateway; a public `APP_URL` (QR codes and NFC chips encode it — changing it
+  later means re-printing/re-writing them).

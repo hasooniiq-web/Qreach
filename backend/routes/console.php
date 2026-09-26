@@ -21,3 +21,6 @@ Schedule::command('backup:database')->dailyAt('02:00');
 
 // Visitor conversations live 15 days after their last message.
 Schedule::command('contacts:purge')->dailyAt('03:00');
+
+// Retention: anonymize/delete stale raw data.
+Schedule::command("data:prune")->dailyAt("03:30");

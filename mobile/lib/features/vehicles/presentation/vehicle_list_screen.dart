@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../shared/widgets/iraqi_plate.dart';
+import '../../../shared/widgets/vehicle_thumb.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
@@ -8,7 +10,6 @@ import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_state.dart';
-import '../../../shared/widgets/plate_badge.dart';
 import '../../../shared/widgets/skeleton.dart';
 import '../../../shared/widgets/status_badge.dart';
 import 'vehicle_controller.dart';
@@ -101,7 +102,26 @@ class VehicleListScreen extends ConsumerWidget {
                           ),
                         ),
                       const SizedBox(height: AppSpacing.md),
-                      PlateBadge(plate: vehicle.plateNumber),
+                      Row(
+                        children: [
+                          VehicleThumb(
+                            kind: thumbKindFor(
+                                vehicleType: vehicle.vehicleType,
+                                plateType: vehicle.plateType),
+                            color: AppColors.ink700,
+                            cutout: AppColors.brandWhite,
+                            width: 72,
+                          ),
+                          const Spacer(),
+                          IraqiPlate(
+                            number: vehicle.plateNumber,
+                            letter: vehicle.plateLetter,
+                            governorate: vehicle.plateGovernorate,
+                            type: PlateType.fromCode(vehicle.plateType),
+                            width: 170,
+                          ),
+                        ],
+                      ),
                     ],
                   ),
                 );

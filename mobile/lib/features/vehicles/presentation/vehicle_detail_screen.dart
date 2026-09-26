@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../../shared/widgets/iraqi_plate.dart';
+import '../../../shared/widgets/vehicle_thumb.dart';
 import 'package:qr_flutter/qr_flutter.dart';
 
 import '../../../core/network/api_client.dart';
@@ -11,7 +13,6 @@ import '../../../l10n/app_localizations.dart';
 import '../../tags/data/tag_model.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/error_state.dart';
-import '../../../shared/widgets/plate_badge.dart';
 import '../../../shared/widgets/skeleton.dart';
 import '../../../shared/widgets/status_badge.dart';
 import '../data/vehicle_model.dart';
@@ -341,7 +342,26 @@ class _VehicleHero extends StatelessWidget {
                   fontSize: 26,
                   fontWeight: FontWeight.w800)),
           const SizedBox(height: AppSpacing.md),
-          PlateBadge(plate: vehicle.plateNumber, onDark: true),
+          Row(
+            children: [
+              VehicleThumb(
+                kind: thumbKindFor(
+                    vehicleType: vehicle.vehicleType,
+                    plateType: vehicle.plateType),
+                color: Colors.white.withValues(alpha: 0.9),
+                cutout: AppColors.brandBlack,
+                width: 84,
+              ),
+              const Spacer(),
+              IraqiPlate(
+                number: vehicle.plateNumber,
+                letter: vehicle.plateLetter,
+                governorate: vehicle.plateGovernorate,
+                type: PlateType.fromCode(vehicle.plateType),
+                width: 190,
+              ),
+            ],
+          ),
           const SizedBox(height: AppSpacing.lg),
           Wrap(
             spacing: AppSpacing.sm,
