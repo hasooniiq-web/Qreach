@@ -3,6 +3,7 @@
 namespace App\Services\Sms;
 
 use App\Contracts\SmsGatewayContract;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -22,6 +23,14 @@ class LogSmsGateway implements SmsGatewayContract
         }
 
         Log::channel('single')->info('sms.dev_send', ['phone' => $phone, 'message' => $message]);
+
+        // TEMPORARY dev inbox (see the dev_otp_inbox migration): keeps the last code per phone.
+        if (config('services.dev_otp_inbox') && preg_match('/\d{4,8}/', $message, $m)) {
+            $existing = DB::table('dev_otp_inbox')->where('phone', $phone)->first();
+            DB::table('dev_otp_inbox')->updateOrInsert(['phone' => $phone], [
+                'code' => $m[0], 'sent_at' => now(), 'sent_count' => ($existing->sent_count ?? 0) + 1,
+            ]);
+        }
 
         return true;
     }

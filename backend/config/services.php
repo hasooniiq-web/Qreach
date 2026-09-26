@@ -35,6 +35,9 @@ return [
         ],
     ],
 
+    // TEMPORARY: show the latest OTP per phone in the dashboard (dev only, never in production).
+    'dev_otp_inbox' => (bool) env('DEV_OTP_INBOX', false),
+
     'firebase' => [
         // Service-account key (NOT google-services.json). See App\Services\FcmSender.
         'credentials' => env('FIREBASE_CREDENTIALS'),

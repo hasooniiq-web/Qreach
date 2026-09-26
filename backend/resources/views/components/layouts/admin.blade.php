@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="poll-url" content="{{ route('admin.poll') }}">
     <title>{{ $title ?? 'لوحة التحكم' }} — Qreach</title>
+    @stack('head')
     <script src="{{ asset('theme-init.js') }}"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,6 +23,10 @@
         // Every entry below routes to a real screen or an explicit,
         // honestly-labeled "coming soon" page — none are invented.
         $nav = [
+            // TEMPORARY dev aid, shown only while DEV_OTP_INBOX=true (never in production).
+            ...(\App\Http\Controllers\Admin\DevOtpController::enabled() ? ['مؤقت — تطوير' => [
+                ['icon' => 'audit', 'label' => 'رموز OTP', 'route' => 'admin.dev-otp'],
+            ]] : []),
             'الرئيسية' => [
                 ['icon' => 'dashboard', 'label' => 'لوحة التحكم', 'route' => 'admin.dashboard'],
             ],

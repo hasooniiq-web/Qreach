@@ -36,6 +36,10 @@ class PruneStaleData extends Command
             ->where(fn ($q) => $q->whereNotNull('request_ip')->orWhereNotNull('user_agent'))
             ->update(['request_ip' => null, 'user_agent' => null]);
 
+        if (\Illuminate\Support\Facades\Schema::hasTable('dev_otp_inbox')) {
+            DB::table('dev_otp_inbox')->where('sent_at', '<', now()->subDay())->delete();
+        }
+
         $otpDeleted = OtpCode::where('expires_at', '<', now()->subDay())->delete();
 
         // Personal-access tokens that expired long ago are dead weight.

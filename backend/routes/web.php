@@ -67,6 +67,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::middleware('admin.2fa')->group(function () {
             Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
             Route::get('poll', [DashboardController::class, 'poll'])->name('poll');
+            Route::get('dev-otp', [\App\Http\Controllers\Admin\DevOtpController::class, 'index'])
+                ->middleware('admin.permission:settings.view')->name('dev-otp');
 
             // Own profile only — none of these take an admin id, so there is no
             // way to view or change someone else's profile through them.
