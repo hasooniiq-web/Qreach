@@ -24,7 +24,7 @@ class StoreVehicleRequest extends FormRequest
             'model' => ['nullable', 'string', 'max:100'],
             'year' => ['nullable', 'integer', 'min:1900', 'max:'.(date('Y') + 1)],
             'color' => ['nullable', 'string', 'max:50'],
-            'vehicle_type' => ['nullable', 'in:sedan,suv,truck,motorcycle,van,other'],
+            'vehicle_type' => ['nullable', 'in:sedan,suv,pickup,truck,bus,motorcycle,van,other'],
             'description' => ['nullable', 'string', 'max:1000'],
             'privacy_settings' => ['nullable', 'array'],
             'privacy_settings.*' => ['boolean'],

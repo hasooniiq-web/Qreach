@@ -41,8 +41,6 @@ class HomeAndReportsTest extends TestCase
         }
 
         Cache::flush(); // reset the per-minute throttle
-        $this->post("/t/{$tag->public_token}/contact", ['reason' => 'other'])->assertSessionHasErrors('message');
-        $this->post("/t/{$tag->public_token}/contact", ['reason' => 'other', 'message' => 'شيء آخر'])->assertRedirect();
 
         $request = ContactRequest::where('reason', 'malfunction')->first();
         $this->get("/t/{$tag->public_token}/c/{$request->uuid}")->assertOk()->assertSee('بانتظار قراءة المالك')->assertSee('عطل');

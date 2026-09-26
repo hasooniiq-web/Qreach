@@ -24,7 +24,7 @@ class UpdateVehicleRequest extends FormRequest
             'model' => ['sometimes', 'nullable', 'string', 'max:100'],
             'year' => ['sometimes', 'nullable', 'integer', 'min:1900', 'max:'.(date('Y') + 1)],
             'color' => ['sometimes', 'nullable', 'string', 'max:50'],
-            'vehicle_type' => ['sometimes', 'in:sedan,suv,truck,motorcycle,van,other'],
+            'vehicle_type' => ['sometimes', 'in:sedan,suv,pickup,truck,bus,motorcycle,van,other'],
             'description' => ['sometimes', 'nullable', 'string', 'max:1000'],
             'status' => ['sometimes', 'in:active,inactive,archived'],
             'privacy_settings' => ['sometimes', 'array'],

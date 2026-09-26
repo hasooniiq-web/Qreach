@@ -9,7 +9,6 @@ import '../../../core/providers.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../l10n/app_localizations.dart';
-import '../../../shared/widgets/notification_bell.dart';
 import '../../../shared/widgets/settings_group.dart';
 import '../../../shared/widgets/user_avatar.dart';
 import '../../auth/presentation/logout_confirm.dart';
@@ -176,10 +175,7 @@ class ProfileScreen extends ConsumerWidget {
     final sharing = profile?.sharesAnything ?? false;
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.tabProfile),
-        actions: const [NotificationBell()],
-      ),
+      appBar: AppBar(title: Text(l10n.tabProfile)),
       body: ListView(
         padding: const EdgeInsets.all(AppSpacing.lg),
         children: [

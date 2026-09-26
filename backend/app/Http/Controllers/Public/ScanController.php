@@ -172,23 +172,15 @@ class ScanController extends Controller
         return ContactRequest::where('uuid', $uuid)->where('tag_id', $tag->id)->first();
     }
 
-    /** Prepends the chosen reason label so the owner sees why, even when the visitor typed nothing. */
+    /** The report text is the chosen reason's label; any further talk happens in the thread. */
     private function composeContactMessage(ContactOwnerRequest $request): string
     {
-        $labels = [
+        return [
             'damage' => 'لاحظت ضررًا في المركبة',
             'malfunction' => 'يوجد عطل',
             'safety' => 'توجد مشكلة تتعلق بالسلامة',
             'assistance' => 'أحتاج إلى مساعدة',
-            'open' => 'باب أو نافذة المركبة مفتوحة',
-            'question' => 'لدي استفسار بخصوص المركبة',
-            'other' => 'سبب آخر',
-        ];
-
-        $reason = $labels[$request->validated('reason')] ?? null;
-        $text = trim((string) $request->validated('message'));
-
-        return trim(($reason ? $reason.($text !== '' ? ': ' : '') : '').$text);
+        ][$request->validated('reason')];
     }
 
     private function recordSimpleAction(Request $request, string $token, string $actionType, string $successMessage): RedirectResponse

@@ -11,6 +11,8 @@ import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/iraqi_plate.dart';
 import '../../../shared/widgets/notification_bell.dart';
 import '../../../shared/widgets/plate_labels.dart';
+import '../../../shared/widgets/user_avatar.dart';
+import '../../../shared/widgets/vehicle_thumb.dart';
 import '../../../shared/widgets/skeleton.dart';
 import '../../notifications/presentation/notification_tile.dart';
 import '../../profile/presentation/profile_controller.dart';
@@ -50,19 +52,8 @@ class HomeScreen extends ConsumerWidget {
                     AppSpacing.lg, AppSpacing.sm, AppSpacing.lg, 0),
                 child: Row(
                   children: [
-                    Container(
-                      width: 40,
-                      height: 40,
-                      decoration: const BoxDecoration(
-                          color: AppColors.brandYellow, shape: BoxShape.circle),
-                      alignment: Alignment.center,
-                      child: const Text('Q',
-                          style: TextStyle(
-                              color: AppColors.brandBlack,
-                              fontSize: 20,
-                              fontWeight: FontWeight.w800)),
-                    ),
-                    const SizedBox(width: AppSpacing.sm),
+                    UserAvatar(name: profile?.name, radius: 22),
+                    const SizedBox(width: AppSpacing.md),
                     Expanded(
                       child: Text(
                         (profile?.name?.isNotEmpty == true)
@@ -118,11 +109,6 @@ class HomeScreen extends ConsumerWidget {
                 data: (data) => Column(
                   children: [
                     _Conversations(items: data.conversations),
-                    const SizedBox(height: AppSpacing.xl),
-
-                    // 3. Activities
-                    _SectionHeader(title: l10n.homeActivities),
-                    _ActivityGrid(data: data),
                   ],
                 ),
               ),
@@ -283,7 +269,7 @@ class _VehicleCard extends StatelessWidget {
             children: [
               Row(
                 children: [
-                  Icon(linked ? Icons.verified_user : Icons.gpp_bad,
+                  Icon(linked ? Icons.link : Icons.link_off,
                       color: statusColor, size: 22),
                   const SizedBox(width: 6),
                   Text(linked ? l10n.homeLinked : l10n.homeNotLinked,
@@ -298,21 +284,41 @@ class _VehicleCard extends StatelessWidget {
                 ],
               ),
               const Spacer(),
-              Center(
-                child: IraqiPlate(
-                  number: vehicle.plateNumber,
-                  letter: vehicle.plateLetter,
-                  governorate: vehicle.plateGovernorate,
-                  type: PlateType.fromCode(vehicle.plateType),
-                  width: 250,
-                ),
-              ),
-              const SizedBox(height: 6),
-              Center(
-                child: Text(
-                  plateTypeLabel(l10n, PlateType.fromCode(vehicle.plateType)),
-                  style: const TextStyle(color: Colors.white54, fontSize: 11),
-                ),
+              Row(
+                children: [
+                  VehicleThumb(
+                    kind: thumbKindFor(
+                        vehicleType: vehicle.vehicleType,
+                        plateType: vehicle.plateType),
+                    color: Colors.white.withValues(alpha: 0.9),
+                    cutout: AppColors.brandBlack,
+                    width: 78,
+                  ),
+                  const SizedBox(width: AppSpacing.md),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: IraqiPlate(
+                            number: vehicle.plateNumber,
+                            letter: vehicle.plateLetter,
+                            governorate: vehicle.plateGovernorate,
+                            type: PlateType.fromCode(vehicle.plateType),
+                            width: 190,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          plateTypeLabel(
+                              l10n, PlateType.fromCode(vehicle.plateType)),
+                          style: const TextStyle(
+                              color: Colors.white54, fontSize: 11),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
               ),
               const Spacer(),
               Row(
@@ -483,124 +489,6 @@ class _Conversations extends StatelessWidget {
             ),
           ),
       ],
-    );
-  }
-}
-
-/// Four equal areas in a 2x2 grid — same size whatever they contain.
-class _ActivityGrid extends StatelessWidget {
-  const _ActivityGrid({required this.data});
-
-  final HomeData data;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final tiles = [
-      _Tile(l10n.actLatest, Icons.bolt_outlined, data.latest, null),
-      _Tile(l10n.actCommunication, Icons.forum_outlined, data.communication,
-          '/contacts'),
-      _Tile(l10n.actAccount, Icons.person_outline, data.account, '/profile'),
-      _Tile(l10n.actReports, Icons.flag_outlined, data.reports, '/contacts'),
-    ];
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
-      child: GridView.count(
-        crossAxisCount: 2,
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        mainAxisSpacing: AppSpacing.md,
-        crossAxisSpacing: AppSpacing.md,
-        childAspectRatio: 1.05,
-        children: [for (final t in tiles) _ActivityTile(tile: t)],
-      ),
-    );
-  }
-}
-
-class _Tile {
-  const _Tile(this.title, this.icon, this.items, this.route);
-
-  final String title;
-  final IconData icon;
-  final List<ActivityItem> items;
-  final String? route;
-}
-
-class _ActivityTile extends StatelessWidget {
-  const _ActivityTile({required this.tile});
-
-  final _Tile tile;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-
-    return Material(
-      color: AppColors.brandWhite,
-      borderRadius: BorderRadius.circular(16),
-      child: InkWell(
-        borderRadius: BorderRadius.circular(16),
-        onTap: tile.route == null ? null : () => context.go(tile.route!),
-        child: Container(
-          padding: const EdgeInsets.all(AppSpacing.md),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: AppColors.ink100),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Icon(tile.icon, size: 18, color: AppColors.ink700),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: Text(tile.title,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                            fontWeight: FontWeight.w800, fontSize: 13)),
-                  ),
-                ],
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              Expanded(
-                child: tile.items.isEmpty
-                    ? Align(
-                        alignment: AlignmentDirectional.centerStart,
-                        child: Text(l10n.actNone,
-                            style: const TextStyle(
-                                color: AppColors.ink400, fontSize: 12)),
-                      )
-                    : Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          for (final item in tile.items.take(3))
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 6),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(item.text,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(fontSize: 12)),
-                                  Text(notificationTime(item.at),
-                                      style: const TextStyle(
-                                          color: AppColors.ink400,
-                                          fontSize: 10)),
-                                ],
-                              ),
-                            ),
-                        ],
-                      ),
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 }

@@ -1495,6 +1495,18 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'لم تضف أي طريقة تواصل بعد.'**
   String get methodsEmpty;
+
+  /// No description provided for @pickup.
+  ///
+  /// In ar, this message translates to:
+  /// **'بيك أب'**
+  String get pickup;
+
+  /// No description provided for @bus.
+  ///
+  /// In ar, this message translates to:
+  /// **'حافلة'**
+  String get bus;
 }
 
 class _AppLocalizationsDelegate

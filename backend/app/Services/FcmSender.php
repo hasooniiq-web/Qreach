@@ -77,7 +77,8 @@ class FcmSender
                     'notification' => ['title' => $title, 'body' => mb_substr($body, 0, 180)],
                     // FCM wants a JSON object; an empty PHP array would encode as a list and be rejected.
                     'data' => (object) array_map('strval', $data),
-                    'android' => ['priority' => 'HIGH', 'notification' => ['channel_id' => 'default']],
+                    // The phone's own default notification sound (no custom sound file).
+                    'android' => ['priority' => 'HIGH', 'notification' => ['sound' => 'default', 'default_sound' => true, 'default_vibrate_timings' => true, 'notification_priority' => 'PRIORITY_HIGH']],
                 ]]
             );
 

@@ -131,7 +131,7 @@ class ScanTest extends TestCase
         ]);
 
         $response = $this->post("/t/{$tag->public_token}/contact", [
-            'message' => 'أحتاج التواصل معك',
+            'reason' => 'assistance',
             'visitor_name' => 'زائر',
         ]);
 
@@ -153,30 +153,23 @@ class ScanTest extends TestCase
         $this->assertDatabaseHas('contact_requests', ['tag_id' => $tag->id, 'message' => 'لاحظت ضررًا في المركبة']);
     }
 
-    public function test_contact_owner_combines_reason_label_and_typed_message(): void
-    {
-        Notification::fake();
-        $tag = $this->makeAssignedTag();
-
-        $this->post("/t/{$tag->public_token}/contact", ['reason' => 'question', 'message' => 'هل السيارة للبيع؟']);
-
-        $this->assertDatabaseHas('contact_requests', ['tag_id' => $tag->id, 'message' => 'لدي استفسار بخصوص المركبة: هل السيارة للبيع؟']);
-    }
-
-    public function test_contact_owner_with_neither_reason_nor_message_is_rejected(): void
+    public function test_free_text_and_the_other_reason_are_not_accepted(): void
     {
         $tag = $this->makeAssignedTag();
 
-        $this->post("/t/{$tag->public_token}/contact", [])->assertSessionHasErrors('message');
+        $this->post("/t/{$tag->public_token}/contact", ['reason' => 'other', 'message' => 'نص حر'])->assertSessionHasErrors('reason');
+        $this->post("/t/{$tag->public_token}/contact", ['message' => 'بدون سبب'])->assertSessionHasErrors('reason');
+        $this->post("/t/{$tag->public_token}/contact", ['reason' => '<script>'])->assertSessionHasErrors('reason');
         $this->assertDatabaseCount('contact_requests', 0);
     }
 
-    public function test_contact_owner_rejects_an_unknown_reason(): void
+    public function test_the_scan_page_offers_only_the_predefined_reasons(): void
     {
         $tag = $this->makeAssignedTag();
 
-        $this->post("/t/{$tag->public_token}/contact", ['reason' => '<script>', 'message' => 'x'])
-            ->assertSessionHasErrors('reason');
+        $this->get("/t/{$tag->public_token}")->assertOk()
+            ->assertSee('ضرر في المركبة')->assertSee('أحتاج مساعدة')
+            ->assertDontSee('سبب آخر')->assertDontSee('name="message"', false);
     }
 
     public function test_public_action_rate_limit_blocks_excessive_requests_from_the_same_ip(): void

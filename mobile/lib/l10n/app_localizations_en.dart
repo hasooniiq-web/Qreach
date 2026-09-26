@@ -757,4 +757,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get methodsEmpty => 'You have not added any contact method yet.';
+
+  @override
+  String get pickup => 'Pickup';
+
+  @override
+  String get bus => 'Bus';
 }

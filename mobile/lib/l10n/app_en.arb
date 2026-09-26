@@ -319,5 +319,7 @@
     "methodsLockedBody": "Add Instagram, Facebook, Snapchat, TikTok, WhatsApp and more, and choose what visitors see.",
     "upgradeToPlus": "Upgrade to Plus",
     "removeMethod": "Remove",
-    "methodsEmpty": "You have not added any contact method yet."
+    "methodsEmpty": "You have not added any contact method yet.",
+    "pickup": "Pickup",
+    "bus": "Bus"
 }

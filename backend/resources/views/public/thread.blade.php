@@ -20,7 +20,7 @@
 
     @php
         $labels = ['new' => 'أُرسل — بانتظار قراءة المالك', 'read' => 'قرأ المالك بلاغك', 'responded' => 'ردّ المالك', 'closed' => 'أُغلق البلاغ'];
-        $reasons = ['damage' => 'ضرر في المركبة', 'malfunction' => 'عطل', 'safety' => 'مشكلة سلامة', 'assistance' => 'طلب مساعدة', 'other' => 'سبب آخر', 'open' => 'باب أو نافذة مفتوحة', 'question' => 'استفسار'];
+        $reasons = ['damage' => 'ضرر في المركبة', 'malfunction' => 'عطل', 'safety' => 'مشكلة سلامة', 'assistance' => 'طلب مساعدة'];
     @endphp
 
     <div id="thread-live" data-url="{{ route('public.scan.thread.messages', [$tag->public_token, $thread->uuid]) }}">

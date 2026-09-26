@@ -8,7 +8,6 @@ import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/error_state.dart';
-import '../../../shared/widgets/notification_bell.dart';
 import '../../../shared/widgets/skeleton.dart';
 import '../../../shared/widgets/status_badge.dart';
 import '../../notifications/presentation/notification_tile.dart';
@@ -36,10 +35,7 @@ class ContactsScreen extends ConsumerWidget {
     final async = ref.watch(contactsProvider);
 
     return Scaffold(
-      appBar: AppBar(
-        title: Text(l10n.contactsTitle),
-        actions: const [NotificationBell()],
-      ),
+      appBar: AppBar(title: Text(l10n.contactsTitle)),
       body: async.when(
         loading: () => const SkeletonList(count: 4),
         error: (error, _) => ErrorState(

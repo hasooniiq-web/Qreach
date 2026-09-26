@@ -14,20 +14,15 @@ class UserAvatar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final bytes = ref.watch(profileAvatarProvider).valueOrNull;
-    final initial =
-        (name != null && name!.isNotEmpty) ? name!.characters.first : '؟';
-
     return CircleAvatar(
       radius: radius,
       backgroundColor: AppColors.brandYellow,
       backgroundImage: bytes != null ? MemoryImage(bytes) : null,
+      // No photo: a neutral person icon rather than a letter.
       child: bytes != null
           ? null
-          : Text(initial,
-              style: TextStyle(
-                  color: AppColors.brandBlack,
-                  fontSize: radius * 0.85,
-                  fontWeight: FontWeight.w800)),
+          : Icon(Icons.person,
+              color: AppColors.brandBlack, size: radius * 1.15),
     );
   }
 }

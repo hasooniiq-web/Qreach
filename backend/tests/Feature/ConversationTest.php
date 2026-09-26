@@ -36,7 +36,7 @@ class ConversationTest extends TestCase
         $owner = User::factory()->create();
         $tag = $this->assignedTag($owner);
 
-        $response = $this->post("/t/{$tag->public_token}/contact", ['message' => 'سيارتك تعيق الطريق']);
+        $response = $this->post("/t/{$tag->public_token}/contact", ['reason' => 'damage']);
         $request = ContactRequest::firstOrFail();
         $response->assertRedirect("/t/{$tag->public_token}/c/{$request->uuid}");
 
@@ -45,7 +45,7 @@ class ConversationTest extends TestCase
             ->assertCreated()->assertJsonPath('status', 'responded')->assertJsonPath('messages.0.sender', 'owner');
 
         $this->get("/t/{$tag->public_token}/c/{$request->uuid}")
-            ->assertOk()->assertSee('سيارتك تعيق الطريق')->assertSee('أنا قادم الآن');
+            ->assertOk()->assertSee('لاحظت ضررًا في المركبة')->assertSee('أنا قادم الآن');
     }
 
     public function test_visitor_follow_up_reopens_the_request_for_the_owner(): void

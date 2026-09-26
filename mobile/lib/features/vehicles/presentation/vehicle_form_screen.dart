@@ -86,7 +86,9 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
     final types = {
       'sedan': l10n.sedan,
       'suv': l10n.suv,
+      'pickup': l10n.pickup,
       'truck': l10n.truck,
+      'bus': l10n.bus,
       'motorcycle': l10n.motorcycle,
       'van': l10n.van,
       'other': l10n.other,

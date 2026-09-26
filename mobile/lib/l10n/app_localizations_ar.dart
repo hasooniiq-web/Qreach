@@ -752,4 +752,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get methodsEmpty => 'لم تضف أي طريقة تواصل بعد.';
+
+  @override
+  String get pickup => 'بيك أب';
+
+  @override
+  String get bus => 'حافلة';
 }

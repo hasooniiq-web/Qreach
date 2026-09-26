@@ -28,7 +28,7 @@
         </div>
         @php
             $labels = ['nickname' => 'الاسم', 'make' => 'الشركة', 'model' => 'الطراز', 'color' => 'اللون', 'vehicle_type' => 'النوع'];
-            $types = ['sedan' => 'سيدان', 'suv' => 'دفع رباعي', 'truck' => 'شاحنة', 'motorcycle' => 'دراجة نارية', 'van' => 'فان'];
+            $types = ['sedan' => 'سيدان', 'suv' => 'دفع رباعي', 'pickup' => 'بيك أب', 'truck' => 'شاحنة', 'bus' => 'حافلة', 'motorcycle' => 'دراجة نارية', 'van' => 'فان'];
             $shown = collect($publicAttributes)->filter(fn ($v) => ! empty($v));
             $hasDirect = $ownerName || $emergency || count($ownerContacts) > 0;
         @endphp
@@ -88,10 +88,10 @@
         </section>
     @endif
 
-    {{-- Quick report: tap a reason, and only "other" opens a text box (pure CSS,
-         so it works under the strict CSP and without any script). --}}
+    {{-- Quick report: tap one predefined reason. There is no free-text "other";
+         the visitor can write to the owner in the conversation afterwards. --}}
     <h2 class="mb-1 text-base font-bold text-ink-900">أبلغ مالك المركبة</h2>
-    <p class="mb-4 text-sm text-ink-500">اختر السبب وأرسل — يصل إشعار للمالك ويمكنك متابعة رده هنا.</p>
+    <p class="mb-4 text-sm text-ink-500">اختر السبب وأرسل — يصل إشعار للمالك ويمكنك متابعة رده والكتابة له هنا بعد الإرسال.</p>
 
     <form method="POST" action="{{ route('public.scan.contact', $tag->public_token) }}" class="group/f space-y-4">
         @csrf
@@ -112,24 +112,16 @@
                         </span>
                     </label>
                 @endforeach
-                <label class="col-span-2 cursor-pointer">
-                    <input type="radio" name="reason" value="other" class="peer sr-only" @checked(old('reason') === 'other')>
-                    <span class="flex items-center justify-between rounded-xl border border-ink-200 bg-white px-4 py-3.5 text-sm font-semibold text-ink-900 transition-colors peer-checked:border-brand-black peer-checked:bg-brand-black peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-brand-yellow">
-                        أخرى
-                        <span aria-hidden="true">✎</span>
-                    </span>
-                </label>
             </div>
         </fieldset>
 
-        <div class="hidden space-y-3 group-has-[input[value=other]:checked]/f:block">
-            <label for="contact-message" class="block text-xs font-medium text-ink-700">اكتب رسالتك</label>
-            <textarea id="contact-message" name="message" rows="3" maxlength="500" placeholder="اكتب رسالتك لصاحب المركبة..." class="form-control">{{ old('message') }}</textarea>
-            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <input type="text" name="visitor_name" maxlength="100" value="{{ old('visitor_name') }}" placeholder="اسمك (اختياري)" aria-label="اسمك (اختياري)" class="form-control">
-                <input type="tel" name="visitor_phone" maxlength="20" value="{{ old('visitor_phone') }}" placeholder="رقمك للرد (اختياري)" aria-label="رقمك للرد (اختياري)" dir="ltr" class="form-control text-start">
+        <details class="rounded-xl border border-ink-200 bg-white p-3.5">
+            <summary class="cursor-pointer list-none text-sm text-ink-600">إضافة اسمك ورقمك للرد (اختياري)</summary>
+            <div class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <input type="text" name="visitor_name" maxlength="100" value="{{ old('visitor_name') }}" placeholder="اسمك" aria-label="اسمك" class="form-control">
+                <input type="tel" name="visitor_phone" maxlength="20" value="{{ old('visitor_phone') }}" placeholder="رقمك للرد" aria-label="رقمك للرد" dir="ltr" class="form-control text-start">
             </div>
-        </div>
+        </details>
 
         <button type="submit" class="btn-primary w-full !py-3.5 text-base">إرسال البلاغ</button>
         <p class="text-center text-xs text-ink-500">تُحذف المحادثة تلقائيًا بعد 15 يومًا من آخر رسالة.</p>

@@ -19,7 +19,7 @@ class HomeController extends Controller
 {
     private const REASONS = [
         'damage' => 'ضرر في المركبة', 'malfunction' => 'عطل', 'safety' => 'مشكلة سلامة',
-        'assistance' => 'طلب مساعدة', 'other' => 'سبب آخر', 'open' => 'باب أو نافذة مفتوحة', 'question' => 'استفسار',
+        'assistance' => 'طلب مساعدة',
     ];
 
     private const SCAN_LABELS = [
