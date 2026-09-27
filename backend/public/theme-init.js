@@ -18,6 +18,11 @@
     }
 
     apply();
+    try {
+        if (localStorage.getItem('admin.sidebar.collapsed') === '1') {
+            document.documentElement.setAttribute('data-sidebar', 'collapsed');
+        }
+    } catch (e) {}
     if (media && media.addEventListener) media.addEventListener('change', apply);
     window.__setThemeMode = function (next) {
         mode = next;

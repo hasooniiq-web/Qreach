@@ -5,113 +5,443 @@
 @source '../**/*.blade.php';
 @source '../**/*.js';
 
+/*
+ * Design system — a restrained, shadcn-style neutral palette with the Qreach
+ * yellow as the single accent. Tokens are semantic:
+ *   canvas   the page behind everything
+ *   surface  cards, sidebar, topbar, dialogs
+ *   ink-*    text and borders, 900 = strongest text, 200 = borders, 100/50 = fills
+ * The old class names (ink-*, brand-*, status-*) keep working everywhere.
+ */
 @theme {
     --font-sans: 'Cairo', ui-sans-serif, system-ui, sans-serif;
 
-    /* SmartTag / Qreach brand — only these three colors, per spec section 5. */
     --color-brand-yellow: #FFC107;
-    --color-brand-black: #000000;
+    --color-brand-black: #09090B;
     --color-brand-white: #FFFFFF;
 
-    /* Derived neutrals for surfaces/borders/text — never introduce hues
-       outside this yellow/black/white family. */
-    --color-ink-900: #0A0A0A;
-    --color-ink-800: #171717;
-    --color-ink-700: #262626;
-    --color-ink-600: #404040;
-    --color-ink-500: #595959;
-    --color-ink-400: #737373;
-    --color-ink-300: #A3A3A3;
-    --color-ink-200: #D4D4D4;
-    --color-ink-100: #E8E8E8;
-    --color-ink-50: #F5F5F5;
+    --color-canvas: #FAFAFA;
+    --color-surface: #FFFFFF;
 
-    --color-status-success: #1E7A34;
-    --color-status-danger: #B3261E;
-    --color-status-warning: #B7791B;
+    --color-ink-900: #18181B;
+    --color-ink-800: #27272A;
+    --color-ink-700: #3F3F46;
+    --color-ink-600: #52525B;
+    --color-ink-500: #71717A;
+    --color-ink-400: #A1A1AA;
+    --color-ink-300: #D4D4D8;
+    --color-ink-200: #E4E4E7;
+    --color-ink-100: #F4F4F5;
+    --color-ink-50: #FAFAFA;
+
+    --color-status-success: #16A34A;
+    --color-status-danger: #DC2626;
+    --color-status-warning: #D97706;
+    --color-status-info: #2563EB;
+
+    --radius-md: 0.5rem;
+    --radius-lg: 0.625rem;
+    --radius-xl: 0.875rem;
+
+    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.04), 0 1px 3px 0 rgb(0 0 0 / 0.04);
+    --shadow-pop: 0 10px 30px -6px rgb(0 0 0 / 0.16), 0 4px 10px -4px rgb(0 0 0 / 0.08);
 
     --spacing-section: 2rem;
 }
 
-html[dir='rtl'] body {
-}
-
 @layer base {
+    html {
+        -webkit-text-size-adjust: 100%;
+    }
+
     body {
-        @apply bg-ink-50 text-ink-900 antialiased;
+        @apply bg-canvas text-ink-900 antialiased;
+        font-feature-settings: 'tnum' off;
+    }
+
+    .tabular-nums {
+        font-variant-numeric: tabular-nums;
     }
 
     :focus-visible {
         outline: 2px solid var(--color-brand-yellow);
         outline-offset: 2px;
     }
+
+    ::selection {
+        background: rgb(255 193 7 / 0.35);
+    }
 }
 
-/* Shared form/button recipes — the audit found every admin view hand-writing
-   these same class lists (see docs/UI_UX_REDESIGN_AUDIT.md). One definition
-   here means a change to input or button styling happens in one place. */
+/* ---------------------------------------------------------------- */
+/* Components                                                       */
+/* ---------------------------------------------------------------- */
 @layer components {
     .form-control {
-        @apply block w-full rounded-md border border-ink-200 bg-white px-3 py-2.5 text-sm text-ink-900 placeholder:text-ink-400 focus:border-brand-yellow focus:ring-2 focus:ring-brand-yellow/40 outline-none;
+        @apply block h-10 w-full rounded-lg border border-ink-200 bg-white px-3 text-sm text-ink-900 shadow-xs transition placeholder:text-ink-400 outline-none focus:border-ink-400 focus:ring-4 focus:ring-brand-yellow/30;
+    }
+
+    textarea.form-control {
+        @apply h-auto py-2.5;
+    }
+
+    select.form-control {
+        @apply pe-8;
+    }
+
+    .btn-primary,
+    .btn-accent,
+    .btn-secondary,
+    .btn-danger,
+    .btn-ghost {
+        @apply relative inline-flex h-9 items-center justify-center gap-2 whitespace-nowrap rounded-lg px-4 text-sm font-medium transition duration-150 active:scale-[0.98] disabled:pointer-events-none disabled:opacity-50;
     }
 
     .btn-primary {
-        @apply inline-flex items-center justify-center gap-2 rounded-md bg-brand-black px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-ink-800;
+        @apply bg-ink-900 text-white shadow-xs hover:bg-ink-700;
     }
 
     .btn-accent {
-        @apply inline-flex items-center justify-center gap-2 rounded-md bg-brand-yellow px-4 py-2 text-sm font-medium text-brand-black transition-opacity hover:opacity-90;
+        @apply bg-brand-yellow text-brand-black shadow-xs hover:brightness-95;
     }
 
     .btn-secondary {
-        @apply inline-flex items-center justify-center gap-2 rounded-md border border-ink-200 bg-white px-4 py-2 text-sm font-medium text-ink-700 transition-colors hover:bg-ink-50;
+        @apply border border-ink-200 bg-white text-ink-800 shadow-xs hover:bg-ink-100;
     }
 
     .btn-danger {
-        @apply inline-flex items-center justify-center gap-2 rounded-md border border-status-danger bg-white px-4 py-2 text-sm font-medium text-status-danger transition-colors hover:bg-status-danger/5;
+        @apply border border-status-danger/40 bg-white text-status-danger shadow-xs hover:bg-status-danger/5;
     }
+
+    .btn-ghost {
+        @apply text-ink-600 hover:bg-ink-100 hover:text-ink-900;
+    }
+
+    /* A submitting button shows a spinner and ignores further clicks (admin-ui.js sets data-loading). */
+    [data-loading] {
+        pointer-events: none;
+        opacity: 0.75;
+    }
+
+    [data-loading]::after {
+        content: '';
+        width: 0.9rem;
+        height: 0.9rem;
+        border-radius: 9999px;
+        border: 2px solid currentColor;
+        border-inline-end-color: transparent;
+        animation: spin 0.7s linear infinite;
+    }
+
+    .card {
+        @apply rounded-xl border border-ink-200 bg-white shadow-(--shadow-card);
+    }
+
+    /* Tables: no box borders, a quiet header, hairline row separators. */
+    .data-table th {
+        @apply h-10 whitespace-nowrap px-4 text-start text-xs font-medium text-ink-500;
+    }
+
+    .data-table td {
+        @apply px-4 py-3 align-middle;
+    }
+
+    .data-table tbody tr {
+        @apply border-t border-ink-100 transition-colors hover:bg-ink-50;
+    }
+
+    .badge {
+        @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ring-1 ring-inset;
+    }
+
+    .badge::before {
+        content: '';
+        width: 0.375rem;
+        height: 0.375rem;
+        border-radius: 9999px;
+        background: currentColor;
+        opacity: 0.85;
+    }
+
+    .skeleton {
+        @apply relative overflow-hidden rounded-md bg-ink-100;
+    }
+
+    .skeleton::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        transform: translateX(-100%);
+        background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.55), transparent);
+        animation: shimmer 1.4s infinite;
+    }
+
+    .kbd {
+        @apply inline-flex h-5 min-w-5 items-center justify-center rounded border border-ink-200 bg-ink-50 px-1 text-[10px] font-medium text-ink-500;
+    }
+}
+
+/* ---------------------------------------------------------------- */
+/* Sidebar (desktop): full width, or icon-only when collapsed       */
+/* ---------------------------------------------------------------- */
+#desktop-sidebar {
+    width: 16rem;
+    transition: width 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.sb-item {
+    position: relative;
+    display: flex;
+    height: 2.25rem;
+    align-items: center;
+    gap: 0.75rem;
+    border-radius: 0.5rem;
+    padding-inline: 0.625rem;
+    font-size: 0.875rem;
+    color: var(--color-ink-600);
+    transition: background-color 0.15s, color 0.15s;
+}
+
+.sb-item:hover {
+    background: var(--color-ink-100);
+    color: var(--color-ink-900);
+}
+
+.sb-item[aria-current='page'] {
+    background: var(--color-ink-100);
+    color: var(--color-ink-900);
+    font-weight: 600;
+}
+
+/* The yellow marker on the active item. */
+.sb-item[aria-current='page']::before {
+    content: '';
+    position: absolute;
+    inset-inline-start: -0.5rem;
+    top: 0.5rem;
+    bottom: 0.5rem;
+    width: 3px;
+    border-radius: 9999px;
+    background: var(--color-brand-yellow);
+}
+
+.sb-item .sb-icon {
+    width: 1.125rem;
+    height: 1.125rem;
+    flex-shrink: 0;
+}
+
+html[data-sidebar='collapsed'] #desktop-sidebar {
+    width: 4.25rem;
+}
+
+html[data-sidebar='collapsed'] #desktop-sidebar .sb-label,
+html[data-sidebar='collapsed'] #desktop-sidebar .sb-section,
+html[data-sidebar='collapsed'] #desktop-sidebar .sb-brand-text {
+    display: none;
+}
+
+html[data-sidebar='collapsed'] #desktop-sidebar .sb-item {
+    justify-content: center;
+    padding-inline: 0;
+}
+
+html[data-sidebar='collapsed'] #desktop-sidebar .sb-item [data-badge] {
+    position: absolute;
+    top: 0.125rem;
+    inset-inline-end: 0.125rem;
+    margin: 0;
+    min-width: 1rem;
+    padding: 0 0.25rem;
+    font-size: 0.625rem;
+}
+
+html[data-sidebar='collapsed'] #desktop-sidebar .sb-group + .sb-group {
+    border-top: 1px solid var(--color-ink-100);
+    padding-top: 0.75rem;
+}
+
+html[data-sidebar='collapsed'] #sidebar-toggle svg {
+    transform: scaleX(-1);
+}
+
+/* Floating tooltip for collapsed icons (positioned by admin-nav.js). */
+#sb-tooltip {
+    position: fixed;
+    z-index: 70;
+    pointer-events: none;
+    border-radius: 0.375rem;
+    background: var(--color-ink-900);
+    color: var(--color-canvas);
+    padding: 0.25rem 0.625rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    box-shadow: var(--shadow-pop);
+    opacity: 0;
+    transform: translateX(4px);
+    transition: opacity 0.12s, transform 0.12s;
+}
+
+#sb-tooltip[data-show] {
+    opacity: 1;
+    transform: none;
 }
 
 /* Menus scroll but never show a scrollbar. */
 .scrollbar-none { scrollbar-width: none; -ms-overflow-style: none; }
 .scrollbar-none::-webkit-scrollbar { display: none; }
 
-
-/* Dark mode. The neutral "ink" scale is flipped (ink900 stays the strongest
-   text colour, ink50 the faintest fill), and the few places that use white as a
-   *surface* are pointed at a dark surface. Brand yellow/black are unchanged.
-   The attribute is set by public/theme-init.js from the saved choice
-   (system / light / dark). */
-:root[data-theme='dark'] {
-    color-scheme: dark;
-    --color-ink-900: #F2F2F2;
-    --color-ink-800: #E4E4E4;
-    --color-ink-700: #D0D0D0;
-    --color-ink-600: #B8B8B8;
-    --color-ink-500: #9E9E9E;
-    --color-ink-400: #858585;
-    --color-ink-300: #626262;
-    --color-ink-200: #3B3B40;
-    --color-ink-100: #2A2A2E;
-    --color-ink-50: #121214;
-    --color-status-success: #4CAF62;
-    --color-status-danger: #EF6C62;
-    --color-status-warning: #E0A63A;
+/* ---------------------------------------------------------------- */
+/* Motion                                                           */
+/* ---------------------------------------------------------------- */
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes shimmer { to { transform: translateX(100%); } }
+@keyframes pop-in {
+    from { opacity: 0; transform: translateY(-4px) scale(0.98); }
+    to { opacity: 1; transform: none; }
+}
+@keyframes rise-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: none; }
+}
+@keyframes toast-in {
+    from { opacity: 0; transform: translateY(-12px) scale(0.98); }
+    to { opacity: 1; transform: none; }
+}
+@keyframes progress {
+    0% { width: 0; opacity: 1; }
+    80% { width: 85%; opacity: 1; }
+    100% { width: 92%; opacity: 1; }
 }
 
-:root[data-theme='dark'] :is(.bg-white, .form-control, .btn-secondary, .btn-danger) {
-    background-color: #1E1E21;
+/* Dropdowns (native <details data-menu>) */
+details[data-menu][open] > .menu-panel {
+    animation: pop-in 0.14s ease-out;
+}
+
+/* Page content settles in; children marked .stagger cascade. */
+#main-content > div > * {
+    animation: rise-in 0.32s ease-out both;
+}
+
+#main-content > div > *:nth-child(2) { animation-delay: 0.04s; }
+#main-content > div > *:nth-child(3) { animation-delay: 0.08s; }
+#main-content > div > *:nth-child(4) { animation-delay: 0.12s; }
+#main-content > div > *:nth-child(n + 5) { animation-delay: 0.16s; }
+
+/* Confirmation dialog */
+#confirm-dialog[open] {
+    animation: pop-in 0.16s ease-out;
+}
+
+#confirm-dialog::backdrop {
+    background: rgb(9 9 11 / 0.55);
+    backdrop-filter: blur(2px);
+}
+
+/* Toasts */
+.toast {
+    animation: toast-in 0.22s ease-out both;
+}
+
+.toast[data-leaving] {
+    opacity: 0;
+    transform: translateY(-8px);
+    transition: opacity 0.2s, transform 0.2s;
+}
+
+/* Thin progress bar shown while navigating between pages. */
+#nav-progress {
+    position: fixed;
+    inset-block-start: 0;
+    inset-inline-start: 0;
+    z-index: 80;
+    height: 2px;
+    width: 0;
+    opacity: 0;
+    background: var(--color-brand-yellow);
+    box-shadow: 0 0 8px rgb(255 193 7 / 0.7);
+}
+
+#nav-progress[data-active] {
+    animation: progress 8s cubic-bezier(0.1, 0.6, 0.3, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* ---------------------------------------------------------------- */
+/* Dark mode: its own hierarchy, not an inversion.                  */
+/*   canvas #09090B < surface #111113 < fills #18181B / #1F1F23     */
+/* ---------------------------------------------------------------- */
+:root[data-theme='dark'] {
+    color-scheme: dark;
+    --color-canvas: #09090B;
+    --color-surface: #111113;
+    --color-brand-black: #09090B;
+
+    --color-ink-900: #FAFAFA;
+    --color-ink-800: #E4E4E7;
+    --color-ink-700: #D4D4D8;
+    --color-ink-600: #A1A1AA;
+    --color-ink-500: #8B8B94;
+    --color-ink-400: #71717A;
+    --color-ink-300: #52525B;
+    --color-ink-200: #27272A;
+    --color-ink-100: #1D1D21;
+    --color-ink-50: #151518;
+
+    --color-status-success: #4ADE80;
+    --color-status-danger: #F87171;
+    --color-status-warning: #FBBF24;
+    --color-status-info: #60A5FA;
+
+    --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.4);
+    --shadow-card: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+    --shadow-pop: 0 14px 40px -8px rgb(0 0 0 / 0.7);
+}
+
+:root[data-theme='dark'] :is(.bg-white, .form-control, .btn-secondary, .btn-danger, .card) {
+    background-color: var(--color-surface);
+}
+
+:root[data-theme='dark'] .form-control {
+    background-color: #0D0D0F;
 }
 
 :root[data-theme='dark'] .btn-primary {
-    background-color: var(--color-brand-yellow);
-    color: var(--color-brand-black);
+    background-color: var(--color-ink-900);
+    color: #09090B;
 }
 
 :root[data-theme='dark'] .btn-primary:hover {
-    opacity: 0.9;
+    background-color: var(--color-ink-800);
 }
 
 :root[data-theme='dark'] .btn-secondary:hover {
-    background-color: #2A2A2E;
+    background-color: var(--color-ink-100);
+}
+
+:root[data-theme='dark'] .skeleton::after {
+    background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.06), transparent);
+}
+
+:root[data-theme='dark'] #confirm-dialog {
+    background-color: var(--color-surface);
+}
+
+/* Print pages (tag sheets) never use these tokens; nothing to override. */
+
+/* While a link is followed the current page dims slightly so the wait reads as
+   "loading" rather than "stuck"; the top progress bar runs alongside. */
+body[data-navigating] #main-content > div {
+    opacity: 0.6;
+    transition: opacity 0.2s;
+    pointer-events: none;
 }

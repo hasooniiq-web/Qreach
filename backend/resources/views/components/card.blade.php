@@ -1,10 +1,9 @@
 {{--
-    The one card recipe for the dashboard — replaces the
-    `rounded-lg border border-ink-200 bg-white p-5` recipe that was
-    hand-repeated in every admin view. See docs/UI_UX_DESIGN_SYSTEM_V2.md.
+    The one surface recipe: a softly bordered, softly shadowed rounded panel.
+    Use it where grouping helps hierarchy — not around every block.
 --}}
 @props(['padding' => 'p-5'])
 
-<div {{ $attributes->merge(['class' => "rounded-lg border border-ink-200 bg-white $padding"]) }}>
+<div {{ $attributes->merge(['class' => "card $padding"]) }}>
     {{ $slot }}
 </div>

@@ -1,5 +1,5 @@
 <x-layouts.guest title="تحديث كلمة المرور">
-    <h1 class="mb-1 text-lg font-semibold text-ink-900">يجب تحديث كلمة المرور</h1>
+    <h1 class="mb-1.5 text-2xl font-bold tracking-tight text-ink-900">يجب تحديث كلمة المرور</h1>
     <p class="mb-6 text-sm text-ink-500">لأسباب أمنية، عيّن كلمة مرور جديدة قبل المتابعة.</p>
 
     <form method="POST" action="{{ route('admin.password.update') }}" class="space-y-4" novalidate>

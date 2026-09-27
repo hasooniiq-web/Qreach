@@ -3,8 +3,8 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="poll-url" content="{{ route('admin.poll') }}">
     <title>{{ $title ?? 'لوحة التحكم' }} — Qreach</title>
+    <meta name="poll-url" content="{{ route('admin.poll') }}">
     @stack('head')
     <script src="{{ asset('theme-init.js') }}"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -12,21 +12,16 @@
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
     @vite(['resources/css/app.css', 'resources/js/admin-nav.js', 'resources/js/admin-ui.js'])
 </head>
-<body class="h-dvh overflow-hidden bg-ink-50 text-ink-900">
-    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:start-4 focus:top-4 focus:z-[60] focus:rounded-md focus:bg-brand-yellow focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-brand-black">تخطّي إلى المحتوى</a>
+<body class="h-dvh overflow-hidden bg-canvas text-ink-900">
+    <div id="nav-progress" aria-hidden="true"></div>
+    <a href="#main-content" class="sr-only focus:not-sr-only focus:fixed focus:start-4 focus:top-4 focus:z-[90] focus:rounded-md focus:bg-brand-yellow focus:px-4 focus:py-2 focus:text-sm focus:font-medium focus:text-brand-black">تخطّي إلى المحتوى</a>
+
     @php
-        // Grouped by function rather than by "everything that isn't
-        // analytics or security" (see docs/UI_UX_REDESIGN_AUDIT.md finding
-        // #1) — platform data (users/vehicles/tags/batches) is separate
-        // from visitor interaction (contact requests, notifications), which
-        // is separate from analytics, security, and admin/system settings.
-        // Every entry below routes to a real screen or an explicit,
-        // honestly-labeled "coming soon" page — none are invented.
+        $me = auth('admin')->user();
+
+        // Grouped by function: platform data, visitor interaction, insight,
+        // security, and administration. Every entry routes to a real screen.
         $nav = [
-            // TEMPORARY dev aid, shown only while DEV_OTP_INBOX=true (never in production).
-            ...(\App\Http\Controllers\Admin\DevOtpController::enabled() ? ['مؤقت — تطوير' => [
-                ['icon' => 'audit', 'label' => 'رموز OTP', 'route' => 'admin.dev-otp'],
-            ]] : []),
             'الرئيسية' => [
                 ['icon' => 'dashboard', 'label' => 'لوحة التحكم', 'route' => 'admin.dashboard'],
             ],
@@ -54,116 +49,234 @@
                 ['icon' => 'settings', 'label' => 'إعدادات النظام', 'route' => 'admin.settings.index'],
             ],
         ];
+
+        // TEMPORARY dev aid, shown only while DEV_OTP_INBOX=true (never in production).
+        if (\App\Http\Controllers\Admin\DevOtpController::enabled()) {
+            $nav['مؤقت — تطوير'] = [['icon' => 'audit', 'label' => 'رموز OTP', 'route' => 'admin.dev-otp']];
+        }
+
+        // Breadcrumbs from the route name: Home > Section > (current page).
+        $sections = [
+            'admin.users' => ['المستخدمون', 'admin.users.index'],
+            'admin.vehicles' => ['المركبات', 'admin.vehicles.index'],
+            'admin.tags' => ['رموز QR و NFC', 'admin.tags.index'],
+            'admin.tag-batches' => ['دفعات الرموز', 'admin.tag-batches.index'],
+            'admin.contact-requests' => ['طلبات التواصل', 'admin.contact-requests.index'],
+            'admin.emergencies' => ['التنبيهات الطارئة', 'admin.emergencies.index'],
+            'admin.analytics' => ['التحليلات', 'admin.analytics.index'],
+            'admin.reports' => ['التقارير', 'admin.reports.index'],
+            'admin.security' => ['الأحداث الأمنية', 'admin.security.index'],
+            'admin.audit' => ['سجلات التدقيق', 'admin.audit.index'],
+            'admin.subscriptions' => ['الاشتراكات والباقات', 'admin.subscriptions.index'],
+            'admin.plans' => ['الاشتراكات والباقات', 'admin.subscriptions.index'],
+            'admin.admins' => ['المسؤولون والصلاحيات', 'admin.admins.index'],
+            'admin.settings' => ['إعدادات النظام', 'admin.settings.index'],
+            'admin.profile' => ['الملف الشخصي', null],
+            'admin.search' => ['البحث', null],
+        ];
+        $routeName = \Illuminate\Support\Facades\Route::currentRouteName() ?? '';
+        $sectionKey = implode('.', array_slice(explode('.', $routeName), 0, 2));
+        $crumbs = [];
+        if ($routeName !== 'admin.dashboard') {
+            $crumbs[] = ['لوحة التحكم', route('admin.dashboard')];
+            if (isset($sections[$sectionKey])) {
+                [$sectionLabel, $sectionRoute] = $sections[$sectionKey];
+                $isIndex = $sectionRoute && $routeName === $sectionRoute;
+                $crumbs[] = [$sectionLabel, ($isIndex || ! $sectionRoute) ? null : route($sectionRoute)];
+                if (! $isIndex && ($title ?? $sectionLabel) !== $sectionLabel) {
+                    $crumbs[] = [$title ?? '', null];
+                }
+            } else {
+                $crumbs[] = [$title ?? '', null];
+            }
+        }
+
+        // What needs attention, for the bell.
+        $alerts = [
+            'contact_requests' => \App\Models\ContactRequest::where('status', 'new')->count(),
+            'upgrade_requests' => \App\Models\PlanUpgradeRequest::where('status', 'pending')->count(),
+            'security' => \App\Models\SecurityEvent::where('resolved', false)->whereIn('severity', ['warning', 'critical'])->count(),
+        ];
     @endphp
 
-    {{-- The page itself never scrolls: the sidebar and the main column each own a scroll
-         region, so scrolling one never moves the other. --}}
     <div class="flex h-dvh">
-        <!-- Desktop sidebar (RTL: sits on the right by virtue of dir=rtl + flex order) -->
-        <aside id="desktop-sidebar" class="hidden h-dvh lg:flex w-64 shrink-0 flex-col border-e border-ink-200 bg-brand-black text-white">
-            <div class="flex items-center gap-2.5 px-5 h-16 shrink-0 border-b border-white/10">
-                <div class="flex h-8 w-8 items-center justify-center rounded-full bg-brand-yellow">
-                    <span class="text-sm font-bold text-brand-black">Q</span>
-                </div>
-                <span class="font-semibold">Qreach <span class="text-white/50 font-normal text-sm">SmartTag</span></span>
-            </div>
-
-            <nav aria-label="التنقل الرئيسي" class="scrollbar-none flex-1 overflow-y-auto py-4 px-3 space-y-6 text-sm">
-                @include('components.layouts.partials.admin-nav-items')
-            </nav>
+        <!-- Desktop sidebar: full width, or icon-only when collapsed (state on <html data-sidebar>) -->
+        <aside id="desktop-sidebar" class="hidden h-dvh shrink-0 flex-col border-e border-ink-200 bg-surface lg:flex" aria-label="القائمة الجانبية">
+            @include('components.layouts.partials.admin-sidebar')
         </aside>
 
         <!-- Mobile/tablet drawer -->
-        <div id="mobile-nav-backdrop" hidden class="lg:hidden fixed inset-0 z-40 bg-black/50"></div>
-        <aside id="mobile-nav" class="lg:hidden fixed inset-y-0 right-0 z-50 w-72 flex flex-col bg-brand-black text-white translate-x-full transition-transform duration-200">
-            <div class="flex items-center justify-between px-4 h-16 border-b border-white/10">
-                <div class="flex items-center gap-2.5">
-                    <div class="flex h-8 w-8 items-center justify-center rounded-full bg-brand-yellow">
-                        <span class="text-sm font-bold text-brand-black">Q</span>
-                    </div>
-                    <span class="font-semibold">Qreach <span class="text-white/50 font-normal text-sm">SmartTag</span></span>
-                </div>
-                <button type="button" id="mobile-nav-close" aria-label="إغلاق القائمة" class="flex size-11 items-center justify-center rounded-md text-white/80 hover:bg-white/10">
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
-                </button>
-            </div>
-            <nav aria-label="التنقل الرئيسي" class="scrollbar-none flex-1 overflow-y-auto py-4 px-3 space-y-6 text-sm">
-                @include('components.layouts.partials.admin-nav-items')
-            </nav>
+        <div id="mobile-nav-backdrop" hidden class="fixed inset-0 z-40 bg-black/50 backdrop-blur-[2px] lg:hidden"></div>
+        <aside id="mobile-nav" class="fixed inset-y-0 start-0 z-50 flex w-72 -translate-x-full flex-col border-e border-ink-200 bg-surface shadow-(--shadow-pop) transition-transform duration-200 lg:hidden rtl:translate-x-full" aria-label="القائمة الجانبية">
+            @include('components.layouts.partials.admin-sidebar', ['drawer' => true])
         </aside>
 
         <div class="flex h-dvh min-w-0 flex-1 flex-col">
-            <header class="h-16 shrink-0 border-b border-ink-200 bg-white flex items-center justify-between px-4 sm:px-6">
-                <div class="flex items-center gap-3">
-                    <button type="button" id="mobile-nav-open" aria-label="فتح القائمة" class="lg:hidden flex size-11 -ms-2 items-center justify-center rounded-md text-ink-600 hover:bg-ink-100">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
-                    </button>
-                    <button type="button" id="sidebar-toggle" aria-label="إظهار/إخفاء القائمة الجانبية" aria-controls="desktop-sidebar" aria-expanded="true" class="hidden lg:flex size-10 -ms-2 items-center justify-center rounded-md text-ink-600 hover:bg-ink-100">
-                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
-                    </button>
-                    <h1 class="text-base font-semibold text-ink-900">{{ $title ?? 'لوحة التحكم' }}</h1>
-                </div>
-                @php $me = auth('admin')->user(); @endphp
-                <div class="flex items-center gap-1">
-                <button type="button" id="theme-toggle" class="flex size-10 items-center justify-center rounded-md text-ink-600 hover:bg-ink-100" aria-label="المظهر" title="المظهر: حسب الجهاز / فاتح / داكن">
-                    <span data-theme-icon="system" class="text-lg" aria-hidden="true">◐</span>
-                    <span data-theme-icon="light" class="hidden text-lg" aria-hidden="true">☀</span>
-                    <span data-theme-icon="dark" class="hidden text-lg" aria-hidden="true">☾</span>
+            <header class="sticky top-0 z-30 flex h-14 shrink-0 items-center gap-2 border-b border-ink-200 bg-surface/90 px-3 backdrop-blur sm:px-5">
+                <button type="button" id="mobile-nav-open" aria-label="فتح القائمة" class="btn-ghost !size-9 !px-0 lg:hidden">
+                    <x-icon name="menu" class="size-5" />
                 </button>
-                <details data-menu class="relative">
-                    <summary class="flex cursor-pointer list-none items-center gap-2.5 rounded-full py-1 ps-3 pe-1 hover:bg-ink-50" aria-label="قائمة الحساب">
-                        <span class="hidden text-sm font-medium text-ink-700 sm:inline">{{ $me->name }}</span>
-                        <x-admin-avatar :admin="$me" />
-                    </summary>
-                    <div class="absolute end-0 top-full z-30 mt-3 w-80 overflow-hidden rounded-xl border border-ink-200 bg-white shadow-xl">
-                        <div class="flex items-center gap-4 border-b border-ink-100 px-5 py-5">
-                            <x-admin-avatar :admin="$me" size="size-14" class="!text-lg" />
-                            <div class="min-w-0">
-                                <p class="truncate text-base font-semibold text-ink-900">{{ $me->name }}</p>
-                                <p class="truncate text-sm text-ink-400" dir="ltr">{{ $me->email }}</p>
+                <button type="button" id="sidebar-toggle" aria-label="إظهار/إخفاء القائمة الجانبية" aria-controls="desktop-sidebar" class="btn-ghost hidden !size-9 !px-0 lg:inline-flex">
+                    <x-icon name="sidebar" class="size-[18px]" />
+                </button>
+                <span class="mx-1 hidden h-5 w-px bg-ink-200 lg:block"></span>
+
+                <nav aria-label="مسار التنقل" class="hidden min-w-0 items-center gap-1.5 text-sm sm:flex">
+                    @forelse ($crumbs as $i => [$label, $url])
+                        @if ($i > 0)<x-icon name="chevron-left" class="size-3.5 shrink-0 text-ink-300" />@endif
+                        @if ($url)
+                            <a href="{{ $url }}" class="truncate text-ink-500 transition-colors hover:text-ink-900">{{ $label }}</a>
+                        @else
+                            <span class="truncate font-medium text-ink-900" @if ($loop->last) aria-current="page" @endif>{{ $label }}</span>
+                        @endif
+                    @empty
+                        <span class="font-medium text-ink-900" aria-current="page">{{ $title ?? 'لوحة التحكم' }}</span>
+                    @endforelse
+                </nav>
+                <h1 class="truncate text-sm font-semibold sm:hidden">{{ $title ?? 'لوحة التحكم' }}</h1>
+
+                <div class="ms-auto flex items-center gap-1">
+                    <form method="GET" action="{{ route('admin.search') }}" role="search" class="relative me-1 hidden md:block">
+                        <x-icon name="search" class="pointer-events-none absolute start-3 top-1/2 size-4 -translate-y-1/2 text-ink-400" />
+                        <input id="global-search" type="search" name="q" value="{{ request()->routeIs('admin.search') ? request('q') : '' }}" autocomplete="off"
+                               placeholder="بحث سريع..." aria-label="بحث عام"
+                               class="form-control !h-9 w-56 !bg-ink-50 ps-9 pe-9 transition-[width] focus:w-72">
+                        <span class="kbd pointer-events-none absolute end-2.5 top-1/2 -translate-y-1/2">/</span>
+                    </form>
+                    <a href="{{ route('admin.search') }}" class="btn-ghost !size-9 !px-0 md:hidden" aria-label="بحث"><x-icon name="search" class="size-[18px]" /></a>
+
+                    {{-- Quick actions --}}
+                    @if ($me->hasPermission('qr.generate_batch') || $me->hasPermission('admins.create'))
+                        <details data-menu class="relative">
+                            <summary class="btn-ghost !size-9 cursor-pointer list-none !px-0" aria-label="إجراءات سريعة"><x-icon name="plus" class="size-[18px]" /></summary>
+                            <div class="menu-panel absolute end-0 top-full z-40 mt-2 w-56 rounded-xl border border-ink-200 bg-surface p-1.5 shadow-(--shadow-pop)">
+                                <p class="px-2.5 py-1.5 text-xs font-medium text-ink-400">إجراءات سريعة</p>
+                                @if ($me->hasPermission('qr.generate_batch'))
+                                    <a href="{{ route('admin.tag-batches.create') }}" class="flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm text-ink-800 hover:bg-ink-100"><x-icon name="batch" class="size-4 text-ink-500" /> دفعة رموز جديدة</a>
+                                @endif
+                                @if ($me->hasPermission('admins.create'))
+                                    <a href="{{ route('admin.admins.create') }}" class="flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm text-ink-800 hover:bg-ink-100"><x-icon name="users" class="size-4 text-ink-500" /> مسؤول جديد</a>
+                                @endif
+                            </div>
+                        </details>
+                    @endif
+
+                    {{-- Theme --}}
+                    <details data-menu class="relative">
+                        <summary class="btn-ghost !size-9 cursor-pointer list-none !px-0" aria-label="المظهر">
+                            <span data-theme-icon="system"><x-icon name="monitor" class="size-[18px]" /></span>
+                            <span data-theme-icon="light" class="hidden"><x-icon name="sun" class="size-[18px]" /></span>
+                            <span data-theme-icon="dark" class="hidden"><x-icon name="moon" class="size-[18px]" /></span>
+                        </summary>
+                        <div class="menu-panel absolute end-0 top-full z-40 mt-2 w-44 rounded-xl border border-ink-200 bg-surface p-1.5 shadow-(--shadow-pop)">
+                            @foreach (['light' => ['فاتح', 'sun'], 'dark' => ['داكن', 'moon'], 'system' => ['حسب الجهاز', 'monitor']] as $mode => [$modeLabel, $modeIcon])
+                                <button type="button" data-theme-set="{{ $mode }}" class="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm text-ink-800 hover:bg-ink-100">
+                                    <x-icon :name="$modeIcon" class="size-4 text-ink-500" /> {{ $modeLabel }}
+                                    <x-icon name="check" class="ms-auto hidden size-4 text-ink-900" data-theme-check="{{ $mode }}" />
+                                </button>
+                            @endforeach
+                        </div>
+                    </details>
+
+                    {{-- Notifications: what needs attention right now --}}
+                    <details data-menu class="relative">
+                        <summary class="btn-ghost relative !size-9 cursor-pointer list-none !px-0" aria-label="التنبيهات">
+                            <x-icon name="bell" class="size-[18px]" />
+                            <span data-bell-dot @class(['absolute end-2 top-2 size-2 rounded-full bg-brand-yellow ring-2 ring-surface', 'hidden' => array_sum($alerts) === 0])></span>
+                        </summary>
+                        <div class="menu-panel absolute end-0 top-full z-40 mt-2 w-80 max-w-[calc(100vw-1.5rem)] rounded-xl border border-ink-200 bg-surface p-1.5 shadow-(--shadow-pop)">
+                            <p class="px-2.5 py-1.5 text-xs font-medium text-ink-400">يحتاج انتباهك</p>
+                            @php
+                                $items = [
+                                    ['contact_requests', 'طلبات تواصل جديدة', 'contact', route('admin.contact-requests.index', ['status' => 'new'])],
+                                    ['upgrade_requests', 'طلبات ترقية بانتظار المراجعة', 'star', route('admin.subscriptions.requests')],
+                                    ['security', 'أحداث أمنية غير محلولة', 'shield', route('admin.security.index')],
+                                ];
+                            @endphp
+                            @foreach ($items as [$key, $text, $ico, $url])
+                                <a href="{{ $url }}" data-alert-row="{{ $key }}" @class(['flex items-center gap-3 rounded-lg px-2.5 py-2.5 text-sm hover:bg-ink-100', 'hidden' => $alerts[$key] === 0])>
+                                    <span class="flex size-8 items-center justify-center rounded-lg bg-ink-100 text-ink-600"><x-icon :name="$ico" class="size-4" /></span>
+                                    <span class="flex-1 text-ink-800">{{ $text }}</span>
+                                    <span data-alert-count="{{ $key }}" class="rounded-full bg-brand-yellow px-2 text-xs font-bold text-brand-black">{{ $alerts[$key] }}</span>
+                                </a>
+                            @endforeach
+                            <p data-alert-empty @class(['px-2.5 py-6 text-center text-sm text-ink-400', 'hidden' => array_sum($alerts) > 0])>لا شيء يحتاج انتباهك الآن</p>
+                        </div>
+                    </details>
+
+                    <span class="mx-1 hidden h-5 w-px bg-ink-200 sm:block"></span>
+
+                    {{-- Account --}}
+                    <details data-menu class="relative">
+                        <summary class="flex cursor-pointer list-none items-center gap-2 rounded-lg py-1 ps-2 pe-1 hover:bg-ink-100" aria-label="قائمة الحساب">
+                            <span class="hidden text-sm font-medium text-ink-700 sm:inline">{{ $me->name }}</span>
+                            <x-admin-avatar :admin="$me" />
+                        </summary>
+                        <div class="menu-panel absolute end-0 top-full z-40 mt-2 w-64 overflow-hidden rounded-xl border border-ink-200 bg-surface shadow-(--shadow-pop)">
+                            <div class="flex items-center gap-3 border-b border-ink-100 px-4 py-4">
+                                <x-admin-avatar :admin="$me" size="size-10" class="!text-sm" />
+                                <div class="min-w-0">
+                                    <p class="truncate text-sm font-semibold text-ink-900">{{ $me->name }}</p>
+                                    <p class="truncate text-xs text-ink-500" dir="ltr">{{ $me->email }}</p>
+                                </div>
+                            </div>
+                            <div class="p-1.5">
+                                <a href="{{ route('admin.profile.edit') }}" class="flex items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm text-ink-800 hover:bg-ink-100">
+                                    <x-icon name="users" class="size-4 text-ink-500" /> الملف الشخصي
+                                </a>
+                                <form method="POST" action="{{ route('admin.logout') }}">
+                                    @csrf
+                                    <button type="submit" class="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-2 text-sm text-status-danger hover:bg-status-danger/10">
+                                        <x-icon name="logout" class="size-4" /> تسجيل الخروج
+                                    </button>
+                                </form>
                             </div>
                         </div>
-                        <div class="p-2">
-                            <a href="{{ route('admin.profile.edit') }}" class="flex items-center gap-3 rounded-lg px-4 py-3.5 text-base text-ink-800 hover:bg-ink-50">
-                                <x-icon name="users" class="size-5 text-ink-500" />
-                                الملف الشخصي
-                            </a>
-                            <form method="POST" action="{{ route('admin.logout') }}">
-                                @csrf
-                                <button type="submit" class="flex w-full items-center gap-3 rounded-lg px-4 py-3.5 text-base text-status-danger hover:bg-status-danger/5">
-                                    <x-icon name="logout" class="size-5" />
-                                    تسجيل الخروج
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </details>
+                    </details>
                 </div>
             </header>
 
-            <main id="main-content" tabindex="-1" class="min-h-0 flex-1 overflow-y-auto p-4 outline-none sm:p-6">
-                @if (session('status'))
-                    <div class="mb-6 rounded-md bg-status-success/10 border border-status-success/30 px-4 py-3 text-sm text-status-success">
-                        {{ session('status') }}
-                    </div>
-                @endif
-
-                {{ $slot }}
+            <main id="main-content" tabindex="-1" class="min-h-0 flex-1 overflow-y-auto outline-none">
+                @php $body = (string) $slot; @endphp
+                <div class="mx-auto w-full max-w-7xl p-4 sm:p-6 lg:p-8">
+                    {{-- Pages that render their own <x-page-header> (marked data-page-header) keep it;
+                         every other page gets the same large title so no page starts without one. --}}
+                    @unless (str_contains($body, 'data-page-header'))
+                        <div data-page-header class="mb-6">
+                            <h2 class="text-2xl font-bold tracking-tight text-ink-900">{{ $title ?? 'لوحة التحكم' }}</h2>
+                        </div>
+                    @endunless
+                    {!! $body !!}
+                </div>
             </main>
         </div>
+    </div>
+
+    {{-- Toasts: flash messages slide in and dismiss themselves. --}}
+    <div id="toasts" class="pointer-events-none fixed inset-x-0 top-4 z-[90] flex flex-col items-center gap-2 px-4" aria-live="polite">
+        @if (session('status'))
+            <div class="toast pointer-events-auto flex max-w-md items-start gap-3 rounded-xl border border-ink-200 bg-surface px-4 py-3 shadow-(--shadow-pop)" role="status" data-toast>
+                <span class="mt-0.5 flex size-5 shrink-0 items-center justify-center rounded-full bg-status-success text-white"><x-icon name="check" class="size-3.5" /></span>
+                <p class="text-sm text-ink-800">{{ session('status') }}</p>
+                <button type="button" data-toast-close class="ms-2 text-ink-400 hover:text-ink-900" aria-label="إغلاق"><x-icon name="x" class="size-4" /></button>
+            </div>
+        @endif
     </div>
 
     {{-- Confirmation dialog driven by admin-ui.js: any form with data-confirm
          opens this instead of a native confirm(), so the wording can say what
          will happen and whether it can be undone. --}}
-    <dialog id="confirm-dialog" class="m-auto w-[calc(100%-2rem)] max-w-sm rounded-lg border border-ink-200 bg-white p-0 text-ink-900 shadow-xl backdrop:bg-black/50">
-        <div class="p-6">
-            <h2 data-confirm-title class="text-base font-semibold"></h2>
-            <p data-confirm-message class="mt-2 text-sm text-ink-600"></p>
+    <dialog id="confirm-dialog" class="m-auto w-[calc(100%-2rem)] max-w-md rounded-xl border border-ink-200 bg-surface p-0 text-ink-900 shadow-(--shadow-pop)">
+        <div class="flex gap-4 p-6">
+            <span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-status-danger/10 text-status-danger"><x-icon name="warning" class="size-5" /></span>
+            <div>
+                <h2 data-confirm-title class="text-base font-semibold"></h2>
+                <p data-confirm-message class="mt-1.5 text-sm text-ink-600"></p>
+            </div>
         </div>
-        <div class="flex justify-end gap-2 border-t border-ink-100 bg-ink-50 px-6 py-3">
+        <div class="flex justify-end gap-2 border-t border-ink-100 bg-ink-50/70 px-6 py-3">
             <button type="button" data-confirm-cancel class="btn-secondary">إلغاء</button>
-            <button type="button" data-confirm-accept class="btn-danger"></button>
+            <button type="button" data-confirm-accept class="btn-primary"></button>
         </div>
     </dialog>
 </body>

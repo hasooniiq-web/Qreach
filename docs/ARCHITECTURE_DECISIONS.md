@@ -66,3 +66,6 @@ Visitors see nothing about the owner by default — not the name, phone, emergen
 
 ## Near-real-time updates
 Until server-side FCM is configured, freshness is polling: the app re-reads notifications, conversations and the home feed every 12 s while in the foreground (and on resume); the visitor's conversation page polls its JSON endpoint every 6 s; the dashboard sidebar badges poll `admin/poll` every 15 s.
+
+## Dashboard design system (shadcn-style)
+Tailwind v4 + Blade, no new framework. Tokens live in `resources/css/app.css` (`canvas`/`surface`/`ink-*`/`status-*`, radius, shadows); dark mode has its own hierarchy under `:root[data-theme='dark']`. The shell (`components/layouts/admin.blade.php`) has a collapsible sidebar (icon-only + tooltips, state in `<html data-sidebar>`), a topbar with breadcrumbs, global search (`admin/search`, permission-aware), quick actions, theme menu and a live notification bell. Shared components (`x-card`, `x-kpi` with real trend + sparkline, `x-data-table`, `x-status-badge`, `x-skeleton`, `x-table-skeleton`, `x-table-empty`, `x-page-header`) carry the look, so every page inherits it; pages without their own `x-page-header` get a standard title from the layout. Loading feedback: a top progress bar, dimmed content while navigating, spinner-on-submit buttons, chart skeletons.

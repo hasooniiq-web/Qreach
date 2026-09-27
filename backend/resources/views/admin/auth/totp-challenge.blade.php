@@ -1,5 +1,5 @@
 <x-layouts.guest title="التحقق بخطوتين">
-    <h1 class="mb-1 text-lg font-semibold text-ink-900">التحقق بخطوتين</h1>
+    <h1 class="mb-1.5 text-2xl font-bold tracking-tight text-ink-900">التحقق بخطوتين</h1>
     <p class="mb-6 text-sm text-ink-500">أدخل الرمز المكوّن من 6 أرقام الظاهر في تطبيق المصادقة.</p>
 
     <form method="POST" action="{{ route('admin.totp.verify') }}" class="space-y-4" novalidate>

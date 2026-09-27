@@ -2,37 +2,44 @@
 
 @php
     $map = [
-        'active' => ['bg-status-success/10 text-status-success', 'نشط'],
-        'inactive' => ['bg-ink-100 text-ink-500', 'غير نشط'],
-        'archived' => ['bg-ink-100 text-ink-500', 'مؤرشف'],
-        'suspended' => ['bg-status-danger/10 text-status-danger', 'موقوف'],
-        'deleted' => ['bg-status-danger/10 text-status-danger', 'محذوف'],
-        'generated' => ['bg-ink-100 text-ink-500', 'مُنشأ'],
-        'available' => ['bg-ink-100 text-ink-600', 'متاح'],
-        'activated' => ['bg-brand-yellow/20 text-ink-900', 'مفعّل'],
-        'assigned' => ['bg-status-success/10 text-status-success', 'مربوط'],
-        'revoked' => ['bg-status-danger/10 text-status-danger', 'ملغى'],
-        'replaced' => ['bg-ink-100 text-ink-500', 'مستبدل'],
-        'disabled' => ['bg-ink-100 text-ink-500', 'معطل'],
-        'new' => ['bg-brand-yellow/20 text-ink-900', 'جديد'],
-        'read' => ['bg-ink-100 text-ink-600', 'مقروء'],
-        'responded' => ['bg-status-success/10 text-status-success', 'تم الرد'],
-        'closed' => ['bg-ink-100 text-ink-500', 'مغلق'],
-        'critical' => ['bg-status-danger/10 text-status-danger', 'حرج'],
-        'warning' => ['bg-brand-yellow/20 text-ink-900', 'تحذير'],
-        'info' => ['bg-ink-100 text-ink-500', 'معلومات'],
-        'success' => ['bg-status-success/10 text-status-success', 'نجاح'],
-        'failure' => ['bg-status-danger/10 text-status-danger', 'فشل'],
-        'resolved' => ['bg-status-success/10 text-status-success', 'تم الحل'],
-        'expired' => ['bg-ink-100 text-ink-500', 'منتهي'],
-        'canceled' => ['bg-status-danger/10 text-status-danger', 'ملغى'],
-        'trialing' => ['bg-brand-yellow/20 text-ink-900', 'تجريبي'],
-        'past_due' => ['bg-status-danger/10 text-status-danger', 'متأخر السداد'],
-        'unresolved' => ['bg-ink-100 text-ink-600', 'قيد المراجعة'],
+        'active' => ['ok', 'نشط'],
+        'inactive' => ['muted', 'غير نشط'],
+        'archived' => ['muted', 'مؤرشف'],
+        'suspended' => ['bad', 'موقوف'],
+        'deleted' => ['bad', 'محذوف'],
+        'generated' => ['muted', 'مُنشأ'],
+        'available' => ['muted', 'متاح'],
+        'activated' => ['accent', 'مفعّل'],
+        'assigned' => ['ok', 'مربوط'],
+        'revoked' => ['bad', 'ملغى'],
+        'replaced' => ['muted', 'مستبدل'],
+        'disabled' => ['muted', 'معطل'],
+        'new' => ['accent', 'جديد'],
+        'read' => ['muted', 'مقروء'],
+        'responded' => ['ok', 'تم الرد'],
+        'closed' => ['muted', 'مغلق'],
+        'critical' => ['bad', 'حرج'],
+        'warning' => ['accent', 'تحذير'],
+        'info' => ['muted', 'معلومات'],
+        'success' => ['ok', 'نجاح'],
+        'failure' => ['bad', 'فشل'],
+        'resolved' => ['ok', 'تم الحل'],
+        'expired' => ['muted', 'منتهي'],
+        'canceled' => ['bad', 'ملغى'],
+        'trialing' => ['accent', 'تجريبي'],
+        'past_due' => ['bad', 'متأخر السداد'],
+        'unresolved' => ['muted', 'قيد المراجعة'],
     ];
-    [$classes, $label] = $map[$status] ?? ['bg-ink-100 text-ink-500', $status];
+    [$classes, $label] = $map[$status] ?? ['muted', $status];
 @endphp
 
-<span {{ $attributes->merge(['class' => "inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium $classes"]) }}>
-    {{ $label }}
-</span>
+@php
+    $tone = [
+        'ok' => 'bg-status-success/10 text-status-success ring-status-success/25',
+        'bad' => 'bg-status-danger/10 text-status-danger ring-status-danger/25',
+        'accent' => 'bg-brand-yellow/15 text-ink-900 ring-brand-yellow/50',
+        'muted' => 'bg-ink-100 text-ink-600 ring-ink-200',
+    ][$classes] ?? 'bg-ink-100 text-ink-600 ring-ink-200';
+@endphp
+
+<span class="badge {{ $tone }}">{{ $label }}</span>
