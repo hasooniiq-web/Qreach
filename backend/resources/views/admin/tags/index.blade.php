@@ -10,7 +10,7 @@
             </select>
             <select name="status" data-auto-submit aria-label="الحالة" class="form-control w-auto">
                 <option value="">كل الحالات</option>
-                @foreach (['generated' => 'مُنشأ', 'available' => 'متاح', 'assigned' => 'مربوط', 'revoked' => 'ملغى', 'replaced' => 'مستبدل'] as $value => $label)
+                @foreach (['generated' => 'أُنشئ', 'printing' => 'أُرسل للطباعة', 'unassigned' => 'غير مُعيّن', 'available' => 'غير مُعيّن (قديم)', 'assigned' => 'مُعيّن', 'revoked' => 'مُلغى', 'replaced' => 'استُبدل'] as $value => $label)
                     <option value="{{ $value }}" @selected(request('status') === $value)>{{ $label }}</option>
                 @endforeach
             </select>

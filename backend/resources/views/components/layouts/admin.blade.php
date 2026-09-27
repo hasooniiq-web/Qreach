@@ -26,29 +26,39 @@
                 ['icon' => 'dashboard', 'label' => 'لوحة التحكم', 'route' => 'admin.dashboard'],
             ],
             'إدارة المنصة' => [
-                ['icon' => 'users', 'label' => 'المستخدمون', 'route' => 'admin.users.index'],
-                ['icon' => 'car', 'label' => 'المركبات', 'route' => 'admin.vehicles.index'],
-                ['icon' => 'qrcode', 'label' => 'رموز QR و NFC', 'route' => 'admin.tags.index'],
-                ['icon' => 'batch', 'label' => 'دفعات الرموز', 'route' => 'admin.tag-batches.index'],
+                ['icon' => 'users', 'label' => 'المستخدمون', 'route' => 'admin.users.index', 'permission' => 'users.view'],
+                ['icon' => 'car', 'label' => 'المركبات', 'route' => 'admin.vehicles.index', 'permission' => 'vehicles.view'],
+                ['icon' => 'qrcode', 'label' => 'رموز QR و NFC', 'route' => 'admin.tags.index', 'permission' => 'qr.view,nfc.view'],
+                ['icon' => 'batch', 'label' => 'دفعات الرموز', 'route' => 'admin.tag-batches.index', 'permission' => 'qr.view,printing.view'],
             ],
             'التفاعل' => [
-                ['icon' => 'contact', 'label' => 'طلبات التواصل', 'route' => 'admin.contact-requests.index', 'badge' => 'contact_requests'],
-                ['icon' => 'warning', 'label' => 'التنبيهات الطارئة', 'route' => 'admin.emergencies.index'],
+                ['icon' => 'contact', 'label' => 'طلبات التواصل', 'route' => 'admin.contact-requests.index', 'badge' => 'contact_requests', 'permission' => 'contact_requests.view'],
+                ['icon' => 'warning', 'label' => 'التنبيهات الطارئة', 'route' => 'admin.emergencies.index', 'permission' => 'emergency.view'],
             ],
             'التحليلات' => [
-                ['icon' => 'chart', 'label' => 'التحليلات', 'route' => 'admin.analytics.index'],
-                ['icon' => 'audit', 'label' => 'التقارير', 'route' => 'admin.reports.index'],
+                ['icon' => 'chart', 'label' => 'التحليلات', 'route' => 'admin.analytics.index', 'permission' => 'analytics.view'],
+                ['icon' => 'audit', 'label' => 'التقارير', 'route' => 'admin.reports.index', 'permission' => 'reports.view'],
             ],
             'الأمان' => [
-                ['icon' => 'shield', 'label' => 'الأحداث الأمنية', 'route' => 'admin.security.index'],
-                ['icon' => 'audit', 'label' => 'سجلات التدقيق', 'route' => 'admin.audit.index'],
+                ['icon' => 'shield', 'label' => 'الأحداث الأمنية', 'route' => 'admin.security.index', 'permission' => 'security.view'],
+                ['icon' => 'audit', 'label' => 'سجلات التدقيق', 'route' => 'admin.audit.index', 'permission' => 'audit.view,audit_logs.view'],
             ],
             'الإدارة' => [
-                ['icon' => 'star', 'label' => 'الاشتراكات والباقات', 'route' => 'admin.subscriptions.index', 'badge' => 'upgrade_requests'],
-                ['icon' => 'users', 'label' => 'المسؤولون والصلاحيات', 'route' => 'admin.admins.index'],
-                ['icon' => 'settings', 'label' => 'إعدادات النظام', 'route' => 'admin.settings.index'],
+                ['icon' => 'star', 'label' => 'الاشتراكات والباقات', 'route' => 'admin.subscriptions.index', 'badge' => 'upgrade_requests', 'permission' => 'subscriptions.view'],
+                ['icon' => 'users', 'label' => 'المسؤولون', 'route' => 'admin.admins.index', 'permission' => 'admins.view'],
+                ['icon' => 'shield', 'label' => 'الأدوار والصلاحيات', 'route' => 'admin.roles.index', 'permission' => 'roles.view'],
+                ['icon' => 'audit', 'label' => 'قائمة الصلاحيات', 'route' => 'admin.permissions.index', 'permission' => 'permissions.view'],
+                ['icon' => 'settings', 'label' => 'إعدادات النظام', 'route' => 'admin.settings.index', 'permission' => 'settings.view'],
             ],
         ];
+
+        // The nav only ever shows a link the admin can actually open — hiding a
+        // link is never the only guard (every route still checks the same
+        // permission server-side), but showing a link that 403s is bad UX.
+        $nav = collect($nav)->map(fn ($items) => collect($items)->filter(
+            fn ($item) => ! isset($item['permission'])
+                || collect(explode(',', $item['permission']))->contains(fn ($key) => $me->hasPermission(trim($key)))
+        ))->filter(fn ($items) => $items->isNotEmpty())->all();
 
         // TEMPORARY dev aid, shown only while DEV_OTP_INBOX=true (never in production).
         if (\App\Http\Controllers\Admin\DevOtpController::enabled()) {

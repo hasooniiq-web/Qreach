@@ -3,7 +3,10 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\AuditLog;
+use App\Models\ContactRequest;
 use App\Models\SubscriptionPlan;
+use App\Models\TagLifecycleEvent;
 use App\Models\User;
 use App\Services\AuditLogger;
 use App\Services\PlanEntitlements;
@@ -13,6 +16,20 @@ use Illuminate\View\View;
 
 class UserController extends Controller
 {
+    /** @var array<string, string> */
+    private const AUDIT_LABELS = [
+        'admin.user_suspended' => 'أوقف مسؤول الحساب', 'admin.user_activated' => 'أعاد مسؤول تفعيل الحساب',
+        'profile.name_updated' => 'حدّث الاسم', 'profile.avatar_updated' => 'غيّر الصورة',
+        'profile.contact_updated' => 'حدّث بيانات التواصل', 'profile.visibility_updated' => 'غيّر ما يظهر للزوار',
+        'profile.method_added' => 'أضاف طريقة تواصل', 'profile.emergency_updated' => 'حدّث جهة اتصال الطوارئ',
+    ];
+
+    /** @var array<string, string> */
+    private const STATUS_LABELS = [
+        'generated' => 'أُنشئ', 'printing' => 'أُرسل للطباعة', 'unassigned' => 'أصبح غير مُعيّن', 'available' => 'أصبح غير مُعيّن',
+        'assigned' => 'رُبط بالمركبة', 'replaced' => 'استُبدل', 'revoked' => 'أُلغي',
+    ];
+
     public function index(Request $request): View
     {
         $users = User::query()
@@ -32,13 +49,42 @@ class UserController extends Controller
 
     public function show(User $user, PlanEntitlements $plans): View
     {
-        $user->load(['profile', 'contactMethods', 'vehicles.tags', 'devices', 'subscriptions.plan']);
+        $user->load(['profile', 'contactMethods', 'vehicles.tags.lifecycleEvents', 'devices', 'subscriptions.plan']);
+
+        $vehicleIds = $user->vehicles->pluck('id');
+        $tagIds = $user->vehicles->flatMap(fn ($v) => $v->tags->pluck('id'));
+
+        // A single, merged "what happened to this account" timeline: general
+        // admin/audit actions on the user, plus every QR/NFC lifecycle event
+        // for their vehicles' tags (spec: "User 360", not several disconnected pages).
+        $timeline = AuditLog::where('resource_type', 'User')->where('resource_id', $user->id)
+            ->get()->map(fn ($log) => [
+                'at' => $log->created_at,
+                'text' => self::AUDIT_LABELS[$log->action] ?? $log->action,
+            ])
+            ->concat(
+                TagLifecycleEvent::whereIn('tag_id', $tagIds)->orWhereIn('vehicle_id', $vehicleIds)
+                    ->with('tag')->get()->map(fn ($event) => [
+                        'at' => $event->created_at,
+                        'text' => 'رمز '.$event->tag?->serial_number.': '.
+                            (self::STATUS_LABELS[$event->new_status] ?? $event->new_status).
+                            ($event->reason ? ' — '.$event->reason : ''),
+                    ])
+            )
+            ->concat(
+                ContactRequest::whereIn('vehicle_id', $vehicleIds)->get()->map(fn ($c) => [
+                    'at' => $c->created_at, 'text' => 'رسالة زائر جديدة على مركبة',
+                ])
+            )
+            ->push(['at' => $user->created_at, 'text' => 'إنشاء الحساب'])
+            ->sortByDesc('at')->values();
 
         return view('admin.users.show', [
             'user' => $user,
             'plan' => $plans->planFor($user),
             'activeSubscription' => $plans->activeSubscription($user),
             'paidPlans' => SubscriptionPlan::where('is_active', true)->where('price_cents', '>', 0)->orderBy('sort_order')->get(),
+            'timeline' => $timeline,
         ]);
     }
 

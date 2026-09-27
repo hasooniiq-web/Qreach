@@ -16,7 +16,7 @@ class Vehicle extends Model
     protected $fillable = [
         'user_id', 'nickname', 'plate_number', 'plate_country', 'make', 'model',
         'year', 'color', 'vehicle_type', 'description', 'status', 'privacy_settings',
-        'plate_type', 'plate_letter', 'plate_governorate',
+        'plate_type', 'plate_letter', 'plate_governorate', 'vin',
     ];
 
     protected function casts(): array

@@ -17,6 +17,7 @@ class StoreVehicleRequest extends FormRequest
             'plate_type' => ['nullable', 'in:private,government,truck,taxi,agricultural'],
             'plate_letter' => ['nullable', 'string', 'max:4', 'regex:/^[\p{L}]{1,4}$/u'],
             'plate_governorate' => ['nullable', 'string', 'max:40'],
+            'vin' => ['nullable', 'string', 'max:32', 'regex:/^[A-HJ-NPR-Z0-9]+$/i', 'unique:vehicles,vin'],
             'nickname' => ['nullable', 'string', 'max:100'],
             'plate_number' => ['required', 'string', 'max:32'],
             'plate_country' => ['nullable', 'string', 'size:2'],

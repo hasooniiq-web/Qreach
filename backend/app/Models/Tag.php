@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -15,6 +16,29 @@ use Illuminate\Support\Str;
  */
 class Tag extends Model
 {
+    use HasFactory;
+
+    /**
+     * The 6-stage lifecycle (spec naming -> internal value):
+     *   Created -> generated | Sent to Printing -> printing | Unassigned -> unassigned
+     *   Assigned -> assigned | Replacement (old code) -> replaced | Cancelled -> revoked
+     * `available`/`activated`/`disabled` are legacy values kept for old rows.
+     */
+    public const STATUS_CREATED = 'generated';
+
+    public const STATUS_PRINTING = 'printing';
+
+    public const STATUS_UNASSIGNED = 'unassigned';
+
+    public const STATUS_ASSIGNED = 'assigned';
+
+    public const STATUS_REPLACED = 'replaced';
+
+    public const STATUS_CANCELLED = 'revoked';
+
+    /** Statuses a tag may still be activated/replaced-into from. */
+    public const ASSIGNABLE_STATUSES = ['generated', 'available', 'unassigned'];
+
     protected $fillable = [
         'public_token', 'serial_number', 'type', 'batch_id', 'status', 'vehicle_id',
         'activated_at', 'assigned_at', 'revoked_at', 'revocation_reason', 'replaced_by_tag_id',
@@ -68,9 +92,20 @@ class Tag extends Model
         return $this->hasMany(Scan::class);
     }
 
+    public function lifecycleEvents(): HasMany
+    {
+        return $this->hasMany(TagLifecycleEvent::class)->latest('id');
+    }
+
+    /** The tag this one replaced, if it was created as a replacement. */
+    public function replaces(): HasOne
+    {
+        return $this->hasOne(Tag::class, 'replaced_by_tag_id');
+    }
+
     public function isAvailableForActivation(): bool
     {
-        return $this->status === 'available';
+        return in_array($this->status, self::ASSIGNABLE_STATUSES, true);
     }
 
     public function getRouteKeyName(): string

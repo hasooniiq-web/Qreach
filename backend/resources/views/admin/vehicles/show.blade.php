@@ -5,6 +5,15 @@
         <x-slot:actions><x-status-badge :status="$vehicle->status" /></x-slot:actions>
     </x-page-header>
 
+    <x-card class="mb-4">
+        <dl class="grid grid-cols-2 gap-4 text-sm sm:grid-cols-4">
+            <div><dt class="text-xs text-ink-400">النوع</dt><dd class="mt-1 text-ink-900">{{ $vehicle->vehicle_type }}</dd></div>
+            <div><dt class="text-xs text-ink-400">سنة الصنع</dt><dd class="mt-1 text-ink-900">{{ $vehicle->year ?? '—' }}</dd></div>
+            <div><dt class="text-xs text-ink-400">اللون</dt><dd class="mt-1 text-ink-900">{{ $vehicle->color ?? '—' }}</dd></div>
+            <div><dt class="text-xs text-ink-400">رقم الهيكل (VIN)</dt><dd class="mt-1 font-mono text-ink-900" dir="ltr">{{ $vehicle->vin ?? '—' }}</dd></div>
+        </dl>
+    </x-card>
+
     <div class="mb-4 grid grid-cols-1 gap-4 lg:grid-cols-2">
         <x-card>
             <h3 class="mb-3 text-sm font-semibold text-ink-900">المالك</h3>

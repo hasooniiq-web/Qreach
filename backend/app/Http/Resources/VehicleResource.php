@@ -15,6 +15,7 @@ class VehicleResource extends JsonResource
             'plate_number' => $this->plate_number,
             'plate_country' => $this->plate_country,
             'plate_type' => $this->plate_type ?? 'private',
+            'vin' => $this->vin,
             'plate_letter' => $this->plate_letter,
             'plate_governorate' => $this->plate_governorate,
             'make' => $this->make,

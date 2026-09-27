@@ -23,6 +23,7 @@
         <dl class="grid grid-cols-2 gap-4 text-sm sm:grid-cols-4">
             <div><dt class="text-xs text-ink-400">رقم الهاتف</dt><dd class="mt-1 tabular-nums text-ink-900" dir="ltr">{{ $user->phone }}</dd></div>
             <div><dt class="text-xs text-ink-400">تاريخ التسجيل</dt><dd class="mt-1 text-ink-900">{{ $user->created_at->format('Y-m-d') }}</dd></div>
+            <div><dt class="text-xs text-ink-400">آخر دخول</dt><dd class="mt-1 text-ink-900">{{ $user->last_login_at?->diffForHumans() ?? '—' }}</dd></div>
             <div><dt class="text-xs text-ink-400">عدد المركبات</dt><dd class="mt-1 text-ink-900">{{ $user->vehicles->count() }}</dd></div>
             <div><dt class="text-xs text-ink-400">عدد الأجهزة</dt><dd class="mt-1 text-ink-900">{{ $user->devices->count() }}</dd></div>
         </dl>
@@ -91,12 +92,30 @@
         <x-card>
             <h3 class="mb-3 text-sm font-semibold text-ink-900">المركبات ({{ $user->vehicles->count() }})</h3>
             @forelse ($user->vehicles as $vehicle)
-                <div class="flex items-center justify-between border-b border-ink-100 py-2 last:border-0">
-                    <div>
-                        <p class="text-sm font-medium text-ink-900">{{ $vehicle->nickname ?? $vehicle->plate_number }}</p>
-                        <p class="text-xs text-ink-400">{{ $vehicle->make }} {{ $vehicle->model }} — {{ $vehicle->tags->count() }} رمز</p>
+                <div class="border-b border-ink-100 py-3 last:border-0">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm font-medium text-ink-900">{{ $vehicle->nickname ?? $vehicle->plate_number }}</p>
+                            <p class="text-xs text-ink-400">
+                                {{ $vehicle->make }} {{ $vehicle->model }} {{ $vehicle->year }} · {{ $vehicle->color }}
+                                @if ($vehicle->vin)· VIN: <span dir="ltr">{{ $vehicle->vin }}</span>@endif
+                            </p>
+                        </div>
+                        <a href="{{ route('admin.vehicles.show', $vehicle) }}" class="text-xs font-medium text-ink-600 hover:underline">عرض</a>
                     </div>
-                    <a href="{{ route('admin.vehicles.show', $vehicle) }}" class="text-xs font-medium text-ink-600 hover:underline">عرض</a>
+                    @if ($vehicle->tags->isNotEmpty())
+                        <div class="mt-2 flex flex-wrap gap-1.5">
+                            @foreach ($vehicle->tags as $tag)
+                                <a href="{{ route('admin.tags.show', $tag) }}" class="inline-flex items-center gap-1.5 rounded-full border border-ink-200 px-2 py-0.5 text-xs text-ink-600 hover:border-ink-400">
+                                    <span class="uppercase">{{ $tag->type }}</span>
+                                    <span class="font-mono tabular-nums">{{ $tag->serial_number }}</span>
+                                    <x-status-badge :status="$tag->status" />
+                                </a>
+                            @endforeach
+                        </div>
+                    @else
+                        <p class="mt-1 text-xs text-ink-400">لا يوجد رمز مربوط بهذه المركبة.</p>
+                    @endif
                 </div>
             @empty
                 <p class="text-sm text-ink-400">لم يضف هذا المستخدم أي مركبة بعد.</p>
@@ -115,4 +134,19 @@
             @endforelse
         </x-card>
     </div>
+
+    <x-card class="mt-4" padding="p-0">
+        <h3 class="border-b border-ink-100 px-5 py-4 text-sm font-semibold text-ink-900">السجل الزمني للحساب</h3>
+        <div class="max-h-96 overflow-y-auto">
+            @forelse ($timeline as $item)
+                <div class="flex items-start gap-3 border-b border-ink-100 px-5 py-3 last:border-0">
+                    <span class="mt-1.5 size-1.5 shrink-0 rounded-full bg-ink-300"></span>
+                    <p class="flex-1 text-sm text-ink-800">{{ $item['text'] }}</p>
+                    <time class="shrink-0 text-xs text-ink-400">{{ $item['at']->format('Y-m-d H:i') }}</time>
+                </div>
+            @empty
+                <p class="px-5 py-8 text-center text-sm text-ink-400">لا يوجد نشاط مسجَّل بعد.</p>
+            @endforelse
+        </div>
+    </x-card>
 </x-layouts.admin>

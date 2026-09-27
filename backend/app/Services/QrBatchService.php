@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Tag;
 use App\Models\TagBatch;
+use App\Models\TagLifecycleEvent;
 use Endroid\QrCode\Builder\Builder;
 use Endroid\QrCode\ErrorCorrectionLevel;
 use Endroid\QrCode\Writer\PngWriter;
@@ -58,6 +59,20 @@ class QrBatchService
             }
 
             $batch->update(['status' => 'generated', 'generated_at' => now()]);
+
+            // "Created" — the first entry in every tag's immutable lifecycle ledger.
+            $now = now();
+            $tagIds = $batch->tags()->pluck('id');
+            foreach ($tagIds->chunk(500) as $chunk) {
+                TagLifecycleEvent::insert($chunk->map(fn ($id) => [
+                    'tag_id' => $id,
+                    'previous_status' => null,
+                    'new_status' => 'generated',
+                    'performed_by_type' => 'admin',
+                    'performed_by_id' => $createdByAdminId,
+                    'created_at' => $now,
+                ])->all());
+            }
 
             AuditLogger::log(
                 'qr.batch_generated', 'admin', $createdByAdminId, 'TagBatch', $batch->id,

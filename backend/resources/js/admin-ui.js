@@ -124,6 +124,15 @@ refreshCounts();
 setInterval(refreshCounts, 15000);
 document.addEventListener('visibilitychange', refreshCounts);
 
+// ---- Role permission picker: "select all" per group ----------------------
+document.addEventListener('click', (event) => {
+    const button = event.target instanceof Element ? event.target.closest('[data-select-group]') : null;
+    if (!button) return;
+    const boxes = document.querySelectorAll(`input[data-permission-group="${CSS.escape(button.dataset.selectGroup)}"]`);
+    const allChecked = [...boxes].every((box) => box.checked);
+    boxes.forEach((box) => { box.checked = !allChecked; });
+});
+
 // ---- Appearance menu (system / light / dark) ------------------------------
 function showThemeState() {
     const mode = document.documentElement.dataset.themeMode || 'system';

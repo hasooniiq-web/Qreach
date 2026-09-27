@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exceptions\TagActivationException;
 use App\Http\Controllers\Controller;
 use App\Models\Tag;
 use App\Services\TagLifecycleService;
@@ -41,11 +42,50 @@ class TagController extends Controller
         return back()->with('status', 'تم إلغاء الرمز بنجاح.');
     }
 
+    /**
+     * Replacement workflow: pick an existing unassigned/generated tag by its
+     * serial number and swap it in for this one. The old tag becomes
+     * permanently unusable ("Replacement" status); the new one takes over the
+     * same vehicle. Both stay linked for auditing.
+     */
+    public function replace(Request $request, Tag $tag): RedirectResponse
+    {
+        $data = $request->validate([
+            'new_tag_serial' => ['required', 'string'],
+            'reason' => ['required', 'string', 'max:255'],
+        ], [], ['new_tag_serial' => 'الرقم التسلسلي للرمز الجديد']);
+
+        $newTag = Tag::where('serial_number', $data['new_tag_serial'])->first();
+
+        if (! $newTag) {
+            return back()->withErrors(['new_tag_serial' => 'لا يوجد رمز بهذا الرقم التسلسلي.'])->withInput();
+        }
+
+        try {
+            $this->lifecycle->replace($tag, $newTag, $data['reason'], 'admin', $request->user('admin')->id);
+        } catch (TagActivationException $e) {
+            return back()->withErrors(['new_tag_serial' => $e->getMessage()])->withInput();
+        }
+
+        return redirect()->route('admin.tags.show', $newTag)->with('status', "تم استبدال الرمز {$tag->serial_number} بالرمز {$newTag->serial_number} بنجاح.");
+    }
+
     public function show(Tag $tag): View
     {
-        $tag->load('vehicle.user', 'qrTag', 'nfcTag', 'batch');
+        $tag->load('vehicle.user', 'qrTag', 'nfcTag', 'batch', 'lifecycleEvents', 'replaces');
 
-        return view('admin.tags.show', ['tag' => $tag, 'url' => $this->publicUrl($tag)]);
+        $replacementCandidates = Tag::where('type', $tag->type)
+            ->whereIn('status', Tag::ASSIGNABLE_STATUSES)
+            ->where('id', '!=', $tag->id)
+            ->orderByDesc('id')
+            ->limit(50)
+            ->pluck('serial_number');
+
+        return view('admin.tags.show', [
+            'tag' => $tag,
+            'url' => $this->publicUrl($tag),
+            'replacementCandidates' => $replacementCandidates,
+        ]);
     }
 
     /**

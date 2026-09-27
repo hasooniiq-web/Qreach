@@ -7,6 +7,8 @@ use App\Http\Requests\Admin\StoreTagBatchRequest;
 use App\Models\TagBatch;
 use App\Services\AuditLogger;
 use App\Services\QrBatchService;
+use App\Services\TagLifecycleService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -14,7 +16,10 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class TagBatchController extends Controller
 {
-    public function __construct(private readonly QrBatchService $batches) {}
+    public function __construct(
+        private readonly QrBatchService $batches,
+        private readonly TagLifecycleService $lifecycle,
+    ) {}
 
     public function index(): View
     {
@@ -57,6 +62,60 @@ class TagBatchController extends Controller
         $tags = $tagBatch->tags()->with('qrTag')->get();
 
         return view('admin.tag-batches.print', ['batch' => $tagBatch, 'tags' => $tags]);
+    }
+
+    /** Lifecycle step 1: "Sent to Printing" — bulk, idempotent. */
+    public function sendToPrinting(Request $request, TagBatch $tagBatch): RedirectResponse
+    {
+        $count = $this->lifecycle->sendBatchToPrinting($tagBatch, 'admin', $request->user('admin')->id);
+
+        return back()->with('status', $count > 0
+            ? "تم تحويل {$count} رمزًا إلى حالة «أُرسل للطباعة»."
+            : 'لا توجد رموز في حالة «تم الإنشاء» لتحويلها.');
+    }
+
+    /** Lifecycle step 2: codes are back from the printer and ready to hand out — "Unassigned". */
+    public function markUnassigned(Request $request, TagBatch $tagBatch): RedirectResponse
+    {
+        $count = $this->lifecycle->markBatchUnassigned($tagBatch, 'admin', $request->user('admin')->id);
+
+        return back()->with('status', $count > 0
+            ? "تم تحويل {$count} رمزًا إلى حالة «غير مُعيّن» — جاهزة للربط الآن."
+            : 'لا توجد رموز في حالة «أُرسل للطباعة» لتحويلها.');
+    }
+
+    /** Machine-readable export: every field needed to reprint/re-issue, no user/vehicle data. */
+    public function exportCodes(Request $request, TagBatch $tagBatch): JsonResponse
+    {
+        AuditLogger::log('qr.batch_exported', 'admin', $request->user('admin')->id, 'TagBatch', $tagBatch->id, 'success', ['format' => 'codes']);
+
+        $codes = $tagBatch->tags()->get(['serial_number', 'public_token', 'type', 'status'])
+            ->map(fn ($tag) => [
+                'serial_number' => $tag->serial_number,
+                'public_token' => $tag->public_token,
+                'public_url' => url('/t/'.$tag->public_token),
+                'type' => $tag->type,
+                'status' => $tag->status,
+            ]);
+
+        return response()->json(['batch' => $tagBatch->batch_code, 'count' => $codes->count(), 'codes' => $codes])
+            ->header('Content-Disposition', "attachment; filename=\"{$tagBatch->batch_code}.json\"");
+    }
+
+    /** Plain-text export: one human-readable serial number per line — for a print shop's own tooling. */
+    public function exportText(Request $request, TagBatch $tagBatch): StreamedResponse
+    {
+        AuditLogger::log('qr.batch_exported', 'admin', $request->user('admin')->id, 'TagBatch', $tagBatch->id, 'success', ['format' => 'text']);
+
+        $filename = "{$tagBatch->batch_code}.txt";
+
+        return response()->streamDownload(function () use ($tagBatch) {
+            $tagBatch->tags()->orderBy('id')->chunk(500, function ($tags) {
+                foreach ($tags as $tag) {
+                    echo $tag->serial_number.PHP_EOL;
+                }
+            });
+        }, $filename, ['Content-Type' => 'text/plain; charset=UTF-8']);
     }
 
     public function exportCsv(Request $request, TagBatch $tagBatch): StreamedResponse

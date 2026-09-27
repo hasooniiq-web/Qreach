@@ -6,11 +6,15 @@ use App\Http\Controllers\Admin\AuditLogController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\ContactRequestController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\DevOtpController;
 use App\Http\Controllers\Admin\EmergencyController;
 use App\Http\Controllers\Admin\PasswordController;
+use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\PlanController;
 use App\Http\Controllers\Admin\ProfileController;
 use App\Http\Controllers\Admin\ReportController;
+use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\Admin\SearchController;
 use App\Http\Controllers\Admin\SecurityEventController;
 use App\Http\Controllers\Admin\SubscriptionController;
 use App\Http\Controllers\Admin\SystemSettingController;
@@ -67,8 +71,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::middleware('admin.2fa')->group(function () {
             Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
             Route::get('poll', [DashboardController::class, 'poll'])->name('poll');
-            Route::get('search', \App\Http\Controllers\Admin\SearchController::class)->name('search');
-            Route::get('dev-otp', [\App\Http\Controllers\Admin\DevOtpController::class, 'index'])
+            Route::get('search', SearchController::class)->name('search');
+            Route::get('dev-otp', [DevOtpController::class, 'index'])
                 ->middleware('admin.permission:settings.view')->name('dev-otp');
 
             // Own profile only — none of these take an admin id, so there is no
@@ -139,7 +143,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
                 Route::get('qr/{tag:public_token}/image.{format}', [TagController::class, 'image'])->name('tags.image');
             });
             Route::post('qr/{tag:public_token}/revoke', [TagController::class, 'revoke'])
-                ->middleware('admin.permission:qr.revoke')->name('tags.revoke');
+                ->middleware('admin.permission:qr.revoke,qr.cancel,nfc.revoke,nfc.cancel')->name('tags.revoke');
+            Route::post('qr/{tag:public_token}/replace', [TagController::class, 'replace'])
+                ->middleware('admin.permission:qr.replace,nfc.replace')->name('tags.replace');
 
             // Literal-segment routes (batches/create) must be registered before
             // the wildcard batches/{tagBatch} route, or Laravel's router matches
@@ -148,13 +154,21 @@ Route::prefix('admin')->name('admin.')->group(function () {
                 Route::get('batches/create', [TagBatchController::class, 'create'])->name('tag-batches.create');
                 Route::post('batches', [TagBatchController::class, 'store'])->name('tag-batches.store');
             });
-            Route::middleware('admin.permission:qr.view')->group(function () {
+            Route::middleware('admin.permission:qr.view,printing.view')->group(function () {
                 Route::get('batches', [TagBatchController::class, 'index'])->name('tag-batches.index');
                 Route::get('batches/{tagBatch}', [TagBatchController::class, 'show'])->name('tag-batches.show');
                 Route::get('batches/{tagBatch}/print', [TagBatchController::class, 'print'])->name('tag-batches.print');
             });
             Route::get('batches/{tagBatch}/export', [TagBatchController::class, 'exportCsv'])
-                ->middleware('admin.permission:qr.export')->name('tag-batches.export');
+                ->middleware('admin.permission:qr.export,printing.export')->name('tag-batches.export');
+            Route::middleware('admin.permission:printing.export')->group(function () {
+                Route::get('batches/{tagBatch}/export/codes', [TagBatchController::class, 'exportCodes'])->name('tag-batches.export.codes');
+                Route::get('batches/{tagBatch}/export/text', [TagBatchController::class, 'exportText'])->name('tag-batches.export.text');
+            });
+            Route::middleware('admin.permission:printing.create')->group(function () {
+                Route::post('batches/{tagBatch}/send-to-printing', [TagBatchController::class, 'sendToPrinting'])->name('tag-batches.send-to-printing');
+                Route::post('batches/{tagBatch}/mark-unassigned', [TagBatchController::class, 'markUnassigned'])->name('tag-batches.mark-unassigned');
+            });
 
             Route::middleware('admin.permission:contact_requests.view')->group(function () {
                 Route::get('contact-requests', [ContactRequestController::class, 'index'])->name('contact-requests.index');
@@ -170,7 +184,23 @@ Route::prefix('admin')->name('admin.')->group(function () {
                 ->middleware('admin.permission:security.resolve')->name('security.resolve');
 
             Route::get('audit', [AuditLogController::class, 'index'])
-                ->middleware('admin.permission:audit.view')->name('audit.index');
+                ->middleware('admin.permission:audit.view,audit_logs.view')->name('audit.index');
+
+            Route::middleware('admin.permission:roles.view')->group(function () {
+                Route::get('roles', [RoleController::class, 'index'])->name('roles.index');
+                Route::get('roles/{role}/edit', [RoleController::class, 'edit'])->name('roles.edit');
+            });
+            Route::middleware('admin.permission:roles.create')->group(function () {
+                Route::get('roles/create', [RoleController::class, 'create'])->name('roles.create');
+                Route::post('roles', [RoleController::class, 'store'])->name('roles.store');
+            });
+            Route::put('roles/{role}', [RoleController::class, 'update'])
+                ->middleware('admin.permission:roles.update')->name('roles.update');
+            Route::delete('roles/{role}', [RoleController::class, 'destroy'])
+                ->middleware('admin.permission:roles.delete')->name('roles.destroy');
+
+            Route::get('permissions', [PermissionController::class, 'index'])
+                ->middleware('admin.permission:permissions.view')->name('permissions.index');
 
             Route::middleware('admin.permission:admins.view')->group(function () {
                 Route::get('admins', [AdminManagementController::class, 'index'])->name('admins.index');
