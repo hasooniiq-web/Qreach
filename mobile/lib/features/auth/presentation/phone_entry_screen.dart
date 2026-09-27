@@ -71,10 +71,13 @@ class _PhoneEntryScreenState extends ConsumerState<PhoneEntryScreen> {
               controller: _phoneController,
               keyboardType: TextInputType.phone,
               textDirection: TextDirection.ltr,
+              // No "+964" shown anywhere: the system is Iraq-only, so the
+              // field just takes the local number as people actually type it
+              // (with or without the leading zero) — toIraqiE164 adds the
+              // country code internally when the request is sent.
               decoration: InputDecoration(
                 labelText: l10n.phoneLabel,
                 hintText: l10n.phoneHint,
-                prefixText: '+964 ',
               ),
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {

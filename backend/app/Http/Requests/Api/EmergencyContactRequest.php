@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Api;
 
 use App\Rules\PlainTextOnly;
+use App\Services\IraqiPhone;
 use Illuminate\Foundation\Http\FormRequest;
 
 class EmergencyContactRequest extends FormRequest
@@ -10,6 +11,15 @@ class EmergencyContactRequest extends FormRequest
     public function authorize(): bool
     {
         return true;
+    }
+
+    /** Accepts the leading trunk zero ("07...") the same as "7..." or a
+     *  number already written with a country code, before it is stored. */
+    protected function prepareForValidation(): void
+    {
+        if ($this->filled('phone')) {
+            $this->merge(['phone' => IraqiPhone::normalize($this->input('phone')) ?? $this->input('phone')]);
+        }
     }
 
     public function rules(): array

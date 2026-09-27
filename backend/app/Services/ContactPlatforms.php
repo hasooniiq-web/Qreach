@@ -15,8 +15,10 @@ class ContactPlatforms
     public static function all(): array
     {
         return [
-            'phone' => ['label' => 'اتصال هاتفي', 'hint' => '+9647701234567'],
-            'whatsapp' => ['label' => 'واتساب', 'hint' => '+9647701234567'],
+            // No country code in the hint: the system is Iraq-only, and the
+            // value is normalized (with or without the leading zero) below.
+            'phone' => ['label' => 'اتصال هاتفي', 'hint' => '07701234567'],
+            'whatsapp' => ['label' => 'واتساب', 'hint' => '07701234567'],
             'telegram' => ['label' => 'تيليغرام', 'hint' => 'username'],
             'instagram' => ['label' => 'إنستغرام', 'hint' => 'username'],
             'facebook' => ['label' => 'فيسبوك', 'hint' => 'username أو رابط الصفحة'],
@@ -48,7 +50,7 @@ class ContactPlatforms
         $handle = ltrim($value, '@');
 
         return match ($type) {
-            'phone', 'whatsapp' => preg_match('/^\+?[1-9]\d{7,14}$/', $value) ? $value : null,
+            'phone', 'whatsapp' => IraqiPhone::normalize($value),
             'telegram' => preg_match('/^[A-Za-z0-9_]{5,32}$/', $handle) ? $handle : null,
             'instagram' => preg_match('/^[A-Za-z0-9._]{1,30}$/', $handle) ? $handle : null,
             'facebook' => preg_match('/^[A-Za-z0-9.]{5,50}$/', $handle) || preg_match('#^https://(www\.)?(facebook|fb)\.com/[\w.\-/?=&%]+$#i', $value)

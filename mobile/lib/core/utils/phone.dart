@@ -22,8 +22,10 @@ bool isValidIraqiLocalNumber(String raw) {
   return RegExp(r'^7\d{9}$').hasMatch(stripIraqiTrunkZero(raw));
 }
 
-/// Builds the full `+964XXXXXXXXXX` number from whatever the user typed in a
-/// field that always has a fixed `+964 ` prefix in front of it.
+/// Builds the full `+964XXXXXXXXXX` number from the local number the user
+/// typed on the login screen — no "+964" is ever shown on screen, since the
+/// app is Iraq-only; the country code is only added here, internally, before
+/// the request is sent.
 String toIraqiE164(String localNumber) =>
     '+964${stripIraqiTrunkZero(localNumber)}';
 

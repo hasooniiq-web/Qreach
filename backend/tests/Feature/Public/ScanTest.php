@@ -153,6 +153,18 @@ class ScanTest extends TestCase
         $this->assertDatabaseHas('contact_requests', ['tag_id' => $tag->id, 'message' => 'لاحظت ضررًا في المركبة']);
     }
 
+    public function test_visitor_phone_is_accepted_and_normalized_with_or_without_the_leading_trunk_zero(): void
+    {
+        Notification::fake();
+        $tag = $this->makeAssignedTag();
+
+        $this->post("/t/{$tag->public_token}/contact", [
+            'reason' => 'assistance', 'visitor_phone' => '07701234567',
+        ])->assertSessionDoesntHaveErrors()->assertRedirect();
+
+        $this->assertDatabaseHas('contact_requests', ['tag_id' => $tag->id, 'visitor_phone' => '+9647701234567']);
+    }
+
     public function test_free_text_and_the_other_reason_are_not_accepted(): void
     {
         $tag = $this->makeAssignedTag();

@@ -322,7 +322,7 @@ class _PhoneCardState extends State<_PhoneCard> {
             onChanged: (_) => setState(() {}),
             decoration: InputDecoration(
               labelText: l10n.phoneShownLabel,
-              hintText: '+9647XXXXXXXXX',
+              hintText: '07XXXXXXXXX',
               prefixIcon: const Icon(Icons.phone_outlined),
               suffixIcon: TextButton(
                 onPressed: () =>
@@ -414,7 +414,7 @@ class _EmergencyCardState extends State<_EmergencyCard> {
               keyboardType: TextInputType.phone,
               textDirection: TextDirection.ltr,
               decoration: InputDecoration(
-                  labelText: l10n.emergencyPhone, hintText: '+9647XXXXXXXXX'),
+                  labelText: l10n.emergencyPhone, hintText: '07XXXXXXXXX'),
               validator: (v) => normalizePhoneInput(v ?? '') != null
                   ? null
                   : l10n.invalidPhone,
