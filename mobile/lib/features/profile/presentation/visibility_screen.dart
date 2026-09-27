@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../core/utils/phone.dart';
+
 import '../../../core/network/api_client.dart';
 import '../../../core/providers.dart';
 import '../../../core/theme/app_colors.dart';
@@ -298,6 +300,13 @@ class _PhoneCardState extends State<_PhoneCard> {
     super.dispose();
   }
 
+  // Accepts a local Iraqi number with or without the leading trunk zero, or
+  // one already written with a country code; falls back to the raw text
+  // (unchanged behaviour) so an actually-invalid value still reaches the
+  // server and shows its error message.
+  String get _normalizedOrRaw =>
+      normalizePhoneInput(_controller.text) ?? _controller.text.trim();
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -316,8 +325,8 @@ class _PhoneCardState extends State<_PhoneCard> {
               hintText: '+9647XXXXXXXXX',
               prefixIcon: const Icon(Icons.phone_outlined),
               suffixIcon: TextButton(
-                onPressed: () => widget.onSave(
-                    _controller.text.trim(), widget.field.visible),
+                onPressed: () =>
+                    widget.onSave(_normalizedOrRaw, widget.field.visible),
                 child: Text(l10n.save),
               ),
             ),
@@ -326,7 +335,7 @@ class _PhoneCardState extends State<_PhoneCard> {
             contentPadding: EdgeInsets.zero,
             value: widget.field.visible && widget.field.canShow,
             onChanged: has && widget.field.canShow
-                ? (v) => widget.onSave(_controller.text.trim(), v)
+                ? (v) => widget.onSave(_normalizedOrRaw, v)
                 : null,
             title: Text(l10n.showToVisitors),
           ),
@@ -371,8 +380,10 @@ class _EmergencyCardState extends State<_EmergencyCard> {
 
   void _save(bool visible) {
     if (!_form.currentState!.validate()) return;
-    widget.onSave(
-        _name.text.trim(), _relation.text.trim(), _phone.text.trim(), visible);
+    // Accepts a local Iraqi number with or without the leading trunk zero,
+    // as well as one already written with a country code.
+    final phone = normalizePhoneInput(_phone.text) ?? _phone.text.trim();
+    widget.onSave(_name.text.trim(), _relation.text.trim(), phone, visible);
   }
 
   @override
@@ -404,10 +415,9 @@ class _EmergencyCardState extends State<_EmergencyCard> {
               textDirection: TextDirection.ltr,
               decoration: InputDecoration(
                   labelText: l10n.emergencyPhone, hintText: '+9647XXXXXXXXX'),
-              validator: (v) =>
-                  RegExp(r'^\+?[1-9]\d{7,14}$').hasMatch(v?.trim() ?? '')
-                      ? null
-                      : l10n.invalidPhone,
+              validator: (v) => normalizePhoneInput(v ?? '') != null
+                  ? null
+                  : l10n.invalidPhone,
             ),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,

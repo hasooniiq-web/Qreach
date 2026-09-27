@@ -4,8 +4,8 @@ import '../../../shared/widgets/app_button.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/network/api_client.dart';
-import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
+import '../../../core/utils/phone.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/error_banner.dart';
 import 'auth_controller.dart';
@@ -30,7 +30,9 @@ class _PhoneEntryScreenState extends ConsumerState<PhoneEntryScreen> {
     super.dispose();
   }
 
-  String get _fullPhone => '+964${_phoneController.text.trim()}';
+  // Accepts either "7701234567" or the locally-dialed "07701234567" — the
+  // leading trunk zero is stripped before the fixed +964 prefix is added.
+  String get _fullPhone => toIraqiE164(_phoneController.text);
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
@@ -78,8 +80,9 @@ class _PhoneEntryScreenState extends ConsumerState<PhoneEntryScreen> {
                 if (value == null || value.trim().isEmpty) {
                   return l10n.requiredField;
                 }
-                // Iraqi mobile: 7 followed by 9 digits (10 after +964).
-                if (!RegExp(r'^7\d{9}$').hasMatch(value.trim())) {
+                // Iraqi mobile: 7 followed by 9 digits, with or without the
+                // leading trunk zero people dial with (07... or 7...).
+                if (!isValidIraqiLocalNumber(value)) {
                   return l10n.invalidPhone;
                 }
                 return null;
