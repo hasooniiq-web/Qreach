@@ -8,11 +8,14 @@ import 'app.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // Only Android has a registered Firebase config (android/app/google-
-  // services.json) so far — see docs/MOBILE_SECURITY.md. Guard by platform
-  // so an iOS/web build doesn't crash at startup with no native config file
-  // for Firebase.initializeApp() to read.
-  if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
+  // Android (android/app/google-services.json) and iOS (ios/Runner/
+  // GoogleService-Info.plist) both have a registered Firebase config — see
+  // docs/MOBILE_SECURITY.md. Guard by platform so web (no config there yet)
+  // doesn't crash at startup with no native config file for
+  // Firebase.initializeApp() to read.
+  if (!kIsWeb &&
+      (defaultTargetPlatform == TargetPlatform.android ||
+          defaultTargetPlatform == TargetPlatform.iOS)) {
     // Push is optional: if Firebase can't start (missing Play Services, bad
     // config) the app must still open and work, just without notifications.
     try {

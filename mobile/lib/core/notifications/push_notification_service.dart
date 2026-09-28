@@ -4,21 +4,34 @@ import 'package:flutter/foundation.dart';
 import '../network/api_client.dart';
 
 /// Registers this device for Firebase Cloud Messaging and keeps the
-/// backend's `devices.push_token` in sync. Android-only for now — no iOS
-/// Firebase config (GoogleService-Info.plist) has been registered yet, see
-/// docs/MOBILE_SECURITY.md.
+/// backend's `devices.push_token` in sync. Android and iOS both have a
+/// registered Firebase config now (see docs/MOBILE_SECURITY.md) — iOS still
+/// goes through FCM, not raw APNs, since firebase_messaging relays through
+/// it, so `push_provider` is "fcm" on both platforms and only the
+/// `platform` value differs.
 class PushNotificationService {
   PushNotificationService(this._client);
 
   final ApiClient _client;
 
   Future<void> registerForPushNotifications() async {
-    if (kIsWeb || defaultTargetPlatform != TargetPlatform.android) return;
+    if (kIsWeb ||
+        (defaultTargetPlatform != TargetPlatform.android &&
+            defaultTargetPlatform != TargetPlatform.iOS)) {
+      return;
+    }
 
     try {
       final messaging = FirebaseMessaging.instance;
       final settings = await messaging.requestPermission();
       if (settings.authorizationStatus == AuthorizationStatus.denied) return;
+
+      // iOS needs the APNs token registered before FCM can hand out a
+      // token; the plugin fetches it under the hood, but on a fresh
+      // install that can briefly lag behind requestPermission() returning.
+      if (defaultTargetPlatform == TargetPlatform.iOS) {
+        await messaging.getAPNSToken();
+      }
 
       final token = await messaging.getToken();
       if (token != null) {
@@ -37,7 +50,8 @@ class PushNotificationService {
   Future<void> _sendTokenToBackend(String token) async {
     try {
       await _client.dio.put('/devices/push-token', data: {
-        'platform': 'android',
+        'platform':
+            defaultTargetPlatform == TargetPlatform.iOS ? 'ios' : 'android',
         'push_provider': 'fcm',
         'push_token': token,
       });

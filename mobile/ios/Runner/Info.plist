@@ -10,6 +10,12 @@
 	<string>Qreach SmartTag</string>
 	<key>NSCameraUsageDescription</key>
 	<string>يحتاج التطبيق إلى الكاميرا لمسح رمز QR الخاص بالمركبة.</string>
+	<key>UIBackgroundModes</key>
+	<array>
+		<string>remote-notification</string>
+	</array>
+	<key>FirebaseAppDelegateProxyEnabled</key>
+	<true/>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
