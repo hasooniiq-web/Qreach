@@ -1,0 +1,57 @@
+workflows:
+  ios-workflow:
+    name: iOS Workflow
+    max_build_duration: 120
+    instance_type: mac_mini_m2
+    integrations:
+      # Set this up once in Codemagic: Team settings → Integrations → Apple
+      # Developer Portal / App Store Connect. Name the integration "codemagic"
+      # there, or change the value below to whatever name you used.
+      app_store_connect: codemagic
+    environment:
+      ios_signing:
+        distribution_type: app_store
+        bundle_identifier: com.qreach.qreachSmarttag
+      vars:
+        XCODE_WORKSPACE: "Runner.xcworkspace"
+        XCODE_SCHEME: "Runner"
+      flutter: stable
+      xcode: latest
+      cocoapods: default
+    cache:
+      cache_paths:
+        - $HOME/.pub-cache
+    triggering:
+      events:
+        - push
+      branch_patterns:
+        # Update this if your default branch isn't "master".
+        - pattern: master
+          include: true
+          source: true
+    scripts:
+      - name: Get Flutter packages
+        script: cd mobile && flutter packages pub get
+      - name: Set up code signing settings on Xcode project
+        script: cd mobile && xcode-project use-profiles
+      - name: Run Flutter unit tests
+        script: cd mobile && flutter test
+      - name: Flutter build ipa for distribution
+        script: |
+          cd mobile && flutter build ipa --release \
+            --export-options-plist=/Users/builder/export_options.plist
+    artifacts:
+      - mobile/build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      email:
+        recipients:
+          - husseinnaeem0@gmail.com
+        notify:
+          success: true
+          failure: true
+      # Uncomment once the app is registered in App Store Connect and the
+      # integration above is verified working, to auto-upload to TestFlight.
+      # app_store_connect:
+      #   auth: integration
+      #   submit_to_testflight: true
