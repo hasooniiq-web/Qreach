@@ -10,6 +10,7 @@ use App\Models\User;
 use App\Models\Vehicle;
 use Database\Seeders\SubscriptionPlanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Tests\TestCase;
 
 /**
@@ -180,5 +181,37 @@ class ProfileVisibilityTest extends TestCase
 
         $this->putJson('/api/v1/profile', ['name' => 'x'], $headers)->assertStatus(422);
         $this->putJson('/api/v1/profile', ['name' => '<b>x</b>'], $headers)->assertStatus(422);
+    }
+
+    public function test_avatar_and_cover_are_hidden_by_default_and_shown_only_when_switched_on(): void
+    {
+        $owner = User::factory()->create();
+        $vehicle = Vehicle::factory()->for($owner)->create();
+        $tag = Tag::create([
+            'public_token' => bin2hex(random_bytes(16)), 'serial_number' => 'ST-Q-AV-'.random_int(1000, 9999),
+            'type' => 'qr', 'status' => 'assigned', 'vehicle_id' => $vehicle->id,
+        ]);
+        $headers = $this->bearer($owner);
+
+        $this->postJson('/api/v1/profile/avatar', ['avatar' => UploadedFile::fake()->image('avatar.jpg', 300, 300)], $headers)
+            ->assertOk()->assertJsonPath('has_avatar', true);
+        $this->postJson('/api/v1/profile/cover', ['cover' => UploadedFile::fake()->image('cover.jpg', 1200, 400)], $headers)
+            ->assertOk()->assertJsonPath('has_cover', true);
+
+        // Uploaded, but not switched on yet: the public scan page serves neither.
+        $this->get("/t/{$tag->public_token}/avatar")->assertNotFound();
+        $this->get("/t/{$tag->public_token}/cover")->assertNotFound();
+
+        $this->putJson('/api/v1/profile/visibility', ['show_avatar' => true, 'show_cover' => true], $headers)
+            ->assertOk()->assertJsonPath('show_avatar', true)->assertJsonPath('show_cover', true);
+
+        $this->get("/t/{$tag->public_token}/avatar")->assertOk()->assertHeader('Content-Type', 'image/jpeg');
+        $this->get("/t/{$tag->public_token}/cover")->assertOk()->assertHeader('Content-Type', 'image/jpeg');
+    }
+
+    public function test_updating_visibility_with_no_fields_is_rejected(): void
+    {
+        $owner = User::factory()->create();
+        $this->putJson('/api/v1/profile/visibility', [], $this->bearer($owner))->assertStatus(422);
     }
 }

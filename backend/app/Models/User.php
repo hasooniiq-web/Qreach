@@ -30,7 +30,10 @@ class User extends Authenticatable
         'email_verified_at',
         'last_login_at',
         'avatar_path',
+        'cover_path',
         'show_name_publicly',
+        'show_avatar_publicly',
+        'show_cover_publicly',
     ];
 
     protected $hidden = [
@@ -44,6 +47,8 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'last_login_at' => 'datetime',
             'show_name_publicly' => 'boolean',
+            'show_avatar_publicly' => 'boolean',
+            'show_cover_publicly' => 'boolean',
         ];
     }
 

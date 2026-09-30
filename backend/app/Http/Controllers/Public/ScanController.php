@@ -49,13 +49,45 @@ class ScanController extends Controller
             'user_agent' => $request->userAgent(),
         ]);
 
+        $contacts = app(PublicContacts::class);
+
         return view('public.scan', [
             'tag' => $tag,
             'vehicle' => $tag->vehicle,
             'publicAttributes' => $tag->vehicle->publicAttributes(),
-            'ownerContacts' => app(PublicContacts::class)->visibleTo($tag->vehicle->user),
-            'ownerName' => app(PublicContacts::class)->nameFor($tag->vehicle->user),
-            'emergency' => app(PublicContacts::class)->emergencyFor($tag->vehicle->user),
+            'ownerContacts' => $contacts->visibleTo($tag->vehicle->user),
+            'ownerName' => $contacts->nameFor($tag->vehicle->user),
+            'emergency' => $contacts->emergencyFor($tag->vehicle->user),
+            'ownerAvatarUrl' => $contacts->avatarUrlFor($tag->vehicle->user, $tag->public_token),
+            'ownerCoverUrl' => $contacts->coverUrlFor($tag->vehicle->user, $tag->public_token),
+        ]);
+    }
+
+    /** The owner's avatar, only served if they switched it on for this scan page. */
+    public function ownerAvatar(Request $request, string $token): HttpResponse
+    {
+        $tag = $this->resolveActiveTagOrFail($token, $request);
+        $user = $tag->vehicle->user;
+
+        abort_unless($user->show_avatar_publicly && $user->avatar_path && Storage::disk('local')->exists($user->avatar_path), 404);
+
+        return Storage::disk('local')->response($user->avatar_path, null, [
+            'Content-Type' => 'image/jpeg',
+            'Cache-Control' => 'public, max-age=300',
+        ]);
+    }
+
+    /** The owner's cover photo, only served if they switched it on for this scan page. */
+    public function ownerCover(Request $request, string $token): HttpResponse
+    {
+        $tag = $this->resolveActiveTagOrFail($token, $request);
+        $user = $tag->vehicle->user;
+
+        abort_unless($user->show_cover_publicly && $user->cover_path && Storage::disk('local')->exists($user->cover_path), 404);
+
+        return Storage::disk('local')->response($user->cover_path, null, [
+            'Content-Type' => 'image/jpeg',
+            'Cache-Control' => 'public, max-age=300',
         ]);
     }
 

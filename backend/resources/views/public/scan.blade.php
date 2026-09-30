@@ -24,8 +24,17 @@
 
     {{-- Identity. By default a visitor learns nothing about the owner: the name,
          phone, emergency contact and any other contact method appear only if the
-         owner explicitly switched them on (and their plan allows it). --}}
-    <section class="mb-6 rounded-xl bg-brand-black p-5 text-white">
+         owner explicitly switched them on (and their plan allows it). Avatar and
+         cover follow the exact same "off unless switched on" rule. --}}
+    @if ($ownerCoverUrl)
+        <img src="{{ $ownerCoverUrl }}" alt="" class="-mb-8 h-32 w-full rounded-xl object-cover sm:h-40">
+    @endif
+    <section class="relative mb-6 rounded-xl bg-brand-black p-5 text-white">
+        @if ($ownerAvatarUrl)
+            <img src="{{ $ownerAvatarUrl }}" alt="{{ $ownerName ?: 'صاحب المركبة' }}"
+                 class="absolute -top-8 start-5 size-16 rounded-full border-4 border-brand-black object-cover">
+        @endif
+        <div class="{{ $ownerAvatarUrl ? 'pt-9' : '' }}">
         <div class="mb-3 flex items-center gap-2 text-xs font-medium text-brand-yellow">
             <x-icon name="shield" class="size-4" />
             مركبة محمية عبر Qreach SmartTag
@@ -57,33 +66,70 @@
         @unless ($hasDirect)
             <p class="mt-4 text-xs text-white/60">لا يعرض المالك أي بيانات تواصل — أرسل له رسالة وسيصله إشعار.</p>
         @endunless
+        </div>
     </section>
 
     @if ($emergency || count($ownerContacts) > 0)
-        <section class="mb-6 rounded-xl border border-ink-200 bg-white p-4" aria-labelledby="direct-contact-title">
+        @php
+            // A distinct icon + tint per platform so the list reads at a
+            // glance instead of as a wall of identical rows (still labeled
+            // with text too, never color/icon alone).
+            $platformStyle = [
+                'phone' => ['phone', 'bg-ink-900 text-white'],
+                'whatsapp' => ['chat-bubble', 'bg-[#25D366]/15 text-[#128C7E]'],
+                'telegram' => ['send', 'bg-[#229ED9]/15 text-[#229ED9]'],
+                'instagram' => ['camera', 'bg-[#E1306C]/15 text-[#E1306C]'],
+                'facebook' => ['chat-bubble', 'bg-[#1877F2]/15 text-[#1877F2]'],
+                'snapchat' => ['camera', 'bg-[#FFFC00]/40 text-ink-900'],
+                'tiktok' => ['globe', 'bg-ink-900/10 text-ink-900'],
+                'twitter' => ['x', 'bg-ink-900/10 text-ink-900'],
+                'linkedin' => ['users', 'bg-[#0A66C2]/15 text-[#0A66C2]'],
+                'youtube' => ['monitor', 'bg-[#FF0000]/15 text-[#FF0000]'],
+                'website' => ['globe', 'bg-ink-100 text-ink-700'],
+                'email' => ['envelope', 'bg-ink-100 text-ink-700'],
+                'other' => ['pencil', 'bg-ink-100 text-ink-700'],
+            ];
+        @endphp
+        <section class="mb-6 rounded-2xl border border-ink-200 bg-white p-4" aria-labelledby="direct-contact-title">
             <h2 id="direct-contact-title" class="mb-3 text-sm font-bold text-ink-900">تواصل مباشر</h2>
             <ul class="space-y-2">
                 @if ($emergency)
                     <li>
                         <a href="tel:{{ preg_replace('/[^\d+]/', '', $emergency['phone']) }}"
-                           class="flex items-center justify-between gap-3 rounded-lg border-2 border-brand-black px-4 py-3 text-sm">
-                            <span class="font-semibold text-ink-900">جهة اتصال الطوارئ{{ $emergency['relationship'] ? ' — '.$emergency['relationship'] : '' }}</span>
-                            <span class="text-ink-700" dir="ltr">{{ $emergency['name'] }} · {{ $emergency['phone'] }}</span>
+                           class="flex items-center gap-3 rounded-xl border-2 border-brand-black px-3.5 py-3 text-sm transition-transform hover:-translate-y-0.5">
+                            <span class="flex size-10 shrink-0 items-center justify-center rounded-full bg-brand-yellow text-brand-black">
+                                <x-icon name="warning" class="size-5" />
+                            </span>
+                            <span class="min-w-0 flex-1">
+                                <span class="block font-semibold text-ink-900">جهة اتصال الطوارئ{{ $emergency['relationship'] ? ' — '.$emergency['relationship'] : '' }}</span>
+                                <span class="block truncate text-ink-600" dir="ltr">{{ $emergency['name'] }} · {{ $emergency['phone'] }}</span>
+                            </span>
                         </a>
                     </li>
                 @endif
                 @foreach ($ownerContacts as $contact)
+                    @php [$icon, $badge] = $platformStyle[$contact['type']] ?? ['contact', 'bg-ink-100 text-ink-700']; @endphp
                     <li>
                         @if ($contact['href'])
                             <a href="{{ $contact['href'] }}" @if (str_starts_with($contact['href'], 'https://')) target="_blank" rel="noopener noreferrer" @endif
-                               class="flex items-center justify-between gap-3 rounded-lg border border-ink-200 px-4 py-3 text-sm transition-colors hover:border-brand-black">
-                                <span class="font-medium text-ink-900">{{ $contact['label'] }}</span>
-                                <span class="text-ink-600" dir="ltr">{{ $contact['value'] }}</span>
+                               class="flex items-center gap-3 rounded-xl border border-ink-200 px-3.5 py-3 text-sm shadow-sm transition-all hover:-translate-y-0.5 hover:border-brand-black hover:shadow">
+                                <span class="flex size-10 shrink-0 items-center justify-center rounded-full {{ $badge }}">
+                                    <x-icon :name="$icon" class="size-5" />
+                                </span>
+                                <span class="min-w-0 flex-1">
+                                    <span class="block font-medium text-ink-900">{{ $contact['label'] }}</span>
+                                    <span class="block truncate text-ink-600" dir="ltr">{{ $contact['value'] }}</span>
+                                </span>
                             </a>
                         @else
-                            <div class="flex items-center justify-between gap-3 rounded-lg bg-ink-50 px-4 py-3 text-sm">
-                                <span class="font-medium text-ink-900">{{ $contact['label'] }}</span>
-                                <span class="text-ink-600">{{ $contact['value'] }}</span>
+                            <div class="flex items-center gap-3 rounded-xl bg-ink-50 px-3.5 py-3 text-sm">
+                                <span class="flex size-10 shrink-0 items-center justify-center rounded-full {{ $badge }}">
+                                    <x-icon :name="$icon" class="size-5" />
+                                </span>
+                                <span class="min-w-0 flex-1">
+                                    <span class="block font-medium text-ink-900">{{ $contact['label'] }}</span>
+                                    <span class="block truncate text-ink-600">{{ $contact['value'] }}</span>
+                                </span>
                             </div>
                         @endif
                     </li>
