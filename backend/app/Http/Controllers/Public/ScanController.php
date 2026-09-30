@@ -12,12 +12,16 @@ use App\Models\Tag;
 use App\Notifications\ContactRequestNotification;
 use App\Notifications\TagActionNotification;
 use App\Rules\PlainTextOnly;
+use App\Services\MessageImageProcessor;
 use App\Services\PublicContacts;
 use App\Services\SecurityEventLogger;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
 /**
  * The public, unauthenticated QR/NFC scan experience (section 13). No
@@ -135,13 +139,15 @@ class ScanController extends Controller
         $contactRequest = $tag ? $this->findThread($tag, $uuid) : null;
         abort_if(! $contactRequest, 404);
 
-        $items = collect([['sender' => 'visitor', 'body' => $contactRequest->message, 'at' => $contactRequest->created_at]])
-            ->concat($contactRequest->messages->map(fn ($m) => ['sender' => $m->sender, 'body' => $m->body, 'at' => $m->created_at]));
+        $items = collect([['sender' => 'visitor', 'body' => $contactRequest->message, 'id' => null, 'at' => $contactRequest->created_at]])
+            ->concat($contactRequest->messages->map(fn ($m) => ['sender' => $m->sender, 'body' => $m->body, 'id' => $m->id, 'image' => $m->image_path, 'at' => $m->created_at]));
 
         return response()->json([
             'status' => $contactRequest->status,
             'messages' => $items->map(fn ($i) => [
-                'sender' => $i['sender'], 'body' => $i['body'], 'at' => $i['at']->format('Y-m-d H:i'),
+                'sender' => $i['sender'], 'body' => $i['body'],
+                'image_url' => ! empty($i['image'] ?? null) ? route('public.scan.thread.image', [$token, $uuid, $i['id']]) : null,
+                'at' => $i['at']->format('Y-m-d H:i'),
             ])->values(),
         ])->header('Cache-Control', 'no-store');
     }
@@ -152,19 +158,50 @@ class ScanController extends Controller
         $contactRequest = $this->findThread($tag, $uuid);
         abort_if(! $contactRequest, 404);
 
-        $data = $request->validate(['body' => ['required', 'string', 'max:500', new PlainTextOnly]], [
-            'body.required' => 'اكتب رسالتك أولًا.',
+        $data = $request->validate([
+            'body' => ['nullable', 'string', 'max:500', new PlainTextOnly, 'required_without:image'],
+            'image' => ['nullable', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:8192'],
+        ], [
+            'body.required_without' => 'اكتب رسالتك أو أرفق صورة.',
         ]);
 
         if ($contactRequest->messages()->count() >= ContactRequest::MAX_MESSAGES) {
             return back()->withErrors(['body' => 'وصلت المحادثة إلى الحد الأقصى من الرسائل.']);
         }
 
-        $contactRequest->addMessage('visitor', trim($data['body']));
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $jpeg = app(MessageImageProcessor::class)->normalize($request->file('image'));
+            if ($jpeg === null) {
+                return back()->withErrors(['image' => 'تعذّرت معالجة الصورة. جرّب صورة أخرى.']);
+            }
+            $imagePath = 'contact-message-images/'.Str::uuid().'.jpg';
+            Storage::disk('local')->put($imagePath, $jpeg);
+        }
+
+        $body = trim((string) ($data['body'] ?? ''));
+        $contactRequest->addMessage('visitor', $body, $imagePath);
         $contactRequest->update(['status' => 'new', 'read_at' => null]);
-        $tag->vehicle->user->notify(new ContactRequestNotification($contactRequest, trim($data['body'])));
+        $tag->vehicle->user->notify(new ContactRequestNotification($contactRequest, $body !== '' ? $body : '📷 صورة'));
 
         return back()->with('scan_status', 'تم إرسال رسالتك.');
+    }
+
+    /** Serves a message's photo — gated the same way the thread page itself
+     *  is (the unguessable uuid), never a public storage URL. */
+    public function threadImage(Request $request, string $token, string $uuid, int $message): HttpResponse
+    {
+        $tag = $this->resolveActiveTag($token, $request);
+        $contactRequest = $tag ? $this->findThread($tag, $uuid) : null;
+        abort_if(! $contactRequest, 404);
+
+        $msg = $contactRequest->messages()->whereKey($message)->firstOrFail();
+        abort_unless($msg->image_path && Storage::disk('local')->exists($msg->image_path), 404);
+
+        return Storage::disk('local')->response($msg->image_path, null, [
+            'Content-Type' => 'image/jpeg',
+            'Cache-Control' => 'private, max-age=3600',
+        ]);
     }
 
     private function findThread(Tag $tag, string $uuid): ?ContactRequest
@@ -172,15 +209,23 @@ class ScanController extends Controller
         return ContactRequest::where('uuid', $uuid)->where('tag_id', $tag->id)->first();
     }
 
-    /** The report text is the chosen reason's label; any further talk happens in the thread. */
+    /** The report text is the chosen reason's fixed label, except "other"
+     *  which uses whatever the visitor typed; any further talk happens in the thread. */
     private function composeContactMessage(ContactOwnerRequest $request): string
     {
+        $reason = $request->validated('reason');
+
+        if ($reason === 'other') {
+            return trim((string) $request->validated('other_details'));
+        }
+
         return [
+            'blocking' => 'سيارتك تعيق الطريق',
             'damage' => 'لاحظت ضررًا في المركبة',
             'malfunction' => 'يوجد عطل',
             'safety' => 'توجد مشكلة تتعلق بالسلامة',
             'assistance' => 'أحتاج إلى مساعدة',
-        ][$request->validated('reason')];
+        ][$reason];
     }
 
     private function recordSimpleAction(Request $request, string $token, string $actionType, string $successMessage): RedirectResponse

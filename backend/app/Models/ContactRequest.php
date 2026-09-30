@@ -54,9 +54,9 @@ class ContactRequest extends Model
     }
 
     /** Adds a message to the conversation and refreshes its 15-day clock. */
-    public function addMessage(string $sender, string $body): ContactRequestMessage
+    public function addMessage(string $sender, string $body, ?string $imagePath = null): ContactRequestMessage
     {
-        $message = $this->messages()->create(['sender' => $sender, 'body' => $body]);
+        $message = $this->messages()->create(['sender' => $sender, 'body' => $body, 'image_path' => $imagePath]);
         $this->forceFill(['last_activity_at' => now()])->save();
 
         return $message;

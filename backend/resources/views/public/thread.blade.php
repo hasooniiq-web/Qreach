@@ -42,7 +42,14 @@
                 <div class="flex {{ $m->sender === 'visitor' ? 'justify-end' : 'justify-start' }}">
                     <div class="max-w-[85%] rounded-2xl px-4 py-2.5 text-sm {{ $m->sender === 'visitor' ? 'rounded-ee-sm bg-brand-yellow text-brand-black' : 'rounded-es-sm bg-ink-100 text-ink-900' }}">
                         @if ($m->sender === 'owner')<p class="mb-0.5 text-[11px] font-semibold text-ink-500">المالك</p>@endif
-                        <p class="whitespace-pre-line">{{ $m->body }}</p>
+                        @if ($m->body !== '')
+                            <p class="whitespace-pre-line">{{ $m->body }}</p>
+                        @endif
+                        @if ($m->image_path)
+                            <a href="{{ route('public.scan.thread.image', [$tag->public_token, $thread->uuid, $m]) }}" target="_blank" rel="noopener noreferrer">
+                                <img src="{{ route('public.scan.thread.image', [$tag->public_token, $thread->uuid, $m]) }}" alt="صورة مرفقة" class="mt-1.5 max-h-56 rounded-lg object-contain">
+                            </a>
+                        @endif
                         <p class="mt-1 text-[11px] opacity-60">{{ $m->created_at->format('Y-m-d H:i') }}</p>
                     </div>
                 </div>
@@ -50,10 +57,15 @@
         </div>
     </div>
 
-    <form method="POST" action="{{ route('public.scan.thread.reply', [$tag->public_token, $thread->uuid]) }}" class="space-y-3">
+    <form method="POST" action="{{ route('public.scan.thread.reply', [$tag->public_token, $thread->uuid]) }}" class="space-y-3" enctype="multipart/form-data">
         @csrf
         <label for="reply-body" class="sr-only">رسالتك</label>
-        <textarea id="reply-body" name="body" rows="3" maxlength="500" required placeholder="اكتب رسالة جديدة..." class="form-control">{{ old('body') }}</textarea>
+        <textarea id="reply-body" name="body" rows="3" maxlength="500" placeholder="اكتب رسالة جديدة..." class="form-control">{{ old('body') }}</textarea>
+        <label for="reply-image" class="flex cursor-pointer items-center gap-2 rounded-xl border border-dashed border-ink-300 px-3.5 py-2.5 text-sm text-ink-600">
+            <x-icon name="plus" class="size-4 shrink-0" />
+            <span id="reply-image-label">إرفاق صورة (من الكاميرا أو المعرض)</span>
+            <input id="reply-image" type="file" name="image" accept="image/*" class="sr-only">
+        </label>
         <button type="submit" class="btn-primary w-full !py-3">إرسال</button>
     </form>
 </x-layouts.public>

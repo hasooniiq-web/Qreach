@@ -7,12 +7,13 @@ use App\Services\IraqiPhone;
 use Illuminate\Foundation\Http\FormRequest;
 
 /**
- * A quick report: the visitor taps one predefined reason. There is deliberately
- * no free-text "other" reason; conversation happens afterwards in the thread.
+ * A quick report: the visitor taps one predefined reason, or "other" with a
+ * short free-text description of their own. Further back-and-forth still
+ * happens afterwards in the thread.
  */
 class ContactOwnerRequest extends FormRequest
 {
-    public const REASONS = ['damage', 'malfunction', 'safety', 'assistance'];
+    public const REASONS = ['blocking', 'damage', 'malfunction', 'safety', 'assistance', 'other'];
 
     public function authorize(): bool
     {
@@ -32,6 +33,10 @@ class ContactOwnerRequest extends FormRequest
     {
         return [
             'reason' => ['required', 'in:'.implode(',', self::REASONS)],
+            // Only "other" needs a description; every other reason already
+            // has a fixed label (composeContactMessage), so this stays empty
+            // and unused for them even if the client sent something.
+            'other_details' => ['required_if:reason,other', 'nullable', 'string', 'max:500', new PlainTextOnly],
             'visitor_name' => ['nullable', 'string', 'max:100', new PlainTextOnly],
             'visitor_phone' => ['nullable', 'string', 'max:32', 'regex:/^\+?[1-9]\d{7,14}$/'],
         ];
@@ -39,6 +44,10 @@ class ContactOwnerRequest extends FormRequest
 
     public function messages(): array
     {
-        return ['reason.required' => 'اختر سبب البلاغ.', 'reason.in' => 'سبب البلاغ غير صالح.'];
+        return [
+            'reason.required' => 'اختر سبب البلاغ.',
+            'reason.in' => 'سبب البلاغ غير صالح.',
+            'other_details.required_if' => 'اكتب تفاصيل السبب.',
+        ];
     }
 }

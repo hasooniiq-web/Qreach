@@ -9,7 +9,7 @@ class ContactRequestMessage extends Model
 {
     public const UPDATED_AT = null;
 
-    protected $fillable = ['contact_request_id', 'sender', 'body'];
+    protected $fillable = ['contact_request_id', 'sender', 'body', 'image_path'];
 
     public function contactRequest(): BelongsTo
     {

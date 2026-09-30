@@ -27,13 +27,28 @@ if (root) {
             who.textContent = 'المالك';
             box.appendChild(who);
         }
-        const body = document.createElement('p');
-        body.className = 'whitespace-pre-line';
-        body.textContent = m.body;
+        if (m.body) {
+            const body = document.createElement('p');
+            body.className = 'whitespace-pre-line';
+            body.textContent = m.body;
+            box.appendChild(body);
+        }
+        if (m.image_url) {
+            const link = document.createElement('a');
+            link.href = m.image_url;
+            link.target = '_blank';
+            link.rel = 'noopener noreferrer';
+            const img = document.createElement('img');
+            img.src = m.image_url;
+            img.alt = 'صورة مرفقة';
+            img.className = 'mt-1.5 max-h-56 rounded-lg object-contain';
+            link.appendChild(img);
+            box.appendChild(link);
+        }
         const time = document.createElement('p');
         time.className = 'mt-1 text-[11px] opacity-60';
         time.textContent = m.at;
-        box.append(body, time);
+        box.append(time);
         wrap.appendChild(box);
 
         return wrap;
@@ -59,3 +74,12 @@ if (root) {
     setInterval(poll, 6000);
     document.addEventListener('visibilitychange', poll);
 }
+
+// Shows the chosen file's name on the attach-image button instead of the
+// browser's own (English, verbose) file input label.
+const imageInput = document.getElementById('reply-image');
+const imageLabel = document.getElementById('reply-image-label');
+const defaultImageLabel = imageLabel ? imageLabel.textContent : '';
+imageInput?.addEventListener('change', () => {
+    imageLabel.textContent = imageInput.files[0] ? imageInput.files[0].name : defaultImageLabel;
+});

@@ -6,7 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\ContactRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\Response;
 
 class ContactRequestController extends Controller
 {
@@ -39,5 +41,17 @@ class ContactRequestController extends Controller
         $contactRequest->update(['status' => 'closed']);
 
         return back()->with('status', 'تم إغلاق طلب التواصل.');
+    }
+
+    /** Read-only oversight view of a photo a visitor attached in the thread. */
+    public function messageImage(ContactRequest $contactRequest, int $message): Response
+    {
+        $msg = $contactRequest->messages()->whereKey($message)->firstOrFail();
+        abort_unless($msg->image_path && Storage::disk('local')->exists($msg->image_path), 404);
+
+        return Storage::disk('local')->response($msg->image_path, null, [
+            'Content-Type' => 'image/jpeg',
+            'Cache-Control' => 'private, max-age=3600',
+        ]);
     }
 }

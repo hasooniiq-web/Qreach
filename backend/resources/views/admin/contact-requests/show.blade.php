@@ -40,7 +40,14 @@
                     @foreach ($contactRequest->messages as $m)
                         <li class="rounded-lg px-3 py-2 {{ $m->sender === 'owner' ? 'bg-ink-100' : 'bg-brand-yellow/20' }}">
                             <span class="text-xs font-semibold text-ink-500">{{ $m->sender === 'owner' ? 'المالك' : 'الزائر' }} — {{ $m->created_at->format('Y-m-d H:i') }}</span>
-                            <p class="whitespace-pre-line text-ink-900">{{ $m->body }}</p>
+                            @if ($m->body !== '')
+                                <p class="whitespace-pre-line text-ink-900">{{ $m->body }}</p>
+                            @endif
+                            @if ($m->image_path)
+                                <a href="{{ route('admin.contact-requests.message-image', [$contactRequest, $m]) }}" target="_blank" rel="noopener noreferrer">
+                                    <img src="{{ route('admin.contact-requests.message-image', [$contactRequest, $m]) }}" alt="صورة مرفقة" class="mt-2 max-h-64 rounded-lg border border-ink-200 object-contain">
+                                </a>
+                            @endif
                         </li>
                     @endforeach
                 </ul>

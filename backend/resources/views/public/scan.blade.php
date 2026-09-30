@@ -1,4 +1,8 @@
 <x-layouts.public title="التواصل بخصوص المركبة">
+    @push('head')
+        @vite(['resources/js/public-scan.js'])
+    @endpush
+
     @if (session('scan_status'))
         <div class="mb-5 flex items-start gap-3 rounded-xl border border-status-success/30 bg-status-success/10 p-4" role="status">
             <span class="flex size-8 shrink-0 items-center justify-center rounded-full bg-status-success text-white">
@@ -99,10 +103,12 @@
             <legend class="sr-only">سبب البلاغ</legend>
             <div class="grid grid-cols-2 gap-2.5">
                 @foreach ([
+                    'blocking' => ['سيارتك تعيق الطريق', 'car'],
                     'damage' => ['ضرر في المركبة', 'car'],
                     'malfunction' => ['يوجد عطل', 'warning'],
                     'safety' => ['مشكلة سلامة', 'shield'],
                     'assistance' => ['أحتاج مساعدة', 'bell'],
+                    'other' => ['سبب آخر', 'pencil'],
                 ] as $value => [$label, $icon])
                     <label class="cursor-pointer">
                         <input type="radio" name="reason" value="{{ $value }}" class="peer sr-only" @checked(old('reason') === $value) required>
@@ -112,6 +118,13 @@
                         </span>
                     </label>
                 @endforeach
+            </div>
+
+            <div id="other-details-wrap" class="mt-2.5 hidden">
+                <label for="other-details" class="sr-only">تفاصيل السبب</label>
+                <textarea id="other-details" name="other_details" rows="3" maxlength="500"
+                          placeholder="اكتب تفاصيل السبب..." class="form-control">{{ old('other_details') }}</textarea>
+                @error('other_details')<p class="mt-1 text-xs text-status-danger">{{ $message }}</p>@enderror
             </div>
         </fieldset>
 

@@ -50,6 +50,8 @@ Route::prefix('t')->name('public.scan.')->group(function () {
         ->middleware('throttle:120,1')->name('thread.messages');
     Route::post('{token}/c/{uuid}', [ScanController::class, 'threadReply'])
         ->middleware('throttle:thread-reply')->name('thread.reply');
+    Route::get('{token}/c/{uuid}/messages/{message}/image', [ScanController::class, 'threadImage'])
+        ->middleware('throttle:public-scan')->name('thread.image');
 });
 
 Route::prefix('admin')->name('admin.')->group(function () {
@@ -173,6 +175,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::middleware('admin.permission:contact_requests.view')->group(function () {
                 Route::get('contact-requests', [ContactRequestController::class, 'index'])->name('contact-requests.index');
                 Route::get('contact-requests/{contactRequest}', [ContactRequestController::class, 'show'])->name('contact-requests.show');
+                Route::get('contact-requests/{contactRequest}/messages/{message}/image', [ContactRequestController::class, 'messageImage'])->name('contact-requests.message-image');
             });
             Route::post('contact-requests/{contactRequest}/close', [ContactRequestController::class, 'close'])
                 ->middleware('admin.permission:contact_requests.respond')->name('contact-requests.close');

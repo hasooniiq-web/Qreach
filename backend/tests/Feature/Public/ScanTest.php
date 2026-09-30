@@ -2,12 +2,14 @@
 
 namespace Tests\Feature\Public;
 
+use App\Models\ContactRequest;
 use App\Models\Scan;
 use App\Models\Tag;
 use App\Models\User;
 use App\Models\Vehicle;
 use App\Notifications\TagActionNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Notification;
 use Tests\TestCase;
 
@@ -165,23 +167,79 @@ class ScanTest extends TestCase
         $this->assertDatabaseHas('contact_requests', ['tag_id' => $tag->id, 'visitor_phone' => '+9647701234567']);
     }
 
-    public function test_free_text_and_the_other_reason_are_not_accepted(): void
+    public function test_a_reason_outside_the_predefined_list_is_not_accepted(): void
     {
         $tag = $this->makeAssignedTag();
 
-        $this->post("/t/{$tag->public_token}/contact", ['reason' => 'other', 'message' => 'نص حر'])->assertSessionHasErrors('reason');
         $this->post("/t/{$tag->public_token}/contact", ['message' => 'بدون سبب'])->assertSessionHasErrors('reason');
         $this->post("/t/{$tag->public_token}/contact", ['reason' => '<script>'])->assertSessionHasErrors('reason');
         $this->assertDatabaseCount('contact_requests', 0);
     }
 
-    public function test_the_scan_page_offers_only_the_predefined_reasons(): void
+    public function test_the_blocking_reason_is_accepted_and_stores_its_fixed_label(): void
+    {
+        Notification::fake();
+        $tag = $this->makeAssignedTag();
+
+        $this->post("/t/{$tag->public_token}/contact", ['reason' => 'blocking'])
+            ->assertSessionDoesntHaveErrors()->assertRedirect();
+
+        $this->assertDatabaseHas('contact_requests', ['tag_id' => $tag->id, 'reason' => 'blocking', 'message' => 'سيارتك تعيق الطريق']);
+    }
+
+    public function test_the_other_reason_requires_details_and_stores_them_as_the_message(): void
+    {
+        Notification::fake();
+        $tag = $this->makeAssignedTag();
+
+        $this->post("/t/{$tag->public_token}/contact", ['reason' => 'other'])->assertSessionHasErrors('other_details');
+        $this->assertDatabaseCount('contact_requests', 0);
+
+        $this->post("/t/{$tag->public_token}/contact", ['reason' => 'other', 'other_details' => 'نص حر عن السبب'])
+            ->assertSessionDoesntHaveErrors()->assertRedirect();
+
+        $this->assertDatabaseHas('contact_requests', ['tag_id' => $tag->id, 'reason' => 'other', 'message' => 'نص حر عن السبب']);
+    }
+
+    public function test_the_scan_page_offers_all_predefined_reasons_including_blocking_and_other(): void
     {
         $tag = $this->makeAssignedTag();
 
         $this->get("/t/{$tag->public_token}")->assertOk()
-            ->assertSee('ضرر في المركبة')->assertSee('أحتاج مساعدة')
-            ->assertDontSee('سبب آخر')->assertDontSee('name="message"', false);
+            ->assertSee('سيارتك تعيق الطريق')->assertSee('ضرر في المركبة')->assertSee('أحتاج مساعدة')
+            ->assertSee('سبب آخر')->assertDontSee('name="message"', false);
+    }
+
+    public function test_a_thread_reply_can_carry_an_image_with_or_without_text(): void
+    {
+        Notification::fake();
+        $tag = $this->makeAssignedTag();
+
+        $this->post("/t/{$tag->public_token}/contact", ['reason' => 'blocking']);
+        $thread = ContactRequest::where('tag_id', $tag->id)->firstOrFail();
+
+        $image = UploadedFile::fake()->image('blocked.jpg', 800, 600);
+
+        $this->post("/t/{$tag->public_token}/c/{$thread->uuid}", ['image' => $image])
+            ->assertSessionDoesntHaveErrors()->assertRedirect();
+
+        $message = $thread->messages()->latest('id')->first();
+        $this->assertNotNull($message->image_path);
+        $this->assertSame('', $message->body);
+
+        $this->get("/t/{$tag->public_token}/c/{$thread->uuid}/messages/{$message->id}/image")
+            ->assertOk()->assertHeader('Content-Type', 'image/jpeg');
+    }
+
+    public function test_a_thread_reply_needs_at_least_a_body_or_an_image(): void
+    {
+        Notification::fake();
+        $tag = $this->makeAssignedTag();
+
+        $this->post("/t/{$tag->public_token}/contact", ['reason' => 'assistance']);
+        $thread = ContactRequest::where('tag_id', $tag->id)->firstOrFail();
+
+        $this->post("/t/{$tag->public_token}/c/{$thread->uuid}", [])->assertSessionHasErrors('body');
     }
 
     public function test_public_action_rate_limit_blocks_excessive_requests_from_the_same_ip(): void
