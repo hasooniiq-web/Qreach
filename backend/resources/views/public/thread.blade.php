@@ -57,15 +57,25 @@
         </div>
     </div>
 
-    <form method="POST" action="{{ route('public.scan.thread.reply', [$tag->public_token, $thread->uuid]) }}" class="space-y-3" enctype="multipart/form-data">
+    <form method="POST" action="{{ route('public.scan.thread.reply', [$tag->public_token, $thread->uuid]) }}" enctype="multipart/form-data">
         @csrf
-        <label for="reply-body" class="sr-only">رسالتك</label>
-        <textarea id="reply-body" name="body" rows="3" maxlength="500" placeholder="اكتب رسالة جديدة..." class="form-control">{{ old('body') }}</textarea>
-        <label for="reply-image" class="flex cursor-pointer items-center gap-2 rounded-xl border border-dashed border-ink-300 px-3.5 py-2.5 text-sm text-ink-600">
-            <x-icon name="plus" class="size-4 shrink-0" />
-            <span id="reply-image-label">إرفاق صورة (من الكاميرا أو المعرض)</span>
-            <input id="reply-image" type="file" name="image" accept="image/*" class="sr-only">
-        </label>
-        <button type="submit" class="btn-primary w-full !py-3">إرسال</button>
+        <div id="reply-image-chip" class="mb-2 hidden items-center gap-2 self-start rounded-full bg-ink-100 py-1 pe-1 ps-3 text-xs text-ink-700">
+            <span id="reply-image-label"></span>
+            <button type="button" id="reply-image-clear" class="flex size-5 items-center justify-center rounded-full text-ink-500 hover:bg-ink-200" aria-label="إزالة الصورة">
+                <x-icon name="x" class="size-3.5" />
+            </button>
+        </div>
+        <div class="flex items-end gap-2">
+            <label for="reply-image" class="flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-full text-ink-500 transition-colors hover:bg-ink-100" title="إرفاق صورة (من الكاميرا أو المعرض)">
+                <x-icon name="camera" class="size-5" />
+                <input id="reply-image" type="file" name="image" accept="image/*" class="sr-only">
+            </label>
+            <label for="reply-body" class="sr-only">رسالتك</label>
+            <textarea id="reply-body" name="body" rows="1" maxlength="500" placeholder="اكتب رسالة..."
+                      class="max-h-32 flex-1 resize-none rounded-3xl border border-ink-200 bg-white px-4 py-2.5 text-sm focus:border-brand-black focus:outline-none focus:ring-0">{{ old('body') }}</textarea>
+            <button type="submit" class="flex size-11 shrink-0 items-center justify-center rounded-full bg-brand-black text-white transition-opacity hover:opacity-90" aria-label="إرسال">
+                <x-icon name="send" class="size-5 -scale-x-100" />
+            </button>
+        </div>
     </form>
 </x-layouts.public>

@@ -150,7 +150,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get tagNotFound => 'الرمز غير صالح';
 
   @override
-  String get profile => 'الملف الشخصي';
+  String get profile => 'حسابي';
 
   @override
   String get logout => 'تسجيل الخروج';
@@ -443,7 +443,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get tabContacts => 'التواصل';
 
   @override
-  String get tabProfile => 'الملف الشخصي';
+  String get tabProfile => 'حسابي';
 
   @override
   String get contactsTitle => 'طلبات التواصل';

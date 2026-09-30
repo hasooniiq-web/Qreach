@@ -152,7 +152,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tagNotFound => 'Invalid tag';
 
   @override
-  String get profile => 'Profile';
+  String get profile => 'My Account';
 
   @override
   String get logout => 'Log out';
@@ -447,7 +447,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tabContacts => 'Contacts';
 
   @override
-  String get tabProfile => 'Profile';
+  String get tabProfile => 'My Account';
 
   @override
   String get contactsTitle => 'Contact requests';

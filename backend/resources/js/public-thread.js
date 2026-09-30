@@ -75,11 +75,29 @@ if (root) {
     document.addEventListener('visibilitychange', poll);
 }
 
-// Shows the chosen file's name on the attach-image button instead of the
-// browser's own (English, verbose) file input label.
+// WhatsApp-style composer: a chosen file shows as a small removable chip
+// above the input row instead of the browser's own file-input text, and the
+// textarea grows with its content instead of scrolling internally.
 const imageInput = document.getElementById('reply-image');
+const imageChip = document.getElementById('reply-image-chip');
 const imageLabel = document.getElementById('reply-image-label');
-const defaultImageLabel = imageLabel ? imageLabel.textContent : '';
+const imageClear = document.getElementById('reply-image-clear');
+const replyBody = document.getElementById('reply-body');
+
 imageInput?.addEventListener('change', () => {
-    imageLabel.textContent = imageInput.files[0] ? imageInput.files[0].name : defaultImageLabel;
+    const file = imageInput.files[0];
+    imageChip.classList.toggle('hidden', !file);
+    imageChip.classList.toggle('flex', !!file);
+    if (file) imageLabel.textContent = file.name;
+});
+
+imageClear?.addEventListener('click', () => {
+    imageInput.value = '';
+    imageChip.classList.add('hidden');
+    imageChip.classList.remove('flex');
+});
+
+replyBody?.addEventListener('input', () => {
+    replyBody.style.height = 'auto';
+    replyBody.style.height = replyBody.scrollHeight + 'px';
 });

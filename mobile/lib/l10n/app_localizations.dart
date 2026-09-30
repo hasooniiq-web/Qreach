@@ -365,7 +365,7 @@ abstract class AppLocalizations {
   /// No description provided for @profile.
   ///
   /// In ar, this message translates to:
-  /// **'الملف الشخصي'**
+  /// **'حسابي'**
   String get profile;
 
   /// No description provided for @logout.
@@ -911,7 +911,7 @@ abstract class AppLocalizations {
   /// No description provided for @tabProfile.
   ///
   /// In ar, this message translates to:
-  /// **'الملف الشخصي'**
+  /// **'حسابي'**
   String get tabProfile;
 
   /// No description provided for @contactsTitle.
