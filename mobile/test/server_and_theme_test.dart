@@ -38,7 +38,7 @@ void main() {
     expect(AppColors.ink900, isNot(lightInk));
     expect(AppColors.surface, isNot(lightSurface));
     expect(AppColors.brandYellow, const Color(0xFFFFC107));
-    expect(dark.textTheme.bodyMedium?.fontFamily, 'Cairo');
+    expect(dark.textTheme.bodyMedium?.fontFamily, 'Lateef');
 
     AppColors.dark = false; // leave global state clean for other tests
   });

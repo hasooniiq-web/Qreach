@@ -14,7 +14,7 @@
  * The old class names (ink-*, brand-*, status-*) keep working everywhere.
  */
 @theme {
-    --font-sans: 'Cairo', ui-sans-serif, system-ui, sans-serif;
+    --font-sans: 'Lateef', ui-sans-serif, system-ui, sans-serif;
 
     --color-brand-yellow: #FFC107;
     --color-brand-black: #09090B;
@@ -53,6 +53,11 @@
 @layer base {
     html {
         -webkit-text-size-adjust: 100%;
+        /* Lateef's x-height reads noticeably smaller than Cairo's at the
+           same declared size, and the type scale (text-sm, text-base, ...)
+           was tuned for Cairo. Bumping the rem base scales every one of
+           those utilities uniformly instead of overriding sizes one by one. */
+        font-size: 118%;
     }
 
     body {
