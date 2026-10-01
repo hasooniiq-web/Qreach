@@ -12,7 +12,12 @@ import 'auth_controller.dart';
 import 'auth_scaffold.dart';
 
 class PhoneEntryScreen extends ConsumerStatefulWidget {
-  const PhoneEntryScreen({super.key});
+  const PhoneEntryScreen({super.key, required this.isSignup});
+
+  /// Only changes the title/subtitle below — the request is identical
+  /// either way (phone + OTP, no password; the server silently registers an
+  /// unrecognized number on successful verification).
+  final bool isSignup;
 
   @override
   ConsumerState<PhoneEntryScreen> createState() => _PhoneEntryScreenState();
@@ -58,8 +63,10 @@ class _PhoneEntryScreenState extends ConsumerState<PhoneEntryScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return AuthScaffold(
-      title: l10n.welcomeTitle,
-      subtitle: l10n.welcomeSubtitle,
+      title: widget.isSignup ? l10n.createAccountTitle : l10n.loginTitle,
+      subtitle:
+          widget.isSignup ? l10n.createAccountSubtitle : l10n.loginSubtitle,
+      showBack: true,
       child: Form(
         key: _formKey,
         child: Column(
@@ -96,12 +103,6 @@ class _PhoneEntryScreenState extends ConsumerState<PhoneEntryScreen> {
               label: l10n.sendCode,
               loading: _submitting,
               onPressed: _submitting ? null : _submit,
-            ),
-            const SizedBox(height: AppSpacing.md),
-            TextButton.icon(
-              onPressed: () => context.push('/server'),
-              icon: const Icon(Icons.dns_outlined, size: 18),
-              label: Text(l10n.serverSetup),
             ),
           ],
         ),

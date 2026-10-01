@@ -18,6 +18,26 @@ class AppLocalizationsAr extends AppLocalizations {
   String get welcomeSubtitle => 'أضف رمز SmartTag إلى مركبتك للتواصل بأمان';
 
   @override
+  String get createAccountButton => 'إنشاء حساب جديد';
+
+  @override
+  String get alreadyHaveAccount => 'لدي حساب بالفعل';
+
+  @override
+  String get createAccountTitle => 'إنشاء حساب جديد';
+
+  @override
+  String get createAccountSubtitle =>
+      'أدخل رقم هاتفك وسنرسل لك رمز تحقق لإنشاء حسابك';
+
+  @override
+  String get loginTitle => 'تسجيل الدخول';
+
+  @override
+  String get loginSubtitle =>
+      'أدخل رقم هاتفك المسجّل وسنرسل لك رمز تحقق لتسجيل الدخول';
+
+  @override
   String get phoneLabel => 'رقم الهاتف';
 
   @override

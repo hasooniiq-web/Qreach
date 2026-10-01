@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:qreach_smarttag/core/splash_screen.dart';
+import 'package:qreach_smarttag/features/auth/presentation/auth_choice_screen.dart';
 import 'package:qreach_smarttag/features/auth/presentation/otp_screen.dart';
 import 'package:qreach_smarttag/features/auth/presentation/phone_entry_screen.dart';
 import 'package:qreach_smarttag/features/contacts/presentation/contact_thread_screen.dart';
@@ -18,7 +19,9 @@ void main() {
 
   final shots = <String, Widget>{
     'splash': const SplashScreen(),
-    'login': const PhoneEntryScreen(),
+    'login': const AuthChoiceScreen(),
+    'login_signup': const PhoneEntryScreen(isSignup: true),
+    'login_phone': const PhoneEntryScreen(isSignup: false),
     'otp': const OtpScreen(phone: '+9647701234567'),
     'detail': const VehicleDetailScreen(vehicleId: '1'),
     'detail_unlinked': const VehicleDetailScreen(vehicleId: '2'),

@@ -19,6 +19,26 @@ class AppLocalizationsEn extends AppLocalizations {
       'Add a SmartTag to your vehicle to communicate safely';
 
   @override
+  String get createAccountButton => 'Create a new account';
+
+  @override
+  String get alreadyHaveAccount => 'I already have an account';
+
+  @override
+  String get createAccountTitle => 'Create a new account';
+
+  @override
+  String get createAccountSubtitle =>
+      'Enter your phone number and we\'ll send a verification code to create your account';
+
+  @override
+  String get loginTitle => 'Log in';
+
+  @override
+  String get loginSubtitle =>
+      'Enter your registered phone number and we\'ll send a verification code to log you in';
+
+  @override
   String get phoneLabel => 'Phone number';
 
   @override

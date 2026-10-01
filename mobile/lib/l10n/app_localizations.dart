@@ -116,6 +116,42 @@ abstract class AppLocalizations {
   /// **'أضف رمز SmartTag إلى مركبتك للتواصل بأمان'**
   String get welcomeSubtitle;
 
+  /// No description provided for @createAccountButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنشاء حساب جديد'**
+  String get createAccountButton;
+
+  /// No description provided for @alreadyHaveAccount.
+  ///
+  /// In ar, this message translates to:
+  /// **'لدي حساب بالفعل'**
+  String get alreadyHaveAccount;
+
+  /// No description provided for @createAccountTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنشاء حساب جديد'**
+  String get createAccountTitle;
+
+  /// No description provided for @createAccountSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل رقم هاتفك وسنرسل لك رمز تحقق لإنشاء حسابك'**
+  String get createAccountSubtitle;
+
+  /// No description provided for @loginTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تسجيل الدخول'**
+  String get loginTitle;
+
+  /// No description provided for @loginSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل رقم هاتفك المسجّل وسنرسل لك رمز تحقق لتسجيل الدخول'**
+  String get loginSubtitle;
+
   /// No description provided for @phoneLabel.
   ///
   /// In ar, this message translates to:

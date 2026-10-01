@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../features/auth/presentation/auth_choice_screen.dart';
 import '../../features/auth/presentation/auth_controller.dart';
 import '../../features/auth/presentation/otp_screen.dart';
 import '../../features/auth/presentation/phone_entry_screen.dart';
@@ -51,7 +52,12 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
       GoRoute(
         path: '/login',
-        pageBuilder: animatedPage((context, state) => const PhoneEntryScreen()),
+        pageBuilder: animatedPage((context, state) => const AuthChoiceScreen()),
+      ),
+      GoRoute(
+        path: '/login/phone',
+        pageBuilder: animatedPage((context, state) =>
+            PhoneEntryScreen(isSignup: state.extra as bool? ?? false)),
       ),
       GoRoute(
         path: '/login/otp',
