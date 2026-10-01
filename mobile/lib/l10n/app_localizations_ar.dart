@@ -28,14 +28,13 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get createAccountSubtitle =>
-      'أدخل رقم هاتفك وسنرسل لك رمز تحقق لإنشاء حسابك';
+      'أدخل اسمك ورقم هاتفك وكلمة مرور — سنرسل لك رمز تحقق لمرة واحدة لتأكيد رقمك';
 
   @override
   String get loginTitle => 'تسجيل الدخول';
 
   @override
-  String get loginSubtitle =>
-      'أدخل رقم هاتفك المسجّل وسنرسل لك رمز تحقق لتسجيل الدخول';
+  String get loginSubtitle => 'أدخل رقم هاتفك وكلمة المرور';
 
   @override
   String get phoneLabel => 'رقم الهاتف';
@@ -45,6 +44,75 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get sendCode => 'إرسال رمز التحقق';
+
+  @override
+  String get nameLabel => 'الاسم';
+
+  @override
+  String get nameHint => 'اسمك الكامل';
+
+  @override
+  String get passwordLabel => 'كلمة المرور';
+
+  @override
+  String get passwordHint => '8 أحرف على الأقل';
+
+  @override
+  String get createAccountSubmit => 'إنشاء الحساب';
+
+  @override
+  String get loginSubmit => 'تسجيل الدخول';
+
+  @override
+  String get passwordTooShort => 'كلمة المرور يجب أن تكون 8 أحرف على الأقل';
+
+  @override
+  String get forgotPasswordLink => 'نسيت كلمة المرور؟ أو لم تحدّدها بعد';
+
+  @override
+  String get forgotPasswordTitle => 'استعادة كلمة المرور';
+
+  @override
+  String get forgotPasswordSubtitle =>
+      'أدخل رقم هاتفك وسنرسل لك رمز تحقق لتعيين كلمة مرور جديدة';
+
+  @override
+  String get forgotPasswordSendOtp => 'إرسال رمز التحقق';
+
+  @override
+  String get forgotPasswordCodeLabel => 'رمز التحقق';
+
+  @override
+  String get forgotPasswordNewPasswordLabel => 'كلمة المرور الجديدة';
+
+  @override
+  String get forgotPasswordSubmit => 'تعيين كلمة المرور وتسجيل الدخول';
+
+  @override
+  String get biometricSectionTitle => 'الأمان';
+
+  @override
+  String get biometricToggleLabel => 'الدخول بالبصمة أو الوجه';
+
+  @override
+  String get biometricToggleHint =>
+      'افتح التطبيق دون إدخال كلمة المرور في كل مرة';
+
+  @override
+  String get biometricEnablePrompt =>
+      'فعّل الدخول بالبصمة أو الوجه لهذا الحساب';
+
+  @override
+  String get lockScreenTitle => 'التطبيق مُقفل';
+
+  @override
+  String get lockScreenSubtitle => 'استخدم بصمتك أو وجهك لفتح Qreach SmartTag';
+
+  @override
+  String get lockScreenUnlockButton => 'فتح القفل';
+
+  @override
+  String get lockScreenFailed => 'تعذّر فتح القفل. حاول مرة أخرى.';
 
   @override
   String get otpTitle => 'أدخل رمز التحقق';

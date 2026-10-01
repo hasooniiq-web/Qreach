@@ -9,6 +9,8 @@
          NFC can still link a code by scanning its QR. -->
     <uses-permission android:name="android.permission.NFC"/>
     <uses-feature android:name="android.hardware.nfc" android:required="false"/>
+    <!-- Face ID / fingerprint unlock (local_auth), opt-in, Profile > Security. -->
+    <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
 
     <application
         android:label="Qreach SmartTag"

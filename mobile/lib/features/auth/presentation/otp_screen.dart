@@ -13,10 +13,22 @@ import '../../../shared/widgets/error_banner.dart';
 import 'auth_controller.dart';
 import 'auth_scaffold.dart';
 
+/// Verifies the OTP sent by registration (AuthController.register) — the
+/// only place an OTP is sent now, since logging in afterwards uses a
+/// password instead. [name]/[password] aren't shown here; they're only
+/// needed to resend (register() re-sends for whatever name/password were
+/// typed, since it's the same upsert-then-send-OTP endpoint either way).
 class OtpScreen extends ConsumerStatefulWidget {
-  const OtpScreen({super.key, required this.phone});
+  const OtpScreen({
+    super.key,
+    required this.name,
+    required this.phone,
+    required this.password,
+  });
 
+  final String name;
   final String phone;
+  final String password;
 
   @override
   ConsumerState<OtpScreen> createState() => _OtpScreenState();
@@ -64,7 +76,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
     });
 
     try {
-      await ref.read(authControllerProvider.notifier).verifyOtp(
+      await ref.read(authControllerProvider.notifier).verifyRegister(
             phone: widget.phone,
             code: _codeController.text.trim(),
           );
@@ -80,7 +92,11 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
   Future<void> _resend() async {
     if (_cooldown > 0) return;
     try {
-      await ref.read(authControllerProvider.notifier).requestOtp(widget.phone);
+      await ref.read(authControllerProvider.notifier).register(
+            name: widget.name,
+            phone: widget.phone,
+            password: widget.password,
+          );
       _startCooldown();
     } catch (e) {
       setState(() => _error = asApiException(e).message);

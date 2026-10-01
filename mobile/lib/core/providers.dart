@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'auth/biometric_service.dart';
 import 'network/api_client.dart';
 import 'notifications/push_notification_service.dart';
 import 'storage/secure_storage_service.dart';
@@ -22,6 +23,10 @@ final apiClientProvider = Provider<ApiClient>((ref) {
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   return AuthRepository(
       ref.watch(apiClientProvider), ref.watch(secureStorageProvider));
+});
+
+final biometricServiceProvider = Provider<BiometricService>((ref) {
+  return BiometricService(ref.watch(secureStorageProvider));
 });
 
 final vehicleRepositoryProvider = Provider<VehicleRepository>((ref) {

@@ -1,7 +1,7 @@
 name: qreach_smarttag
 description: "Qreach SmartTag — customer mobile app"
 publish_to: 'none'
-version: 0.1.0+3
+version: 0.1.0+5
 
 environment:
   sdk: ^3.5.0
@@ -48,6 +48,10 @@ dependencies:
   image_picker: ^1.2.3
   qr_flutter: ^4.1.0
   nfc_manager: ^4.2.1
+
+  # Face ID / fingerprint unlock as an opt-in alternative to retyping the
+  # password on each app open.
+  local_auth: ^2.3.0
 
 dev_dependencies:
   flutter_test:

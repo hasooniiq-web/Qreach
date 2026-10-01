@@ -3,8 +3,11 @@ import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/auth_choice_screen.dart';
 import '../../features/auth/presentation/auth_controller.dart';
+import '../../features/auth/presentation/forgot_password_screen.dart';
+import '../../features/auth/presentation/lock_screen.dart';
+import '../../features/auth/presentation/login_screen.dart';
 import '../../features/auth/presentation/otp_screen.dart';
-import '../../features/auth/presentation/phone_entry_screen.dart';
+import '../../features/auth/presentation/signup_screen.dart';
 import '../../features/contacts/presentation/contact_thread_screen.dart';
 import '../../features/contacts/presentation/contacts_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
@@ -36,14 +39,18 @@ final routerProvider = Provider<GoRouter>((ref) {
     initialLocation: '/',
     redirect: (context, state) {
       final loggingIn = state.matchedLocation.startsWith('/login');
+      final onLock = state.matchedLocation == '/lock';
 
       if (authState is AuthUnknown) return '/';
       final onServer = state.matchedLocation == '/server';
       if (authState is AuthUnauthenticated) {
         return (loggingIn || onServer) ? null : '/login';
       }
+      if (authState is AuthLocked) {
+        return onLock ? null : '/lock';
+      }
       if (authState is AuthAuthenticated &&
-          (loggingIn || state.matchedLocation == '/')) {
+          (loggingIn || onLock || state.matchedLocation == '/')) {
         return '/home';
       }
       return null;
@@ -55,14 +62,30 @@ final routerProvider = Provider<GoRouter>((ref) {
         pageBuilder: animatedPage((context, state) => const AuthChoiceScreen()),
       ),
       GoRoute(
-        path: '/login/phone',
-        pageBuilder: animatedPage((context, state) =>
-            PhoneEntryScreen(isSignup: state.extra as bool? ?? false)),
+        path: '/login/signup',
+        pageBuilder: animatedPage((context, state) => const SignupScreen()),
       ),
       GoRoute(
-        path: '/login/otp',
-        pageBuilder: animatedPage(
-            (context, state) => OtpScreen(phone: state.extra as String? ?? '')),
+        path: '/login/signup/otp',
+        pageBuilder: animatedPage((context, state) {
+          final extra =
+              state.extra as ({String name, String phone, String password});
+          return OtpScreen(
+              name: extra.name, phone: extra.phone, password: extra.password);
+        }),
+      ),
+      GoRoute(
+        path: '/login/password',
+        pageBuilder: animatedPage((context, state) => const LoginScreen()),
+      ),
+      GoRoute(
+        path: '/login/password/forgot',
+        pageBuilder:
+            animatedPage((context, state) => const ForgotPasswordScreen()),
+      ),
+      GoRoute(
+        path: '/lock',
+        pageBuilder: animatedPage((context, state) => const LockScreen()),
       ),
       StatefulShellRoute.indexedStack(
         builder: (context, state, navigationShell) =>

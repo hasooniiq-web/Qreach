@@ -1,37 +1,40 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../shared/widgets/app_button.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/phone.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/error_banner.dart';
 import 'auth_controller.dart';
 import 'auth_scaffold.dart';
 
-class PhoneEntryScreen extends ConsumerStatefulWidget {
-  const PhoneEntryScreen({super.key, required this.isSignup});
-
-  /// Only changes the title/subtitle below — the request is identical
-  /// either way (phone + OTP, no password; the server silently registers an
-  /// unrecognized number on successful verification).
-  final bool isSignup;
+/// Create a new account: name, phone, password. The phone is verified once,
+/// right after this, with a one-time OTP (see OtpScreen) — logging in
+/// afterwards never needs one again.
+class SignupScreen extends ConsumerStatefulWidget {
+  const SignupScreen({super.key});
 
   @override
-  ConsumerState<PhoneEntryScreen> createState() => _PhoneEntryScreenState();
+  ConsumerState<SignupScreen> createState() => _SignupScreenState();
 }
 
-class _PhoneEntryScreenState extends ConsumerState<PhoneEntryScreen> {
+class _SignupScreenState extends ConsumerState<SignupScreen> {
   final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
   final _phoneController = TextEditingController();
+  final _passwordController = TextEditingController();
+  bool _obscure = true;
   bool _submitting = false;
   String? _error;
 
   @override
   void dispose() {
+    _nameController.dispose();
     _phoneController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
@@ -47,10 +50,18 @@ class _PhoneEntryScreenState extends ConsumerState<PhoneEntryScreen> {
       _error = null;
     });
 
+    final name = _nameController.text.trim();
+    final password = _passwordController.text;
+
     try {
-      await ref.read(authControllerProvider.notifier).requestOtp(_fullPhone);
+      await ref.read(authControllerProvider.notifier).register(
+            name: name,
+            phone: _fullPhone,
+            password: password,
+          );
       if (!mounted) return;
-      context.push('/login/otp', extra: _fullPhone);
+      context.push('/login/signup/otp',
+          extra: (name: name, phone: _fullPhone, password: password));
     } catch (e) {
       setState(() => _error = asApiException(e).message);
     } finally {
@@ -63,9 +74,8 @@ class _PhoneEntryScreenState extends ConsumerState<PhoneEntryScreen> {
     final l10n = AppLocalizations.of(context)!;
 
     return AuthScaffold(
-      title: widget.isSignup ? l10n.createAccountTitle : l10n.loginTitle,
-      subtitle:
-          widget.isSignup ? l10n.createAccountSubtitle : l10n.loginSubtitle,
+      title: l10n.createAccountTitle,
+      subtitle: l10n.createAccountSubtitle,
       showBack: true,
       child: Form(
         key: _formKey,
@@ -74,6 +84,18 @@ class _PhoneEntryScreenState extends ConsumerState<PhoneEntryScreen> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             if (_error != null) ErrorBanner(message: _error!),
+            TextFormField(
+              controller: _nameController,
+              textCapitalization: TextCapitalization.words,
+              decoration: InputDecoration(
+                labelText: l10n.nameLabel,
+                hintText: l10n.nameHint,
+              ),
+              validator: (value) => (value == null || value.trim().length < 2)
+                  ? l10n.requiredField
+                  : null,
+            ),
+            const SizedBox(height: AppSpacing.md),
             TextFormField(
               controller: _phoneController,
               keyboardType: TextInputType.phone,
@@ -90,17 +112,33 @@ class _PhoneEntryScreenState extends ConsumerState<PhoneEntryScreen> {
                 if (value == null || value.trim().isEmpty) {
                   return l10n.requiredField;
                 }
-                // Iraqi mobile: 7 followed by 9 digits, with or without the
-                // leading trunk zero people dial with (07... or 7...).
                 if (!isValidIraqiLocalNumber(value)) {
                   return l10n.invalidPhone;
                 }
                 return null;
               },
             ),
+            const SizedBox(height: AppSpacing.md),
+            TextFormField(
+              controller: _passwordController,
+              obscureText: _obscure,
+              decoration: InputDecoration(
+                labelText: l10n.passwordLabel,
+                hintText: l10n.passwordHint,
+                suffixIcon: IconButton(
+                  icon: Icon(_obscure
+                      ? Icons.visibility_outlined
+                      : Icons.visibility_off_outlined),
+                  onPressed: () => setState(() => _obscure = !_obscure),
+                ),
+              ),
+              validator: (value) => (value == null || value.length < 8)
+                  ? l10n.passwordTooShort
+                  : null,
+            ),
             const SizedBox(height: AppSpacing.lg),
             AppButton(
-              label: l10n.sendCode,
+              label: l10n.createAccountSubmit,
               loading: _submitting,
               onPressed: _submitting ? null : _submit,
             ),

@@ -27,13 +27,13 @@ class AuthChoiceScreen extends StatelessWidget {
         children: [
           AppButton(
             label: l10n.createAccountButton,
-            onPressed: () => context.push('/login/phone', extra: true),
+            onPressed: () => context.push('/login/signup'),
           ),
           const SizedBox(height: AppSpacing.md),
           AppButton(
             label: l10n.alreadyHaveAccount,
             style: AppButtonStyle.secondary,
-            onPressed: () => context.push('/login/phone', extra: false),
+            onPressed: () => context.push('/login/password'),
           ),
           const SizedBox(height: AppSpacing.md),
           TextButton.icon(

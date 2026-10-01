@@ -29,14 +29,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get createAccountSubtitle =>
-      'Enter your phone number and we\'ll send a verification code to create your account';
+      'Enter your name, phone number and a password — we\'ll send a one-time code to confirm your number';
 
   @override
   String get loginTitle => 'Log in';
 
   @override
-  String get loginSubtitle =>
-      'Enter your registered phone number and we\'ll send a verification code to log you in';
+  String get loginSubtitle => 'Enter your phone number and password';
 
   @override
   String get phoneLabel => 'Phone number';
@@ -46,6 +45,77 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sendCode => 'Send verification code';
+
+  @override
+  String get nameLabel => 'Name';
+
+  @override
+  String get nameHint => 'Your full name';
+
+  @override
+  String get passwordLabel => 'Password';
+
+  @override
+  String get passwordHint => 'At least 8 characters';
+
+  @override
+  String get createAccountSubmit => 'Create account';
+
+  @override
+  String get loginSubmit => 'Log in';
+
+  @override
+  String get passwordTooShort => 'Password must be at least 8 characters';
+
+  @override
+  String get forgotPasswordLink =>
+      'Forgot your password, or haven\'t set one yet?';
+
+  @override
+  String get forgotPasswordTitle => 'Reset password';
+
+  @override
+  String get forgotPasswordSubtitle =>
+      'Enter your phone number and we\'ll send a code to set a new password';
+
+  @override
+  String get forgotPasswordSendOtp => 'Send verification code';
+
+  @override
+  String get forgotPasswordCodeLabel => 'Verification code';
+
+  @override
+  String get forgotPasswordNewPasswordLabel => 'New password';
+
+  @override
+  String get forgotPasswordSubmit => 'Set password and log in';
+
+  @override
+  String get biometricSectionTitle => 'Security';
+
+  @override
+  String get biometricToggleLabel => 'Unlock with fingerprint or face';
+
+  @override
+  String get biometricToggleHint =>
+      'Open the app without typing your password every time';
+
+  @override
+  String get biometricEnablePrompt =>
+      'Enable fingerprint/face unlock for this account';
+
+  @override
+  String get lockScreenTitle => 'App locked';
+
+  @override
+  String get lockScreenSubtitle =>
+      'Use your fingerprint or face to unlock Qreach SmartTag';
+
+  @override
+  String get lockScreenUnlockButton => 'Unlock';
+
+  @override
+  String get lockScreenFailed => 'Couldn\'t unlock. Try again.';
 
   @override
   String get otpTitle => 'Enter verification code';

@@ -16,6 +16,7 @@ import '../../../shared/widgets/app_sheet.dart';
 import '../../../shared/widgets/screen_header.dart';
 import '../../../shared/widgets/settings_group.dart';
 import '../../../shared/widgets/user_avatar.dart';
+import '../../auth/presentation/auth_controller.dart';
 import '../../auth/presentation/logout_confirm.dart';
 import '../../subscription/presentation/subscription_controller.dart';
 import '../data/profile_models.dart';
@@ -184,6 +185,24 @@ class ProfileScreen extends ConsumerWidget {
       messenger
           .showSnackBar(SnackBar(content: Text(asApiException(e).message)));
     }
+  }
+
+  Future<void> _toggleBiometric(
+      BuildContext context, WidgetRef ref, bool enable) async {
+    final l10n = AppLocalizations.of(context)!;
+
+    // Turning it ON proves the biometric actually works for this person
+    // right now, rather than just flipping a switch that might fail silently
+    // the next time the app opens.
+    if (enable) {
+      final ok = await ref
+          .read(biometricServiceProvider)
+          .authenticate(l10n.biometricEnablePrompt);
+      if (!ok) return;
+    }
+
+    await ref.read(biometricServiceProvider).setEnabled(enable);
+    ref.invalidate(biometricEnabledProvider);
   }
 
   Future<void> _chooseTheme(BuildContext context, WidgetRef ref) async {
@@ -465,6 +484,17 @@ class ProfileScreen extends ConsumerWidget {
             SettingsGroup(
               title: l10n.settingsSecurity,
               rows: [
+                if (ref.watch(biometricAvailableProvider).valueOrNull == true)
+                  SettingsRow(
+                    icon: Icons.fingerprint,
+                    label: l10n.biometricToggleLabel,
+                    value: l10n.biometricToggleHint,
+                    trailing: Switch(
+                      value: ref.watch(biometricEnabledProvider).valueOrNull ??
+                          false,
+                      onChanged: (v) => _toggleBiometric(context, ref, v),
+                    ),
+                  ),
                 SettingsRow(
                   icon: Icons.logout,
                   label: l10n.logout,

@@ -137,7 +137,7 @@ abstract class AppLocalizations {
   /// No description provided for @createAccountSubtitle.
   ///
   /// In ar, this message translates to:
-  /// **'أدخل رقم هاتفك وسنرسل لك رمز تحقق لإنشاء حسابك'**
+  /// **'أدخل اسمك ورقم هاتفك وكلمة مرور — سنرسل لك رمز تحقق لمرة واحدة لتأكيد رقمك'**
   String get createAccountSubtitle;
 
   /// No description provided for @loginTitle.
@@ -149,7 +149,7 @@ abstract class AppLocalizations {
   /// No description provided for @loginSubtitle.
   ///
   /// In ar, this message translates to:
-  /// **'أدخل رقم هاتفك المسجّل وسنرسل لك رمز تحقق لتسجيل الدخول'**
+  /// **'أدخل رقم هاتفك وكلمة المرور'**
   String get loginSubtitle;
 
   /// No description provided for @phoneLabel.
@@ -169,6 +169,138 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'إرسال رمز التحقق'**
   String get sendCode;
+
+  /// No description provided for @nameLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاسم'**
+  String get nameLabel;
+
+  /// No description provided for @nameHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسمك الكامل'**
+  String get nameHint;
+
+  /// No description provided for @passwordLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلمة المرور'**
+  String get passwordLabel;
+
+  /// No description provided for @passwordHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'8 أحرف على الأقل'**
+  String get passwordHint;
+
+  /// No description provided for @createAccountSubmit.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنشاء الحساب'**
+  String get createAccountSubmit;
+
+  /// No description provided for @loginSubmit.
+  ///
+  /// In ar, this message translates to:
+  /// **'تسجيل الدخول'**
+  String get loginSubmit;
+
+  /// No description provided for @passwordTooShort.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلمة المرور يجب أن تكون 8 أحرف على الأقل'**
+  String get passwordTooShort;
+
+  /// No description provided for @forgotPasswordLink.
+  ///
+  /// In ar, this message translates to:
+  /// **'نسيت كلمة المرور؟ أو لم تحدّدها بعد'**
+  String get forgotPasswordLink;
+
+  /// No description provided for @forgotPasswordTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'استعادة كلمة المرور'**
+  String get forgotPasswordTitle;
+
+  /// No description provided for @forgotPasswordSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل رقم هاتفك وسنرسل لك رمز تحقق لتعيين كلمة مرور جديدة'**
+  String get forgotPasswordSubtitle;
+
+  /// No description provided for @forgotPasswordSendOtp.
+  ///
+  /// In ar, this message translates to:
+  /// **'إرسال رمز التحقق'**
+  String get forgotPasswordSendOtp;
+
+  /// No description provided for @forgotPasswordCodeLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رمز التحقق'**
+  String get forgotPasswordCodeLabel;
+
+  /// No description provided for @forgotPasswordNewPasswordLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلمة المرور الجديدة'**
+  String get forgotPasswordNewPasswordLabel;
+
+  /// No description provided for @forgotPasswordSubmit.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعيين كلمة المرور وتسجيل الدخول'**
+  String get forgotPasswordSubmit;
+
+  /// No description provided for @biometricSectionTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأمان'**
+  String get biometricSectionTitle;
+
+  /// No description provided for @biometricToggleLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'الدخول بالبصمة أو الوجه'**
+  String get biometricToggleLabel;
+
+  /// No description provided for @biometricToggleHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'افتح التطبيق دون إدخال كلمة المرور في كل مرة'**
+  String get biometricToggleHint;
+
+  /// No description provided for @biometricEnablePrompt.
+  ///
+  /// In ar, this message translates to:
+  /// **'فعّل الدخول بالبصمة أو الوجه لهذا الحساب'**
+  String get biometricEnablePrompt;
+
+  /// No description provided for @lockScreenTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'التطبيق مُقفل'**
+  String get lockScreenTitle;
+
+  /// No description provided for @lockScreenSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'استخدم بصمتك أو وجهك لفتح Qreach SmartTag'**
+  String get lockScreenSubtitle;
+
+  /// No description provided for @lockScreenUnlockButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'فتح القفل'**
+  String get lockScreenUnlockButton;
+
+  /// No description provided for @lockScreenFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر فتح القفل. حاول مرة أخرى.'**
+  String get lockScreenFailed;
 
   /// No description provided for @otpTitle.
   ///
