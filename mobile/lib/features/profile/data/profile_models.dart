@@ -118,6 +118,10 @@ class ProfileModel extends Equatable {
     this.emergency,
     this.hasAvatar = false,
     this.avatarVersion,
+    this.hasCover = false,
+    this.coverVersion,
+    this.showAvatar = false,
+    this.showCover = false,
   });
 
   final String? name;
@@ -142,9 +146,20 @@ class ProfileModel extends Equatable {
   /// Changes whenever the account is updated; lets the photo be re-fetched.
   final int? avatarVersion;
 
+  final bool hasCover;
+
+  /// Changes whenever the account is updated; lets the photo be re-fetched.
+  final int? coverVersion;
+
+  /// Whether visitors see the avatar/cover photo. Both off by default.
+  final bool showAvatar;
+  final bool showCover;
+
   /// True if anything is currently switched on for visitors.
   bool get sharesAnything =>
       showName ||
+      showAvatar ||
+      showCover ||
       (phoneField.visible && phoneField.canShow) ||
       (emergency?.visible == true && emergency?.canShow == true) ||
       methods.any((m) => m.visible && m.canShow);
@@ -171,6 +186,10 @@ class ProfileModel extends Equatable {
           : EmergencyModel.fromJson(json['emergency'] as Map<String, dynamic>),
       hasAvatar: json['has_avatar'] as bool? ?? false,
       avatarVersion: (json['avatar_version'] as num?)?.toInt(),
+      hasCover: json['has_cover'] as bool? ?? false,
+      coverVersion: (json['cover_version'] as num?)?.toInt(),
+      showAvatar: json['show_avatar'] as bool? ?? false,
+      showCover: json['show_cover'] as bool? ?? false,
     );
   }
 
@@ -187,5 +206,9 @@ class ProfileModel extends Equatable {
         emergency,
         hasAvatar,
         avatarVersion,
+        hasCover,
+        coverVersion,
+        showAvatar,
+        showCover,
       ];
 }

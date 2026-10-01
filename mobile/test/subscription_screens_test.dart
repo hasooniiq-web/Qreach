@@ -71,10 +71,25 @@ class FakeProfileRepository implements ProfileRepository {
   Future<ProfileModel> removeAvatar() async => profile;
 
   @override
+  Future<Uint8List?> fetchCover() async => null;
+
+  @override
+  Future<ProfileModel> uploadCover(String filePath) async => profile;
+
+  @override
+  Future<ProfileModel> removeCover() async => profile;
+
+  @override
   Future<ProfileModel> updateName(String name) async => profile;
 
   @override
   Future<ProfileModel> setShowName(bool value) async => profile;
+
+  @override
+  Future<ProfileModel> setShowAvatar(bool value) async => profile;
+
+  @override
+  Future<ProfileModel> setShowCover(bool value) async => profile;
 
   @override
   Future<ProfileModel> updatePhone(

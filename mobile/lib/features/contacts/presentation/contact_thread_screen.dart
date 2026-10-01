@@ -18,6 +18,53 @@ import '../../../shared/widgets/skeleton.dart';
 import '../data/contact_request_model.dart';
 import 'contact_controller.dart';
 
+/// A photo a visitor attached, fetched through the authenticated repository
+/// (never a bare network image) and shown full-screen on tap.
+class _MessageImage extends ConsumerWidget {
+  const _MessageImage({required this.path});
+
+  final String path;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final async = ref.watch(contactMessageImageProvider(path));
+
+    return async.when(
+      loading: () => SizedBox(
+        width: 200,
+        height: 150,
+        child: Center(
+            child: CircularProgressIndicator(
+                strokeWidth: 2, color: AppColors.ink400)),
+      ),
+      error: (_, __) => Container(
+        width: 200,
+        height: 100,
+        color: AppColors.ink100,
+        alignment: Alignment.center,
+        child: Icon(Icons.broken_image_outlined, color: AppColors.ink400),
+      ),
+      data: (bytes) => GestureDetector(
+        onTap: () => showDialog<void>(
+          context: context,
+          builder: (context) => Dialog(
+            insetPadding: const EdgeInsets.all(AppSpacing.md),
+            backgroundColor: Colors.transparent,
+            child: GestureDetector(
+              onTap: () => Navigator.of(context).pop(),
+              child: InteractiveViewer(child: Image.memory(bytes)),
+            ),
+          ),
+        ),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxHeight: 220, maxWidth: 220),
+          child: Image.memory(bytes, fit: BoxFit.cover),
+        ),
+      ),
+    );
+  }
+}
+
 /// One visitor conversation: their first message, then replies from both
 /// sides. The owner replies here; the visitor sees the reply on the page
 /// they scanned. The whole conversation is deleted automatically 15 days
@@ -356,13 +403,13 @@ class _Messages extends StatelessWidget {
   }
 }
 
-class _Bubble extends StatelessWidget {
+class _Bubble extends ConsumerWidget {
   const _Bubble({required this.message});
 
   final ThreadMessage message;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final mine = message.fromOwner;
     final rtl = Directionality.of(context) == TextDirection.rtl;
     // The corner nearest the sender is squared off, like a speech tail.
@@ -395,11 +442,19 @@ class _Bubble extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(message.body,
-                style: TextStyle(
-                    color: mine ? AppColors.brandBlack : AppColors.ink900,
-                    fontSize: 15,
-                    height: 1.45)),
+            if (message.imageUrl != null) ...[
+              ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: _MessageImage(path: message.imageUrl!),
+              ),
+              if (message.body.isNotEmpty) const SizedBox(height: 6),
+            ],
+            if (message.body.isNotEmpty)
+              Text(message.body,
+                  style: TextStyle(
+                      color: mine ? AppColors.brandBlack : AppColors.ink900,
+                      fontSize: 15,
+                      height: 1.45)),
             const SizedBox(height: 4),
             Text(
               DateFormat('HH:mm', 'en').format(message.createdAt.toLocal()),

@@ -8,6 +8,8 @@ use App\Rules\PlainTextOnly;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * The owner's inbox: messages visitors sent after scanning one of their
@@ -113,10 +115,28 @@ class ContactRequestController extends Controller
             $out['messages'] = $r->messages->map(fn ($m) => [
                 'sender' => $m->sender,
                 'body' => $m->body,
+                // A relative path, not route()'s absolute form: the app's
+                // own configured API host (which can differ from APP_URL in
+                // local dev) is what it should be fetched through.
+                'image_url' => $m->image_path ? "/contact-requests/{$r->uuid}/messages/{$m->id}/image" : null,
                 'created_at' => $m->created_at->toIso8601String(),
             ])->values();
         }
 
         return $out;
+    }
+
+    /** A photo a visitor attached in the thread. Same ownership scoping as every other route here. */
+    public function messageImage(Request $request, string $uuid, int $message): Response
+    {
+        $contact = $this->find($request, $uuid);
+        $msg = $contact->messages()->whereKey($message)->firstOrFail();
+
+        abort_unless($msg->image_path && Storage::disk('local')->exists($msg->image_path), 404);
+
+        return Storage::disk('local')->response($msg->image_path, null, [
+            'Content-Type' => 'image/jpeg',
+            'Cache-Control' => 'private, max-age=3600',
+        ]);
     }
 }

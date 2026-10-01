@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/providers.dart';
@@ -58,4 +60,10 @@ final contactsProvider =
 final contactThreadProvider =
     FutureProvider.autoDispose.family<ContactRequestModel, String>((ref, id) {
   return ref.watch(contactRequestRepositoryProvider).fetchOne(id);
+});
+
+/// A photo a visitor attached to one message, keyed by its API path.
+final contactMessageImageProvider =
+    FutureProvider.autoDispose.family<Uint8List, String>((ref, path) {
+  return ref.watch(contactRequestRepositoryProvider).fetchMessageImage(path);
 });

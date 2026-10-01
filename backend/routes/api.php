@@ -37,6 +37,7 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
 
         Route::get('contact-requests', [ContactRequestController::class, 'index'])->name('contact-requests.index');
         Route::get('contact-requests/{uuid}', [ContactRequestController::class, 'show'])->name('contact-requests.show');
+        Route::get('contact-requests/{uuid}/messages/{message}/image', [ContactRequestController::class, 'messageImage'])->name('contact-requests.message-image');
         Route::post('contact-requests/{uuid}/reply', [ContactRequestController::class, 'reply'])
             ->middleware('throttle:30,1')->name('contact-requests.reply');
         Route::put('contact-requests/{uuid}/read', [ContactRequestController::class, 'markRead'])->name('contact-requests.read');

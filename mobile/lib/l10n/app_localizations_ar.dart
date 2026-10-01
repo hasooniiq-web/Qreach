@@ -710,6 +710,25 @@ class AppLocalizationsAr extends AppLocalizations {
       'مخفي افتراضيًا. الزائر لا يرى اسمك إلا إذا فعّلت هذا.';
 
   @override
+  String get visShowAvatar => 'إظهار صورتي الشخصية للزائر';
+
+  @override
+  String get visAvatarHint => 'مخفية افتراضيًا. أضف صورة من ملفك الشخصي أولًا.';
+
+  @override
+  String get visAvatarLabel => 'صورتي الشخصية';
+
+  @override
+  String get visShowCover => 'إظهار صورة الغلاف للزائر';
+
+  @override
+  String get visCoverHint =>
+      'مخفية افتراضيًا. أضف صورة غلاف من ملفك الشخصي أولًا.';
+
+  @override
+  String get visCoverLabel => 'صورة الغلاف';
+
+  @override
   String get emergencySection => 'جهة اتصال الطوارئ';
 
   @override

@@ -1412,6 +1412,42 @@ abstract class AppLocalizations {
   /// **'مخفي افتراضيًا. الزائر لا يرى اسمك إلا إذا فعّلت هذا.'**
   String get visNameHint;
 
+  /// No description provided for @visShowAvatar.
+  ///
+  /// In ar, this message translates to:
+  /// **'إظهار صورتي الشخصية للزائر'**
+  String get visShowAvatar;
+
+  /// No description provided for @visAvatarHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مخفية افتراضيًا. أضف صورة من ملفك الشخصي أولًا.'**
+  String get visAvatarHint;
+
+  /// No description provided for @visAvatarLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'صورتي الشخصية'**
+  String get visAvatarLabel;
+
+  /// No description provided for @visShowCover.
+  ///
+  /// In ar, this message translates to:
+  /// **'إظهار صورة الغلاف للزائر'**
+  String get visShowCover;
+
+  /// No description provided for @visCoverHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مخفية افتراضيًا. أضف صورة غلاف من ملفك الشخصي أولًا.'**
+  String get visCoverHint;
+
+  /// No description provided for @visCoverLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'صورة الغلاف'**
+  String get visCoverLabel;
+
   /// No description provided for @emergencySection.
   ///
   /// In ar, this message translates to:

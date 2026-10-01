@@ -1,21 +1,30 @@
 import 'package:equatable/equatable.dart';
 
 class ThreadMessage extends Equatable {
-  const ThreadMessage(
-      {required this.fromOwner, required this.body, required this.createdAt});
+  const ThreadMessage({
+    required this.fromOwner,
+    required this.body,
+    required this.createdAt,
+    this.imageUrl,
+  });
 
   final bool fromOwner;
   final String body;
   final DateTime createdAt;
 
+  /// A relative API path (e.g. "/contact-requests/{uuid}/messages/{id}/image")
+  /// to fetch the photo the visitor attached, or null if there isn't one.
+  final String? imageUrl;
+
   factory ThreadMessage.fromJson(Map<String, dynamic> json) => ThreadMessage(
         fromOwner: json['sender'] == 'owner',
         body: json['body'] as String? ?? '',
         createdAt: DateTime.parse(json['created_at'] as String),
+        imageUrl: json['image_url'] as String?,
       );
 
   @override
-  List<Object?> get props => [fromOwner, body, createdAt];
+  List<Object?> get props => [fromOwner, body, createdAt, imageUrl];
 }
 
 /// A message a visitor sent after scanning one of the owner's vehicle tags.

@@ -7,6 +7,7 @@ use App\Models\Tag;
 use App\Models\User;
 use App\Models\Vehicle;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class OwnerContactRequestsTest extends TestCase
@@ -77,5 +78,25 @@ class OwnerContactRequestsTest extends TestCase
     public function test_requires_authentication(): void
     {
         $this->getJson('/api/v1/contact-requests')->assertUnauthorized();
+    }
+
+    public function test_owner_can_view_a_photo_the_visitor_attached_but_another_user_cannot(): void
+    {
+        $owner = User::factory()->create();
+        $intruder = User::factory()->create();
+        $req = $this->requestFor($owner);
+        $message = $req->addMessage('visitor', '', 'contact-message-images/test.jpg');
+        Storage::disk('local')->put('contact-message-images/test.jpg', 'fake-jpeg-bytes');
+
+        $this->getJson("/api/v1/contact-requests/{$req->uuid}", $this->bearer($owner))
+            ->assertOk()
+            ->assertJsonPath('messages.0.image_url', "/contact-requests/{$req->uuid}/messages/{$message->id}/image");
+
+        $this->get("/api/v1/contact-requests/{$req->uuid}/messages/{$message->id}/image", $this->bearer($owner))
+            ->assertOk()->assertHeader('Content-Type', 'image/jpeg');
+
+        $this->app['auth']->forgetGuards();
+        $this->get("/api/v1/contact-requests/{$req->uuid}/messages/{$message->id}/image", $this->bearer($intruder))
+            ->assertNotFound();
     }
 }

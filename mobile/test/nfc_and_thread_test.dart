@@ -60,6 +60,10 @@ class FakeContactRepository implements ContactRequestRepository {
 
   @override
   Future<void> markResponded(String id) async {}
+
+  @override
+  Future<Uint8List> fetchMessageImage(String path) async =>
+      Uint8List.fromList(const []);
 }
 
 Uint8List _bytes(List<int> v) => Uint8List.fromList(v);

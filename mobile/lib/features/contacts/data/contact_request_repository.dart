@@ -1,3 +1,7 @@
+import 'dart:typed_data';
+
+import 'package:dio/dio.dart';
+
 import '../../../core/network/api_client.dart';
 import 'contact_request_model.dart';
 
@@ -31,5 +35,13 @@ class ContactRequestRepository {
 
   Future<void> markResponded(String id) async {
     await _client.dio.put('/contact-requests/$id/responded');
+  }
+
+  /// A photo a visitor attached in the thread, fetched with the same
+  /// authenticated client as everything else — never a bare network image.
+  Future<Uint8List> fetchMessageImage(String path) async {
+    final response = await _client.dio.get<List<int>>(path,
+        options: Options(responseType: ResponseType.bytes));
+    return Uint8List.fromList(response.data!);
   }
 }

@@ -105,6 +105,8 @@ class _VisibilityBody extends ConsumerWidget {
 
     final shown = [
       if (profile.showName) l10n.homeOwnerLabel,
+      if (profile.showAvatar) l10n.visAvatarLabel,
+      if (profile.showCover) l10n.visCoverLabel,
       if (profile.phoneField.visible && profile.phoneField.canShow)
         l10n.phoneShownLabel,
       if (profile.emergency?.visible == true) l10n.emergencySection,
@@ -156,6 +158,38 @@ class _VisibilityBody extends ConsumerWidget {
                 style: const TextStyle(fontSize: 12)),
             value: profile.showName,
             onChanged: (v) => _run(context, ref, () => repo.setShowName(v)),
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+
+        // Avatar
+        AppCard(
+          child: SwitchListTile(
+            contentPadding: EdgeInsets.zero,
+            title: Text(l10n.visShowAvatar,
+                style: const TextStyle(fontWeight: FontWeight.w700)),
+            subtitle:
+                Text(l10n.visAvatarHint, style: const TextStyle(fontSize: 12)),
+            value: profile.showAvatar,
+            onChanged: profile.hasAvatar
+                ? (v) => _run(context, ref, () => repo.setShowAvatar(v))
+                : null,
+          ),
+        ),
+        const SizedBox(height: AppSpacing.md),
+
+        // Cover photo
+        AppCard(
+          child: SwitchListTile(
+            contentPadding: EdgeInsets.zero,
+            title: Text(l10n.visShowCover,
+                style: const TextStyle(fontWeight: FontWeight.w700)),
+            subtitle:
+                Text(l10n.visCoverHint, style: const TextStyle(fontSize: 12)),
+            value: profile.showCover,
+            onChanged: profile.hasCover
+                ? (v) => _run(context, ref, () => repo.setShowCover(v))
+                : null,
           ),
         ),
         const SizedBox(height: AppSpacing.md),

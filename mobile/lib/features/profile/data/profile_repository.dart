@@ -25,6 +25,16 @@ class ProfileRepository {
       _parse(_client.dio.put<Map<String, dynamic>>('/profile/visibility',
           data: {'show_name': value}));
 
+  /// Whether visitors see the avatar (hidden by default).
+  Future<ProfileModel> setShowAvatar(bool value) =>
+      _parse(_client.dio.put<Map<String, dynamic>>('/profile/visibility',
+          data: {'show_avatar': value}));
+
+  /// Whether visitors see the cover photo (hidden by default).
+  Future<ProfileModel> setShowCover(bool value) =>
+      _parse(_client.dio.put<Map<String, dynamic>>('/profile/visibility',
+          data: {'show_cover': value}));
+
   /// The phone number shown to visitors (a Basic feature). An empty value
   /// removes it.
   Future<ProfileModel> updatePhone(
@@ -93,4 +103,27 @@ class ProfileRepository {
 
   Future<ProfileModel> removeAvatar() =>
       _parse(_client.dio.delete<Map<String, dynamic>>('/profile/avatar'));
+
+  /// The cover photo, or null when none is set.
+  Future<Uint8List?> fetchCover() async {
+    try {
+      final response = await _client.dio.get<List<int>>('/profile/cover',
+          options: Options(responseType: ResponseType.bytes));
+      return Uint8List.fromList(response.data!);
+    } on DioException catch (e) {
+      if (e.response?.statusCode == 404) return null;
+      rethrow;
+    }
+  }
+
+  Future<ProfileModel> uploadCover(String filePath) async {
+    final form = FormData.fromMap({
+      'cover': await MultipartFile.fromFile(filePath, filename: 'cover.jpg'),
+    });
+    return _parse(
+        _client.dio.post<Map<String, dynamic>>('/profile/cover', data: form));
+  }
+
+  Future<ProfileModel> removeCover() =>
+      _parse(_client.dio.delete<Map<String, dynamic>>('/profile/cover'));
 }

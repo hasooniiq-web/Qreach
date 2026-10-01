@@ -715,6 +715,26 @@ class AppLocalizationsEn extends AppLocalizations {
       'Hidden by default. Visitors only see your name if you turn this on.';
 
   @override
+  String get visShowAvatar => 'Show my photo to visitors';
+
+  @override
+  String get visAvatarHint =>
+      'Hidden by default. Add a photo in your profile first.';
+
+  @override
+  String get visAvatarLabel => 'My photo';
+
+  @override
+  String get visShowCover => 'Show my cover photo to visitors';
+
+  @override
+  String get visCoverHint =>
+      'Hidden by default. Add a cover photo in your profile first.';
+
+  @override
+  String get visCoverLabel => 'Cover photo';
+
+  @override
   String get emergencySection => 'Emergency contact';
 
   @override
