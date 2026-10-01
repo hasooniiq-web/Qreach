@@ -1,47 +1,60 @@
 workflows:
   ios-workflow:
-    name: iOS Workflow
+    name: QReach iOS Workflow
     max_build_duration: 120
     instance_type: mac_mini_m2
+
     integrations:
-      # Set up in Codemagic: Team settings → Integrations → Apple Developer
-      # Portal / App Store Connect, named "QReach" there.
       app_store_connect: QReach
+
     environment:
       ios_signing:
         distribution_type: app_store
         bundle_identifier: com.qreach
+
       vars:
         XCODE_WORKSPACE: "Runner.xcworkspace"
         XCODE_SCHEME: "Runner"
+
       flutter: stable
       xcode: latest
       cocoapods: default
+
     cache:
       cache_paths:
         - $HOME/.pub-cache
+
     triggering:
       events:
         - push
+
       branch_patterns:
-        # Update this if your default branch isn't "master".
         - pattern: master
           include: true
           source: true
+
     scripts:
       - name: Get Flutter packages
-        script: flutter packages pub get
+        script: |
+          flutter pub get
+
       - name: Set up code signing settings on Xcode project
-        script: xcode-project use-profiles
+        script: |
+          xcode-project use-profiles
+
       - name: Run Flutter unit tests
-        script: flutter test
-      - name: Flutter build ipa for distribution
+        script: |
+          flutter test
+
+      - name: Flutter build IPA for distribution
         script: |
           flutter build ipa --release \
             --export-options-plist=/Users/builder/export_options.plist
+
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
+
     publishing:
       email:
         recipients:
@@ -49,8 +62,7 @@ workflows:
         notify:
           success: true
           failure: true
-      # Uncomment once the app is registered in App Store Connect and the
-      # integration above is verified working, to auto-upload to TestFlight.
-      # app_store_connect:
-      #   auth: integration
-      #   submit_to_testflight: true
+
+      app_store_connect:
+        auth: integration
+        submit_to_testflight: true
