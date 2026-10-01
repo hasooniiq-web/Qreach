@@ -69,20 +69,7 @@ class _QreachAppState extends ConsumerState<QreachApp>
       ],
       builder: (context, child) {
         AppColors.dark = dark;
-        // Lateef's x-height reads noticeably smaller than Cairo's at the same
-        // declared font size, and most screens' text sizes were tuned for
-        // Cairo. Boosting on top of whatever text-scale the user already has
-        // (rather than replacing it) keeps their own accessibility setting
-        // in effect instead of overriding it.
-        final mq = MediaQuery.of(context);
-        final boosted = TextScaler.linear(mq.textScaler.scale(1.0) * 1.2);
-        return KeyedSubtree(
-          key: ValueKey(dark),
-          child: MediaQuery(
-            data: mq.copyWith(textScaler: boosted),
-            child: child!,
-          ),
-        );
+        return KeyedSubtree(key: ValueKey(dark), child: child!);
       },
     );
   }

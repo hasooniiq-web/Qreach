@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import '../design/tokens.dart';
 import 'app_colors.dart';
 
-/// Lateef throughout (bundled in assets/fonts, so it works offline), in light
+/// Cairo throughout (bundled in assets/fonts, so it works offline), in light
 /// and dark. Building a theme also sets [AppColors.dark] so every widget that
 /// reads the palette agrees with the theme being built.
 abstract final class AppTheme {
-  static const fontFamily = 'Lateef';
+  static const fontFamily = 'Cairo';
 
   static ThemeData build({required bool dark}) {
     AppColors.dark = dark;

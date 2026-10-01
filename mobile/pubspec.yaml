@@ -36,7 +36,9 @@ dependencies:
   # avoids the phosphor_flutter incompatibility found during development,
   # see docs/ARCHITECTURE_DECISIONS.md). No emoji as structural icons.
 
-  # Typography — Lateef bundled locally so it works offline.
+  # Typography — IBM Plex Sans Arabic via Google Fonts (fetched/cached at
+  # runtime). For a fully offline-first build, replace with bundled .ttf
+  # assets before shipping — see docs note in core/theme/app_theme.dart.
   # Utilities
   intl: ^0.20.2
   equatable: ^2.0.5
@@ -57,17 +59,17 @@ flutter:
   generate: true
 
   fonts:
-    - family: Lateef
+    - family: Cairo
       fonts:
-        - asset: assets/fonts/Lateef-Regular.ttf
+        - asset: assets/fonts/Cairo.ttf
           weight: 400
-        - asset: assets/fonts/Lateef-500.ttf
+        - asset: assets/fonts/Cairo.ttf
           weight: 500
-        - asset: assets/fonts/Lateef-600.ttf
+        - asset: assets/fonts/Cairo.ttf
           weight: 600
-        - asset: assets/fonts/Lateef-700.ttf
+        - asset: assets/fonts/Cairo.ttf
           weight: 700
-        - asset: assets/fonts/Lateef-800.ttf
+        - asset: assets/fonts/Cairo.ttf
           weight: 800
 
   assets:

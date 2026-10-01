@@ -57,7 +57,7 @@ abstract final class AppMotion {
   static const Duration stagger = Duration(milliseconds: 55);
 }
 
-/// Type scale on top of Lateef. Screens ask for a role, not a size.
+/// Type scale on top of Cairo. Screens ask for a role, not a size.
 abstract final class AppText {
   static TextStyle display(BuildContext context) => TextStyle(
         fontSize: 30,

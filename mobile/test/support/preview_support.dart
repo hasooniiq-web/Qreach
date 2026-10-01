@@ -181,8 +181,8 @@ class FakeContacts implements ContactRequestRepository {
   FakeContacts({this.empty = false});
   final bool empty;
 
-  ContactRequestModel _one(String id, String name, String msg, String status,
-          Duration ago) =>
+  ContactRequestModel _one(
+          String id, String name, String msg, String status, Duration ago) =>
       ContactRequestModel(
         id: id,
         visitorName: name,
@@ -208,12 +208,12 @@ class FakeContacts implements ContactRequestRepository {
               const Duration(minutes: 4)),
           _one('b', '', 'لاحظت ضررًا في المركبة', 'responded',
               const Duration(hours: 5)),
-          _one('c', 'زينب', 'أحتاج إلى مساعدة', 'read',
-              const Duration(days: 2)),
+          _one(
+              'c', 'زينب', 'أحتاج إلى مساعدة', 'read', const Duration(days: 2)),
         ]);
   @override
-  Future<ContactRequestModel> fetchOne(String id) async =>
-      _one(id, 'أحمد', 'سيارتك تعيق الطريق', 'read', const Duration(minutes: 9));
+  Future<ContactRequestModel> fetchOne(String id) async => _one(
+      id, 'أحمد', 'سيارتك تعيق الطريق', 'read', const Duration(minutes: 9));
   @override
   Future<ContactRequestModel> reply(String id, String body) async =>
       fetchOne(id);
@@ -221,6 +221,9 @@ class FakeContacts implements ContactRequestRepository {
   Future<void> markRead(String id) async {}
   @override
   Future<void> markResponded(String id) async {}
+  @override
+  Future<Uint8List> fetchMessageImage(String path) async =>
+      Uint8List.fromList(const []);
 }
 
 class FakeProfile implements ProfileRepository {
@@ -266,9 +269,19 @@ class FakeProfile implements ProfileRepository {
   @override
   Future<ProfileModel> removeAvatar() async => _p;
   @override
+  Future<Uint8List?> fetchCover() async => null;
+  @override
+  Future<ProfileModel> uploadCover(String filePath) async => _p;
+  @override
+  Future<ProfileModel> removeCover() async => _p;
+  @override
   Future<ProfileModel> updateName(String name) async => _p;
   @override
   Future<ProfileModel> setShowName(bool value) async => _p;
+  @override
+  Future<ProfileModel> setShowAvatar(bool value) async => _p;
+  @override
+  Future<ProfileModel> setShowCover(bool value) async => _p;
   @override
   Future<ProfileModel> updatePhone(
           {required String phone, required bool visible}) async =>
@@ -367,7 +380,8 @@ Future<void> shoot(
   final key = GlobalKey();
   final router = GoRouter(routes: [
     GoRoute(path: '/', builder: (_, __) => screen),
-    GoRoute(path: '/:any(.*)', builder: (_, s) => Scaffold(body: Text('${s.uri}'))),
+    GoRoute(
+        path: '/:any(.*)', builder: (_, s) => Scaffold(body: Text('${s.uri}'))),
   ]);
 
   await tester.pumpWidget(ProviderScope(
@@ -400,8 +414,7 @@ Future<void> shoot(
   if (interact != null) await interact(tester);
   await tester.pump(const Duration(milliseconds: 900));
 
-  final boundary =
-      tester.renderObject<RenderRepaintBoundary>(find.byKey(key));
+  final boundary = tester.renderObject<RenderRepaintBoundary>(find.byKey(key));
   final bytes = await tester.runAsync(() async {
     final image = await boundary.toImage(pixelRatio: 1);
     final data = await image.toByteData(format: ui.ImageByteFormat.png);
