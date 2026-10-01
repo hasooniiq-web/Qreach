@@ -122,6 +122,7 @@ class ProfileModel extends Equatable {
     this.coverVersion,
     this.showAvatar = false,
     this.showCover = false,
+    this.hasPassword = false,
   });
 
   final String? name;
@@ -154,6 +155,10 @@ class ProfileModel extends Equatable {
   /// Whether visitors see the avatar/cover photo. Both off by default.
   final bool showAvatar;
   final bool showCover;
+
+  /// Whether a password has ever been set — decides whether changing it
+  /// needs the current one, or is really a first-time set.
+  final bool hasPassword;
 
   /// True if anything is currently switched on for visitors.
   bool get sharesAnything =>
@@ -190,6 +195,7 @@ class ProfileModel extends Equatable {
       coverVersion: (json['cover_version'] as num?)?.toInt(),
       showAvatar: json['show_avatar'] as bool? ?? false,
       showCover: json['show_cover'] as bool? ?? false,
+      hasPassword: json['has_password'] as bool? ?? false,
     );
   }
 
@@ -210,5 +216,6 @@ class ProfileModel extends Equatable {
         coverVersion,
         showAvatar,
         showCover,
+        hasPassword,
       ];
 }

@@ -215,7 +215,7 @@ abstract class AppLocalizations {
   /// No description provided for @forgotPasswordLink.
   ///
   /// In ar, this message translates to:
-  /// **'نسيت كلمة المرور؟ أو لم تحدّدها بعد'**
+  /// **'هل نسيت كلمة المرور؟'**
   String get forgotPasswordLink;
 
   /// No description provided for @forgotPasswordTitle.
@@ -253,6 +253,36 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'تعيين كلمة المرور وتسجيل الدخول'**
   String get forgotPasswordSubmit;
+
+  /// No description provided for @changePasswordLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تغيير كلمة المرور'**
+  String get changePasswordLabel;
+
+  /// No description provided for @setPasswordLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعيين كلمة مرور'**
+  String get setPasswordLabel;
+
+  /// No description provided for @currentPasswordLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلمة المرور الحالية'**
+  String get currentPasswordLabel;
+
+  /// No description provided for @newPasswordLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلمة المرور الجديدة'**
+  String get newPasswordLabel;
+
+  /// No description provided for @passwordChanged.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تغيير كلمة المرور'**
+  String get passwordChanged;
 
   /// No description provided for @biometricSectionTitle.
   ///

@@ -277,6 +277,10 @@ class FakeProfile implements ProfileRepository {
   @override
   Future<ProfileModel> updateName(String name) async => _p;
   @override
+  Future<ProfileModel> updatePassword(
+          {String? currentPassword, required String password}) async =>
+      _p;
+  @override
   Future<ProfileModel> setShowName(bool value) async => _p;
   @override
   Future<ProfileModel> setShowAvatar(bool value) async => _p;

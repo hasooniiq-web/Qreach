@@ -187,6 +187,107 @@ class ProfileScreen extends ConsumerWidget {
     }
   }
 
+  Future<void> _changePassword(
+      BuildContext context, WidgetRef ref, ProfileModel profile) async {
+    final l10n = AppLocalizations.of(context)!;
+    final currentController = TextEditingController();
+    final newController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
+    var obscureCurrent = true;
+    var obscureNew = true;
+
+    final saved = await showDialog<bool>(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: Text(profile.hasPassword
+              ? l10n.changePasswordLabel
+              : l10n.setPasswordLabel),
+          content: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (profile.hasPassword)
+                  TextFormField(
+                    controller: currentController,
+                    autofocus: true,
+                    obscureText: obscureCurrent,
+                    decoration: InputDecoration(
+                      labelText: l10n.currentPasswordLabel,
+                      suffixIcon: IconButton(
+                        icon: Icon(obscureCurrent
+                            ? Icons.visibility_outlined
+                            : Icons.visibility_off_outlined),
+                        onPressed: () =>
+                            setState(() => obscureCurrent = !obscureCurrent),
+                      ),
+                    ),
+                    validator: (v) =>
+                        (v == null || v.isEmpty) ? l10n.requiredField : null,
+                  ),
+                TextFormField(
+                  controller: newController,
+                  autofocus: !profile.hasPassword,
+                  obscureText: obscureNew,
+                  decoration: InputDecoration(
+                    labelText: l10n.newPasswordLabel,
+                    hintText: l10n.passwordHint,
+                    suffixIcon: IconButton(
+                      icon: Icon(obscureNew
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined),
+                      onPressed: () => setState(() => obscureNew = !obscureNew),
+                    ),
+                  ),
+                  validator: (v) => (v == null || v.length < 8)
+                      ? l10n.passwordTooShort
+                      : null,
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                child: Text(l10n.cancel)),
+            TextButton(
+              onPressed: () {
+                if (formKey.currentState!.validate()) {
+                  Navigator.of(context).pop(true);
+                }
+              },
+              child: Text(l10n.save),
+            ),
+          ],
+        ),
+      ),
+    );
+
+    if (saved != true || !context.mounted) {
+      currentController.dispose();
+      newController.dispose();
+      return;
+    }
+
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await ref.read(profileRepositoryProvider).updatePassword(
+            currentPassword:
+                profile.hasPassword ? currentController.text : null,
+            password: newController.text,
+          );
+      ref.invalidate(profileProvider);
+      messenger.showSnackBar(SnackBar(content: Text(l10n.passwordChanged)));
+    } catch (e) {
+      messenger
+          .showSnackBar(SnackBar(content: Text(asApiException(e).message)));
+    } finally {
+      currentController.dispose();
+      newController.dispose();
+    }
+  }
+
   Future<void> _toggleBiometric(
       BuildContext context, WidgetRef ref, bool enable) async {
     final l10n = AppLocalizations.of(context)!;
@@ -484,6 +585,14 @@ class ProfileScreen extends ConsumerWidget {
             SettingsGroup(
               title: l10n.settingsSecurity,
               rows: [
+                if (profile != null)
+                  SettingsRow(
+                    icon: Icons.password_outlined,
+                    label: profile.hasPassword
+                        ? l10n.changePasswordLabel
+                        : l10n.setPasswordLabel,
+                    onTap: () => _changePassword(context, ref, profile),
+                  ),
                 if (ref.watch(biometricAvailableProvider).valueOrNull == true)
                   SettingsRow(
                     icon: Icons.fingerprint,

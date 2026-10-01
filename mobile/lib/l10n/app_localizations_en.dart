@@ -68,8 +68,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get passwordTooShort => 'Password must be at least 8 characters';
 
   @override
-  String get forgotPasswordLink =>
-      'Forgot your password, or haven\'t set one yet?';
+  String get forgotPasswordLink => 'Forgot your password?';
 
   @override
   String get forgotPasswordTitle => 'Reset password';
@@ -89,6 +88,21 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get forgotPasswordSubmit => 'Set password and log in';
+
+  @override
+  String get changePasswordLabel => 'Change password';
+
+  @override
+  String get setPasswordLabel => 'Set a password';
+
+  @override
+  String get currentPasswordLabel => 'Current password';
+
+  @override
+  String get newPasswordLabel => 'New password';
+
+  @override
+  String get passwordChanged => 'Password changed';
 
   @override
   String get biometricSectionTitle => 'Security';

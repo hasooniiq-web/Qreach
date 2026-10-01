@@ -67,7 +67,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get passwordTooShort => 'كلمة المرور يجب أن تكون 8 أحرف على الأقل';
 
   @override
-  String get forgotPasswordLink => 'نسيت كلمة المرور؟ أو لم تحدّدها بعد';
+  String get forgotPasswordLink => 'هل نسيت كلمة المرور؟';
 
   @override
   String get forgotPasswordTitle => 'استعادة كلمة المرور';
@@ -87,6 +87,21 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get forgotPasswordSubmit => 'تعيين كلمة المرور وتسجيل الدخول';
+
+  @override
+  String get changePasswordLabel => 'تغيير كلمة المرور';
+
+  @override
+  String get setPasswordLabel => 'تعيين كلمة مرور';
+
+  @override
+  String get currentPasswordLabel => 'كلمة المرور الحالية';
+
+  @override
+  String get newPasswordLabel => 'كلمة المرور الجديدة';
+
+  @override
+  String get passwordChanged => 'تم تغيير كلمة المرور';
 
   @override
   String get biometricSectionTitle => 'الأمان';

@@ -20,6 +20,18 @@ class ProfileRepository {
   Future<ProfileModel> updateName(String name) => _parse(
       _client.dio.put<Map<String, dynamic>>('/profile', data: {'name': name}));
 
+  /// [currentPassword] is only needed when the profile already has one
+  /// (see [ProfileModel.hasPassword]) — a first-time set from inside the
+  /// app doesn't need it.
+  Future<ProfileModel> updatePassword({
+    String? currentPassword,
+    required String password,
+  }) =>
+      _parse(_client.dio.put<Map<String, dynamic>>('/profile/password', data: {
+        if (currentPassword != null) 'current_password': currentPassword,
+        'password': password,
+      }));
+
   /// Whether visitors see the owner's name (hidden by default).
   Future<ProfileModel> setShowName(bool value) =>
       _parse(_client.dio.put<Map<String, dynamic>>('/profile/visibility',
