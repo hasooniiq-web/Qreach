@@ -11,6 +11,7 @@ use App\Models\Vehicle;
 use Database\Seeders\SubscriptionPlanSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 /**
@@ -213,5 +214,36 @@ class ProfileVisibilityTest extends TestCase
     {
         $owner = User::factory()->create();
         $this->putJson('/api/v1/profile/visibility', [], $this->bearer($owner))->assertStatus(422);
+    }
+
+    public function test_changing_the_password_requires_the_current_one_and_is_rejected_if_wrong(): void
+    {
+        $user = User::factory()->create(['password' => 'old-password']);
+        $headers = $this->bearer($user);
+
+        $this->putJson('/api/v1/profile/password', ['password' => 'new-password-123'], $headers)
+            ->assertStatus(422);
+
+        $this->putJson('/api/v1/profile/password', [
+            'current_password' => 'wrong-password', 'password' => 'new-password-123',
+        ], $headers)->assertStatus(422)->assertJsonPath('error.code', 'INVALID_CURRENT_PASSWORD');
+
+        $this->assertTrue(Hash::check('old-password', $user->fresh()->password));
+
+        $this->putJson('/api/v1/profile/password', [
+            'current_password' => 'old-password', 'password' => 'new-password-123',
+        ], $headers)->assertOk()->assertJsonPath('has_password', true);
+
+        $this->assertTrue(Hash::check('new-password-123', $user->fresh()->password));
+    }
+
+    public function test_an_account_with_no_password_yet_can_set_its_first_one_without_a_current_password(): void
+    {
+        $user = User::factory()->create(['password' => null]);
+
+        $this->putJson('/api/v1/profile/password', ['password' => 'brand-new-password'], $this->bearer($user))
+            ->assertOk()->assertJsonPath('has_password', true);
+
+        $this->assertTrue(Hash::check('brand-new-password', $user->fresh()->password));
     }
 }

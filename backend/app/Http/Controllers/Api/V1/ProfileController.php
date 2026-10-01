@@ -15,6 +15,7 @@ use App\Services\MessageImageProcessor;
 use App\Services\PlanEntitlements;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -51,6 +52,7 @@ class ProfileController extends Controller
             'phone' => $user->phone,
             'plan' => $plan->slug,
             'plan_name' => $plan->name_ar,
+            'has_password' => (bool) $user->password,
             'has_avatar' => (bool) $user->avatar_path,
             'avatar_version' => $user->updated_at?->timestamp,
             'has_cover' => (bool) $user->cover_path,
@@ -94,6 +96,38 @@ class ProfileController extends Controller
 
         $request->user()->update(['name' => trim($data['name'])]);
         AuditLogger::log('profile.name_updated', 'customer', $request->user()->id, 'User', $request->user()->id, 'success', [], $request);
+
+        return $this->show($request);
+    }
+
+    /**
+     * Changes the password from inside the app. current_password is only
+     * required if one is already set — an account whose session predates
+     * password login (or was never set up via the OTP flow) can set its
+     * first one here too, with no extra proof beyond the session it
+     * already has, same as every other profile field.
+     */
+    public function updatePassword(Request $request): JsonResponse
+    {
+        $user = $request->user();
+
+        $rules = ['password' => ['required', 'string', 'min:8', 'max:72']];
+        if ($user->password) {
+            $rules['current_password'] = ['required', 'string'];
+        }
+
+        $data = $request->validate($rules, [
+            'password.min' => 'كلمة المرور يجب أن تكون 8 أحرف على الأقل.',
+        ]);
+
+        if ($user->password && ! Hash::check($data['current_password'], $user->password)) {
+            return response()->json([
+                'error' => ['code' => 'INVALID_CURRENT_PASSWORD', 'message' => 'كلمة المرور الحالية غير صحيحة.'],
+            ], 422);
+        }
+
+        $user->update(['password' => $data['password']]);
+        AuditLogger::log('profile.password_changed', 'customer', $user->id, 'User', $user->id, 'success', [], $request);
 
         return $this->show($request);
     }

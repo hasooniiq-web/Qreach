@@ -64,6 +64,7 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
 
         Route::get('profile', [ProfileController::class, 'show'])->name('profile.show');
         Route::put('profile', [ProfileController::class, 'updateName'])->name('profile.name');
+        Route::put('profile/password', [ProfileController::class, 'updatePassword'])->name('profile.password');
         Route::get('profile/avatar', [ProfileController::class, 'avatar'])->name('profile.avatar');
         Route::post('profile/avatar', [ProfileController::class, 'storeAvatar'])->name('profile.avatar.store');
         Route::delete('profile/avatar', [ProfileController::class, 'destroyAvatar'])->name('profile.avatar.destroy');
