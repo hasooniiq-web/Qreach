@@ -34,10 +34,12 @@ class User extends Authenticatable
         'show_name_publicly',
         'show_avatar_publicly',
         'show_cover_publicly',
+        'password',
     ];
 
     protected $hidden = [
         'remember_token',
+        'password',
     ];
 
     protected function casts(): array
@@ -49,6 +51,7 @@ class User extends Authenticatable
             'show_name_publicly' => 'boolean',
             'show_avatar_publicly' => 'boolean',
             'show_cover_publicly' => 'boolean',
+            'password' => 'hashed',
         ];
     }
 

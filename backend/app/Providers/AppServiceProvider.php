@@ -57,6 +57,20 @@ class AppServiceProvider extends ServiceProvider
             ];
         });
 
+        RateLimiter::for('customer-login', function (Request $request) {
+            return [
+                Limit::perMinute(5)->by('customer-login-phone:'.$request->input('phone')),
+                Limit::perMinute(20)->by('customer-login-ip:'.$request->ip()),
+            ];
+        });
+
+        RateLimiter::for('customer-register', function (Request $request) {
+            return [
+                Limit::perMinute(3)->by('customer-register-phone:'.$request->input('phone')),
+                Limit::perHour(10)->by('customer-register-ip:'.$request->ip()),
+            ];
+        });
+
         RateLimiter::for('admin-login', function (Request $request) {
             return [
                 Limit::perMinute(5)->by('admin-login-email:'.strtolower((string) $request->input('email'))),

@@ -13,10 +13,20 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->name('api.v1.')->group(function () {
     Route::prefix('auth')->name('auth.')->group(function () {
-        Route::post('otp/request', [OtpAuthController::class, 'requestOtp'])
-            ->middleware('throttle:otp-request')->name('otp.request');
-        Route::post('otp/verify', [OtpAuthController::class, 'verifyOtp'])
-            ->middleware('throttle:otp-verify')->name('otp.verify');
+        Route::post('register', [OtpAuthController::class, 'register'])
+            ->middleware('throttle:customer-register')->name('register');
+        Route::post('register/verify', [OtpAuthController::class, 'verifyRegister'])
+            ->middleware('throttle:otp-verify')->name('register.verify');
+
+        Route::post('login', [OtpAuthController::class, 'login'])
+            ->middleware('throttle:customer-login')->name('login');
+
+        // Sets a first-ever password (an account that pre-dates password
+        // login) or resets a forgotten one — same OTP-then-act shape either way.
+        Route::post('password/request-otp', [OtpAuthController::class, 'requestPasswordOtp'])
+            ->middleware('throttle:otp-request')->name('password.request-otp');
+        Route::post('password/set', [OtpAuthController::class, 'setPassword'])
+            ->middleware('throttle:otp-verify')->name('password.set');
 
         Route::middleware('auth:sanctum')->group(function () {
             Route::post('logout', [OtpAuthController::class, 'logout'])->name('logout');

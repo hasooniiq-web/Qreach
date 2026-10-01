@@ -39,18 +39,18 @@ class AdditionalSecurityTest extends TestCase
         OtpCode::create([
             'phone' => $phone,
             'code_hash' => Hash::make($code),
-            'purpose' => 'login',
+            'purpose' => 'password_reset',
             'max_attempts' => 5,
             'expires_at' => now()->addMinutes(5),
         ]);
 
         for ($i = 0; $i < 5; $i++) {
-            $this->postJson('/api/v1/auth/otp/verify', ['phone' => $phone, 'code' => '000000'])
+            $this->postJson('/api/v1/auth/password/set', ['phone' => $phone, 'code' => '000000', 'password' => 'correct-horse'])
                 ->assertStatus(422);
         }
 
         // The correct code, on the 6th attempt, must still be rejected.
-        $this->postJson('/api/v1/auth/otp/verify', ['phone' => $phone, 'code' => $code])
+        $this->postJson('/api/v1/auth/password/set', ['phone' => $phone, 'code' => $code, 'password' => 'correct-horse'])
             ->assertStatus(422)
             ->assertJsonPath('error.message', 'تم تجاوز عدد المحاولات المسموح به. اطلب رمزًا جديدًا.');
     }

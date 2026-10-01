@@ -29,9 +29,9 @@ class PhoneNormalizationTest extends TestCase
         return ['Authorization' => 'Bearer '.$u->createToken('t')->plainTextToken];
     }
 
-    public function test_otp_request_treats_the_leading_zero_and_bare_forms_as_the_same_phone(): void
+    public function test_password_otp_request_treats_the_leading_zero_and_bare_forms_as_the_same_phone(): void
     {
-        $this->postJson('/api/v1/auth/otp/request', ['phone' => '07701234567'])
+        $this->postJson('/api/v1/auth/password/request-otp', ['phone' => '07701234567'])
             ->assertStatus(200);
 
         $this->assertDatabaseHas('otp_codes', ['phone' => '+9647701234567']);
@@ -39,7 +39,7 @@ class PhoneNormalizationTest extends TestCase
         // Same subscriber, no zero this time — the resend cooldown fires
         // (429 OTP_COOLDOWN), which only happens if both requests were
         // normalized to the identical stored phone.
-        $this->postJson('/api/v1/auth/otp/request', ['phone' => '7701234567'])
+        $this->postJson('/api/v1/auth/password/request-otp', ['phone' => '7701234567'])
             ->assertStatus(429)
             ->assertJsonPath('error.code', 'OTP_COOLDOWN');
     }

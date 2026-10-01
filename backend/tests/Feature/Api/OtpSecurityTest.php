@@ -26,16 +26,18 @@ class OtpSecurityTest extends TestCase
         OtpCode::create([
             'phone' => $phone,
             'code_hash' => Hash::make($code),
-            'purpose' => 'login',
+            'purpose' => 'password_reset',
             'max_attempts' => 5,
             'expires_at' => now()->addMinutes(5),
         ]);
 
-        $first = $this->postJson('/api/v1/auth/otp/verify', ['phone' => $phone, 'code' => $code]);
+        $payload = ['phone' => $phone, 'code' => $code, 'password' => 'correct-horse'];
+
+        $first = $this->postJson('/api/v1/auth/password/set', $payload);
         $first->assertStatus(200);
 
         // Replaying the exact same code must fail now that it's consumed.
-        $second = $this->postJson('/api/v1/auth/otp/verify', ['phone' => $phone, 'code' => $code]);
+        $second = $this->postJson('/api/v1/auth/password/set', $payload);
         $second->assertStatus(422)->assertJsonPath('error.code', 'OTP_INVALID');
     }
 
@@ -47,12 +49,13 @@ class OtpSecurityTest extends TestCase
         $otp = OtpCode::create([
             'phone' => $phone,
             'code_hash' => Hash::make($code),
-            'purpose' => 'login',
+            'purpose' => 'password_reset',
             'max_attempts' => 5,
             'expires_at' => now()->addMinutes(5),
         ]);
 
-        $this->postJson('/api/v1/auth/otp/verify', ['phone' => $phone, 'code' => $code])->assertStatus(200);
+        $this->postJson('/api/v1/auth/password/set', ['phone' => $phone, 'code' => $code, 'password' => 'correct-horse'])
+            ->assertStatus(200);
 
         $this->assertNotNull($otp->fresh()->consumed_at);
     }
