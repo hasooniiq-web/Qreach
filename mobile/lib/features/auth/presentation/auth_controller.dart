@@ -1,6 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/providers.dart';
+import '../../contacts/presentation/contact_controller.dart';
+import '../../home/presentation/home_controller.dart';
+import '../../notifications/presentation/notification_controller.dart';
+import '../../profile/presentation/profile_controller.dart';
+import '../../subscription/presentation/subscription_controller.dart';
+import '../../vehicles/presentation/vehicle_controller.dart';
 import '../data/user_model.dart';
 
 sealed class AuthState {
@@ -137,11 +143,13 @@ class AuthController extends Notifier<AuthState> {
   Future<void> logout() async {
     await ref.read(authRepositoryProvider).logout();
     state = const AuthUnauthenticated();
+    _clearPerAccountState();
   }
 
   Future<void> logoutAllDevices() async {
     await ref.read(authRepositoryProvider).logoutAllDevices();
     state = const AuthUnauthenticated();
+    _clearPerAccountState();
   }
 
   /// Called by API-consuming providers when a request comes back
@@ -149,6 +157,23 @@ class AuthController extends Notifier<AuthState> {
   /// immediately instead of showing a confusing error on every screen.
   void forceLogout() {
     state = const AuthUnauthenticated();
+    _clearPerAccountState();
+  }
+
+  /// Every provider that caches data scoped to whoever was logged in.
+  /// Without this, logging out and into a *different* account on the same
+  /// app session kept showing the previous account's vehicles (reported
+  /// bug) — VehicleListController isn't .autoDispose, so nothing ever
+  /// re-fetched it until something happened to call refresh() by chance.
+  /// Cleared here rather than relying on autoDispose timing, and covers
+  /// the non-autoDispose ones too (vehicles/contacts/notifications).
+  void _clearPerAccountState() {
+    ref.invalidate(vehicleListControllerProvider);
+    ref.invalidate(contactsProvider);
+    ref.invalidate(notificationsProvider);
+    ref.invalidate(subscriptionProvider);
+    ref.invalidate(profileProvider);
+    ref.invalidate(homeProvider);
   }
 }
 
