@@ -13,12 +13,14 @@ class BrandMark extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // The real logo (yellow Q-ring + QR glyph) already has its own white
+    // background, so only the rounded clip and glow are added here — no
+    // separate coloured tile behind it like the old placeholder icon needed.
     final mark = Container(
       width: size,
       height: size,
       decoration: BoxDecoration(
-        color: AppColors.brandYellow,
-        borderRadius: BorderRadius.circular(size * 0.32),
+        borderRadius: BorderRadius.circular(size * 0.22),
         boxShadow: [
           BoxShadow(
               color: AppColors.brandYellow.withValues(alpha: 0.35),
@@ -26,8 +28,8 @@ class BrandMark extends StatelessWidget {
               offset: Offset(0, size * 0.12)),
         ],
       ),
-      child: Icon(Icons.qr_code_2_rounded,
-          size: size * 0.62, color: AppColors.brandBlack),
+      clipBehavior: Clip.antiAlias,
+      child: Image.asset('assets/images/app_icon.png', fit: BoxFit.cover),
     );
 
     if (!animate || MediaQuery.of(context).disableAnimations) return mark;
