@@ -26,11 +26,23 @@ class PushNotificationService {
       final settings = await messaging.requestPermission();
       if (settings.authorizationStatus == AuthorizationStatus.denied) return;
 
-      // iOS needs the APNs token registered before FCM can hand out a
-      // token; the plugin fetches it under the hood, but on a fresh
-      // install that can briefly lag behind requestPermission() returning.
+      // iOS needs the APNs token registered with Apple before FCM can hand
+      // out a token — getToken() throws if it isn't ready yet, and right
+      // after requestPermission() on a fresh install it usually isn't: the
+      // handshake with Apple's servers hasn't completed. Without this wait,
+      // this whole call fails here, every single time, on first login —
+      // this call only ever runs once per login, so there is no later retry.
       if (defaultTargetPlatform == TargetPlatform.iOS) {
-        await messaging.getAPNSToken();
+        var apnsToken = await messaging.getAPNSToken();
+        var attempts = 0;
+        while (apnsToken == null && attempts < 10) {
+          await Future.delayed(const Duration(seconds: 1));
+          apnsToken = await messaging.getAPNSToken();
+          attempts++;
+        }
+        // Still not ready after 10s: give up for now rather than crash:
+        // onTokenRefresh below will pick it up if/when it does arrive.
+        if (apnsToken == null) return;
       }
 
       final token = await messaging.getToken();
