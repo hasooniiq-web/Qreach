@@ -73,12 +73,12 @@ function build(canvas, config) {
                     display: !doughnut && config.datasets.length > 1,
                     position: 'top',
                     align: 'end',
-                    labels: { usePointStyle: true, pointStyle: 'circle', boxWidth: 8, color: p.text, font: { family: 'Cairo', size: 12 } },
+                    labels: { usePointStyle: true, pointStyle: 'circle', boxWidth: 8, color: p.text, font: { family: 'Noto Sans Arabic', size: 12 } },
                 },
                 tooltip: {
                     rtl: true,
-                    titleFont: { family: 'Cairo' },
-                    bodyFont: { family: 'Cairo' },
+                    titleFont: { family: 'Noto Sans Arabic' },
+                    bodyFont: { family: 'Noto Sans Arabic' },
                     backgroundColor: css('--color-ink-900'),
                     titleColor: css('--color-canvas'),
                     bodyColor: css('--color-canvas'),
@@ -88,8 +88,8 @@ function build(canvas, config) {
                 },
             },
             scales: doughnut ? {} : {
-                x: { grid: { display: false }, border: { display: false }, ticks: { color: p.text, maxTicksLimit: 8, font: { family: 'Cairo', size: 11 } } },
-                y: { beginAtZero: true, border: { display: false }, grid: { color: p.grid }, ticks: { color: p.text, precision: 0, maxTicksLimit: 5, font: { family: 'Cairo', size: 11 } } },
+                x: { grid: { display: false }, border: { display: false }, ticks: { color: p.text, maxTicksLimit: 8, font: { family: 'Noto Sans Arabic', size: 11 } } },
+                y: { beginAtZero: true, border: { display: false }, grid: { color: p.grid }, ticks: { color: p.text, precision: 0, maxTicksLimit: 5, font: { family: 'Noto Sans Arabic', size: 11 } } },
             },
         },
     });

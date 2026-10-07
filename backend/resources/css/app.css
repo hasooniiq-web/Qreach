@@ -50,6 +50,12 @@
     --spacing-section: 2rem;
 }
 
+/* The dashboard (admin + its login) uses Noto Sans Arabic; the public scan
+   pages keep Cairo. Set on <html data-dashboard> by the admin/guest layouts. */
+html[data-dashboard] {
+    --font-sans: 'Noto Sans Arabic', ui-sans-serif, system-ui, sans-serif;
+}
+
 @layer base {
     html {
         -webkit-text-size-adjust: 100%;
