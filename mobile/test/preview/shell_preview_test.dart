@@ -24,7 +24,9 @@ void main() {
   setUpAll(loadFonts);
 
   Future<void> shootShell(WidgetTester tester, String name,
-      {int tab = 0, bool dark = false, Size size = const Size(390, 844)}) async {
+      {int tab = 0,
+      bool dark = false,
+      Size size = const Size(390, 844)}) async {
     tester.view.physicalSize = size * 2;
     tester.view.devicePixelRatio = 2;
     addTearDown(tester.view.reset);
@@ -102,8 +104,8 @@ void main() {
 
   testWidgets('shell home', (t) => shootShell(t, 'shell_home'));
   testWidgets('shell vehicles', (t) => shootShell(t, 'shell_vehicles', tab: 1));
-  testWidgets(
-      'shell contacts dark', (t) => shootShell(t, 'shell_contacts_dark', tab: 2, dark: true));
+  testWidgets('shell contacts dark',
+      (t) => shootShell(t, 'shell_contacts_dark', tab: 2, dark: true));
   testWidgets('shell home small',
       (t) => shootShell(t, 'shell_home_small', size: const Size(360, 640)));
 }

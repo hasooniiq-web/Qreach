@@ -1,7 +1,7 @@
 name: qreach_smarttag
 description: "Qreach SmartTag — customer mobile app"
 publish_to: 'none'
-version: 0.1.0+8
+version: 0.1.0+10
 
 environment:
   sdk: ^3.5.0
@@ -74,17 +74,17 @@ flutter:
   generate: true
 
   fonts:
-    - family: Cairo
+    - family: Noto Sans Arabic
       fonts:
-        - asset: assets/fonts/Cairo.ttf
+        - asset: assets/fonts/NotoSansArabic.ttf
           weight: 400
-        - asset: assets/fonts/Cairo.ttf
+        - asset: assets/fonts/NotoSansArabic.ttf
           weight: 500
-        - asset: assets/fonts/Cairo.ttf
+        - asset: assets/fonts/NotoSansArabic.ttf
           weight: 600
-        - asset: assets/fonts/Cairo.ttf
+        - asset: assets/fonts/NotoSansArabic.ttf
           weight: 700
-        - asset: assets/fonts/Cairo.ttf
+        - asset: assets/fonts/NotoSansArabic.ttf
           weight: 800
 
   assets:

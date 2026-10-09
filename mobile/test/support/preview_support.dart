@@ -30,9 +30,9 @@ import 'package:qreach_smarttag/l10n/app_localizations.dart';
 /// Loads the real fonts so preview screenshots show Arabic text and icons
 /// instead of test placeholder boxes.
 Future<void> loadFonts() async {
-  final cairo = FontLoader('Cairo')
-    ..addFont(rootBundle.load('assets/fonts/Cairo.ttf'));
-  await cairo.load();
+  final noto = FontLoader('Noto Sans Arabic')
+    ..addFont(rootBundle.load('assets/fonts/NotoSansArabic.ttf'));
+  await noto.load();
 
   final icons = File(
       'C:/flutter/bin/cache/artifacts/material_fonts/MaterialIcons-Regular.otf');

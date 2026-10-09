@@ -3,11 +3,11 @@ import 'package:flutter/material.dart';
 import '../design/tokens.dart';
 import 'app_colors.dart';
 
-/// Cairo throughout (bundled in assets/fonts, so it works offline), in light
+/// Noto Sans Arabic throughout (same as the dashboard) (bundled in assets/fonts, so it works offline), in light
 /// and dark. Building a theme also sets [AppColors.dark] so every widget that
 /// reads the palette agrees with the theme being built.
 abstract final class AppTheme {
-  static const fontFamily = 'Cairo';
+  static const fontFamily = 'Noto Sans Arabic';
 
   static ThemeData build({required bool dark}) {
     AppColors.dark = dark;

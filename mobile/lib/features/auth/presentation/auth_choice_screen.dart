@@ -35,12 +35,6 @@ class AuthChoiceScreen extends StatelessWidget {
             style: AppButtonStyle.secondary,
             onPressed: () => context.push('/login/password'),
           ),
-          const SizedBox(height: AppSpacing.md),
-          TextButton.icon(
-            onPressed: () => context.push('/server'),
-            icon: const Icon(Icons.dns_outlined, size: 18),
-            label: Text(l10n.serverSetup),
-          ),
         ],
       ),
     );

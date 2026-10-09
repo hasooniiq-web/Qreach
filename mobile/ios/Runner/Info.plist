@@ -10,6 +10,19 @@
 	<string>Qreach SmartTag</string>
 	<key>NSCameraUsageDescription</key>
 	<string>يحتاج التطبيق إلى الكاميرا لمسح رمز QR الخاص بالمركبة.</string>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+		<key>NSExceptionDomains</key>
+		<dict>
+			<key>77.42.10.126</key>
+			<dict>
+				<key>NSExceptionAllowsInsecureHTTPLoads</key>
+				<true/>
+			</dict>
+		</dict>
+	</dict>
+	<key>NFCReaderUsageDescription</key>
+	<string>يستخدم التطبيق NFC لقراءة بطاقة SmartTag وربطها بمركبتك.</string>
 	<key>NSFaceIDUsageDescription</key>
 	<string>يُستخدم Face ID لفتح حسابك بدل إدخال كلمة المرور في كل مرة.</string>
 	<key>UIBackgroundModes</key>

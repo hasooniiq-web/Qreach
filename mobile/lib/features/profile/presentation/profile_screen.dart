@@ -574,11 +574,6 @@ class ProfileScreen extends ConsumerWidget {
                   },
                   onTap: () => _chooseTheme(context, ref),
                 ),
-                SettingsRow(
-                  icon: Icons.dns_outlined,
-                  label: l10n.serverSetup,
-                  onTap: () => context.push('/server'),
-                ),
               ],
             ),
             const SizedBox(height: AppSpacing.xl),

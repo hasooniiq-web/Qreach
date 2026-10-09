@@ -6,7 +6,7 @@ import 'api_exception.dart';
 /// Base URL is compile-time configurable so a debug build can point at a
 /// local backend without editing source:
 ///   flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8000/api/v1
-const _defaultBaseUrl = 'https://smarttag.example/api/v1';
+const _defaultBaseUrl = 'http://77.42.10.126/api/v1';
 const String apiBaseUrl =
     String.fromEnvironment('API_BASE_URL', defaultValue: _defaultBaseUrl);
 
@@ -28,9 +28,9 @@ class ApiClient {
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          // The server can be changed at runtime (server-setup screen), so the
-          // base URL is resolved for every request rather than fixed at start.
-          options.baseUrl = await _storage.readServerBaseUrl() ?? apiBaseUrl;
+          // The server picker is hidden (this server is the fixed default), so a
+          // base URL saved by an older build is deliberately ignored.
+          options.baseUrl = apiBaseUrl;
           final token = await _storage.readToken();
           if (token != null) {
             options.headers['Authorization'] = 'Bearer $token';
