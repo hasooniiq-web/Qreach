@@ -287,6 +287,12 @@ class ScanController extends Controller
     {
         $tag = Tag::with('vehicle.user')->where('public_token', $token)->first();
 
+        // An owner can pause a vehicle from the app: its code then behaves like an
+        // unlinked one (generic page, no contact, no scan recorded) until reactivated.
+        if ($tag && $tag->status === 'assigned' && $tag->vehicle && $tag->vehicle->status !== 'active') {
+            return null;
+        }
+
         if (! $tag || $tag->status !== 'assigned' || ! $tag->vehicle) {
             SecurityEventLogger::log(
                 SecurityEventLogger::QR_GUESSING, 'info', 'unknown', null,

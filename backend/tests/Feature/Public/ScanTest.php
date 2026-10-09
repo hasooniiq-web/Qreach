@@ -38,6 +38,19 @@ class ScanTest extends TestCase
         ]);
     }
 
+    public function test_a_paused_vehicle_shows_the_generic_page_and_accepts_no_contact_until_reactivated(): void
+    {
+        $tag = $this->makeAssignedTag(['nickname' => 'سيارة موقوفة', 'status' => 'inactive']);
+
+        $this->get("/t/{$tag->public_token}")->assertOk()->assertDontSee('سيارة موقوفة')->assertSee('أوقف صاحبه المركبة مؤقتًا');
+        $this->assertDatabaseMissing('scans', ['tag_id' => $tag->id]);
+        $this->post("/t/{$tag->public_token}/contact", ['reason' => 'damage'])->assertNotFound();
+        $this->assertSame(0, ContactRequest::count());
+
+        $tag->vehicle->update(['status' => 'active']);
+        $this->get("/t/{$tag->public_token}")->assertOk()->assertSee('سيارة موقوفة');
+    }
+
     public function test_scanning_a_valid_tag_shows_the_public_page_without_auth(): void
     {
         $tag = $this->makeAssignedTag(['nickname' => 'سيارتي']);

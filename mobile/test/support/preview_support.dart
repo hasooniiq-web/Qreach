@@ -101,6 +101,8 @@ class FakeVehicles implements VehicleRepository {
   @override
   Future<void> delete(String id) async {}
   @override
+  Future<void> setStatus(String id, {required bool active}) async {}
+  @override
   Future<void> removeTag(String vehicleId) async {}
 }
 

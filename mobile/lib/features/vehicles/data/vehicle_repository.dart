@@ -36,6 +36,13 @@ class VehicleRepository {
         response.data!['data'] as Map<String, dynamic>);
   }
 
+  /// Pauses (`inactive`) or resumes (`active`) a vehicle; the server decides what
+  /// that means for its public code.
+  Future<void> setStatus(String id, {required bool active}) async {
+    await _client.dio
+        .put('/vehicles/$id', data: {'status': active ? 'active' : 'inactive'});
+  }
+
   Future<void> delete(String id) async {
     await _client.dio.delete('/vehicles/$id');
   }

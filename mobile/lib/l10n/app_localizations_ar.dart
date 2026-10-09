@@ -929,6 +929,49 @@ class AppLocalizationsAr extends AppLocalizations {
   String get themeDark => 'داكن';
 
   @override
+  String get disableVehicle => 'إيقاف المركبة';
+
+  @override
+  String get enableVehicle => 'إعادة تفعيل المركبة';
+
+  @override
+  String get disableVehicleTitle => 'إيقاف هذه المركبة؟';
+
+  @override
+  String get disableVehicleBody =>
+      'أثناء الإيقاف، يعرض مسح رمز QR أو شريحة NFC صفحة \"غير متاح\": لن يتمكن الزوار من التواصل معك ولن تصلك أي تنبيهات. يبقى الرمز وبيانات المركبة ومحادثاتك السابقة كما هي، ويمكنك إعادة التفعيل في أي وقت.';
+
+  @override
+  String get disableConfirm => 'إيقاف';
+
+  @override
+  String get enableVehicleTitle => 'إعادة تفعيل هذه المركبة؟';
+
+  @override
+  String get enableVehicleBody =>
+      'سيتمكن الزوار الذين يمسحون رمزها من التواصل معك مجددًا.';
+
+  @override
+  String get enableConfirm => 'إعادة التفعيل';
+
+  @override
+  String get vehicleDisabledBanner =>
+      'هذه المركبة موقوفة. يعرض رمزها صفحة \"غير متاح\" للزوار.';
+
+  @override
+  String get vehicleDisabledDone => 'تم إيقاف المركبة';
+
+  @override
+  String get vehicleEnabledDone => 'تمت إعادة تفعيل المركبة';
+
+  @override
+  String get deleteVehicleTitle => 'حذف هذه المركبة؟';
+
+  @override
+  String get deleteVehicleBody =>
+      'ستُزال المركبة من حسابك ويتوقف رمزها عن العمل. لا يمكن التراجع عن هذا الإجراء. إن أردت إيقافها مؤقتًا فقط فاستخدم \"إيقاف المركبة\" بدلًا من الحذف.';
+
+  @override
   String get attachPhoto => 'إرفاق صورة';
 
   @override

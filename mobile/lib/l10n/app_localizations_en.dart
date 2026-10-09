@@ -937,6 +937,49 @@ class AppLocalizationsEn extends AppLocalizations {
   String get themeDark => 'Dark';
 
   @override
+  String get disableVehicle => 'Disable vehicle';
+
+  @override
+  String get enableVehicle => 'Reactivate vehicle';
+
+  @override
+  String get disableVehicleTitle => 'Disable this vehicle?';
+
+  @override
+  String get disableVehicleBody =>
+      'While it is disabled, scanning its QR code or NFC tag shows an unavailable page: visitors cannot contact you and no alerts reach you. Your code, details and past conversations are kept, and you can reactivate the vehicle at any time.';
+
+  @override
+  String get disableConfirm => 'Disable';
+
+  @override
+  String get enableVehicleTitle => 'Reactivate this vehicle?';
+
+  @override
+  String get enableVehicleBody =>
+      'Visitors who scan its code will be able to contact you again.';
+
+  @override
+  String get enableConfirm => 'Reactivate';
+
+  @override
+  String get vehicleDisabledBanner =>
+      'This vehicle is disabled. Its code shows an unavailable page to visitors.';
+
+  @override
+  String get vehicleDisabledDone => 'Vehicle disabled';
+
+  @override
+  String get vehicleEnabledDone => 'Vehicle reactivated';
+
+  @override
+  String get deleteVehicleTitle => 'Delete this vehicle?';
+
+  @override
+  String get deleteVehicleBody =>
+      'The vehicle is removed from your account and its code stops working. This cannot be undone. If you only want to pause it, disable it instead.';
+
+  @override
   String get attachPhoto => 'Attach a photo';
 
   @override

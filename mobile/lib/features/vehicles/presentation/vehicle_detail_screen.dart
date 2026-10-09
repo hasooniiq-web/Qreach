@@ -29,29 +29,6 @@ class VehicleDetailScreen extends ConsumerWidget {
 
   final String vehicleId;
 
-  Future<void> _confirmDelete(BuildContext context, WidgetRef ref) async {
-    final l10n = AppLocalizations.of(context)!;
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        content: Text(l10n.deleteVehicleConfirm),
-        actions: [
-          TextButton(
-              onPressed: () => context.pop(false), child: Text(l10n.cancel)),
-          TextButton(
-            onPressed: () => context.pop(true),
-            child: Text(l10n.delete,
-                style: TextStyle(color: AppColors.statusDanger)),
-          ),
-        ],
-      ),
-    );
-    if (confirmed == true) {
-      await ref.read(vehicleListControllerProvider.notifier).delete(vehicleId);
-      if (context.mounted) context.pop();
-    }
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
@@ -60,16 +37,6 @@ class VehicleDetailScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.vehicleDetails),
-        actions: [
-          PopupMenuButton<String>(
-            onSelected: (value) {
-              if (value == 'delete') _confirmDelete(context, ref);
-            },
-            itemBuilder: (context) => [
-              PopupMenuItem(value: 'delete', child: Text(l10n.delete)),
-            ],
-          ),
-        ],
       ),
       body: vehicleAsync.when(
         loading: () => ListView(
@@ -92,6 +59,10 @@ class VehicleDetailScreen extends ConsumerWidget {
           child: ListView(
             padding: const EdgeInsets.all(AppSpacing.lg),
             children: [
+              if (vehicle.status == 'inactive') ...[
+                FadeSlideIn(child: const _DisabledBanner()),
+                const SizedBox(height: AppSpacing.md),
+              ],
               FadeSlideIn(child: _VehicleHero(vehicle: vehicle)),
               const SizedBox(height: AppSpacing.xl),
               FadeSlideIn(
@@ -105,6 +76,11 @@ class VehicleDetailScreen extends ConsumerWidget {
                     _CodeSection(vehicle: vehicle, vehicleId: vehicleId),
                   ],
                 ),
+              ),
+              const SizedBox(height: AppSpacing.xxl),
+              FadeSlideIn(
+                index: 2,
+                child: _VehicleActions(vehicle: vehicle, vehicleId: vehicleId),
               ),
             ],
           ),
@@ -404,6 +380,174 @@ class _VehicleHero extends StatelessWidget {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _DisabledBanner extends StatelessWidget {
+  const _DisabledBanner();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: AppColors.statusWarning.withValues(alpha: 0.14),
+        borderRadius: AppRadius.rMd,
+      ),
+      child: Row(
+        children: [
+          Icon(Icons.pause_circle_outline_rounded,
+              color: AppColors.statusWarning),
+          const SizedBox(width: AppSpacing.sm),
+          Expanded(
+            child: Text(l10n.vehicleDisabledBanner,
+                style: TextStyle(
+                    color: AppColors.ink900,
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.w600)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// The two vehicle-level actions, side by side: pause/resume (reversible) and
+/// delete (destructive, visually distinct). Each asks for confirmation and
+/// states what it will do first. The server still enforces ownership.
+class _VehicleActions extends ConsumerStatefulWidget {
+  const _VehicleActions({required this.vehicle, required this.vehicleId});
+
+  final VehicleModel vehicle;
+  final String vehicleId;
+
+  @override
+  ConsumerState<_VehicleActions> createState() => _VehicleActionsState();
+}
+
+class _VehicleActionsState extends ConsumerState<_VehicleActions> {
+  bool _busy = false;
+
+  bool get _disabled => widget.vehicle.status == 'inactive';
+
+  Future<bool> _confirm({
+    required String title,
+    required String body,
+    required String confirmLabel,
+    required bool destructive,
+  }) async {
+    final l10n = AppLocalizations.of(context)!;
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        icon: Icon(
+            destructive
+                ? Icons.warning_amber_rounded
+                : Icons.pause_circle_outline_rounded,
+            color: destructive ? AppColors.statusDanger : AppColors.ink700,
+            size: 32),
+        title: Text(title, textAlign: TextAlign.center),
+        content: Text(body, style: const TextStyle(height: 1.5)),
+        actionsAlignment: MainAxisAlignment.spaceBetween,
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(l10n.cancel)),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(confirmLabel,
+                style: TextStyle(
+                    color: destructive ? AppColors.statusDanger : null,
+                    fontWeight: FontWeight.w700)),
+          ),
+        ],
+      ),
+    );
+    return result == true;
+  }
+
+  Future<void> _toggle() async {
+    final l10n = AppLocalizations.of(context)!;
+    final enable = _disabled;
+    final ok = await _confirm(
+      title: enable ? l10n.enableVehicleTitle : l10n.disableVehicleTitle,
+      body: enable ? l10n.enableVehicleBody : l10n.disableVehicleBody,
+      confirmLabel: enable ? l10n.enableConfirm : l10n.disableConfirm,
+      destructive: false,
+    );
+    if (!ok || !mounted) return;
+
+    setState(() => _busy = true);
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await ref
+          .read(vehicleRepositoryProvider)
+          .setStatus(widget.vehicleId, active: enable);
+      ref.invalidate(vehicleDetailProvider(widget.vehicleId));
+      await ref.read(vehicleListControllerProvider.notifier).refresh();
+      messenger.showSnackBar(SnackBar(
+          content: Text(
+              enable ? l10n.vehicleEnabledDone : l10n.vehicleDisabledDone)));
+    } catch (e) {
+      messenger
+          .showSnackBar(SnackBar(content: Text(asApiException(e).message)));
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _delete() async {
+    final l10n = AppLocalizations.of(context)!;
+    final ok = await _confirm(
+      title: l10n.deleteVehicleTitle,
+      body: l10n.deleteVehicleBody,
+      confirmLabel: l10n.delete,
+      destructive: true,
+    );
+    if (!ok || !mounted) return;
+
+    setState(() => _busy = true);
+    final messenger = ScaffoldMessenger.of(context);
+    final navigator = Navigator.of(context);
+    try {
+      await ref
+          .read(vehicleListControllerProvider.notifier)
+          .delete(widget.vehicleId);
+      navigator.maybePop();
+    } catch (e) {
+      messenger
+          .showSnackBar(SnackBar(content: Text(asApiException(e).message)));
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Row(
+      children: [
+        Expanded(
+          child: AppButton(
+            label: _disabled ? l10n.enableVehicle : l10n.disableVehicle,
+            icon: _disabled
+                ? Icons.play_circle_outline_rounded
+                : Icons.pause_circle_outline_rounded,
+            style: AppButtonStyle.secondary,
+            onPressed: _busy ? null : _toggle,
+          ),
+        ),
+        const SizedBox(width: AppSpacing.md),
+        Expanded(
+          child: AppButton(
+            label: l10n.delete,
+            icon: Icons.delete_outline_rounded,
+            style: AppButtonStyle.danger,
+            onPressed: _busy ? null : _delete,
+          ),
+        ),
+      ],
     );
   }
 }

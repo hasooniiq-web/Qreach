@@ -1832,6 +1832,84 @@ abstract class AppLocalizations {
   /// **'داكن'**
   String get themeDark;
 
+  /// No description provided for @disableVehicle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إيقاف المركبة'**
+  String get disableVehicle;
+
+  /// No description provided for @enableVehicle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة تفعيل المركبة'**
+  String get enableVehicle;
+
+  /// No description provided for @disableVehicleTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إيقاف هذه المركبة؟'**
+  String get disableVehicleTitle;
+
+  /// No description provided for @disableVehicleBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'أثناء الإيقاف، يعرض مسح رمز QR أو شريحة NFC صفحة \"غير متاح\": لن يتمكن الزوار من التواصل معك ولن تصلك أي تنبيهات. يبقى الرمز وبيانات المركبة ومحادثاتك السابقة كما هي، ويمكنك إعادة التفعيل في أي وقت.'**
+  String get disableVehicleBody;
+
+  /// No description provided for @disableConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'إيقاف'**
+  String get disableConfirm;
+
+  /// No description provided for @enableVehicleTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة تفعيل هذه المركبة؟'**
+  String get enableVehicleTitle;
+
+  /// No description provided for @enableVehicleBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيتمكن الزوار الذين يمسحون رمزها من التواصل معك مجددًا.'**
+  String get enableVehicleBody;
+
+  /// No description provided for @enableConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة التفعيل'**
+  String get enableConfirm;
+
+  /// No description provided for @vehicleDisabledBanner.
+  ///
+  /// In ar, this message translates to:
+  /// **'هذه المركبة موقوفة. يعرض رمزها صفحة \"غير متاح\" للزوار.'**
+  String get vehicleDisabledBanner;
+
+  /// No description provided for @vehicleDisabledDone.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إيقاف المركبة'**
+  String get vehicleDisabledDone;
+
+  /// No description provided for @vehicleEnabledDone.
+  ///
+  /// In ar, this message translates to:
+  /// **'تمت إعادة تفعيل المركبة'**
+  String get vehicleEnabledDone;
+
+  /// No description provided for @deleteVehicleTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'حذف هذه المركبة؟'**
+  String get deleteVehicleTitle;
+
+  /// No description provided for @deleteVehicleBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'ستُزال المركبة من حسابك ويتوقف رمزها عن العمل. لا يمكن التراجع عن هذا الإجراء. إن أردت إيقافها مؤقتًا فقط فاستخدم \"إيقاف المركبة\" بدلًا من الحذف.'**
+  String get deleteVehicleBody;
+
   /// No description provided for @attachPhoto.
   ///
   /// In ar, this message translates to:
