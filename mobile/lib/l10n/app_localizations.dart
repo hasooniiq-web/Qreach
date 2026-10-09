@@ -1957,6 +1957,174 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'تعذّر إرسال الصورة. حاول مرة أخرى.'**
   String get imageSendFailed;
+
+  /// No description provided for @payCheckoutTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الاشتراك'**
+  String get payCheckoutTitle;
+
+  /// No description provided for @payReviewTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'ملخص الطلب'**
+  String get payReviewTitle;
+
+  /// No description provided for @payPriceLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'السعر'**
+  String get payPriceLabel;
+
+  /// No description provided for @payBenefitsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'ماذا ستحصل عليه'**
+  String get payBenefitsTitle;
+
+  /// No description provided for @payMethodTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'وسيلة الدفع'**
+  String get payMethodTitle;
+
+  /// No description provided for @payNoMethods.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد وسيلة دفع متاحة حاليًا. حاول لاحقًا.'**
+  String get payNoMethods;
+
+  /// No description provided for @payTestBadge.
+  ///
+  /// In ar, this message translates to:
+  /// **'تجريبي'**
+  String get payTestBadge;
+
+  /// No description provided for @payNow.
+  ///
+  /// In ar, this message translates to:
+  /// **'ادفع الآن'**
+  String get payNow;
+
+  /// No description provided for @payNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'ستنتقل إلى صفحة دفع آمنة. لا تُفعَّل باقتك إلا بعد تأكيد الدفع.'**
+  String get payNote;
+
+  /// No description provided for @payStatusTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الدفع'**
+  String get payStatusTitle;
+
+  /// No description provided for @payChecking.
+  ///
+  /// In ar, this message translates to:
+  /// **'جارٍ تأكيد الدفع…'**
+  String get payChecking;
+
+  /// No description provided for @payCheckingHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'يستغرق ذلك عادةً بضع ثوانٍ. تُفعَّل باقتك فور تأكيد الدفع.'**
+  String get payCheckingHint;
+
+  /// No description provided for @paySuccessTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تمت عملية الدفع'**
+  String get paySuccessTitle;
+
+  /// No description provided for @payFailedTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم تكتمل عملية الدفع'**
+  String get payFailedTitle;
+
+  /// No description provided for @payFailedHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'لم يُخصم منك أي مبلغ. يمكنك المحاولة مرة أخرى.'**
+  String get payFailedHint;
+
+  /// No description provided for @payFailedExpired.
+  ///
+  /// In ar, this message translates to:
+  /// **'انتهت مهلة الدفع قبل إتمامه.'**
+  String get payFailedExpired;
+
+  /// No description provided for @payTryAgain.
+  ///
+  /// In ar, this message translates to:
+  /// **'حاول مرة أخرى'**
+  String get payTryAgain;
+
+  /// No description provided for @payDone.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم'**
+  String get payDone;
+
+  /// No description provided for @payReceiptTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإيصال'**
+  String get payReceiptTitle;
+
+  /// No description provided for @payReceiptNumber.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الإيصال'**
+  String get payReceiptNumber;
+
+  /// No description provided for @payReceiptPlan.
+  ///
+  /// In ar, this message translates to:
+  /// **'الباقة'**
+  String get payReceiptPlan;
+
+  /// No description provided for @payReceiptAmount.
+  ///
+  /// In ar, this message translates to:
+  /// **'المبلغ'**
+  String get payReceiptAmount;
+
+  /// No description provided for @payReceiptMethod.
+  ///
+  /// In ar, this message translates to:
+  /// **'وسيلة الدفع'**
+  String get payReceiptMethod;
+
+  /// No description provided for @payReceiptDate.
+  ///
+  /// In ar, this message translates to:
+  /// **'التاريخ'**
+  String get payReceiptDate;
+
+  /// No description provided for @payReceiptValidUntil.
+  ///
+  /// In ar, this message translates to:
+  /// **'صالحة حتى'**
+  String get payReceiptValidUntil;
+
+  /// No description provided for @payOpenFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر فتح صفحة الدفع.'**
+  String get payOpenFailed;
+
+  /// No description provided for @payTestNotice.
+  ///
+  /// In ar, this message translates to:
+  /// **'كانت هذه عملية دفع تجريبية. لم يُخصم أي مبلغ حقيقي.'**
+  String get payTestNotice;
+
+  /// No description provided for @paySubscribeButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشترك في هذه الباقة'**
+  String get paySubscribeButton;
 }
 
 class _AppLocalizationsDelegate

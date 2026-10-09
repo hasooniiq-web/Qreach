@@ -1006,4 +1006,93 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get imageSendFailed => 'The photo could not be sent. Try again.';
+
+  @override
+  String get payCheckoutTitle => 'Subscribe';
+
+  @override
+  String get payReviewTitle => 'Order summary';
+
+  @override
+  String get payPriceLabel => 'Price';
+
+  @override
+  String get payBenefitsTitle => 'What you get';
+
+  @override
+  String get payMethodTitle => 'Payment method';
+
+  @override
+  String get payNoMethods =>
+      'No payment method is available right now. Please try again later.';
+
+  @override
+  String get payTestBadge => 'Test';
+
+  @override
+  String get payNow => 'Pay now';
+
+  @override
+  String get payNote =>
+      'You will be taken to a secure payment page. Your plan is activated only after the payment is confirmed.';
+
+  @override
+  String get payStatusTitle => 'Payment';
+
+  @override
+  String get payChecking => 'Confirming your payment…';
+
+  @override
+  String get payCheckingHint =>
+      'This usually takes a few seconds. Your plan is activated as soon as the payment is confirmed.';
+
+  @override
+  String get paySuccessTitle => 'Payment successful';
+
+  @override
+  String get payFailedTitle => 'The payment did not go through';
+
+  @override
+  String get payFailedHint => 'You were not charged. You can try again.';
+
+  @override
+  String get payFailedExpired =>
+      'The payment window expired before it was completed.';
+
+  @override
+  String get payTryAgain => 'Try again';
+
+  @override
+  String get payDone => 'Done';
+
+  @override
+  String get payReceiptTitle => 'Receipt';
+
+  @override
+  String get payReceiptNumber => 'Receipt no.';
+
+  @override
+  String get payReceiptPlan => 'Plan';
+
+  @override
+  String get payReceiptAmount => 'Amount';
+
+  @override
+  String get payReceiptMethod => 'Payment method';
+
+  @override
+  String get payReceiptDate => 'Date';
+
+  @override
+  String get payReceiptValidUntil => 'Valid until';
+
+  @override
+  String get payOpenFailed => 'Could not open the payment page.';
+
+  @override
+  String get payTestNotice =>
+      'This was a test payment. Nothing real was charged.';
+
+  @override
+  String get paySubscribeButton => 'Subscribe to this plan';
 }

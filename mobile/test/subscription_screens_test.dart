@@ -192,6 +192,10 @@ Widget _app(FakeSubscriptionRepository repo, Widget screen,
       routerConfig: GoRouter(routes: [
         GoRoute(path: '/', builder: (_, __) => screen),
         GoRoute(
+            path: '/subscription/checkout/:slug',
+            builder: (_, state) => Scaffold(
+                body: Text('checkout-route:${state.pathParameters['slug']}'))),
+        GoRoute(
             path: '/subscription',
             builder: (_, __) =>
                 const Scaffold(body: Text('subscription-route'))),
@@ -222,7 +226,7 @@ void main() {
       expect(find.text('الباقة الافتراضية المجانية'), findsOneWidget);
       // Phone, Instagram and extra info are locked on Basic.
       expect(find.byIcon(Icons.lock_outline), findsNWidgets(2));
-      expect(find.text('طلب الترقية'), findsOneWidget);
+      expect(find.text('اشترك في هذه الباقة'), findsOneWidget);
     });
 
     testWidgets(
@@ -239,7 +243,7 @@ void main() {
       expect(find.text('فعّال'), findsOneWidget);
       expect(find.text('ينتهي في 2027-09-25'), findsOneWidget);
       expect(find.byIcon(Icons.lock_outline), findsNothing);
-      expect(find.text('طلب الترقية'), findsNothing);
+      expect(find.text('اشترك في هذه الباقة'), findsNothing);
     });
 
     testWidgets(
@@ -266,10 +270,10 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('طلبك قيد المراجعة'), findsOneWidget);
-      expect(find.text('طلب الترقية'), findsNothing);
+      expect(find.text('اشترك في هذه الباقة'), findsNothing);
     });
 
-    testWidgets('requesting an upgrade confirms first, then sends the request',
+    testWidgets('the subscribe button opens the checkout for that plan',
         (tester) async {
       _tall(tester);
       final repo = FakeSubscriptionRepository(info: _info(plan: _basic));
@@ -277,19 +281,13 @@ void main() {
       await tester.pumpWidget(_app(repo, const SubscriptionScreen()));
       await tester.pumpAndSettle();
 
-      await tester.ensureVisible(find.text('طلب الترقية'));
-      await tester.tap(find.text('طلب الترقية'));
+      await tester.ensureVisible(find.text('اشترك في هذه الباقة'));
+      await tester.tap(find.text('اشترك في هذه الباقة'));
       await tester.pumpAndSettle();
 
-      expect(find.text('طلب الترقية إلى الاحترافية؟'), findsOneWidget);
+      expect(find.text('checkout-route:pro'), findsOneWidget);
       expect(repo.upgradeRequests, isEmpty,
-          reason: 'nothing sent before confirming');
-
-      await tester.tap(find.descendant(
-          of: find.byType(AlertDialog), matching: find.text('طلب الترقية')));
-      await tester.pumpAndSettle();
-
-      expect(repo.upgradeRequests, ['pro']);
+          reason: 'no admin-approval request is sent any more');
     });
   });
 

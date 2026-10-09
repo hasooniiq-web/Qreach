@@ -16,6 +16,8 @@ import '../../features/profile/presentation/profile_screen.dart';
 import '../../features/profile/presentation/visibility_screen.dart';
 import '../../features/server/server_setup_screen.dart';
 import '../../features/shell/app_shell.dart';
+import '../../features/subscription/presentation/checkout_screen.dart';
+import '../../features/subscription/presentation/payment_status_screen.dart';
 import '../../features/subscription/presentation/subscription_screen.dart';
 import '../../features/tags/presentation/scan_screen.dart';
 import '../../features/vehicles/presentation/vehicle_detail_screen.dart';
@@ -136,6 +138,16 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/vehicles/:id/scan',
         pageBuilder: animatedPage((context, state) =>
             ScanScreen(vehicleId: state.pathParameters['id']!)),
+      ),
+      GoRoute(
+        path: '/subscription/checkout/:slug',
+        pageBuilder: animatedPage((context, state) =>
+            CheckoutScreen(planSlug: state.pathParameters['slug']!)),
+      ),
+      GoRoute(
+        path: '/subscription/payment/:id',
+        pageBuilder: animatedPage((context, state) =>
+            PaymentStatusScreen(paymentId: state.pathParameters['id']!)),
       ),
       GoRoute(
         path: '/subscription',

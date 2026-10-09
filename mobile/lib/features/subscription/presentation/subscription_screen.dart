@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/design/motion.dart';
 import '../../../core/design/tokens.dart';
 import '../../../shared/widgets/app_button.dart';
 
-import '../../../core/network/api_client.dart';
-import '../../../core/providers.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../l10n/app_localizations.dart';
@@ -291,59 +290,20 @@ class _PlanCard extends StatelessWidget {
   }
 }
 
-class _UpgradeButton extends ConsumerStatefulWidget {
+/// Opens the checkout for a plan. (Before electronic payments this sent an
+/// "upgrade request" for an admin to approve; a request made earlier can still
+/// be pending and is shown as such.)
+class _UpgradeButton extends StatelessWidget {
   const _UpgradeButton({required this.plan, required this.pending});
 
   final PlanModel plan;
   final bool pending;
 
   @override
-  ConsumerState<_UpgradeButton> createState() => _UpgradeButtonState();
-}
-
-class _UpgradeButtonState extends ConsumerState<_UpgradeButton> {
-  bool _busy = false;
-
-  Future<void> _request() async {
-    final l10n = AppLocalizations.of(context)!;
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.upgradeConfirmTitle(widget.plan.name)),
-        content: Text(l10n.upgradeConfirmBody),
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: Text(l10n.cancel)),
-          TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: Text(l10n.requestUpgrade)),
-        ],
-      ),
-    );
-    if (confirmed != true || !mounted) return;
-
-    setState(() => _busy = true);
-    final messenger = ScaffoldMessenger.of(context);
-    try {
-      await ref
-          .read(subscriptionRepositoryProvider)
-          .requestUpgrade(widget.plan.slug);
-      messenger.showSnackBar(SnackBar(content: Text(l10n.upgradeSent)));
-      ref.invalidate(subscriptionProvider);
-    } catch (e) {
-      messenger
-          .showSnackBar(SnackBar(content: Text(asApiException(e).message)));
-    } finally {
-      if (mounted) setState(() => _busy = false);
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    if (widget.pending) {
+    if (pending) {
       return AppButton(
         label: l10n.upgradePending,
         icon: Icons.schedule_rounded,
@@ -353,9 +313,9 @@ class _UpgradeButtonState extends ConsumerState<_UpgradeButton> {
     }
 
     return AppButton(
-      label: l10n.requestUpgrade,
-      loading: _busy,
-      onPressed: _busy ? null : _request,
+      label: l10n.paySubscribeButton,
+      icon: Icons.lock_outline_rounded,
+      onPressed: () => context.push('/subscription/checkout/${plan.slug}'),
     );
   }
 }

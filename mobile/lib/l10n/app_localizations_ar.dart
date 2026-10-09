@@ -998,4 +998,91 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get imageSendFailed => 'تعذّر إرسال الصورة. حاول مرة أخرى.';
+
+  @override
+  String get payCheckoutTitle => 'الاشتراك';
+
+  @override
+  String get payReviewTitle => 'ملخص الطلب';
+
+  @override
+  String get payPriceLabel => 'السعر';
+
+  @override
+  String get payBenefitsTitle => 'ماذا ستحصل عليه';
+
+  @override
+  String get payMethodTitle => 'وسيلة الدفع';
+
+  @override
+  String get payNoMethods => 'لا توجد وسيلة دفع متاحة حاليًا. حاول لاحقًا.';
+
+  @override
+  String get payTestBadge => 'تجريبي';
+
+  @override
+  String get payNow => 'ادفع الآن';
+
+  @override
+  String get payNote =>
+      'ستنتقل إلى صفحة دفع آمنة. لا تُفعَّل باقتك إلا بعد تأكيد الدفع.';
+
+  @override
+  String get payStatusTitle => 'الدفع';
+
+  @override
+  String get payChecking => 'جارٍ تأكيد الدفع…';
+
+  @override
+  String get payCheckingHint =>
+      'يستغرق ذلك عادةً بضع ثوانٍ. تُفعَّل باقتك فور تأكيد الدفع.';
+
+  @override
+  String get paySuccessTitle => 'تمت عملية الدفع';
+
+  @override
+  String get payFailedTitle => 'لم تكتمل عملية الدفع';
+
+  @override
+  String get payFailedHint => 'لم يُخصم منك أي مبلغ. يمكنك المحاولة مرة أخرى.';
+
+  @override
+  String get payFailedExpired => 'انتهت مهلة الدفع قبل إتمامه.';
+
+  @override
+  String get payTryAgain => 'حاول مرة أخرى';
+
+  @override
+  String get payDone => 'تم';
+
+  @override
+  String get payReceiptTitle => 'الإيصال';
+
+  @override
+  String get payReceiptNumber => 'رقم الإيصال';
+
+  @override
+  String get payReceiptPlan => 'الباقة';
+
+  @override
+  String get payReceiptAmount => 'المبلغ';
+
+  @override
+  String get payReceiptMethod => 'وسيلة الدفع';
+
+  @override
+  String get payReceiptDate => 'التاريخ';
+
+  @override
+  String get payReceiptValidUntil => 'صالحة حتى';
+
+  @override
+  String get payOpenFailed => 'تعذّر فتح صفحة الدفع.';
+
+  @override
+  String get payTestNotice =>
+      'كانت هذه عملية دفع تجريبية. لم يُخصم أي مبلغ حقيقي.';
+
+  @override
+  String get paySubscribeButton => 'اشترك في هذه الباقة';
 }
