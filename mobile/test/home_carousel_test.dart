@@ -28,7 +28,7 @@ void main() {
     publicUrl: 'http://x/t/t',
   );
 
-  testWidgets('carousel shows linked/not linked, owner and a coloured plate',
+  testWidgets('carousel shows linked/not linked and a coloured plate',
       (tester) async {
     tester.view.physicalSize = const Size(800, 1200);
     tester.view.devicePixelRatio = 1;
@@ -36,7 +36,6 @@ void main() {
 
     await tester.pumpWidget(_wrap(VehicleCarousel(
       autoplay: false,
-      ownerName: 'علي',
       vehicles: const [
         VehicleModel(
           id: '1',
@@ -53,7 +52,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('مربوطة'), findsOneWidget);
-    expect(find.textContaining('علي'), findsWidgets);
+    expect(find.textContaining('علي'), findsNothing); // no owner label
     expect(find.text('12345'), findsOneWidget);
     expect(find.text('بغداد'), findsOneWidget);
     expect(find.text('أجرة'), findsOneWidget);

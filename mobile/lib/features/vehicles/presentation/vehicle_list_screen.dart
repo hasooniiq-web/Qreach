@@ -200,7 +200,7 @@ class _VehicleRow extends StatelessWidget {
             const SizedBox(height: AppSpacing.md),
             Row(
               children: [
-                Icon(Icons.chevron_left_rounded, color: AppColors.ink300),
+                Icon(Icons.chevron_right_rounded, color: AppColors.ink300),
                 const Spacer(),
                 IraqiPlate(
                   number: vehicle.plateNumber,

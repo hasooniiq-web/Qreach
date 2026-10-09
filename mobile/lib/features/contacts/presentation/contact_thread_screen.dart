@@ -328,12 +328,16 @@ class _Composer extends StatelessWidget {
                                   strokeWidth: 2.2,
                                   color: AppColors.brandBlack),
                             )
-                          : Icon(Icons.send_rounded,
+                          : Transform.flip(
                               key: const ValueKey('send'),
-                              size: 22,
-                              color: canSend
-                                  ? AppColors.brandBlack
-                                  : AppColors.ink400),
+                              // The send glyph points right; in RTL it must point left.
+                              flipX: Directionality.of(context) ==
+                                  TextDirection.rtl,
+                              child: Icon(Icons.send_rounded,
+                                  size: 22,
+                                  color: canSend
+                                      ? AppColors.brandBlack
+                                      : AppColors.ink400)),
                     ),
                   ),
                 ),

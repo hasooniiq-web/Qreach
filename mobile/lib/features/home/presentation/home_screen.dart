@@ -87,8 +87,7 @@ class HomeScreen extends ConsumerWidget {
                           )
                         : VehicleCarousel(
                             key: const ValueKey('vehicles-data'),
-                            vehicles: list,
-                            ownerName: profile?.name),
+                            vehicles: list),
                   ),
                 ),
               ),
@@ -238,12 +237,10 @@ class VehicleCarousel extends StatefulWidget {
   const VehicleCarousel({
     super.key,
     required this.vehicles,
-    required this.ownerName,
     this.autoplay = true,
   });
 
   final List<VehicleModel> vehicles;
-  final String? ownerName;
   final bool autoplay;
 
   @override
@@ -310,8 +307,7 @@ class _VehicleCarouselState extends State<VehicleCarousel> {
                 },
                 child: Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 6),
-                  child: _VehicleCard(
-                      vehicle: widget.vehicles[i], ownerName: widget.ownerName),
+                  child: _VehicleCard(vehicle: widget.vehicles[i]),
                 ),
               ),
             ),
@@ -343,10 +339,9 @@ class _VehicleCarouselState extends State<VehicleCarousel> {
 }
 
 class _VehicleCard extends StatelessWidget {
-  const _VehicleCard({required this.vehicle, required this.ownerName});
+  const _VehicleCard({required this.vehicle});
 
   final VehicleModel vehicle;
-  final String? ownerName;
 
   @override
   Widget build(BuildContext context) {
@@ -465,25 +460,10 @@ class _VehicleCard extends StatelessWidget {
                     ],
                   ),
                   const Spacer(),
-                  Row(
-                    children: [
-                      const Icon(Icons.person_outline_rounded,
-                          color: Colors.white54, size: 18),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: Text(
-                          '${l10n.homeOwnerLabel}: ${ownerName?.isNotEmpty == true ? ownerName! : l10n.notSet}',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
-                              color: AppColors.brandWhite,
-                              fontSize: 14,
-                              fontWeight: FontWeight.w600),
-                        ),
-                      ),
-                      const Icon(Icons.arrow_outward_rounded,
-                          color: Colors.white38, size: 20),
-                    ],
+                  const Align(
+                    alignment: AlignmentDirectional.centerEnd,
+                    child: Icon(Icons.arrow_outward_rounded,
+                        color: Colors.white38, size: 20),
                   ),
                 ],
               ),
@@ -662,8 +642,11 @@ class _ConversationRow extends StatelessWidget {
                       if (c.fromOwner)
                         Padding(
                           padding: const EdgeInsetsDirectional.only(end: 4),
-                          child: Icon(Icons.reply_rounded,
-                              size: 16, color: AppColors.ink400),
+                          child: Transform.flip(
+                              flipX: Directionality.of(context) ==
+                                  TextDirection.rtl,
+                              child: Icon(Icons.reply_rounded,
+                                  size: 16, color: AppColors.ink400)),
                         ),
                       Expanded(
                         child: Text(
