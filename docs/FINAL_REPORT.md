@@ -269,7 +269,7 @@ server-side FCM push, retention job):
   (needs the service-account key, verified against real FCM with one test
   push); retention/anonymization job (`data:prune`, scheduled daily);
   Basic/Plus plans with server-enforced visibility; two-way visitor
-  conversations that auto-delete 15 days after the last message.
+  conversations that auto-delete 7 days after the last message.
 - **Still not done:** payment gateway (Plus is granted by an admin or through
   an upgrade request), real SMS gateway (OTP codes are only written to the log
   by `LogSmsGateway`), APNs/iOS push, dark mode in the mobile app, general
