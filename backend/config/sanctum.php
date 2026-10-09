@@ -50,7 +50,7 @@ return [
     |
     */
 
-    'expiration' => null,
+    'expiration' => (int) env('SANCTUM_EXPIRATION', 129600), // minutes: 90 days absolute lifetime
 
     /*
     |--------------------------------------------------------------------------

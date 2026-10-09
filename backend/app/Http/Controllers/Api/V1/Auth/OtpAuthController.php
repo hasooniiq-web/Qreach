@@ -14,8 +14,10 @@ use App\Models\User;
 use App\Services\AuditLogger;
 use App\Services\OtpService;
 use App\Services\SecurityEventLogger;
+use App\Services\SessionRegistry;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 /**
@@ -153,21 +155,32 @@ class OtpAuthController extends Controller
     /** Common tail of every flow that ends in a logged-in session: token, device row, audit/security logging. */
     private function issueSession(User $user, Request $request, string $auditAction): JsonResponse
     {
-        $user->update(['last_login_at' => now()]);
+        // One active session per account. Revoking the previous tokens and creating
+        // the new one happen in a single transaction that holds a row lock on the
+        // user, so two logins racing for the same account serialize: the later one
+        // wins and the earlier one's token is revoked — never two live sessions.
+        $token = DB::transaction(function () use ($user, $request) {
+            User::whereKey($user->id)->lockForUpdate()->first();
 
-        $token = $user->createToken($request->input('device_name', 'mobile'));
+            $user->update(['last_login_at' => now()]);
+            SessionRegistry::revokeAll($user);
 
-        if ($request->filled('platform')) {
-            Device::create([
-                'user_id' => $user->id,
-                'personal_access_token_id' => $token->accessToken->id,
-                'platform' => $request->input('platform'),
-                'push_provider' => $request->input('push_provider'),
-                'push_token' => $request->input('push_token'),
-                'device_name' => $request->input('device_name'),
-                'last_active_at' => now(),
-            ]);
-        }
+            $token = $user->createToken($request->input('device_name', 'mobile'));
+
+            if ($request->filled('platform')) {
+                Device::create([
+                    'user_id' => $user->id,
+                    'personal_access_token_id' => $token->accessToken->id,
+                    'platform' => $request->input('platform'),
+                    'push_provider' => $request->input('push_provider'),
+                    'push_token' => $request->input('push_token'),
+                    'device_name' => $request->input('device_name'),
+                    'last_active_at' => now(),
+                ]);
+            }
+
+            return $token;
+        });
 
         SecurityEventLogger::log(SecurityEventLogger::AUTH_SUCCESS, 'info', 'customer', $user->id, [], $request);
         AuditLogger::log($auditAction, 'customer', $user->id, 'User', $user->id, 'success', [], $request);

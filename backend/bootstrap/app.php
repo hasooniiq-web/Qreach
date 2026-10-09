@@ -73,7 +73,11 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $exceptions->render(function (AuthenticationException $e, Request $request) {
             if ($request->is('api/*')) {
-                return response()->json(['error' => ['code' => 'UNAUTHENTICATED', 'message' => 'يجب تسجيل الدخول للوصول إلى هذا المورد.']], 401);
+                $error = \App\Services\SessionRegistry::wasReplaced($request)
+                    ? ['code' => 'SESSION_REPLACED', 'message' => 'تم تسجيل الخروج لأن حسابك فُتح على جهاز آخر.']
+                    : ['code' => 'UNAUTHENTICATED', 'message' => 'يجب تسجيل الدخول للوصول إلى هذا المورد.'];
+
+                return response()->json(['error' => $error], 401);
             }
         });
 

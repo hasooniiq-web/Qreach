@@ -376,6 +376,7 @@
     "themeSystem": "System",
     "themeLight": "Light",
     "themeDark": "Dark",
+    "sessionReplacedNotice": "You were signed out because your account was opened on another device.",
     "disableVehicle": "Disable vehicle",
     "enableVehicle": "Reactivate vehicle",
     "disableVehicleTitle": "Disable this vehicle?",

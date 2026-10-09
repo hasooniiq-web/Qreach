@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../features/auth/presentation/auth_controller.dart';
 import 'auth/biometric_service.dart';
 import 'network/api_client.dart';
 import 'notifications/push_notification_service.dart';
@@ -17,7 +18,14 @@ final secureStorageProvider =
     Provider<SecureStorageService>((ref) => SecureStorageService());
 
 final apiClientProvider = Provider<ApiClient>((ref) {
-  return ApiClient(ref.watch(secureStorageProvider));
+  return ApiClient(
+    ref.watch(secureStorageProvider),
+    // Read lazily (inside the callback) so the providers do not depend on each
+    // other at build time.
+    onSessionInvalid: (code) => ref
+        .read(authControllerProvider.notifier)
+        .sessionEnded(replaced: code == 'SESSION_REPLACED'),
+  );
 });
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {

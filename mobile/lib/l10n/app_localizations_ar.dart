@@ -929,6 +929,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get themeDark => 'داكن';
 
   @override
+  String get sessionReplacedNotice =>
+      'تم تسجيل خروجك لأن حسابك فُتح على جهاز آخر.';
+
+  @override
   String get disableVehicle => 'إيقاف المركبة';
 
   @override

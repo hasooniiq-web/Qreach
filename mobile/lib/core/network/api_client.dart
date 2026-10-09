@@ -16,7 +16,7 @@ const String apiBaseUrl =
 /// for the network-security-config/ATS enforcement that must accompany this
 /// on each platform (not something Dio itself can guarantee).
 class ApiClient {
-  ApiClient(this._storage)
+  ApiClient(this._storage, {this.onSessionInvalid})
       : dio = Dio(
           BaseOptions(
             baseUrl: apiBaseUrl,
@@ -38,7 +38,9 @@ class ApiClient {
           handler.next(options);
         },
         onError: (error, handler) {
-          handler.next(_translateError(error));
+          final translated = _translateError(error);
+          _notifyIfSessionInvalid(translated);
+          handler.next(translated);
         },
       ),
     );
@@ -46,6 +48,24 @@ class ApiClient {
 
   final Dio dio;
   final SecureStorageService _storage;
+
+  /// Called when the server rejects the stored token (revoked, expired, or
+  /// replaced by a newer login on another device) so the app can drop back to
+  /// the login screen. Receives the server's error code, e.g. SESSION_REPLACED.
+  final void Function(String code)? onSessionInvalid;
+
+  void _notifyIfSessionInvalid(DioException error) {
+    final request = error.requestOptions;
+    // Only a request that *carried* a token can mean "your session ended"; the
+    // logout call itself legitimately ends in a 401 once the token is gone.
+    if (error.response?.statusCode != 401 ||
+        request.headers['Authorization'] == null ||
+        request.path.endsWith('/auth/logout')) {
+      return;
+    }
+    final err = error.error;
+    onSessionInvalid?.call(err is ApiException ? err.code : 'UNAUTHENTICATED');
+  }
 
   DioException _translateError(DioException error) {
     final response = error.response;

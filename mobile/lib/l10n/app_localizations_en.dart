@@ -937,6 +937,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get themeDark => 'Dark';
 
   @override
+  String get sessionReplacedNotice =>
+      'You were signed out because your account was opened on another device.';
+
+  @override
   String get disableVehicle => 'Disable vehicle';
 
   @override

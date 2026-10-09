@@ -1832,6 +1832,12 @@ abstract class AppLocalizations {
   /// **'داكن'**
   String get themeDark;
 
+  /// No description provided for @sessionReplacedNotice.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تسجيل خروجك لأن حسابك فُتح على جهاز آخر.'**
+  String get sessionReplacedNotice;
+
   /// No description provided for @disableVehicle.
   ///
   /// In ar, this message translates to:

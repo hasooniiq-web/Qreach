@@ -152,6 +152,17 @@ class AuthController extends Notifier<AuthState> {
     _clearPerAccountState();
   }
 
+  /// The server ended this session (token revoked, expired, or the account was
+  /// opened on another device): clear the stored token and return to login.
+  /// Several in-flight requests can fail at once; only the first one acts.
+  Future<void> sessionEnded({required bool replaced}) async {
+    if (state is AuthUnauthenticated || state is AuthUnknown) return;
+    await ref.read(secureStorageProvider).deleteToken();
+    ref.read(sessionReplacedNoticeProvider.notifier).state = replaced;
+    state = const AuthUnauthenticated();
+    _clearPerAccountState();
+  }
+
   /// Called by API-consuming providers when a request comes back
   /// unauthenticated (expired/revoked token) so the UI drops back to login
   /// immediately instead of showing a confusing error on every screen.
@@ -176,6 +187,10 @@ class AuthController extends Notifier<AuthState> {
     ref.invalidate(homeProvider);
   }
 }
+
+/// True after the server ended this session because the account signed in on
+/// another device — shown once on the login screen.
+final sessionReplacedNoticeProvider = StateProvider<bool>((ref) => false);
 
 final authControllerProvider =
     NotifierProvider<AuthController, AuthState>(AuthController.new);

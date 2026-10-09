@@ -16,8 +16,7 @@ class NfcReader {
   static bool get _isIos => defaultTargetPlatform == TargetPlatform.iOS;
 
   static bool get _platformOk =>
-      !kIsWeb &&
-      (defaultTargetPlatform == TargetPlatform.android || _isIos);
+      !kIsWeb && (defaultTargetPlatform == TargetPlatform.android || _isIos);
 
   Future<NfcState> state() async {
     if (!_platformOk) return NfcState.unsupported;

@@ -376,6 +376,7 @@
     "themeSystem": "حسب الهاتف",
     "themeLight": "فاتح",
     "themeDark": "داكن",
+    "sessionReplacedNotice": "تم تسجيل خروجك لأن حسابك فُتح على جهاز آخر.",
     "disableVehicle": "إيقاف المركبة",
     "enableVehicle": "إعادة تفعيل المركبة",
     "disableVehicleTitle": "إيقاف هذه المركبة؟",
