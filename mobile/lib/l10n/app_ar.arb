@@ -375,5 +375,12 @@
     "appearance": "المظهر",
     "themeSystem": "حسب الهاتف",
     "themeLight": "فاتح",
-    "themeDark": "داكن"
+    "themeDark": "داكن",
+    "attachPhoto": "إرفاق صورة",
+    "removeAttachment": "إزالة الصورة",
+    "imageTooLarge": "الصورة كبيرة جدًا (الحد الأقصى 8 ميغابايت).",
+    "imageTypeUnsupported": "نوع الملف غير مدعوم. استخدم صورة JPG أو PNG أو WebP.",
+    "cameraPermissionDenied": "اسمح بالوصول إلى الكاميرا من إعدادات الهاتف لالتقاط صورة.",
+    "photosPermissionDenied": "اسمح بالوصول إلى الصور من إعدادات الهاتف لاختيار صورة.",
+    "imageSendFailed": "تعذّر إرسال الصورة. حاول مرة أخرى."
 }

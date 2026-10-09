@@ -22,10 +22,18 @@ class ContactRequestRepository {
     return ContactRequestModel.fromJson(response.data!);
   }
 
-  Future<ContactRequestModel> reply(String id, String body) async {
-    final response = await _client.dio.post<Map<String, dynamic>>(
-        '/contact-requests/$id/reply',
-        data: {'body': body});
+  /// Sends the owner's reply: text, a photo, or both (at least one).
+  Future<ContactRequestModel> reply(String id, String body,
+      {String? imagePath}) async {
+    final response = await _client.dio
+        .post<Map<String, dynamic>>('/contact-requests/$id/reply',
+            data: imagePath == null
+                ? {'body': body}
+                : FormData.fromMap({
+                    if (body.isNotEmpty) 'body': body,
+                    'image': await MultipartFile.fromFile(imagePath,
+                        filename: 'photo.jpg'),
+                  }));
     return ContactRequestModel.fromJson(response.data!);
   }
 

@@ -1831,6 +1831,48 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'داكن'**
   String get themeDark;
+
+  /// No description provided for @attachPhoto.
+  ///
+  /// In ar, this message translates to:
+  /// **'إرفاق صورة'**
+  String get attachPhoto;
+
+  /// No description provided for @removeAttachment.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزالة الصورة'**
+  String get removeAttachment;
+
+  /// No description provided for @imageTooLarge.
+  ///
+  /// In ar, this message translates to:
+  /// **'الصورة كبيرة جدًا (الحد الأقصى 8 ميغابايت).'**
+  String get imageTooLarge;
+
+  /// No description provided for @imageTypeUnsupported.
+  ///
+  /// In ar, this message translates to:
+  /// **'نوع الملف غير مدعوم. استخدم صورة JPG أو PNG أو WebP.'**
+  String get imageTypeUnsupported;
+
+  /// No description provided for @cameraPermissionDenied.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسمح بالوصول إلى الكاميرا من إعدادات الهاتف لالتقاط صورة.'**
+  String get cameraPermissionDenied;
+
+  /// No description provided for @photosPermissionDenied.
+  ///
+  /// In ar, this message translates to:
+  /// **'اسمح بالوصول إلى الصور من إعدادات الهاتف لاختيار صورة.'**
+  String get photosPermissionDenied;
+
+  /// No description provided for @imageSendFailed.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر إرسال الصورة. حاول مرة أخرى.'**
+  String get imageSendFailed;
 }
 
 class _AppLocalizationsDelegate

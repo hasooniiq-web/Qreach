@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart' hide TextDirection;
 import 'package:url_launcher/url_launcher.dart';
@@ -13,6 +15,7 @@ import '../../../core/providers.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../l10n/app_localizations.dart';
+import '../../../shared/widgets/app_sheet.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/skeleton.dart';
 import '../data/contact_request_model.dart';
@@ -83,6 +86,7 @@ class _ContactThreadScreenState extends ConsumerState<ContactThreadScreen> {
   final _input = TextEditingController();
   final _scroll = ScrollController();
   bool _sending = false;
+  XFile? _picked;
   Timer? _live;
   int _lastCount = 0;
 
@@ -119,7 +123,8 @@ class _ContactThreadScreenState extends ConsumerState<ContactThreadScreen> {
 
   Future<void> _send() async {
     final body = _input.text.trim();
-    if (body.isEmpty || _sending) return;
+    final photo = _picked;
+    if ((body.isEmpty && photo == null) || _sending) return;
 
     HapticFeedback.lightImpact();
     final messenger = ScaffoldMessenger.of(context);
@@ -127,8 +132,9 @@ class _ContactThreadScreenState extends ConsumerState<ContactThreadScreen> {
     try {
       await ref
           .read(contactRequestRepositoryProvider)
-          .reply(widget.requestId, body);
+          .reply(widget.requestId, body, imagePath: photo?.path);
       _input.clear();
+      _picked = null;
       ref.invalidate(contactThreadProvider(widget.requestId));
       ref.read(contactsProvider.notifier).refresh();
     } catch (e) {
@@ -136,6 +142,69 @@ class _ContactThreadScreenState extends ConsumerState<ContactThreadScreen> {
           .showSnackBar(SnackBar(content: Text(asApiException(e).message)));
     } finally {
       if (mounted) setState(() => _sending = false);
+    }
+  }
+
+  static const _maxImageBytes = 8 * 1024 * 1024;
+  static const _allowedExtensions = {'jpg', 'jpeg', 'png', 'webp'};
+
+  /// Camera or photo library -> a preview above the composer. Validated here
+  /// (type, size) for a fast, clear message; the server re-checks both and
+  /// re-encodes the image, so this is a convenience, not the security boundary.
+  Future<void> _pickPhoto() async {
+    final l10n = AppLocalizations.of(context)!;
+    final source = await showAppSheet<ImageSource>(
+      context,
+      builder: (context) => SafeArea(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_camera_outlined),
+              title: Text(l10n.takePhoto),
+              onTap: () => Navigator.of(context).pop(ImageSource.camera),
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library_outlined),
+              title: Text(l10n.chooseFromGallery),
+              onTap: () => Navigator.of(context).pop(ImageSource.gallery),
+            ),
+          ],
+        ),
+      ),
+    );
+    if (source == null || !mounted) return;
+
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      // Re-encoding to a bounded JPEG here also turns iPhone HEIC into JPEG.
+      final picked = await ImagePicker().pickImage(
+          source: source, maxWidth: 1600, maxHeight: 1600, imageQuality: 85);
+      if (picked == null || !mounted) return;
+
+      final ext = picked.name.contains('.')
+          ? picked.name.split('.').last.toLowerCase()
+          : '';
+      if (!_allowedExtensions.contains(ext)) {
+        messenger
+            .showSnackBar(SnackBar(content: Text(l10n.imageTypeUnsupported)));
+        return;
+      }
+      if (await File(picked.path).length() > _maxImageBytes) {
+        messenger.showSnackBar(SnackBar(content: Text(l10n.imageTooLarge)));
+        return;
+      }
+      setState(() => _picked = picked);
+    } on PlatformException catch (e) {
+      final denied = e.code.contains('access_denied');
+      messenger.showSnackBar(SnackBar(
+          content: Text(!denied
+              ? l10n.imageSendFailed
+              : source == ImageSource.camera
+                  ? l10n.cameraPermissionDenied
+                  : l10n.photosPermissionDenied)));
+    } catch (_) {
+      messenger.showSnackBar(SnackBar(content: Text(l10n.imageSendFailed)));
     }
   }
 
@@ -231,6 +300,11 @@ class _ContactThreadScreenState extends ConsumerState<ContactThreadScreen> {
                 _Composer(
                   controller: _input,
                   sending: _sending,
+                  photo: _picked,
+                  onAttach: _pickPhoto,
+                  onRemovePhoto: () => setState(() => _picked = null),
+                  attachTooltip: l10n.attachPhoto,
+                  removeTooltip: l10n.removeAttachment,
                   hint: l10n.replyHint,
                   tooltip: l10n.sendMessage,
                   onSend: _send,
@@ -248,6 +322,11 @@ class _Composer extends StatelessWidget {
   const _Composer({
     required this.controller,
     required this.sending,
+    required this.photo,
+    required this.onAttach,
+    required this.onRemovePhoto,
+    required this.attachTooltip,
+    required this.removeTooltip,
     required this.hint,
     required this.tooltip,
     required this.onSend,
@@ -255,95 +334,168 @@ class _Composer extends StatelessWidget {
 
   final TextEditingController controller;
   final bool sending;
+  final XFile? photo;
+  final VoidCallback onAttach;
+  final VoidCallback onRemovePhoto;
+  final String attachTooltip;
+  final String removeTooltip;
   final String hint;
   final String tooltip;
   final VoidCallback onSend;
 
   @override
   Widget build(BuildContext context) {
-    final canSend = controller.text.trim().isNotEmpty && !sending;
+    final canSend =
+        (controller.text.trim().isNotEmpty || photo != null) && !sending;
 
     return SafeArea(
       top: false,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(
             AppSpacing.md, AppSpacing.sm, AppSpacing.md, AppSpacing.md),
-        child: Container(
-          padding: const EdgeInsetsDirectional.only(
-              start: AppSpacing.lg, end: 6, top: 4, bottom: 4),
-          decoration: BoxDecoration(
-            color: AppColors.surface,
-            borderRadius: BorderRadius.circular(28),
-            boxShadow: AppShadows.card,
-            border: AppShadows.hairline,
-          ),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: controller,
-                  minLines: 1,
-                  maxLines: 5,
-                  maxLength: 500,
-                  buildCounter: (_,
-                          {required currentLength,
-                          required isFocused,
-                          maxLength}) =>
-                      null,
-                  textInputAction: TextInputAction.newline,
-                  decoration: InputDecoration(
-                    hintText: hint,
-                    filled: false,
-                    border: InputBorder.none,
-                    enabledBorder: InputBorder.none,
-                    focusedBorder: InputBorder.none,
-                    contentPadding: const EdgeInsets.symmetric(vertical: 12),
-                  ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (photo != null)
+              Padding(
+                padding:
+                    const EdgeInsetsDirectional.only(bottom: AppSpacing.sm),
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(14),
+                      child: Image.file(File(photo!.path),
+                          width: 96,
+                          height: 96,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) => Container(
+                              width: 96,
+                              height: 96,
+                              color: AppColors.ink100,
+                              child: Icon(Icons.broken_image_outlined,
+                                  color: AppColors.ink400))),
+                    ),
+                    PositionedDirectional(
+                      top: -8,
+                      end: -8,
+                      child: Semantics(
+                        button: true,
+                        label: removeTooltip,
+                        child: Pressable(
+                          onTap: sending ? null : onRemovePhoto,
+                          scale: 0.9,
+                          child: Container(
+                            width: 28,
+                            height: 28,
+                            decoration: const BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: AppColors.brandBlack),
+                            child: const Icon(Icons.close_rounded,
+                                size: 16, color: AppColors.brandWhite),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
               ),
-              const SizedBox(width: 6),
-              Semantics(
-                button: true,
-                label: tooltip,
-                child: Pressable(
-                  onTap: canSend ? onSend : null,
-                  scale: 0.9,
-                  child: AnimatedContainer(
-                    duration: AppMotion.base,
-                    curve: AppMotion.standard,
-                    width: 46,
-                    height: 46,
-                    decoration: BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: canSend ? AppColors.brandYellow : AppColors.ink100,
-                    ),
-                    child: AnimatedSwitcher(
-                      duration: AppMotion.fast,
-                      child: sending
-                          ? const Padding(
-                              key: ValueKey('sending'),
-                              padding: EdgeInsets.all(13),
-                              child: CircularProgressIndicator(
-                                  strokeWidth: 2.2,
-                                  color: AppColors.brandBlack),
-                            )
-                          : Transform.flip(
-                              key: const ValueKey('send'),
-                              // The send glyph points right; in RTL it must point left.
-                              flipX: Directionality.of(context) ==
-                                  TextDirection.rtl,
-                              child: Icon(Icons.send_rounded,
-                                  size: 22,
-                                  color: canSend
-                                      ? AppColors.brandBlack
-                                      : AppColors.ink400)),
+            Container(
+              padding: const EdgeInsetsDirectional.only(
+                  start: 4, end: 6, top: 4, bottom: 4),
+              decoration: BoxDecoration(
+                color: AppColors.surface,
+                borderRadius: BorderRadius.circular(28),
+                boxShadow: AppShadows.card,
+                border: AppShadows.hairline,
+              ),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  Semantics(
+                    button: true,
+                    label: attachTooltip,
+                    child: Pressable(
+                      onTap: sending ? null : onAttach,
+                      scale: 0.9,
+                      child: SizedBox(
+                        width: 46,
+                        height: 46,
+                        child: Icon(Icons.add_photo_alternate_outlined,
+                            size: 24, color: AppColors.ink500),
+                      ),
                     ),
                   ),
-                ),
+                  Expanded(
+                    child: TextField(
+                      controller: controller,
+                      minLines: 1,
+                      maxLines: 5,
+                      maxLength: 500,
+                      buildCounter: (_,
+                              {required currentLength,
+                              required isFocused,
+                              maxLength}) =>
+                          null,
+                      textInputAction: TextInputAction.newline,
+                      decoration: InputDecoration(
+                        hintText: hint,
+                        filled: false,
+                        border: InputBorder.none,
+                        enabledBorder: InputBorder.none,
+                        focusedBorder: InputBorder.none,
+                        contentPadding:
+                            const EdgeInsets.symmetric(vertical: 12),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 6),
+                  Semantics(
+                    button: true,
+                    label: tooltip,
+                    child: Pressable(
+                      onTap: canSend ? onSend : null,
+                      scale: 0.9,
+                      child: AnimatedContainer(
+                        duration: AppMotion.base,
+                        curve: AppMotion.standard,
+                        width: 46,
+                        height: 46,
+                        decoration: BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: canSend
+                              ? AppColors.brandYellow
+                              : AppColors.ink100,
+                        ),
+                        child: AnimatedSwitcher(
+                          duration: AppMotion.fast,
+                          child: sending
+                              ? const Padding(
+                                  key: ValueKey('sending'),
+                                  padding: EdgeInsets.all(13),
+                                  child: CircularProgressIndicator(
+                                      strokeWidth: 2.2,
+                                      color: AppColors.brandBlack),
+                                )
+                              : Transform.flip(
+                                  key: const ValueKey('send'),
+                                  // The send glyph points right; in RTL it must point left.
+                                  flipX: Directionality.of(context) ==
+                                      TextDirection.rtl,
+                                  child: Icon(Icons.send_rounded,
+                                      size: 22,
+                                      color: canSend
+                                          ? AppColors.brandBlack
+                                          : AppColors.ink400)),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );

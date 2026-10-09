@@ -30,7 +30,8 @@ class FakeContactRepository implements ContactRequestRepository {
   Future<ContactRequestModel> fetchOne(String id) async => model;
 
   @override
-  Future<ContactRequestModel> reply(String id, String body) async {
+  Future<ContactRequestModel> reply(String id, String body,
+      {String? imagePath}) async {
     replies.add(body);
     model = ContactRequestModel(
       id: model.id,

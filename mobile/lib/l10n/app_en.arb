@@ -375,5 +375,12 @@
     "appearance": "Appearance",
     "themeSystem": "System",
     "themeLight": "Light",
-    "themeDark": "Dark"
+    "themeDark": "Dark",
+    "attachPhoto": "Attach a photo",
+    "removeAttachment": "Remove photo",
+    "imageTooLarge": "That photo is too large (8 MB maximum).",
+    "imageTypeUnsupported": "Unsupported file. Use a JPG, PNG or WebP photo.",
+    "cameraPermissionDenied": "Allow camera access in your phone settings to take a photo.",
+    "photosPermissionDenied": "Allow photo access in your phone settings to choose a photo.",
+    "imageSendFailed": "The photo could not be sent. Try again."
 }

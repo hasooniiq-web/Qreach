@@ -927,4 +927,28 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get themeDark => 'داكن';
+
+  @override
+  String get attachPhoto => 'إرفاق صورة';
+
+  @override
+  String get removeAttachment => 'إزالة الصورة';
+
+  @override
+  String get imageTooLarge => 'الصورة كبيرة جدًا (الحد الأقصى 8 ميغابايت).';
+
+  @override
+  String get imageTypeUnsupported =>
+      'نوع الملف غير مدعوم. استخدم صورة JPG أو PNG أو WebP.';
+
+  @override
+  String get cameraPermissionDenied =>
+      'اسمح بالوصول إلى الكاميرا من إعدادات الهاتف لالتقاط صورة.';
+
+  @override
+  String get photosPermissionDenied =>
+      'اسمح بالوصول إلى الصور من إعدادات الهاتف لاختيار صورة.';
+
+  @override
+  String get imageSendFailed => 'تعذّر إرسال الصورة. حاول مرة أخرى.';
 }

@@ -21,6 +21,8 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>يحتاج التطبيق إلى الصور لإرفاق صورة في المحادثة أو في ملفك الشخصي.</string>
 	<key>NFCReaderUsageDescription</key>
 	<string>يستخدم التطبيق NFC لقراءة بطاقة SmartTag وربطها بمركبتك.</string>
 	<key>NSFaceIDUsageDescription</key>

@@ -215,7 +215,8 @@ class FakeContacts implements ContactRequestRepository {
   Future<ContactRequestModel> fetchOne(String id) async => _one(
       id, 'أحمد', 'سيارتك تعيق الطريق', 'read', const Duration(minutes: 9));
   @override
-  Future<ContactRequestModel> reply(String id, String body) async =>
+  Future<ContactRequestModel> reply(String id, String body,
+          {String? imagePath}) async =>
       fetchOne(id);
   @override
   Future<void> markRead(String id) async {}
