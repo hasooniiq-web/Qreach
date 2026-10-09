@@ -1,0 +1,109 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f4ef">
+  <title>دار — جولة ثلاثية الأبعاد</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&display=swap');
+    :root{--ink:#252a25;--muted:#777c73;--paper:#f6f4ef;--green:#416c51;--line:#e7e4db;--gold:#cda972}
+    *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans Arabic',Tahoma,sans-serif;overflow:hidden}button{font:inherit;color:inherit}
+    .app{height:100svh;min-height:620px;display:grid;grid-template-rows:78px 1fr 64px;background:radial-gradient(ellipse at 51% 46%,#fff 0,#f8f6f1 48%,#f2f0e9 100%)}
+    header{display:flex;align-items:center;justify-content:space-between;padding:0 5.2vw;border-bottom:1px solid #e9e6df;background:#ffffff80;backdrop-filter:blur(14px);z-index:3}
+    .brand{display:flex;align-items:center;gap:11px;font-weight:700;font-size:20px;letter-spacing:-.5px}.brand-mark{height:35px;width:35px;display:grid;place-items:center;background:var(--green);color:#fff;border-radius:11px;font-size:17px}.brand small{display:block;color:#93958d;font-size:10px;letter-spacing:1.7px;font-weight:500;margin-top:-3px}
+    .header-right{display:flex;align-items:center;gap:20px}.pill{border:1px solid #e7e5dc;border-radius:30px;padding:9px 15px;color:#697268;background:#fff;font-size:12px}.pill i{display:inline-block;width:7px;height:7px;border-radius:50%;background:#75947b;margin-left:7px}.share{border:0;background:transparent;color:#657267;font-size:13px;cursor:pointer}
+    main{position:relative;display:flex;align-items:center;justify-content:center;overflow:hidden}.eyebrow{font-size:11px;letter-spacing:2px;color:#899087}.intro{position:absolute;right:7.5%;top:12%;z-index:2;pointer-events:none}.intro h1{font-size:clamp(31px,3.5vw,49px);line-height:1.25;letter-spacing:-1.4px;margin:13px 0 8px;font-weight:600}.intro p{margin:0;color:var(--muted);font-size:14px}.intro .rule{width:38px;height:2px;background:#b5a37d;margin-top:22px}
+    .stage{position:absolute;left:50%;top:54%;width:min(790px,70vw);height:min(580px,72vh);transform:translate(-50%,-50%);perspective:1150px;touch-action:none;cursor:grab}.stage.dragging{cursor:grabbing}.world{position:absolute;left:50%;top:50%;width:560px;height:390px;transform-style:preserve-3d;transform:translate(-50%,-50%) rotateX(-25deg) rotateY(-35deg);transition:filter .25s;will-change:transform}.shadow{position:absolute;left:50%;top:57%;width:590px;height:370px;transform:translate(-50%,-50%) rotateX(70deg) translateZ(-82px);background:#60634b1a;filter:blur(19px);border-radius:50%}
+    .ground{position:absolute;width:560px;height:390px;left:0;top:0;transform:translateZ(-68px);background:#ddd7c7;border:1px solid #cec7b7;box-shadow:0 8px 0 #c8c0af;background-image:linear-gradient(90deg,#ffffff15 1px,transparent 1px),linear-gradient(#ffffff15 1px,transparent 1px);background-size:35px 35px}
+    .base{position:absolute;left:38px;top:29px;width:480px;height:318px;transform:translateZ(-29px);background:#eadfc9;box-shadow:0 0 0 1px #d6c8ad}
+    .wall{position:absolute;transform-style:preserve-3d}.backwall{left:38px;top:29px;width:480px;height:318px;background:#f0e8da;transform:translateZ(1px);box-shadow:inset 0 0 0 1px #ded3c1}.leftwall{left:38px;top:29px;width:318px;height:68px;background:#d3c2a8;transform-origin:top left;transform:rotateX(90deg) translateZ(0);box-shadow:0 1px #c3b294}.rightwall{left:518px;top:29px;width:318px;height:68px;background:#d8c8ae;transform-origin:top left;transform:rotateX(90deg) rotateY(90deg) translateZ(-68px);display:none}
+    .front{position:absolute;left:38px;top:347px;width:480px;height:68px;transform-origin:top;transform:rotateX(-90deg);background:#dacbb4;box-shadow:0 0 0 1px #cbbba1}
+    .room{position:absolute;top:34px;height:298px;background:#e8decf;box-shadow:inset 0 0 0 1px #d9cebd}.living{left:43px;width:178px}.dining{left:222px;width:126px;background:#ded5c7}.bedroom{left:349px;width:164px;background:#e5dbce}
+    .room:after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,#fff2 1px,transparent 1px),linear-gradient(#fff2 1px,transparent 1px);background-size:31px 31px;opacity:.45}
+    .rug{position:absolute;left:25px;top:92px;width:122px;height:86px;background:#b8a184;transform:rotateZ(-3deg);border:5px solid #cbb99e;box-shadow:inset 0 0 0 1px #a48c70}.sofa{position:absolute;left:42px;top:48px;width:104px;height:37px;background:#87947f;box-shadow:0 8px 0 #71806d,0 10px 8px #473d3025;border-radius:5px;transform:rotateZ(-1deg)}.sofa:before,.sofa:after{content:'';position:absolute;top:4px;width:42px;height:27px;background:#9ba692;border-radius:4px}.sofa:before{left:6px}.sofa:after{right:6px}.table{position:absolute;left:64px;top:111px;width:48px;height:34px;background:#b18b63;box-shadow:0 8px 0 #8c6c4d;border-radius:50%;z-index:1}.plant{position:absolute;left:18px;top:28px;width:20px;height:28px;background:#728b68;clip-path:polygon(45% 100%,47% 45%,0 11%,38% 35%,49% 0,58% 37%,100% 12%,62% 54%,62% 100%)}
+    .dining-table{position:absolute;left:257px;top:122px;width:65px;height:45px;background:#b48e65;border-radius:50%;box-shadow:0 9px 0 #8b6948}.chair{position:absolute;width:16px;height:17px;border-radius:4px;background:#79836c}.c1{left:248px;top:103px}.c2{left:314px;top:103px}.c3{left:248px;top:174px}.c4{left:314px;top:174px}.vase{position:absolute;left:286px;top:127px;width:13px;height:17px;border-radius:40% 40% 35% 35%;background:#d0b17f;z-index:1}
+    .bed{position:absolute;left:374px;top:86px;width:107px;height:137px;background:#718170;box-shadow:7px 7px 0 #5f705e;border-radius:5px}.bed:before{content:'';position:absolute;left:9px;right:9px;top:9px;height:38px;background:#f2eee7;border-radius:4px}.bed:after{content:'';position:absolute;left:13px;right:13px;top:56px;height:68px;background:#8b9b87;border-radius:3px}.nightstand{position:absolute;left:486px;top:101px;width:23px;height:24px;background:#a98a67;box-shadow:0 4px 0 #836a4d}.lamp{position:absolute;left:491px;top:88px;width:12px;height:12px;border-radius:50%;background:#ddbe7b;box-shadow:0 0 14px #d9b86b}.wardrobe{position:absolute;left:359px;top:47px;width:49px;height:20px;background:#aa9577;box-shadow:0 4px 0 #8b795e}
+    .window{position:absolute;top:0;width:55px;height:8px;transform:translateZ(2px);background:#93b3b4;border:3px solid #fff9ed;box-shadow:0 0 0 1px #c7bba6}.w1{left:91px}.w2{left:279px}.w3{left:407px}
+    .roof{position:absolute;left:24px;top:-3px;width:510px;height:320px;transform:translateZ(71px);background:#71816d;clip-path:polygon(0 28%,51% 0,100% 28%,100% 39%,51% 12%,0 39%);filter:drop-shadow(0 4px 1px #50604e)}.roofline{position:absolute;left:24px;top:-4px;width:510px;height:320px;transform:translateZ(72px);background:linear-gradient(155deg,transparent 0 24%,#8e9c85 24.4% 25%,transparent 25.4% 100%)}
+    .label{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:10px;color:#87867d;letter-spacing:1px;text-transform:uppercase;pointer-events:none}.tag{position:absolute;transform:translateZ(10px);padding:5px 10px;border-radius:20px;background:#fffdf5e8;border:1px solid #e7e0d1;color:#657361;font-size:9px;box-shadow:0 3px 8px #554b3516}.tag-a{left:68px;top:242px}.tag-b{left:263px;top:266px}.tag-c{left:390px;top:249px}
+    .compass{position:absolute;left:8%;bottom:12%;display:flex;align-items:center;gap:11px;color:#85887f;font-size:11px}.compass-ring{width:36px;height:36px;border:1px solid #d9d7ce;border-radius:50%;display:grid;place-items:center;color:#779078;font-size:14px}
+    .hint{position:absolute;left:50%;bottom:8%;transform:translateX(-50%);font-size:12px;color:#8c8f87;display:flex;align-items:center;gap:10px;white-space:nowrap}.mouse{width:18px;height:25px;border:1.5px solid #9b9d94;border-radius:11px;position:relative}.mouse:after{content:'';position:absolute;width:2px;height:5px;background:#8c9a85;top:4px;left:7px;border-radius:2px;animation:scroll 1.5s infinite}@keyframes scroll{to{transform:translateY(7px);opacity:0}}
+    .side-controls{position:absolute;left:5.4%;top:50%;transform:translateY(-30%);display:grid;gap:9px}.icon-button{height:42px;width:42px;border:1px solid #e7e5dd;border-radius:13px;background:#fff;color:#737d72;cursor:pointer;box-shadow:0 4px 14px #252a2509;transition:.2s}.icon-button:hover{border-color:#9bad97;color:#46694d;transform:translateY(-2px)}
+    footer{border-top:1px solid #e8e5de;background:#ffffff8c;display:flex;align-items:center;justify-content:space-between;padding:0 5.2vw;font-size:11px;color:#92938c}footer strong{font-weight:500;color:#666c62}.footer-note{display:flex;align-items:center;gap:8px}.leaf{color:#799278}
+    .toast{position:fixed;bottom:82px;left:50%;transform:translate(-50%,12px);opacity:0;background:#29372e;color:#fff;padding:10px 17px;border-radius:22px;font-size:12px;transition:.25s;pointer-events:none}.toast.show{opacity:1;transform:translate(-50%,0)}
+    @media(max-width:760px){.app{min-height:560px;grid-template-rows:68px 1fr 54px}header{padding:0 20px}.header-right{gap:8px}.pill{font-size:10px;padding:7px 10px}.share{font-size:0}.share:after{content:'↗';font-size:17px}.intro{right:7%;top:7%}.intro h1{font-size:31px;margin:8px 0}.intro p{font-size:12px}.intro .rule{margin-top:14px}.stage{width:100vw;height:62vh;top:54%;transform:translate(-50%,-50%) scale(.72)}.side-controls{left:5%;top:auto;bottom:14%;transform:none;display:flex}.icon-button{height:38px;width:38px}.compass{left:7%;bottom:7%;font-size:10px}.compass-ring{width:29px;height:29px}.hint{bottom:7%;left:auto;right:7%;transform:none;font-size:0}.footer-note{font-size:9px}footer{padding:0 18px}}
+    @media(max-width:420px){.brand{font-size:17px}.brand-mark{width:31px;height:31px}.stage{transform:translate(-50%,-48%) scale(.58)}.eyebrow{font-size:9px}.intro h1{font-size:28px}}
+    /* Immersive property-tour layout, inspired by the reference viewer. */
+    body{overflow:hidden;background:#8ca6ae}.app{display:block;min-height:0;height:100svh;background:linear-gradient(180deg,#8db6d2 0%,#c6d8d8 37%,#d8d5bd 57%,#617751 58%,#74885c 100%)}
+    header,footer{display:none}main{position:absolute;inset:0;background:linear-gradient(180deg,#ffffff08,#17241d22)}
+    main:before{content:"";position:absolute;inset:45% 0 0;background:radial-gradient(ellipse at 75% 29%,#8eaa65 0 8%,transparent 8.5%),radial-gradient(ellipse at 20% 47%,#557247 0 19%,transparent 19.5%),radial-gradient(ellipse at 73% 58%,#536c43 0 23%,transparent 23.5%),linear-gradient(172deg,transparent 0 5%,#9aab75 5.5% 23%,#6f8655 23.5% 53%,#435d3d 53.5%);opacity:.78}
+    main:after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,#16231e55 0%,transparent 53%),radial-gradient(ellipse at 50% 95%,transparent 30%,#15231b45 100%);pointer-events:none}
+    .intro{top:9%;right:6%;padding:20px 25px;background:#24312e46;backdrop-filter:blur(8px);color:white;border-right:2px solid #e4c987;z-index:2}.intro .eyebrow,.intro p{color:#ffffffcf}.intro h1{font-size:clamp(30px,3vw,45px);margin:8px 0}.intro .rule{display:none}
+    .stage{z-index:1;top:61%;left:58%;width:min(790px,68vw);height:min(570px,72vh);perspective:1250px}.world{transform:translate(-50%,-50%) rotateX(-25deg) rotateY(-35deg) scale(1.1);filter:drop-shadow(0 20px 25px #26362665)}.shadow{background:#10190c4c;filter:blur(24px)}
+    .compass{z-index:3;left:25px;bottom:25px;color:white;font-size:0}.compass-ring{width:48px;height:48px;background:#fff;color:#26332b;border:0;font-size:20px;box-shadow:0 2px 10px #0004}
+    .hint{z-index:3;bottom:28px;left:auto;right:28px;transform:none;color:white;background:#1f2c27a6;padding:9px 15px;border-radius:22px;backdrop-filter:blur(8px)}
+    .side-controls{z-index:4;left:auto;right:25px;top:auto;bottom:84px;transform:none;display:flex;gap:7px}.icon-button{background:#24342bbd;border:1px solid #ffffff55;color:white;backdrop-filter:blur(7px)}.icon-button:hover{background:#fff;color:#416c51}
+    .tour-panel{position:absolute;z-index:5;inset:0 auto 0 0;width:clamp(270px,27vw,355px);padding:42px 36px 30px;background:#202d32a6;color:white;backdrop-filter:blur(8px);display:flex;flex-direction:column;box-shadow:10px 0 40px #16232524}
+    .tour-logo{display:flex;align-items:center;gap:12px;margin-bottom:auto}.tour-logo .brand-mark{background:#f6f2e7;color:#536f53;width:47px;height:47px;border-radius:3px;font-size:25px}.tour-logo strong{font-size:21px;font-weight:600}.tour-logo small{display:block;color:#ffffff9c;font-size:9px;letter-spacing:2px;margin-top:0}
+    .tour-links{display:grid;gap:3px;margin:0 0 18px}.tour-links button{border:0;text-align:right;color:#fff;background:#ffffff20;padding:8px 12px;font-size:15px;cursor:pointer;transition:.2s}.tour-links button:hover,.tour-links button.active{background:#ffffff46;padding-right:17px}.tour-links button.active{border-right:2px solid #dfc17d}
+    .tour-location{border-top:1px solid #ffffff48;padding-top:20px;margin-top:0;color:#ffffffd9;font-size:12px}.tour-location span{display:block;color:#bdd1d3;font-size:10px;margin-bottom:10px;letter-spacing:1px}
+    .scene-label{position:absolute;z-index:4;left:50%;bottom:0;transform:translateX(-50%);background:#26332cbf;color:white;padding:11px 25px;font-size:12px;white-space:nowrap;backdrop-filter:blur(7px)}
+    .tag{z-index:2;cursor:pointer}
+    @media(max-width:760px){.tour-panel{width:230px;padding:27px 22px 22px}.intro{right:15px;top:12px;padding:12px 14px}.intro h1{font-size:25px}.intro p{font-size:11px}.stage{left:60%;top:57%;transform:translate(-50%,-50%) scale(.76);width:100vw;height:58vh}.side-controls{right:14px;bottom:73px}.compass{left:14px;bottom:15px}.hint{right:13px;bottom:17px}.scene-label{font-size:10px;padding:9px 17px}}
+    @media(max-width:420px){.tour-panel{width:192px;padding:20px 15px 17px}.tour-logo strong{font-size:17px}.tour-logo .brand-mark{width:37px;height:37px}.tour-links button{font-size:12px;padding:8px}.tour-location{font-size:10px}.stage{transform:translate(-50%,-50%) scale(.57);left:65%;top:60%}.intro{top:15px;right:12px}.intro h1{font-size:21px}.intro .eyebrow{font-size:8px}.hint{font-size:0;padding:8px 11px}.scene-label{left:calc(50% + 75px)}}
+    @media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <div class="brand"><span class="brand-mark">⌂</span><span>دار<small>مساحة للحياة</small></span></div>
+      <div class="header-right"><span class="pill"><i></i>جولة تفاعلية</span><button class="share" id="share" aria-label="مشاركة الجولة">مشاركة الجولة&nbsp; ↗</button></div>
+    </header>
+    <main>
+      <aside class="tour-panel" aria-label="أقسام الجولة">
+        <div class="tour-logo"><span class="brand-mark">⌂</span><span><strong>دار السرو</strong><small>جولة افتراضية</small></span></div>
+        <nav class="tour-links" aria-label="الغرف">
+          <button class="active" data-room="المنزل من الخارج">المنزل من الخارج&nbsp; ›</button>
+          <button data-room="غرفة المعيشة">غرفة المعيشة&nbsp; ›</button>
+          <button data-room="منطقة الطعام">منطقة الطعام&nbsp; ›</button>
+          <button data-room="غرفة النوم">غرفة النوم&nbsp; ›</button>
+        </nav>
+        <div class="tour-location"><span>⌖ &nbsp; الموقع</span>بيت السرو · بغداد<br>٣ غرف &nbsp;·&nbsp; ١٢٨ م²</div>
+      </aside>
+      <div class="intro"><div class="eyebrow">بيت السرو · ٢٠٢٥</div><h1>مساحة تنبض<br>بالحياة.</h1><p>اكتشف تفاصيل البيت من كل زاوية</p><div class="rule"></div></div>
+      <div class="stage" id="stage" aria-label="منزل ثلاثي الأبعاد؛ اسحب بالماوس لتدوير العرض">
+        <div class="shadow"></div>
+        <div class="world" id="world">
+          <div class="ground"></div><div class="base"></div><div class="backwall"></div><div class="leftwall"></div><div class="front"></div>
+          <div class="room living"><div class="rug"></div><div class="sofa"></div><div class="table"></div><div class="plant"></div></div>
+          <div class="room dining"></div><div class="room bedroom"></div>
+          <div class="chair c1"></div><div class="chair c2"></div><div class="chair c3"></div><div class="chair c4"></div><div class="dining-table"></div><div class="vase"></div>
+          <div class="bed"></div><div class="nightstand"></div><div class="lamp"></div><div class="wardrobe"></div>
+          <div class="window w1"></div><div class="window w2"></div><div class="window w3"></div>
+          <div class="roof"></div><div class="roofline"></div>
+          <div class="tag tag-a">المعيشة</div><div class="tag tag-b">السفرة</div><div class="tag tag-c">غرفة النوم</div>
+        </div>
+      </div>
+      <div class="compass"><span class="compass-ring">⌖</span><span>اسحب لاستكشاف المكان</span></div>
+      <div class="side-controls"><button class="icon-button" id="rotate" aria-label="تدوير تلقائي" title="تدوير تلقائي">⟳</button><button class="icon-button" id="reset" aria-label="إعادة العرض" title="إعادة العرض">⌂</button></div>
+      <div class="hint"><span class="mouse"></span><span>حرّك واسحب بالماوس للتجول</span></div>
+      <div class="scene-label" id="sceneLabel">المنزل من الخارج</div>
+    </main>
+    <footer><span>تصميم هادئ، تفاصيل مدروسة</span><span class="footer-note"><span class="leaf">✳</span><strong>١٢٨ م²&nbsp; · &nbsp;٣ غرف&nbsp; · &nbsp;طابق واحد</strong></span></footer>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+  <script>
+    const stage=document.getElementById('stage'),world=document.getElementById('world');let rx=-25,ry=-35,dragging=false,startX=0,startY=0,baseX=0,baseY=0,auto=false,raf;
+    function paint(){world.style.transform=`translate(-50%,-50%) rotateX(${rx}deg) rotateY(${ry}deg)`}
+    stage.addEventListener('pointerdown',e=>{dragging=true;stage.classList.add('dragging');stage.setPointerCapture(e.pointerId);startX=e.clientX;startY=e.clientY;baseX=ry;baseY=rx});
+    stage.addEventListener('pointermove',e=>{if(!dragging)return;ry=baseX+(e.clientX-startX)*.42;rx=Math.max(-55,Math.min(8,baseY-(e.clientY-startY)*.32));paint()});
+    const stop=()=>{dragging=false;stage.classList.remove('dragging')};stage.addEventListener('pointerup',stop);stage.addEventListener('pointercancel',stop);
+    document.getElementById('reset').addEventListener('click',()=>{rx=-25;ry=-35;paint()});
+    document.getElementById('rotate').addEventListener('click',()=>{auto=!auto;document.getElementById('rotate').style.color=auto?'#416c51':'';if(auto){const spin=()=>{if(!auto)return;ry+=.25;paint();raf=requestAnimationFrame(spin)};spin()}else cancelAnimationFrame(raf)});
+    const toast=document.getElementById('toast');document.getElementById('share').addEventListener('click',async()=>{try{await navigator.clipboard.writeText(location.href);toast.textContent='تم نسخ رابط الجولة';toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2200)}catch{toast.textContent='يمكنك مشاركة رابط هذه الصفحة';toast.classList.add('show');setTimeout(()=>toast.classList.remove('show'),2200)}});
+    document.querySelectorAll('.tour-links button').forEach((button,index)=>button.addEventListener('click',()=>{document.querySelector('.tour-links .active')?.classList.remove('active');button.classList.add('active');document.getElementById('sceneLabel').textContent=button.dataset.room;const views=[-35,-115,-205,-295];ry=views[index];rx=index===0?-25:-12;paint()}));
+  </script>
+</body>
+</html>

@@ -11,7 +11,6 @@ use App\Services\SecurityEventLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 /**
@@ -40,15 +39,15 @@ class AdminManagementController extends Controller
 
     public function store(StoreAdminRequest $request): RedirectResponse
     {
-        $password = Str::password(20);
+        $mustChange = $request->boolean('must_change_password');
 
-        $admin = DB::transaction(function () use ($request, $password) {
+        $admin = DB::transaction(function () use ($request, $mustChange) {
             $admin = Admin::create([
                 'name' => $request->input('name'),
                 'email' => $request->input('email'),
-                'password' => $password,
+                'password' => $request->input('password'),
                 'status' => 'active',
-                'must_change_password' => true,
+                'must_change_password' => $mustChange,
             ]);
 
             $admin->roles()->sync($request->input('roles'));
@@ -66,7 +65,7 @@ class AdminManagementController extends Controller
         );
 
         return redirect()->route('admin.admins.index')
-            ->with('status', "تم إنشاء المسؤول بنجاح. كلمة المرور المؤقتة: {$password} (يجب تغييرها عند أول تسجيل دخول)");
+            ->with('status', 'تم إنشاء المسؤول بنجاح.'.($mustChange ? ' سيُطلب منه تغيير كلمة المرور عند أول تسجيل دخول.' : ''));
     }
 
     public function edit(Admin $admin): View

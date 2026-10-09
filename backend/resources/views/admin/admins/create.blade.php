@@ -12,6 +12,14 @@
             <x-field label="البريد الإلكتروني" name="email" hint="يُستخدم لتسجيل الدخول.">
                 <input type="email" id="email" name="email" required value="{{ old('email') }}" dir="ltr" class="form-control">
             </x-field>
+            <x-field label="كلمة المرور" name="password" hint="12 حرفًا على الأقل.">
+                <input type="text" id="password" name="password" required minlength="12" autocomplete="off" dir="ltr" class="form-control">
+            </x-field>
+            <label class="flex items-center gap-2.5 text-sm text-ink-700">
+                <input type="checkbox" name="must_change_password" value="1" @checked(old('must_change_password', true))
+                       class="rounded border-ink-300 text-brand-yellow focus:ring-brand-yellow">
+                <span>إلزام المسؤول بتغيير كلمة المرور عند أول تسجيل دخول</span>
+            </label>
         </x-card>
 
         <x-card padding="p-6">
@@ -33,8 +41,6 @@
                 </div>
             </fieldset>
         </x-card>
-
-        <p class="text-xs text-ink-400">سيتم إنشاء كلمة مرور مؤقتة تلقائيًا، وستظهر لك بعد الإنشاء مباشرة. سيُطلب من المسؤول الجديد تغييرها عند أول تسجيل دخول.</p>
 
         <div class="flex items-center gap-3">
             <button type="submit" class="btn-primary">إنشاء المسؤول</button>

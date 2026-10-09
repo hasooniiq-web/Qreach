@@ -27,6 +27,40 @@ class RbacTest extends TestCase
         $this->actingAs($admin, 'admin')->get('/admin/admins')->assertStatus(200);
     }
 
+    public function test_super_admin_sets_the_new_admins_password_himself(): void
+    {
+        $this->seed(RolesAndPermissionsSeeder::class);
+        $super = Admin::factory()->create();
+        $super->roles()->sync([Role::where('slug', 'super_admin')->value('id')]);
+        $roleId = Role::where('slug', 'support_admin')->value('id');
+
+        $this->actingAs($super, 'admin')->post('/admin/admins', [
+            'name' => 'New Admin',
+            'email' => 'new@example.com',
+            'password' => 'ChosenPassword123',
+            'must_change_password' => '1',
+            'roles' => [$roleId],
+        ])->assertRedirect(route('admin.admins.index'));
+
+        $created = Admin::where('email', 'new@example.com')->firstOrFail();
+        $this->assertTrue(\Illuminate\Support\Facades\Hash::check('ChosenPassword123', $created->password));
+        $this->assertTrue($created->must_change_password);
+    }
+
+    public function test_new_admin_password_must_be_at_least_12_characters(): void
+    {
+        $this->seed(RolesAndPermissionsSeeder::class);
+        $super = Admin::factory()->create();
+        $super->roles()->sync([Role::where('slug', 'super_admin')->value('id')]);
+
+        $this->actingAs($super, 'admin')->post('/admin/admins', [
+            'name' => 'New Admin',
+            'email' => 'new@example.com',
+            'password' => 'short',
+            'roles' => [Role::where('slug', 'support_admin')->value('id')],
+        ])->assertSessionHasErrors('password');
+    }
+
     public function test_support_admin_role_cannot_access_admin_management(): void
     {
         $this->seed(RolesAndPermissionsSeeder::class);
