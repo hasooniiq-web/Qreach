@@ -183,6 +183,6 @@
         </details>
 
         <button type="submit" class="btn-primary w-full !py-3.5 text-base">إرسال البلاغ</button>
-        <p class="text-center text-xs text-ink-500">تُحذف المحادثة تلقائيًا بعد 15 يومًا من آخر رسالة.</p>
+        <p class="text-center text-xs text-ink-500">تُحذف المحادثة تلقائيًا بعد 7 أيام من آخر رسالة.</p>
     </form>
 </x-layouts.public>

@@ -19,8 +19,8 @@ Schedule::command('analytics:aggregate')->dailyAt('00:15');
 // writing an unencrypted dump.
 Schedule::command('backup:database')->dailyAt('02:00');
 
-// Visitor conversations live 15 days after their last message.
-Schedule::command('contacts:purge')->dailyAt('03:00');
+// Visitor conversations (and their photos) are deleted 7 days after their last message; hourly so expiry is close to exact.
+Schedule::command("contacts:purge")->hourly();
 
 // Retention: anonymize/delete stale raw data.
 Schedule::command("data:prune")->dailyAt("03:30");

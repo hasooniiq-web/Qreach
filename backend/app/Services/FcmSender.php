@@ -79,6 +79,9 @@ class FcmSender
                     'data' => (object) array_map('strval', $data),
                     // The phone's own default notification sound (no custom sound file).
                     'android' => ['priority' => 'HIGH', 'notification' => ['sound' => 'default', 'default_sound' => true, 'default_vibrate_timings' => true, 'notification_priority' => 'PRIORITY_HIGH']],
+                    // iOS (via APNs): alert push at high priority with the default sound. Without
+                    // this FCM picks defaults that can deliver silently or delayed.
+                    'apns' => ['headers' => ['apns-priority' => '10', 'apns-push-type' => 'alert'], 'payload' => ['aps' => ['sound' => 'default']]],
                 ]]
             );
 

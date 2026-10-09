@@ -3,6 +3,8 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'core/locale/locale_controller.dart';
+import 'core/providers.dart';
+import 'features/auth/presentation/auth_controller.dart';
 import 'core/router/app_router.dart';
 import 'core/theme/app_colors.dart';
 import 'core/theme/app_theme.dart';
@@ -22,12 +24,28 @@ class _QreachAppState extends ConsumerState<QreachApp>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _listenForPushTaps());
   }
 
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  // Opens the screen a tapped notification points at. A tap that cold-starts
+  // the app arrives before the session is restored, so wait (briefly) for it.
+  void _listenForPushTaps() {
+    ref.read(pushNotificationServiceProvider).listenForTaps((route) async {
+      for (var i = 0; i < 50; i++) {
+        if (!mounted) return;
+        if (ref.read(authControllerProvider) is AuthAuthenticated) {
+          ref.read(routerProvider).push(route);
+          return;
+        }
+        await Future.delayed(const Duration(milliseconds: 100));
+      }
+    });
   }
 
   // The phone switched between light and dark while we follow "system".

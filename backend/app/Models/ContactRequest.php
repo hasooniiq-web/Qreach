@@ -16,7 +16,7 @@ class ContactRequest extends Model
     ];
 
     /** Conversations are deleted this many days after their last activity. */
-    public const RETENTION_DAYS = 15;
+    public const RETENTION_DAYS = 7;
 
     /** Most messages a single conversation may hold (both sides together). */
     public const MAX_MESSAGES = 60;
@@ -53,7 +53,7 @@ class ContactRequest extends Model
         return ($this->last_activity_at ?? $this->created_at)->copy()->addDays(self::RETENTION_DAYS);
     }
 
-    /** Adds a message to the conversation and refreshes its 15-day clock. */
+    /** Adds a message to the conversation and refreshes its retention clock. */
     public function addMessage(string $sender, string $body, ?string $imagePath = null): ContactRequestMessage
     {
         $message = $this->messages()->create(['sender' => $sender, 'body' => $body, 'image_path' => $imagePath]);

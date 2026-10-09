@@ -48,6 +48,72 @@ class ConversationTest extends TestCase
             ->assertOk()->assertSee('لاحظت ضررًا في المركبة')->assertSee('أنا قادم الآن');
     }
 
+    public function test_owner_can_reply_with_an_image_stored_privately_and_served_only_to_them(): void
+    {
+        Storage::fake('local');
+        $owner = User::factory()->create();
+        $tag = $this->assignedTag($owner);
+        $thread = ContactRequest::create(['vehicle_id' => $tag->vehicle_id, 'tag_id' => $tag->id, 'message' => 'x']);
+        $headers = $this->bearer($owner) + ['Accept' => 'application/json'];
+
+        $res = $this->post("/api/v1/contact-requests/{$thread->uuid}/reply", ['image' => UploadedFile::fake()->image('p.png', 900, 700)], $headers)
+            ->assertCreated()->assertJsonPath('messages.0.sender', 'owner');
+        $url = $res->json('messages.0.image_url');
+        $this->assertNotNull($url);
+        Storage::disk('local')->assertExists($thread->messages()->first()->image_path);
+
+        $this->get('/api/v1'.$url, $headers)->assertOk()->assertHeader('Content-Type', 'image/jpeg');
+        $this->app['auth']->forgetGuards(); // Sanctum caches the first user within one test
+        $this->get('/api/v1'.$url, $this->bearer(User::factory()->create()))->assertNotFound();
+        $this->app['auth']->forgetGuards();
+        $this->getJson('/api/v1'.$url)->assertUnauthorized();
+    }
+
+    public function test_owner_reply_rejects_wrong_file_types_oversize_images_and_empty_messages(): void
+    {
+        Storage::fake('local');
+        $owner = User::factory()->create();
+        $tag = $this->assignedTag($owner);
+        $thread = ContactRequest::create(['vehicle_id' => $tag->vehicle_id, 'tag_id' => $tag->id, 'message' => 'x']);
+        $headers = $this->bearer($owner) + ['Accept' => 'application/json'];
+        $url = "/api/v1/contact-requests/{$thread->uuid}/reply";
+
+        $this->post($url, ['image' => UploadedFile::fake()->create('evil.pdf', 10, 'application/pdf')], $headers)->assertUnprocessable();
+        $this->post($url, ['image' => UploadedFile::fake()->create('evil.php', 10, 'text/x-php')], $headers)->assertUnprocessable();
+        $this->post($url, ['image' => UploadedFile::fake()->image('big.jpg')->size(9000)], $headers)->assertUnprocessable();
+        $this->post($url, [], $headers)->assertUnprocessable();
+        $this->assertSame(0, $thread->messages()->count());
+    }
+
+    public function test_purge_deletes_expired_photos_and_sweeps_orphans_but_keeps_live_ones(): void
+    {
+        Storage::fake('local');
+        $owner = User::factory()->create();
+        $tag = $this->assignedTag($owner);
+
+        $old = ContactRequest::create(['vehicle_id' => $tag->vehicle_id, 'tag_id' => $tag->id, 'message' => 'x']);
+        Storage::disk('local')->put('contact-message-images/old.jpg', 'a');
+        $old->addMessage('visitor', '', 'contact-message-images/old.jpg');
+        $old->forceFill(['last_activity_at' => now()->subDays(8)])->save();
+
+        $live = ContactRequest::create(['vehicle_id' => $tag->vehicle_id, 'tag_id' => $tag->id, 'message' => 'y']);
+        Storage::disk('local')->put('contact-message-images/live.jpg', 'b');
+        $live->addMessage('visitor', '', 'contact-message-images/live.jpg');
+
+        $orphan = 'contact-message-images/orphan.jpg';
+        Storage::disk('local')->put($orphan, 'c');
+        touch(Storage::disk('local')->path($orphan), now()->subDays(3)->getTimestamp());
+
+        $this->artisan('contacts:purge')->assertSuccessful();
+        $this->artisan('contacts:purge')->assertSuccessful(); // idempotent
+
+        Storage::disk('local')->assertMissing('contact-message-images/old.jpg');
+        Storage::disk('local')->assertMissing($orphan);
+        Storage::disk('local')->assertExists('contact-message-images/live.jpg');
+        $this->assertDatabaseHas('contact_requests', ['id' => $live->id]);
+        $this->assertDatabaseMissing('contact_requests', ['id' => $old->id]);
+    }
+
     public function test_visitor_follow_up_reopens_the_request_for_the_owner(): void
     {
         $owner = User::factory()->create();
@@ -73,15 +139,15 @@ class ConversationTest extends TestCase
             ->assertNotFound();
     }
 
-    public function test_conversations_are_purged_fifteen_days_after_last_activity(): void
+    public function test_conversations_are_purged_seven_days_after_last_activity(): void
     {
         $owner = User::factory()->create();
         $tag = $this->assignedTag($owner);
         $old = ContactRequest::create(['vehicle_id' => $tag->vehicle_id, 'tag_id' => $tag->id, 'message' => 'قديمة']);
         $old->addMessage('owner', 'رد');
-        $old->forceFill(['last_activity_at' => now()->subDays(16)])->save();
+        $old->forceFill(['last_activity_at' => now()->subDays(8)])->save();
         Scan::create(['tag_id' => $tag->id, 'vehicle_id' => $tag->vehicle_id, 'action_type' => 'contact_owner', 'payload' => ['message' => 'قديمة'], 'status' => 'success']);
-        Scan::query()->update(['created_at' => now()->subDays(16)]);
+        Scan::query()->update(['created_at' => now()->subDays(8)]);
 
         $active = ContactRequest::create(['vehicle_id' => $tag->vehicle_id, 'tag_id' => $tag->id, 'message' => 'نشطة']);
         $active->forceFill(['created_at' => now()->subDays(30), 'last_activity_at' => now()->subDays(2)])->save();

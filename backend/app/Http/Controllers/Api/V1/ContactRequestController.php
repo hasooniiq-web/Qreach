@@ -5,10 +5,12 @@ namespace App\Http\Controllers\Api\V1;
 use App\Http\Controllers\Controller;
 use App\Models\ContactRequest;
 use App\Rules\PlainTextOnly;
+use App\Services\MessageImageProcessor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
@@ -44,13 +46,29 @@ class ContactRequestController extends Controller
     public function reply(Request $request, string $uuid): JsonResponse
     {
         $contact = $this->find($request, $uuid);
-        $data = $request->validate(['body' => ['required', 'string', 'max:500', new PlainTextOnly]]);
+        $data = $request->validate([
+            'body' => ['nullable', 'string', 'max:500', new PlainTextOnly, 'required_without:image'],
+            // Same limits as the visitor side: real image, 8 MB, re-encoded server-side.
+            'image' => ['nullable', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:8192'],
+        ], [
+            'body.required_without' => 'اكتب رسالتك أو أرفق صورة.',
+        ]);
 
         if ($contact->messages()->count() >= ContactRequest::MAX_MESSAGES) {
             return response()->json(['error' => ['code' => 'THREAD_FULL', 'message' => 'وصلت المحادثة إلى الحد الأقصى من الرسائل.']], 422);
         }
 
-        $contact->addMessage('owner', trim($data['body']));
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $jpeg = app(MessageImageProcessor::class)->normalize($request->file('image'));
+            if ($jpeg === null) {
+                return response()->json(['error' => ['code' => 'INVALID_IMAGE', 'message' => 'تعذّرت معالجة الصورة. جرّب صورة أخرى.']], 422);
+            }
+            $imagePath = 'contact-message-images/'.Str::uuid().'.jpg';
+            Storage::disk('local')->put($imagePath, $jpeg);
+        }
+
+        $contact->addMessage('owner', trim((string) ($data['body'] ?? '')), $imagePath);
         $contact->update([
             'status' => 'responded',
             'responded_at' => now(),
