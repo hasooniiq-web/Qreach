@@ -22,10 +22,24 @@ use App\Http\Controllers\Admin\TagBatchController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\VehicleController;
+use App\Http\Controllers\Public\PaymentGatewayController as PublicPaymentGatewayController;
+use App\Http\Controllers\Admin\PaymentController as AdminPaymentController;
+use App\Http\Controllers\Admin\PaymentGatewayController as AdminPaymentGatewayController;
 use App\Http\Controllers\Public\ScanController;
 use Illuminate\Support\Facades\Route;
 
 Route::redirect('/', '/admin/login');
+
+// Pages a payment provider (or the customer's browser returning from it) lands on.
+// Display only: a payment's outcome is only ever set from a verified notification.
+Route::prefix('pay')->name('payments.')->group(function () {
+    Route::get('return/{uuid}', [PublicPaymentGatewayController::class, 'return'])
+        ->middleware('throttle:public-scan')->name('return');
+    // The sandbox provider's own pages (non-production only; 404 in production).
+    Route::get('sandbox/{reference}', [PublicPaymentGatewayController::class, 'sandboxShow'])->name('sandbox.show');
+    Route::post('sandbox/{reference}', [PublicPaymentGatewayController::class, 'sandboxComplete'])
+        ->middleware('throttle:public-action')->name('sandbox.complete');
+});
 
 // Public QR/NFC scan experience (section 13) — no auth, no app install.
 Route::prefix('t')->name('public.scan.')->group(function () {
@@ -123,6 +137,20 @@ Route::prefix('admin')->name('admin.')->group(function () {
                 ->middleware('admin.permission:users.suspend')->name('users.suspend');
             Route::post('users/{user}/activate', [UserController::class, 'activate'])
                 ->middleware('admin.permission:users.suspend')->name('users.activate');
+
+            // Electronic payments: records + refunds, and gateway settings (credentials).
+            Route::middleware('admin.permission:payments.view')->group(function () {
+                Route::get('payments', [AdminPaymentController::class, 'index'])->name('payments.index');
+                Route::get('payments/{payment}', [AdminPaymentController::class, 'show'])->name('payments.show');
+            });
+            Route::post('payments/{payment}/refund', [AdminPaymentController::class, 'refund'])
+                ->middleware('admin.permission:payments.refund')->name('payments.refund');
+            Route::get('payment-gateways', [AdminPaymentGatewayController::class, 'index'])
+                ->middleware('admin.permission:payment_gateways.view')->name('payment-gateways.index');
+            Route::get('payment-gateways/{driver}', [AdminPaymentGatewayController::class, 'edit'])
+                ->middleware('admin.permission:payment_gateways.view')->name('payment-gateways.edit');
+            Route::put('payment-gateways/{driver}', [AdminPaymentGatewayController::class, 'update'])
+                ->middleware('admin.permission:payment_gateways.manage')->name('payment-gateways.update');
 
             // Subscriptions & plans. Literal segments (requests) come before any wildcard.
             Route::middleware('admin.permission:subscriptions.view')->group(function () {

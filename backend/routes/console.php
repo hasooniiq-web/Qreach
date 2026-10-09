@@ -27,3 +27,6 @@ Schedule::command("data:prune")->dailyAt("03:30");
 
 // Expired API tokens are already rejected by Sanctum; this just removes the rows.
 Schedule::command('sanctum:prune-expired --hours=24')->daily();
+
+// Payments: ask providers about missing notifications, close abandoned checkouts.
+Schedule::command('payments:maintain')->everyFiveMinutes();

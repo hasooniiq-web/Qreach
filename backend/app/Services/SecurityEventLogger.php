@@ -41,6 +41,8 @@ class SecurityEventLogger
 
     public const EMERGENCY_TRIGGERED = 'EMERGENCY_TRIGGERED';
 
+    public const PAYMENT_ANOMALY = 'PAYMENT_ANOMALY';
+
     public static function log(
         string $eventType,
         string $severity = 'info',

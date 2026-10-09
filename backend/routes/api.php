@@ -5,6 +5,8 @@ use App\Http\Controllers\Api\V1\ContactRequestController;
 use App\Http\Controllers\Api\V1\DeviceController;
 use App\Http\Controllers\Api\V1\HomeController;
 use App\Http\Controllers\Api\V1\NotificationController;
+use App\Http\Controllers\Api\V1\PaymentController;
+use App\Http\Controllers\Public\PaymentGatewayController;
 use App\Http\Controllers\Api\V1\ProfileController;
 use App\Http\Controllers\Api\V1\SubscriptionController;
 use App\Http\Controllers\Api\V1\TagController;
@@ -34,6 +36,10 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         });
     });
 
+    // Provider -> server notifications. No login: each driver verifies the sender itself.
+    Route::post('payments/webhook/{driver}', [PaymentGatewayController::class, 'webhook'])
+        ->middleware('throttle:120,1')->name('payments.webhook');
+
     Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('vehicles', VehicleController::class)->parameters(['vehicles' => 'vehicle']);
 
@@ -61,6 +67,12 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::get('subscription', [SubscriptionController::class, 'show'])->name('subscription.show');
         Route::post('subscription/upgrade-requests', [SubscriptionController::class, 'requestUpgrade'])
             ->middleware('throttle:5,1')->name('subscription.upgrade');
+
+        Route::get('payments/methods', [PaymentController::class, 'methods'])->name('payments.methods');
+        Route::get('payments', [PaymentController::class, 'index'])->name('payments.index');
+        Route::post('payments', [PaymentController::class, 'store'])
+            ->middleware('throttle:10,1')->name('payments.store');
+        Route::get('payments/{uuid}', [PaymentController::class, 'show'])->name('payments.show');
 
         Route::get('profile', [ProfileController::class, 'show'])->name('profile.show');
         Route::put('profile', [ProfileController::class, 'updateName'])->name('profile.name');
