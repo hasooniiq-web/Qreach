@@ -14,11 +14,13 @@ Widget _host(Widget child) => MaterialApp(
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      home: Scaffold(body: Padding(padding: const EdgeInsets.all(16), child: child)),
+      home: Scaffold(
+          body: Padding(padding: const EdgeInsets.all(16), child: child)),
     );
 
 void main() {
-  testWidgets('picking an option reports it and shows its label', (tester) async {
+  testWidgets('picking an option reports it and shows its label',
+      (tester) async {
     String? picked;
     await tester.pumpWidget(_host(StatefulBuilder(
       builder: (context, setState) => ChoiceField(

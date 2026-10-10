@@ -17,12 +17,3 @@ final profileAvatarProvider =
   if (!profile.hasAvatar) return null;
   return ref.watch(profileRepositoryProvider).fetchAvatar();
 });
-
-/// The cover photo bytes (null = none). Re-fetched whenever the profile
-/// reports a different `coverVersion`.
-final profileCoverProvider =
-    FutureProvider.autoDispose<Uint8List?>((ref) async {
-  final profile = await ref.watch(profileProvider.future);
-  if (!profile.hasCover) return null;
-  return ref.watch(profileRepositoryProvider).fetchCover();
-});

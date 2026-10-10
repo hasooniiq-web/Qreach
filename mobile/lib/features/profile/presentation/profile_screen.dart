@@ -138,60 +138,6 @@ class ProfileScreen extends ConsumerWidget {
     }
   }
 
-  Future<void> _changeCover(
-      BuildContext context, WidgetRef ref, ProfileModel profile) async {
-    final l10n = AppLocalizations.of(context)!;
-    final choice = await showAppSheet<String>(
-      context,
-      builder: (context) => SafeArea(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.photo_camera_outlined),
-              title: Text(l10n.takePhoto),
-              onTap: () => Navigator.of(context).pop('camera'),
-            ),
-            ListTile(
-              leading: const Icon(Icons.photo_library_outlined),
-              title: Text(l10n.chooseFromGallery),
-              onTap: () => Navigator.of(context).pop('gallery'),
-            ),
-            if (profile.hasCover)
-              ListTile(
-                leading:
-                    Icon(Icons.delete_outline, color: AppColors.statusDanger),
-                title: Text(l10n.removePhoto,
-                    style: TextStyle(color: AppColors.statusDanger)),
-                onTap: () => Navigator.of(context).pop('remove'),
-              ),
-          ],
-        ),
-      ),
-    );
-    if (choice == null || !context.mounted) return;
-
-    final messenger = ScaffoldMessenger.of(context);
-    try {
-      if (choice == 'remove') {
-        await ref.read(profileRepositoryProvider).removeCover();
-      } else {
-        final picked = await ImagePicker().pickImage(
-          source: choice == 'camera' ? ImageSource.camera : ImageSource.gallery,
-          maxWidth: 1600,
-          imageQuality: 85,
-        );
-        if (picked == null) return;
-        await ref.read(profileRepositoryProvider).uploadCover(picked.path);
-      }
-      ref.invalidate(profileProvider);
-      messenger.showSnackBar(SnackBar(content: Text(l10n.photoUpdated)));
-    } catch (e) {
-      messenger
-          .showSnackBar(SnackBar(content: Text(asApiException(e).message)));
-    }
-  }
-
   Future<void> _changePassword(
       BuildContext context, WidgetRef ref, ProfileModel profile) async {
     final l10n = AppLocalizations.of(context)!;
@@ -404,49 +350,6 @@ class ProfileScreen extends ConsumerWidget {
           padding: const EdgeInsets.only(bottom: 120),
           children: [
             FadeSlideIn(child: ScreenHeader(title: l10n.tabProfile)),
-            if (profile != null)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(
-                    AppSpacing.lg, 0, AppSpacing.lg, AppSpacing.sm),
-                child: FadeSlideIn(
-                  child: GestureDetector(
-                    onTap: () => _changeCover(context, ref, profile),
-                    child: Stack(
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(16),
-                          child: Builder(builder: (context) {
-                            final coverBytes =
-                                ref.watch(profileCoverProvider).valueOrNull;
-                            return Container(
-                              height: 110,
-                              width: double.infinity,
-                              color: AppColors.ink100,
-                              child: coverBytes != null
-                                  ? Image.memory(coverBytes, fit: BoxFit.cover)
-                                  : Icon(Icons.image_outlined,
-                                      color: AppColors.ink300, size: 32),
-                            );
-                          }),
-                        ),
-                        PositionedDirectional(
-                          bottom: 8,
-                          end: 8,
-                          child: Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              color: Colors.black.withValues(alpha: 0.55),
-                              shape: BoxShape.circle,
-                            ),
-                            child: const Icon(Icons.photo_camera,
-                                size: 16, color: Colors.white),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
               child: FadeSlideIn(
@@ -635,7 +538,6 @@ class ProfileScreen extends ConsumerWidget {
           l10n.featurePublicPhone,
         if (p.showName) l10n.homeOwnerLabel,
         if (p.showAvatar) l10n.visAvatarLabel,
-        if (p.showCover) l10n.visCoverLabel,
         if (p.emergency?.visible == true) l10n.emergencySection,
         for (final m in p.methods)
           if (m.visible && m.canShow) m.label,

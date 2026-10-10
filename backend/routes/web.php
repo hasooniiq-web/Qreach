@@ -47,8 +47,6 @@ Route::prefix('t')->name('public.scan.')->group(function () {
         ->middleware('throttle:public-scan')->name('show');
     Route::get('{token}/avatar', [ScanController::class, 'ownerAvatar'])
         ->middleware('throttle:public-scan')->name('avatar');
-    Route::get('{token}/cover', [ScanController::class, 'ownerCover'])
-        ->middleware('throttle:public-scan')->name('cover');
 
     Route::middleware('throttle:public-action')->group(function () {
         Route::post('{token}/vehicle-block', [ScanController::class, 'vehicleBlock'])->name('vehicle-block');

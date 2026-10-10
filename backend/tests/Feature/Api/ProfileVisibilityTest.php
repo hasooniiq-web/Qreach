@@ -184,7 +184,7 @@ class ProfileVisibilityTest extends TestCase
         $this->putJson('/api/v1/profile', ['name' => '<b>x</b>'], $headers)->assertStatus(422);
     }
 
-    public function test_avatar_and_cover_are_hidden_by_default_and_shown_only_when_switched_on(): void
+    public function test_the_avatar_is_hidden_by_default_and_shown_only_when_switched_on(): void
     {
         $owner = User::factory()->create();
         $vehicle = Vehicle::factory()->for($owner)->create();
@@ -196,20 +196,44 @@ class ProfileVisibilityTest extends TestCase
 
         $this->postJson('/api/v1/profile/avatar', ['avatar' => UploadedFile::fake()->image('avatar.jpg', 300, 300)], $headers)
             ->assertOk()->assertJsonPath('has_avatar', true);
-        $this->postJson('/api/v1/profile/cover', ['cover' => UploadedFile::fake()->image('cover.jpg', 1200, 400)], $headers)
-            ->assertOk()->assertJsonPath('has_cover', true);
 
-        // Uploaded, but not switched on yet: the public scan page serves neither.
+        // Uploaded, but not switched on yet: the public scan page serves nothing.
         $this->get("/t/{$tag->public_token}/avatar")->assertNotFound();
-        $this->get("/t/{$tag->public_token}/cover")->assertNotFound();
 
-        $this->putJson('/api/v1/profile/visibility', ['show_avatar' => true, 'show_cover' => true], $headers)
-            ->assertOk()->assertJsonPath('show_avatar', true)->assertJsonPath('show_cover', true);
+        $this->putJson('/api/v1/profile/visibility', ['show_avatar' => true], $headers)
+            ->assertOk()->assertJsonPath('show_avatar', true);
 
         $this->get("/t/{$tag->public_token}/avatar")->assertOk()->assertHeader('Content-Type', 'image/jpeg');
-        $this->get("/t/{$tag->public_token}/cover")->assertOk()->assertHeader('Content-Type', 'image/jpeg');
     }
 
+    public function test_cover_photos_no_longer_exist_anywhere(): void
+    {
+        $owner = User::factory()->create();
+        $vehicle = Vehicle::factory()->for($owner)->create();
+        $tag = Tag::create([
+            'public_token' => bin2hex(random_bytes(16)), 'serial_number' => 'ST-Q-CV-'.random_int(1000, 9999),
+            'type' => 'qr', 'status' => 'assigned', 'vehicle_id' => $vehicle->id,
+        ]);
+        $headers = $this->bearer($owner);
+
+        $this->postJson('/api/v1/profile/cover', ['cover' => UploadedFile::fake()->image('c.jpg', 1200, 400)], $headers)->assertNotFound();
+        $this->get("/t/{$tag->public_token}/cover")->assertNotFound();
+        $this->getJson('/api/v1/profile', $headers)->assertOk()
+            ->assertJsonMissingPath('has_cover')->assertJsonMissingPath('show_cover');
+    }
+
+    public function test_the_purge_command_deletes_existing_covers(): void
+    {
+        \Illuminate\Support\Facades\Storage::fake('local');
+        $user = User::factory()->create(['cover_path' => 'user-covers/old.jpg', 'show_cover_publicly' => true]);
+        \Illuminate\Support\Facades\Storage::disk('local')->put('user-covers/old.jpg', 'x');
+
+        $this->artisan('profile:purge-covers')->assertSuccessful();
+
+        \Illuminate\Support\Facades\Storage::disk('local')->assertMissing('user-covers/old.jpg');
+        $this->assertNull($user->fresh()->cover_path);
+        $this->assertFalse($user->fresh()->show_cover_publicly);
+    }
     public function test_updating_visibility_with_no_fields_is_rejected(): void
     {
         $owner = User::factory()->create();

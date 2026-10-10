@@ -27,12 +27,6 @@ class PublicContacts
         return $owner->show_avatar_publicly && $owner->avatar_path ? route('public.scan.avatar', $token) : null;
     }
 
-    /** The scan-page URL for the owner's cover photo, only if they chose to show it. */
-    public function coverUrlFor(User $owner, string $token): ?string
-    {
-        return $owner->show_cover_publicly && $owner->cover_path ? route('public.scan.cover', $token) : null;
-    }
-
     /** @return array{name: string, relationship: ?string, phone: string}|null */
     public function emergencyFor(User $owner): ?array
     {

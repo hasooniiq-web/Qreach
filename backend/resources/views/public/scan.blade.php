@@ -24,11 +24,8 @@
 
     {{-- Identity. By default a visitor learns nothing about the owner: the name,
          phone, emergency contact and any other contact method appear only if the
-         owner explicitly switched them on (and their plan allows it). Avatar and
-         cover follow the exact same "off unless switched on" rule. --}}
-    @if ($ownerCoverUrl)
-        <img src="{{ $ownerCoverUrl }}" alt="" class="-mb-8 h-32 w-full rounded-xl object-cover sm:h-40">
-    @endif
+         owner explicitly switched them on (and their plan allows it). The avatar
+         follows the same "off unless switched on" rule. --}}
     <section class="relative mb-6 rounded-xl bg-brand-black p-5 text-white">
         @if ($ownerAvatarUrl)
             <img src="{{ $ownerAvatarUrl }}" alt="{{ $ownerName ?: 'صاحب المركبة' }}"

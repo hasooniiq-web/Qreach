@@ -272,12 +272,6 @@ class FakeProfile implements ProfileRepository {
   @override
   Future<ProfileModel> removeAvatar() async => _p;
   @override
-  Future<Uint8List?> fetchCover() async => null;
-  @override
-  Future<ProfileModel> uploadCover(String filePath) async => _p;
-  @override
-  Future<ProfileModel> removeCover() async => _p;
-  @override
   Future<ProfileModel> updateName(String name) async => _p;
   @override
   Future<ProfileModel> updatePassword(
@@ -287,8 +281,6 @@ class FakeProfile implements ProfileRepository {
   Future<ProfileModel> setShowName(bool value) async => _p;
   @override
   Future<ProfileModel> setShowAvatar(bool value) async => _p;
-  @override
-  Future<ProfileModel> setShowCover(bool value) async => _p;
   @override
   Future<ProfileModel> updatePhone(
           {required String phone, required bool visible}) async =>

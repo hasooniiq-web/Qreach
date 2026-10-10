@@ -82,9 +82,6 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::get('profile/avatar', [ProfileController::class, 'avatar'])->name('profile.avatar');
         Route::post('profile/avatar', [ProfileController::class, 'storeAvatar'])->name('profile.avatar.store');
         Route::delete('profile/avatar', [ProfileController::class, 'destroyAvatar'])->name('profile.avatar.destroy');
-        Route::get('profile/cover', [ProfileController::class, 'cover'])->name('profile.cover');
-        Route::post('profile/cover', [ProfileController::class, 'storeCover'])->name('profile.cover.store');
-        Route::delete('profile/cover', [ProfileController::class, 'destroyCover'])->name('profile.cover.destroy');
         Route::put('profile/contact', [ProfileController::class, 'updateContact'])->name('profile.contact');
         Route::put('profile/visibility', [ProfileController::class, 'updateVisibility'])->name('profile.visibility');
         Route::post('profile/methods', [ProfileController::class, 'storeMethod'])->name('profile.methods.store');

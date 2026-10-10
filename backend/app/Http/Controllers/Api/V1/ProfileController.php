@@ -55,11 +55,8 @@ class ProfileController extends Controller
             'has_password' => (bool) $user->password,
             'has_avatar' => (bool) $user->avatar_path,
             'avatar_version' => $user->updated_at?->timestamp,
-            'has_cover' => (bool) $user->cover_path,
-            'cover_version' => $user->updated_at?->timestamp,
             'show_name' => (bool) $user->show_name_publicly,
             'show_avatar' => (bool) $user->show_avatar_publicly,
-            'show_cover' => (bool) $user->show_cover_publicly,
             'can_add_methods' => $plan->allowsExtraMethods(),
             'contact' => [
                 'phone' => [
@@ -132,20 +129,19 @@ class ProfileController extends Controller
         return $this->show($request);
     }
 
-    /** Whether visitors may see the owner's name, avatar and/or cover photo. All off by default. */
+    /** Whether visitors may see the owner's name and/or avatar. All off by default. */
     public function updateVisibility(Request $request): JsonResponse
     {
         $data = $request->validate([
             'show_name' => ['sometimes', 'boolean'],
             'show_avatar' => ['sometimes', 'boolean'],
-            'show_cover' => ['sometimes', 'boolean'],
         ]);
 
         if ($data === []) {
             return response()->json(['message' => 'لم يتم إرسال أي تغيير.'], 422);
         }
 
-        $map = ['show_name' => 'show_name_publicly', 'show_avatar' => 'show_avatar_publicly', 'show_cover' => 'show_cover_publicly'];
+        $map = ['show_name' => 'show_name_publicly', 'show_avatar' => 'show_avatar_publicly'];
         $update = [];
         foreach ($map as $input => $column) {
             if (array_key_exists($input, $data)) {
@@ -340,54 +336,6 @@ class ProfileController extends Controller
         if ($user->avatar_path) {
             Storage::disk('local')->delete($user->avatar_path);
             $user->update(['avatar_path' => null]);
-        }
-
-        return $this->show($request);
-    }
-
-    public function cover(Request $request): Response
-    {
-        $path = $request->user()->cover_path;
-
-        abort_unless($path && Storage::disk('local')->exists($path), 404);
-
-        return Storage::disk('local')->response($path, null, [
-            'Content-Type' => 'image/jpeg',
-            'Cache-Control' => 'private, max-age=300',
-        ]);
-    }
-
-    /** Unlike the avatar (cropped to a square), the cover keeps its own
-     *  aspect ratio — MessageImageProcessor just downscales and re-encodes. */
-    public function storeCover(Request $request): JsonResponse
-    {
-        $request->validate([
-            'cover' => ['required', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:6144', 'dimensions:min_width=200,min_height=80'],
-        ]);
-
-        $user = $request->user();
-        $jpeg = $this->images->normalize($request->file('cover'));
-
-        if ($jpeg === null) {
-            return response()->json(['error' => ['code' => 'INVALID_IMAGE', 'message' => 'تعذّرت معالجة الصورة. جرّب صورة أخرى.']], 422);
-        }
-
-        $path = "user-covers/{$user->uuid}.jpg";
-        Storage::disk('local')->put($path, $jpeg);
-        $user->update(['cover_path' => $path]);
-
-        AuditLogger::log('profile.cover_updated', 'customer', $user->id, 'User', $user->id, 'success', [], $request);
-
-        return $this->show($request);
-    }
-
-    public function destroyCover(Request $request): JsonResponse
-    {
-        $user = $request->user();
-
-        if ($user->cover_path) {
-            Storage::disk('local')->delete($user->cover_path);
-            $user->update(['cover_path' => null]);
         }
 
         return $this->show($request);
