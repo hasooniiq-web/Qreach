@@ -153,11 +153,16 @@
                     'assistance' => ['أحتاج مساعدة', 'bell'],
                     'other' => ['سبب آخر', 'pencil'],
                 ] as $value => [$label, $icon])
-                    <label class="cursor-pointer">
+                    <label class="relative cursor-pointer">
                         <input type="radio" name="reason" value="{{ $value }}" class="peer sr-only" @checked(old('reason') === $value) required>
-                        <span class="flex h-full min-h-24 flex-col justify-between gap-3 rounded-xl border border-ink-200 bg-white p-3.5 text-sm font-semibold text-ink-900 transition-colors peer-checked:border-brand-black peer-checked:bg-brand-black peer-checked:text-white peer-focus-visible:ring-2 peer-focus-visible:ring-brand-yellow">
+                        {{-- The chosen reason turns solid yellow with a check mark: unmistakable on the dark page
+                             (the old black-on-black selection looked like nothing had happened). --}}
+                        <span class="flex h-full min-h-24 flex-col justify-between gap-3 rounded-xl border-2 border-ink-200 bg-white p-3.5 text-sm font-semibold text-ink-900 transition peer-checked:border-brand-yellow peer-checked:bg-brand-yellow peer-checked:text-brand-black peer-checked:shadow-lg peer-checked:ring-4 peer-checked:ring-brand-yellow/40 peer-focus-visible:ring-2 peer-focus-visible:ring-brand-yellow">
                             <x-icon :name="$icon" class="size-6" />
                             {{ $label }}
+                        </span>
+                        <span class="pointer-events-none absolute end-2 top-2 hidden size-6 items-center justify-center rounded-full bg-brand-black text-brand-yellow peer-checked:flex" aria-hidden="true">
+                            <svg viewBox="0 0 20 20" class="size-4" fill="currentColor"><path d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.5 7.5a1 1 0 0 1-1.4 0L3.3 9.7a1 1 0 1 1 1.4-1.4l3.8 3.8 6.8-6.8a1 1 0 0 1 1.4 0Z"/></svg>
                         </span>
                     </label>
                 @endforeach
@@ -179,7 +184,8 @@
             </div>
         </details>
 
-        <button type="submit" class="btn-primary w-full !py-3.5 text-base">إرسال البلاغ</button>
+        {{-- Large and red on purpose: this is the one action on the page. --}}
+        <button type="submit" class="inline-flex h-16 w-full items-center justify-center rounded-xl bg-[#DC2626] px-6 text-xl font-extrabold text-white shadow-lg transition hover:brightness-110 focus-visible:outline-4 focus-visible:outline-offset-2 focus-visible:outline-brand-yellow active:scale-[0.98]">إرسال البلاغ</button>
         <p class="text-center text-xs text-ink-500">تُحذف المحادثة تلقائيًا بعد 7 أيام من بدايتها.</p>
     </form>
 </x-layouts.public>
