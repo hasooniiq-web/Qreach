@@ -1,7 +1,7 @@
 name: qreach_smarttag
 description: "Qreach SmartTag — customer mobile app"
 publish_to: 'none'
-version: 0.1.0+15
+version: 0.1.0+16
 
 environment:
   sdk: ^3.5.0
@@ -72,6 +72,13 @@ flutter_launcher_icons:
 flutter:
   uses-material-design: true
   generate: true
+
+  # CocoaPods only. With Swift Package Manager also on, Firebase was linked twice
+  # on iOS (once statically via SwiftPM, once as Pods frameworks): two copies of
+  # GoogleUtilities/FBLPromises, and the copy that asked for the APNs token was
+  # not the one that received it, so push never got an FCM token.
+  config:
+    enable-swift-package-manager: false
 
   fonts:
     - family: Noto Sans Arabic
