@@ -85,6 +85,28 @@ class ConversationTest extends TestCase
         $this->assertSame(0, $thread->messages()->count());
     }
 
+    public function test_a_chat_that_keeps_going_still_ends_seven_days_after_its_first_message(): void
+    {
+        $owner = User::factory()->create();
+        $tag = $this->assignedTag($owner);
+        $thread = ContactRequest::create(['vehicle_id' => $tag->vehicle_id, 'tag_id' => $tag->id, 'message' => 'x']);
+        $thread->forceFill(['created_at' => now()->subDays(8)])->save();
+        $thread->addMessage('visitor', 'ما زلت هنا'); // activity today does not extend its life
+
+        $this->assertTrue($thread->fresh()->expiresAt()->isPast());
+        $this->artisan('contacts:purge')->assertSuccessful();
+
+        $this->assertDatabaseMissing('contact_requests', ['id' => $thread->id]);
+    }
+
+    public function test_expiry_date_is_seven_days_from_the_start(): void
+    {
+        $owner = User::factory()->create();
+        $tag = $this->assignedTag($owner);
+        $thread = ContactRequest::create(['vehicle_id' => $tag->vehicle_id, 'tag_id' => $tag->id, 'message' => 'x']);
+
+        $this->assertEquals($thread->created_at->copy()->addDays(7)->timestamp, $thread->expiresAt()->timestamp);
+    }
     public function test_purge_deletes_expired_photos_and_sweeps_orphans_but_keeps_live_ones(): void
     {
         Storage::fake('local');
@@ -94,7 +116,7 @@ class ConversationTest extends TestCase
         $old = ContactRequest::create(['vehicle_id' => $tag->vehicle_id, 'tag_id' => $tag->id, 'message' => 'x']);
         Storage::disk('local')->put('contact-message-images/old.jpg', 'a');
         $old->addMessage('visitor', '', 'contact-message-images/old.jpg');
-        $old->forceFill(['last_activity_at' => now()->subDays(8)])->save();
+        $old->forceFill(['created_at' => now()->subDays(8)])->save();
 
         $live = ContactRequest::create(['vehicle_id' => $tag->vehicle_id, 'tag_id' => $tag->id, 'message' => 'y']);
         Storage::disk('local')->put('contact-message-images/live.jpg', 'b');
@@ -139,18 +161,18 @@ class ConversationTest extends TestCase
             ->assertNotFound();
     }
 
-    public function test_conversations_are_purged_seven_days_after_last_activity(): void
+    public function test_conversations_are_purged_seven_days_after_they_started(): void
     {
         $owner = User::factory()->create();
         $tag = $this->assignedTag($owner);
         $old = ContactRequest::create(['vehicle_id' => $tag->vehicle_id, 'tag_id' => $tag->id, 'message' => 'قديمة']);
         $old->addMessage('owner', 'رد');
-        $old->forceFill(['last_activity_at' => now()->subDays(8)])->save();
+        $old->forceFill(['created_at' => now()->subDays(8)])->save();
         Scan::create(['tag_id' => $tag->id, 'vehicle_id' => $tag->vehicle_id, 'action_type' => 'contact_owner', 'payload' => ['message' => 'قديمة'], 'status' => 'success']);
         Scan::query()->update(['created_at' => now()->subDays(8)]);
 
         $active = ContactRequest::create(['vehicle_id' => $tag->vehicle_id, 'tag_id' => $tag->id, 'message' => 'نشطة']);
-        $active->forceFill(['created_at' => now()->subDays(30), 'last_activity_at' => now()->subDays(2)])->save();
+        $active->forceFill(['created_at' => now()->subDays(2), 'last_activity_at' => now()])->save();
 
         $this->artisan('contacts:purge')->assertSuccessful();
 

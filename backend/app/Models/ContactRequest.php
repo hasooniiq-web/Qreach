@@ -15,7 +15,7 @@ class ContactRequest extends Model
         'request_ip', 'user_agent', 'read_at', 'responded_at', 'last_activity_at', 'reason',
     ];
 
-    /** Conversations are deleted this many days after their last activity. */
+    /** Conversations are deleted this many days after they were started (their first message). */
     public const RETENTION_DAYS = 7;
 
     /** Most messages a single conversation may hold (both sides together). */
@@ -50,7 +50,9 @@ class ContactRequest extends Model
 
     public function expiresAt(): Carbon
     {
-        return ($this->last_activity_at ?? $this->created_at)->copy()->addDays(self::RETENTION_DAYS);
+        // From the conversation's FIRST message (its creation), not the last: a chat that keeps
+        // going must still end, so nothing lives longer than RETENTION_DAYS.
+        return $this->created_at->copy()->addDays(self::RETENTION_DAYS);
     }
 
     /** Adds a message to the conversation and refreshes its retention clock. */

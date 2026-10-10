@@ -13,7 +13,8 @@ use Illuminate\Support\Facades\Storage;
 
 /**
  * Visitor conversations are deleted ContactRequest::RETENTION_DAYS (7) days
- * after their last message — measured on the server clock (`last_activity_at`),
+ * after the conversation STARTED (its first message) — measured on the server clock
+ * (`created_at`), so a chat that keeps going still ends on schedule,
  * never on a device. Deletion is permanent (hard delete), and covers the copies
  * of the message text kept elsewhere (the scan log and the owner's notification
  * feed) and every attached photo, so nothing outlives the conversation.
@@ -27,7 +28,7 @@ class PurgeExpiredContactRequests extends Command
 {
     protected $signature = 'contacts:purge';
 
-    protected $description = 'Delete visitor conversations (and their photos) 7 days after their last activity';
+    protected $description = 'Delete visitor conversations (and their photos) 7 days after they were started';
 
     private const IMAGE_DIR = 'contact-message-images';
 
@@ -37,7 +38,7 @@ class PurgeExpiredContactRequests extends Command
         $disk = Storage::disk('local');
         $deleted = 0;
 
-        ContactRequest::where('last_activity_at', '<', $cutoff)->select('id')->chunkById(200, function ($chunk) use ($disk, &$deleted) {
+        ContactRequest::where('created_at', '<', $cutoff)->select('id')->chunkById(200, function ($chunk) use ($disk, &$deleted) {
             $ids = $chunk->pluck('id');
 
             $paths = ContactRequestMessage::whereIn('contact_request_id', $ids)
