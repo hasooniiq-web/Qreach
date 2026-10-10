@@ -107,7 +107,7 @@
                         <div class="mt-2 flex flex-wrap gap-1.5">
                             @foreach ($vehicle->tags as $tag)
                                 <a href="{{ route('admin.tags.show', $tag) }}" class="inline-flex items-center gap-1.5 rounded-full border border-ink-200 px-2 py-0.5 text-xs text-ink-600 hover:border-ink-400">
-                                    <span class="uppercase">{{ $tag->type }}</span>
+                                    <span>{{ $tag->typeLabel() }}</span>
                                     <span class="font-mono tabular-nums">{{ $tag->serial_number }}</span>
                                     <x-status-badge :status="$tag->status" />
                                 </a>

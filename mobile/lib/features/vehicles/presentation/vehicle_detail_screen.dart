@@ -155,8 +155,7 @@ class _CodeSectionState extends ConsumerState<_CodeSection> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Text(
-                  '${tag.type == 'nfc' ? l10n.tagTypeNfc : l10n.tagTypeQr}  ·  ${tag.serialNumber}',
+              Text('${tagTypeLabel(l10n, tag.type)}  ·  ${tag.serialNumber}',
                   textDirection: TextDirection.ltr,
                   style: const TextStyle(
                       fontWeight: FontWeight.w800, fontSize: 16)),
@@ -236,8 +235,14 @@ class _CodeSectionState extends ConsumerState<_CodeSection> {
         AppCard(
           child: Row(
             children: [
-              Icon(tag.type == 'nfc' ? Icons.nfc : Icons.qr_code_2,
-                  size: 32, color: AppColors.ink800),
+              Icon(
+                  tag.type == 'nfc'
+                      ? Icons.nfc
+                      : (tag.type == 'code'
+                          ? Icons.contactless_outlined
+                          : Icons.qr_code_2),
+                  size: 32,
+                  color: AppColors.ink800),
               const SizedBox(width: AppSpacing.md),
               Expanded(
                 child: Column(
@@ -246,7 +251,7 @@ class _CodeSectionState extends ConsumerState<_CodeSection> {
                     Text(tag.serialNumber,
                         style: const TextStyle(fontWeight: FontWeight.w800),
                         textDirection: TextDirection.ltr),
-                    Text(tag.type == 'nfc' ? l10n.tagTypeNfc : l10n.tagTypeQr,
+                    Text(tagTypeLabel(l10n, tag.type),
                         style:
                             TextStyle(color: AppColors.ink500, fontSize: 12)),
                   ],

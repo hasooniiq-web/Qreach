@@ -5,8 +5,9 @@
                    class="form-control min-w-[220px] flex-1">
             <select name="type" data-auto-submit aria-label="النوع" class="form-control w-auto">
                 <option value="">كل الأنواع</option>
-                <option value="qr" @selected(request('type') === 'qr')>QR</option>
-                <option value="nfc" @selected(request('type') === 'nfc')>NFC</option>
+                <option value="code" @selected(request('type') === 'code')>QR + NFC (موحّد)</option>
+                <option value="qr" @selected(request('type') === 'qr')>QR فقط (قديم)</option>
+                <option value="nfc" @selected(request('type') === 'nfc')>NFC فقط (قديم)</option>
             </select>
             <select name="status" data-auto-submit aria-label="الحالة" class="form-control w-auto">
                 <option value="">كل الحالات</option>
@@ -23,7 +24,7 @@
         @forelse ($tags as $tag)
             <tr class="hover:bg-ink-50">
                 <td class="px-4 py-3 font-medium tabular-nums text-ink-900"><a href="{{ route('admin.tags.show', $tag) }}" class="hover:underline">{{ $tag->serial_number }}</a></td>
-                <td class="px-4 py-3 uppercase text-ink-600">{{ $tag->type }}</td>
+                <td class="px-4 py-3 uppercase text-ink-600">{{ $tag->typeLabel() }}</td>
                 <td class="px-4 py-3 text-ink-600">
                     @if ($tag->vehicle)
                         <a href="{{ route('admin.vehicles.show', $tag->vehicle) }}" class="hover:underline">{{ $tag->vehicle->plate_number }}</a>

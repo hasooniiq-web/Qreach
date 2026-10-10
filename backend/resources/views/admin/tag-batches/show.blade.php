@@ -1,7 +1,7 @@
 <x-layouts.admin :title="'الدفعة '.$batch->batch_code">
     @php $admin = auth('admin')->user(); @endphp
     <x-page-header :title="$batch->batch_code"
-                   :subtitle="$batch->quantity.' رمز '.strtoupper($batch->tag_type).' — أُنشئت في '.$batch->created_at->copy()->timezone(config('app.display_timezone'))->format('Y-m-d H:i')"
+                   :subtitle="$batch->quantity.' رمز '.(\App\Models\Tag::typeLabels()[$batch->tag_type] ?? strtoupper($batch->tag_type)).' — أُنشئت في '.$batch->created_at->copy()->timezone(config('app.display_timezone'))->format('Y-m-d H:i')"
                    :back="route('admin.tag-batches.index')" backLabel="كل الدفعات">
         <x-slot:actions>
             <x-status-badge :status="$batch->status" />
@@ -16,7 +16,7 @@
                     </div>
                 </details>
             @endif
-            @if ($batch->tag_type === 'qr')
+            @if (in_array($batch->tag_type, ['qr', 'code'], true))
                 <a href="{{ route('admin.tag-batches.print', $batch) }}" target="_blank" class="btn-accent">طباعة الرموز</a>
             @endif
         </x-slot:actions>

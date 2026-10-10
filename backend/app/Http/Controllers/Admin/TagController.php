@@ -74,7 +74,8 @@ class TagController extends Controller
     {
         $tag->load('vehicle.user', 'qrTag', 'nfcTag', 'batch', 'lifecycleEvents', 'replaces');
 
-        $replacementCandidates = Tag::where('type', $tag->type)
+        // A unified code may replace an older single-purpose one (and vice versa), so any unassigned code qualifies.
+        $replacementCandidates = Tag::query()
             ->whereIn('status', Tag::ASSIGNABLE_STATUSES)
             ->where('id', '!=', $tag->id)
             ->orderByDesc('id')

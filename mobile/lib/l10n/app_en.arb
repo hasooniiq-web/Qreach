@@ -424,5 +424,6 @@
     "payReceiptValidUntil": "Valid until",
     "payOpenFailed": "Could not open the payment page.",
     "payTestNotice": "This was a test payment. Nothing real was charged.",
-    "paySubscribeButton": "Subscribe to this plan"
+    "paySubscribeButton": "Subscribe to this plan",
+    "tagTypeCode": "QR + NFC tag"
 }

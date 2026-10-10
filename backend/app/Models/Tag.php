@@ -82,6 +82,28 @@ class Tag extends Model
         return $this->hasOne(NfcTag::class);
     }
 
+    /** A unified code carries both a QR and an NFC chip; older rows are one or the other. */
+    public function hasQr(): bool
+    {
+        return in_array($this->type, ['qr', 'code'], true);
+    }
+
+    public function hasNfc(): bool
+    {
+        return in_array($this->type, ['nfc', 'code'], true);
+    }
+
+    public function typeLabel(): string
+    {
+        return self::typeLabels()[$this->type] ?? strtoupper((string) $this->type);
+    }
+
+    /** @return array<string, string> */
+    public static function typeLabels(): array
+    {
+        return ['code' => 'QR + NFC', 'qr' => 'QR', 'nfc' => 'NFC'];
+    }
+
     public function assignments(): HasMany
     {
         return $this->hasMany(TagAssignment::class);

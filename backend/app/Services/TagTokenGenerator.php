@@ -97,14 +97,22 @@ class TagTokenGenerator
     /** Human-readable serial printed on the physical tag, e.g. ST-Q-2026-000048. */
     public function formatSerial(string $type, int $sequence): string
     {
-        $prefix = $type === 'nfc' ? 'ST-N' : 'ST-Q';
+        return sprintf('%s-%s-%06d', $this->serialPrefix($type), now()->format('Y'), $sequence);
+    }
 
-        return sprintf('%s-%s-%06d', $prefix, now()->format('Y'), $sequence);
+    /** ST-C = unified code (QR + NFC); ST-Q / ST-N are the older single-purpose kinds. */
+    private function serialPrefix(string $type): string
+    {
+        return match ($type) {
+            'code' => 'ST-C',
+            'nfc' => 'ST-N',
+            default => 'ST-Q',
+        };
     }
 
     public function generateSerialNumber(string $type, int $sequence): string
     {
-        $prefix = $type === 'nfc' ? 'ST-N' : 'ST-Q';
+        $prefix = $this->serialPrefix($type);
         $year = now()->format('Y');
         $serial = sprintf('%s-%s-%06d', $prefix, $year, $sequence);
 

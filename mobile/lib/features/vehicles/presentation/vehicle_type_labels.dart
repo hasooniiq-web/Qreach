@@ -27,3 +27,10 @@ String tagStatusLabel(BuildContext context, String status) {
     _ => l10n.statusActive,
   };
 }
+
+/// `code` is the unified QR + NFC code; `qr` / `nfc` are older single-purpose tags.
+String tagTypeLabel(AppLocalizations l10n, String type) => switch (type) {
+      'code' => l10n.tagTypeCode,
+      'nfc' => l10n.tagTypeNfc,
+      _ => l10n.tagTypeQr,
+    };

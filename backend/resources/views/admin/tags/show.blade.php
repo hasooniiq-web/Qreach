@@ -1,6 +1,6 @@
 <x-layouts.admin :title="'الرمز '.$tag->serial_number">
     <x-page-header :title="$tag->serial_number"
-                   :subtitle="strtoupper($tag->type).' — أُنشئ في '.$tag->created_at->copy()->timezone(config('app.display_timezone'))->format('Y-m-d H:i')"
+                   :subtitle="$tag->typeLabel().' — أُنشئ في '.$tag->created_at->copy()->timezone(config('app.display_timezone'))->format('Y-m-d H:i')"
                    :back="route('admin.tags.index')" backLabel="كل الرموز">
         <x-slot:actions><x-status-badge :status="$tag->status" /></x-slot:actions>
     </x-page-header>
@@ -24,7 +24,7 @@
                 <input type="text" readonly value="{{ $url }}" dir="ltr" class="form-control text-start text-xs" aria-label="الرابط">
                 <p class="mt-2 text-xs text-ink-500">
                     هذا هو الرابط الذي يقرؤه الهاتف عند مسح الـ QR أو تقريبه من شريحة NFC.
-                    @if ($tag->type === 'nfc') اكتبه على الشريحة كسجلّ NDEF من نوع URL (مثلًا بتطبيق NFC Tools). @endif
+                    @if ($tag->hasNfc()) اكتبه على الشريحة كسجلّ NDEF من نوع URL (مثلًا بتطبيق NFC Tools). @endif
                 </p>
                 @if (str_contains($url, 'localhost') || str_contains($url, '127.0.0.1'))
                     <p class="mt-2 rounded-md bg-status-warning/10 p-2 text-xs text-status-warning">
@@ -36,9 +36,9 @@
             <x-card>
                 <h3 class="mb-3 text-sm font-semibold text-ink-900">التفاصيل</h3>
                 <dl class="grid grid-cols-2 gap-3 text-sm">
-                    <div><dt class="text-xs text-ink-400">النوع</dt><dd class="uppercase text-ink-900">{{ $tag->type }}</dd></div>
+                    <div><dt class="text-xs text-ink-400">النوع</dt><dd class="text-ink-900">{{ $tag->typeLabel() }}</dd></div>
                     <div><dt class="text-xs text-ink-400">الدفعة</dt><dd class="text-ink-900">{{ $tag->batch?->batch_code ?? '—' }}</dd></div>
-                    @if ($tag->type === 'nfc')
+                    @if ($tag->hasNfc())
                         <div>
                             <dt class="text-xs text-ink-400">حالة الشريحة</dt>
                             <dd class="text-ink-900">{{ ['unprovisioned' => 'لم تُكتب بعد', 'provisioned' => 'مكتوبة', 'locked' => 'مقفلة'][$tag->nfcTag?->provisioning_status] ?? '—' }}</dd>
@@ -73,7 +73,7 @@
                 </x-card>
             @endif
 
-            @if ($tag->status === 'assigned' && auth('admin')->user()->hasPermission('qr.replace') || (auth('admin')->user()->hasPermission('nfc.replace') && $tag->type === 'nfc'))
+            @if ($tag->status === 'assigned' && auth('admin')->user()->hasPermission('qr.replace') || (auth('admin')->user()->hasPermission('nfc.replace') && $tag->hasNfc()))
                 @if ($tag->status === 'assigned')
                     <x-card>
                         <h3 class="mb-1 text-sm font-semibold text-ink-900">استبدال الرمز</h3>

@@ -7,7 +7,7 @@
         @forelse ($batches as $batch)
             <tr class="hover:bg-ink-50">
                 <td class="px-4 py-3 font-medium tabular-nums text-ink-900">{{ $batch->batch_code }}</td>
-                <td class="px-4 py-3 uppercase text-ink-600">{{ $batch->tag_type }}</td>
+                <td class="px-4 py-3 uppercase text-ink-600">{{ \App\Models\Tag::typeLabels()[$batch->tag_type] ?? $batch->tag_type }}</td>
                 <td class="px-4 py-3 tabular-nums text-ink-600">{{ $batch->quantity }}</td>
                 <td class="px-4 py-3"><x-status-badge :status="$batch->status" /></td>
                 <td class="px-4 py-3 text-ink-500">{{ $batch->created_at->copy()->timezone(config('app.display_timezone'))->format('Y-m-d H:i') }}</td>

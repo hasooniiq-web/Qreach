@@ -424,5 +424,6 @@
     "payReceiptValidUntil": "صالحة حتى",
     "payOpenFailed": "تعذّر فتح صفحة الدفع.",
     "payTestNotice": "كانت هذه عملية دفع تجريبية. لم يُخصم أي مبلغ حقيقي.",
-    "paySubscribeButton": "اشترك في هذه الباقة"
+    "paySubscribeButton": "اشترك في هذه الباقة",
+    "tagTypeCode": "رمز QR + NFC"
 }

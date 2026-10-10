@@ -2125,6 +2125,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'اشترك في هذه الباقة'**
   String get paySubscribeButton;
+
+  /// No description provided for @tagTypeCode.
+  ///
+  /// In ar, this message translates to:
+  /// **'رمز QR + NFC'**
+  String get tagTypeCode;
 }
 
 class _AppLocalizationsDelegate

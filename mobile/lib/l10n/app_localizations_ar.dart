@@ -1085,4 +1085,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get paySubscribeButton => 'اشترك في هذه الباقة';
+
+  @override
+  String get tagTypeCode => 'رمز QR + NFC';
 }

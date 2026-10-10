@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<title>تقرير العمل — QReach — 2026-10-10</title>
+<style>
+  @font-face {
+    font-family: 'Noto Sans Arabic';
+    src: url('file:///D:/Qreach/mobile/assets/fonts/NotoSansArabic.ttf') format('truetype');
+    font-weight: 100 900;
+  }
+  :root {
+    --black: #09090B;
+    --yellow: #FFC107;
+    --ink-900: #18181B;
+    --ink-700: #3F3F46;
+    --ink-500: #71717A;
+    --ink-300: #D4D4D8;
+    --ink-200: #E4E4E7;
+    --ink-100: #F4F4F5;
+    --ink-50: #FAFAFA;
+    --danger: #DC2626;
+  }
+  @page {
+    size: A4;
+    margin: 18mm 16mm 20mm 16mm;
+    @bottom-center { content: counter(page); font-family: 'Noto Sans Arabic'; font-size: 9pt; color: #71717A; }
+  }
+  @page :first { margin: 0; @bottom-center { content: none; } }
+  * { box-sizing: border-box; }
+  html { font-family: 'Noto Sans Arabic', sans-serif; color: var(--ink-900); font-size: 10.5pt; line-height: 1.65; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  body { margin: 0; }
+
+  /* ---------- Cover ---------- */
+  .cover { height: 297mm; width: 210mm; background: var(--black); color: #fff; position: relative; overflow: hidden; page-break-after: always; }
+  .cover .band { position: absolute; inset-inline-start: 0; top: 0; bottom: 0; width: 14mm; background: var(--yellow); }
+  .cover .glow { position: absolute; top: -40mm; inset-inline-end: -40mm; width: 140mm; height: 140mm; border-radius: 50%; background: radial-gradient(circle, rgba(255,193,7,.28), rgba(255,193,7,0) 65%); }
+  .cover .inner { position: absolute; inset: 0; padding: 30mm 28mm 24mm 28mm; display: flex; flex-direction: column; }
+  .cover .logo { width: 62mm; height: 62mm; background: #fff; border-radius: 12mm; display: flex; align-items: center; justify-content: center; box-shadow: 0 8mm 20mm rgba(0,0,0,.5); }
+  .cover .logo img { width: 54mm; height: 54mm; object-fit: contain; }
+  .cover .kicker { margin-top: auto; color: var(--yellow); font-weight: 700; letter-spacing: .02em; font-size: 12pt; }
+  .cover h1 { margin: 4mm 0 0; font-size: 34pt; line-height: 1.25; font-weight: 800; }
+  .cover h1 span { color: var(--yellow); }
+  .cover .sub { margin-top: 6mm; font-size: 13pt; color: #D4D4D8; max-width: 125mm; }
+  .cover .meta { margin-top: 18mm; display: flex; gap: 14mm; border-top: 1px solid #3F3F46; padding-top: 6mm; font-size: 10pt; color: #A1A1AA; }
+  .cover .ltr { background: none; color: inherit; padding: 0; font-family: inherit; font-size: inherit; }
+  .cover .meta b { display: block; color: #fff; font-size: 11.5pt; font-weight: 600; }
+
+  /* ---------- Headings ---------- */
+  h2.part { display: flex; align-items: center; gap: 4mm; margin: 0 0 6mm; font-size: 21pt; font-weight: 800; }
+  h2.part .num { background: var(--black); color: var(--yellow); width: 13mm; height: 13mm; border-radius: 3.5mm; display: inline-flex; align-items: center; justify-content: center; font-size: 15pt; }
+  h3 { margin: 8mm 0 3mm; font-size: 13pt; font-weight: 700; padding-inline-start: 3.5mm; border-inline-start: 1.6mm solid var(--yellow); line-height: 1.3; }
+  p.lead { color: var(--ink-700); margin: 0 0 5mm; }
+  .page-break { break-before: page; }
+
+  /* ---------- KPI cards ---------- */
+  .kpis { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4mm; margin: 6mm 0 8mm; }
+  .kpi { border: 1px solid var(--ink-200); border-radius: 3mm; padding: 4mm; background: var(--ink-50); }
+  .kpi .v { font-size: 22pt; font-weight: 800; line-height: 1.1; }
+  .kpi .l { font-size: 9pt; color: var(--ink-500); margin-top: 1.5mm; }
+  .kpi.dark { background: var(--black); border-color: var(--black); color: #fff; }
+  .kpi.dark .v { color: var(--yellow); } .kpi.dark .l { color: #A1A1AA; }
+
+  /* ---------- Status rows ---------- */
+  .rows { border: 1px solid var(--ink-200); border-radius: 3mm; overflow: hidden; }
+  .row { display: grid; grid-template-columns: 25mm 1fr; gap: 4mm; padding: 3mm 4mm; border-bottom: 1px solid var(--ink-200); break-inside: avoid; align-items: start; }
+  .row:last-child { border-bottom: 0; }
+  .row:nth-child(even) { background: var(--ink-50); }
+  .row .t { font-weight: 700; }
+  .row .d { color: var(--ink-700); font-size: 10pt; margin-top: .5mm; }
+  .chip { display: inline-block; font-size: 8.5pt; font-weight: 700; padding: .6mm 3mm; border-radius: 99mm; text-align: center; white-space: nowrap; }
+  .chip.done { background: var(--black); color: var(--yellow); }
+  .chip.todo { background: var(--yellow); color: var(--black); }
+  .chip.warn { background: #fff; color: var(--danger); border: 1px solid var(--danger); }
+  .chip.info { background: var(--ink-100); color: var(--ink-700); border: 1px solid var(--ink-300); }
+
+  .note { border-inline-start: 1.6mm solid var(--danger); background: #FEF2F2; border-radius: 2mm; padding: 3mm 4mm; margin: 3mm 0; break-inside: avoid; }
+  .note.y { border-color: var(--yellow); background: #FFFBEB; }
+  .note b { display: block; margin-bottom: .5mm; }
+
+  /* ---------- Checklist ---------- */
+  ol.steps { list-style: none; margin: 0; padding: 0; counter-reset: s; }
+  ol.steps li { counter-increment: s; display: grid; grid-template-columns: 11mm 1fr; gap: 4mm; padding: 3.2mm 0; border-bottom: 1px solid var(--ink-200); break-inside: avoid; }
+  ol.steps li::before { content: counter(s); background: var(--yellow); color: var(--black); font-weight: 800; width: 9mm; height: 9mm; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+  ol.steps li b { display: block; }
+  ol.steps li span { color: var(--ink-700); font-size: 10pt; }
+
+  code, .ltr { direction: ltr; unicode-bidi: embed; font-family: 'Consolas', monospace; font-size: 9.3pt; background: var(--ink-100); padding: 0 1.2mm; border-radius: 1mm; }
+  .footer-note { margin-top: 8mm; color: var(--ink-500); font-size: 9pt; border-top: 1px solid var(--ink-200); padding-top: 3mm; }
+</style>
+</head>
+<body>
+
+<!-- ================= COVER ================= -->
+<section class="cover">
+  <div class="band"></div>
+  <div class="glow"></div>
+  <div class="inner">
+    <div class="logo"><img src="file:///D:/Qreach/mobile/assets/images/logo_full.png" alt="QReach"></div>
+    <div class="kicker">QReach SmartTag</div>
+    <h1>تقرير العمل<br><span>الكامل لليوم</span></h1>
+    <div class="sub">ما أُنجز وما لم يُنجز: لوحة التحكم والخادم أولًا، ثم تطبيق الجوال، مع قائمة الإجراءات المطلوبة منك.</div>
+    <div class="meta">
+      <div>التاريخ<b>10 أكتوبر 2026</b></div>
+      <div>الخادم<b><span class="ltr">77.42.10.126</span></b></div>
+      <div>إصدار التطبيق<b><span class="ltr">0.1.0+13</span></b></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SUMMARY ================= -->
+<h2 class="part"><span class="num">·</span>الملخص التنفيذي</h2>
+<p class="lead">أُنجزت جولة كبيرة شملت لوحة التحكم والخادم وتطبيق الجوال. كل تعديلات الباك اند منشورة على الخادم ومرفوعة إلى GitHub، وما بقي مفتوحًا يتطلب أساسًا بيانات أو قرارات خارجية (مزوّد دفع، إعدادات Apple وFirebase، دومين).</p>
+
+<div class="kpis">
+  <div class="kpi dark"><div class="v">232</div><div class="l">اختبار ناجح في الباك اند</div></div>
+  <div class="kpi dark"><div class="v">74</div><div class="l">اختبار ناجح في التطبيق</div></div>
+  <div class="kpi"><div class="v">20</div><div class="l">ملاحظة عميل تمت معالجتها</div></div>
+  <div class="kpi"><div class="v">5</div><div class="l">إجراءات مطلوبة منك</div></div>
+</div>
+
+<div class="rows">
+  <div class="row"><span class="chip done">منشور</span><div><div class="t">لوحة التحكم والخادم</div><div class="d">آخر نسخة على <span class="ltr">http://77.42.10.126</span> بما فيها reCAPTCHA والتحقق بخطوتين الإلزامي.</div></div></div>
+  <div class="row"><span class="chip done">مرفوع</span><div><div class="t">GitHub</div><div class="d">المستودعان <span class="ltr">Qreach</span> و<span class="ltr">Qreach-Mobile</span> محدّثان وبمحتوى متطابق للتطبيق.</div></div></div>
+  <div class="row"><span class="chip todo">بانتظارك</span><div><div class="t">إشعارات iPhone والدفع الحقيقي</div><div class="d">يتطلبان إعدادات Apple وFirebase وحساب تاجر لدى مزوّد دفع.</div></div></div>
+  <div class="row"><span class="chip warn">تنبيه</span><div><div class="t">البوابة التجريبية للدفع مفعّلة على الخادم</div><div class="d">يستطيع أي عميل "الدفع" بها مجانًا؛ الأفضل تعطيلها فورًا.</div></div></div>
+</div>
+
+<!-- ================= DASHBOARD ================= -->
+<h2 class="part page-break"><span class="num">1</span>لوحة التحكم والخادم</h2>
+
+<h3>ما تم</h3>
+<div class="rows">
+  <div class="row"><span class="chip done">تم</span><div><div class="t">إنشاء المسؤول بكلمة مرور تحددها أنت</div><div class="d">حقل كلمة مرور (12 حرفًا على الأقل) وخيار إلزامه بتغييرها عند أول دخول. حذفت من الخادم المسؤولين اللذين أضفتهما.</div></div></div>
+  <div class="row"><span class="chip done">تم</span><div><div class="t">التحقق بخطوتين (Google Authenticator) إلزامي</div><div class="d">اكتشفت أنه لا توجد طريقة لتفعيله وأن فيه خطأ في فك التشفير. بنيت شاشة تفعيل (QR ومفتاح يدوي)، ورمز عند كل دخول، وإعادة ضبط من مسؤول آخر عند ضياع الهاتف.</div></div></div>
+  <div class="row"><span class="chip done">تم</span><div><div class="t">reCAPTCHA على دخول المسؤولين</div><div class="d">مربع «أنا لست روبوتًا» (v2) والتحقق من الخادم قبل تجربة أي كلمة مرور، ويفشل بأمان إن تعذّر الوصول إلى Google. المفتاحان الأولان كانا من نوع غير مناسب فعطّلته مؤقتًا حتى وصل مفتاح صحيح.</div></div></div>
+  <div class="row"><span class="chip done">تم</span><div><div class="t">جلسة واحدة لكل حساب عميل</div><div class="d">الدخول من جهاز جديد يُلغي الجلسة القديمة من الخادم بقفل على الصف، والجهاز القديم يتلقى <span class="ltr">SESSION_REPLACED</span>. عمر التوكن 90 يومًا.</div></div></div>
+  <div class="row"><span class="chip done">تم</span><div><div class="t">حذف المحادثات بعد 7 أيام</div><div class="d">من وقت آخر رسالة بحسب ساعة الخادم، كل ساعة، مع حذف الصور والنسخ المخزنة وتنظيف الصور اليتيمة. الحذف نهائي.</div></div></div>
+</div>
+
+<h3>الدفع الإلكتروني (بنية كاملة)</h3>
+<div class="rows">
+  <div class="row"><span class="chip done">تم</span><div><div class="t">بوابات دفع قابلة للإضافة + بوابة تجريبية</div><div class="d">مزوّد جديد = وحدة واحدة في الكود. التجريبية ترفض العمل في بيئة الإنتاج.</div></div></div>
+  <div class="row"><span class="chip done">تم</span><div><div class="t">قواعد الأمان المالي</div><div class="d">السعر من الخادم لا من التطبيق، ولا تُفعَّل الباقة إلا بإشعار موقّع يطابق المبلغ والعملة، مع منع المعالجة المكررة ومفتاح فريد لكل محاولة، وتسجيل شذوذ المبالغ.</div></div></div>
+  <div class="row"><span class="chip done">تم</span><div><div class="t">إيصالات واسترداد</div><div class="d">رقم إيصال، استرداد كامل أو جزئي، والاسترداد الكامل يُنهي الباقة.</div></div></div>
+  <div class="row"><span class="chip done">تم</span><div><div class="t">صفحتا «المدفوعات» و«بوابات الدفع»</div><div class="d">قوائم وتصفية وتفاصيل وسجل أحداث، وبيانات الاعتماد مشفّرة ولا تُعرض بعد الحفظ ولا تدخل سجل التدقيق. صلاحيات جديدة للمدير العام.</div></div></div>
+</div>
+
+<h3>ملاحظات العميل (20 نقطة)</h3>
+<div class="rows">
+  <div class="row"><span class="chip done">تم</span><div><div class="t">رموز QR (النقاط 1 و2 و5 و14)</div><div class="d">26 حرفًا بترميز Crockford Base32 من مولّد آمن (<span class="ltr">random_bytes</span>)، تبدأ بحرف أو رقم، فلا يظهر <span class="ltr">#NAME?</span> في Excel. مستوى تصحيح الأخطاء Q. الرموز القديمة (43 حرفًا) تبقى صالحة.</div></div></div>
+  <div class="row"><span class="chip done">تم</span><div><div class="t">حد الدفعة (النقطة 10)</div><div class="d">أُزيل رسم صور QR أثناء الإنشاء (لا تُقرأ في أي مكان) وصار الإدخال بالجملة: 3000 رمز في نحو نصف ثانية. السقف 20,000.</div></div></div>
+  <div class="row"><span class="chip done">تم</span><div><div class="t">البحث (النقطة 19)</div><div class="d">وُجد خللان: حساسية الأحرف في PostgreSQL، وصيغة الهاتف <span class="ltr">+964</span> مقابل <span class="ltr">0770</span>. صار يفهم الصيغ والأرقام العربية ويبحث بالرمز العام.</div></div></div>
+  <div class="row"><span class="chip done">تم</span><div><div class="t">توقيت العراق (النقطة 20)</div><div class="d">العرض بتوقيت <span class="ltr">Asia/Baghdad</span> في كل اللوحة، والتخزين يبقى UTC.</div></div></div>
+  <div class="row"><span class="chip done">تم</span><div><div class="t">الواجهة (النقاط 3 و4 و6 و7 و8 و9 و12 و13 و17)</div><div class="d">قائمة التصدير فوق الجدول، الأحداث الأمنية بالعربية مع شرح «تمت المراجعة»، عرض أوسع وخط أكبر، فواصل الأرقام، نص أوضح في الوضع الداكن، سهم القوائم، حذف حالة «مؤرشف» غير المستخدمة، حوار إلغاء الرمز بسبب إلزامي، ومسافة مفتاح الرسم.</div></div></div>
+  <div class="row"><span class="chip done">تم</span><div><div class="t">إصلاح تعتيم الصفحة</div><div class="d">لم تعد الصفحة تبقى معتمة بعد إلغاء نافذة التأكيد.</div></div></div>
+  <div class="row"><span class="chip info">شرح</span><div><div class="t">النقاط 11 و15 و18</div><div class="d">11: شريحة NFC تحمل رابط الـ QR نفسه ويمكن طباعة QR بديلًا. 15: HTTP لأن الخادم على IP بلا دومين. 18: صفحة الهبوط تنتظر تحديد المحتوى.</div></div></div>
+</div>
+
+<h3>الخادم</h3>
+<div class="rows">
+  <div class="row"><span class="chip done">تم</span><div><div class="t">نشر الباك اند كاملًا</div><div class="d">migrations، الكاش، إعادة تشغيل الخدمات، وزيادة حد رفع الصور إلى 10 ميغابايت. جدولة مهام جديدة: المدفوعات (5 دقائق)، تنظيف المحادثات (ساعة)، تنظيف التوكنات (يوميًا).</div></div></div>
+</div>
+
+<h3>ما لم يتم</h3>
+<div class="rows">
+  <div class="row"><span class="chip todo">لم يتم</span><div><div class="t">الدفع بمزوّد حقيقي</div><div class="d">لا مزوّد مربوط (زين كاش / FIB / كي كارد). المطلوب حساب تاجر ووثائقه، وHTTPS.</div></div></div>
+  <div class="row"><span class="chip todo">لم يتم</span><div><div class="t">HTTPS والدومين</div><div class="d">أوقفتَ الموضوع؛ الخادم ما زال على HTTP.</div></div></div>
+  <div class="row"><span class="chip todo">لم يتم</span><div><div class="t">صفحة الهبوط (Landing Page)</div><div class="d">لم تُنشأ بعد.</div></div></div>
+  <div class="row"><span class="chip todo">لم يتم</span><div><div class="t">توحيد QR وNFC في نوع رمز واحد</div><div class="d">تغيير في نموذج البيانات يحتاج قرارك.</div></div></div>
+  <div class="row"><span class="chip todo">لم يتم</span><div><div class="t">وضع QR الأبجدي-الرقمي الكثيف</div><div class="d">يتطلب جعل الرابط كله بأحرف كبيرة وقبول المسار <span class="ltr">/T/</span>.</div></div></div>
+  <div class="row"><span class="chip todo">لم يتم</span><div><div class="t">صفحة الطباعة على صفحات</div><div class="d">الدفعات الكبيرة جدًا تُبطئ الصفحة لأنها تحمّل صورة لكل رمز.</div></div></div>
+  <div class="row"><span class="chip todo">لم يتم</span><div><div class="t">ترجمة أسماء إجراءات سجل التدقيق</div><div class="d">مثل <span class="ltr">qr.revoked</span> ما زالت بالإنجليزية.</div></div></div>
+  <div class="row"><span class="chip todo">لم يتم</span><div><div class="t">مراجعة الواجهة بصريًا في المتصفح</div><div class="d">الأسهم والوضع الداكن ومفتاح الرسم لم تُفحص بصريًا؛ تغطيها اختبارات النص فقط.</div></div></div>
+</div>
+
+<h3>أخطاء وتنبيهات</h3>
+<div class="note"><b>عطل قصير بعد نشر إصلاح التعتيم</b>ظهر خطأ 500 في صفحة الدخول لدقائق بسبب ملكية مجلدات الخادم (خطأ في أمر النشر). أُصلح دون فقد بيانات، وسأضبط الملكية بعد كل نشر.</div>
+<div class="note"><b>ملف غير مقصود في GitHub</b>رفعتُ بالخطأ الملف <span class="ltr">house-tour.html</span> (لا علاقة له بالمشروع) ثم أزلته من التتبع، لكنه باقٍ في تاريخ المستودع.</div>
+<div class="note"><b>البوابة التجريبية للدفع مفعّلة على الخادم</b>لم أفعّلها أنا. يستطيع أي عميل "الدفع" بها مجانًا. يُنصح بتعطيلها من لوحة التحكم ثم بوابات الدفع.</div>
+<div class="note y"><b>التحقق بخطوتين إلزامي الآن</b>سيُطلب منك التفعيل عند أول دخول، فجهّز تطبيق Google Authenticator. الرموز القديمة التي تبدأ بـ <span class="ltr">-</span> ما زالت تظهر <span class="ltr">#NAME?</span> في Excel، فيُنصح بإعادة توليد دفعات الاختبار.</div>
+
+<!-- ================= APP ================= -->
+<h2 class="part page-break"><span class="num">2</span>تطبيق الجوال (Flutter)</h2>
+
+<h3>ما تم</h3>
+<div class="rows">
+  <div class="row"><span class="chip done">تم</span><div><div class="t">الإعداد والتصميم</div><div class="d">الخادم الافتراضي مدمج ومنتقي الخادم مخفي، وخط Noto Sans Arabic مثل اللوحة، وإزالة اسم المالك من بطاقة المركبة.</div></div></div>
+  <div class="row"><span class="chip done">تم</span><div><div class="t">اتجاه الأسهم</div><div class="d">أسهم الإعدادات كانت معكوسة في اللغتين لأن بعض الأيقونات تنعكس تلقائيًا في RTL. صُحّحت، وقُلبت أيقونتا الإرسال والرد في العربية.</div></div></div>
+  <div class="row"><span class="chip done">تم</span><div><div class="t">إدارة المركبة</div><div class="d">زرّا «إيقاف المركبة» و«حذف» بدل القائمة ذات النقاط الثلاث مع حوارات تأكيد تشرح النتيجة. المركبة الموقوفة يعرض رمزها صفحة «غير متاح» للزوار.</div></div></div>
+  <div class="row"><span class="chip done">تم</span><div><div class="t">صور في المحادثة</div><div class="d">إرفاق صورة بالكاميرا أو المعرض مع معاينة وإزالة، وتحقق من النوع والحجم (حتى 8 ميغابايت) في التطبيق والخادم.</div></div></div>
+  <div class="row"><span class="chip done">تم</span><div><div class="t">الدفع داخل التطبيق</div><div class="d">اشتراك ثم مراجعة السعر والمزايا واختيار وسيلة الدفع وفتح صفحة الدفع، فشاشة تنتظر تأكيد الخادم وتعرض الإيصال أو الفشل. حلّت محل طلب الترقية القديم.</div></div></div>
+  <div class="row"><span class="chip done">تم</span><div><div class="t">الجلسة الواحدة</div><div class="d">الجهاز القديم يخرج تلقائيًا برسالة توضح السبب، بعد أن كان التطبيق لا يتفاعل مع انتهاء الجلسة أصلًا.</div></div></div>
+  <div class="row"><span class="chip done">تم</span><div><div class="t">NFC على iPhone</div><div class="d">تفعيل القراءة، وإصلاح صلاحية Apple (<span class="ltr">TAG</span> فقط) بعد رفض الرفع بسبب <span class="ltr">NDEF</span>.</div></div></div>
+  <div class="row"><span class="chip done">تم</span><div><div class="t">تحسينات الإشعارات في الكود</div><div class="d">عرضها والتطبيق مفتوح على iOS، فتح المحادثة عند الضغط، انتظار أطول لتوكن Apple، وبيانات APNs صريحة من الخادم.</div></div></div>
+  <div class="row"><span class="chip done">تم</span><div><div class="t">البناء والرفع</div><div class="d">سكربت Xcode Cloud (<span class="ltr">ci_post_clone.sh</span>) لحل خطأ الحزم، ومستوى QR صار Q، والإصدار <span class="ltr">0.1.0+13</span>. 74 اختبارًا ناجحًا وبناء APK تجريبي ناجح.</div></div></div>
+</div>
+
+<h3>ما لم يتم</h3>
+<div class="rows">
+  <div class="row"><span class="chip warn">لا يعمل</span><div><div class="t">إشعارات iPhone</div><div class="d">التوكن ما زال فارغًا على الخادم، أي أن الآيفون لم يحصل على توكن من Apple. الخادم وFirebase سليمان. الحل في إعدادات Apple وFirebase (انظر القائمة التالية).</div></div></div>
+  <div class="row"><span class="chip todo">لم يتم</span><div><div class="t">Dynamic Island / Live Activity</div><div class="d">لم أنفّذه عمدًا: أحداث QReach لحظية فرادى وتعرض محتوى على شاشة القفل. أنفّذه إن حدّدت ما يظهر في الجزيرة.</div></div></div>
+  <div class="row"><span class="chip todo">لم يتم</span><div><div class="t">سجل المدفوعات داخل التطبيق</div><div class="d">الإيصال يظهر بعد الدفع فقط.</div></div></div>
+  <div class="row"><span class="chip todo">لم يتم</span><div><div class="t">الدفع الفعلي من التطبيق</div><div class="d">لا يعمل إلى أن يُربط مزوّد حقيقي وتُفعَّل وسيلة دفع.</div></div></div>
+  <div class="row"><span class="chip todo">لم يتم</span><div><div class="t">اختبار على أجهزة حقيقية</div><div class="d">لم أجرّب NFC وصور المحادثة والدفع على iPhone.</div></div></div>
+  <div class="row"><span class="chip todo">لم يتم</span><div><div class="t">نسخة جديدة على TestFlight</div><div class="d">تحتاج منك بعد تفعيل الصلاحيات وسحب آخر نسخة من <span class="ltr">Qreach-Mobile</span>.</div></div></div>
+</div>
+
+<!-- ================= ACTIONS ================= -->
+<h2 class="part page-break"><span class="num">3</span>المطلوب منك بالترتيب</h2>
+<ol class="steps">
+  <li><div><b>عطّل البوابة التجريبية على الخادم</b><span>لوحة التحكم ثم بوابات الدفع ثم إلغاء التفعيل، أو أطلب مني.</span></div></li>
+  <li><div><b>جهّز Google Authenticator</b><span>ثبّته على هاتفك قبل أول دخول، وسيظهر لك رمز QR لإضافة الحساب. الدخول من <span class="ltr">http://77.42.10.126/admin/login</span>.</span></div></li>
+  <li><div><b>فعّل Push على <span class="ltr">com.qreach</span> في Apple</b><span>developer.apple.com ثم Identifiers ثم <span class="ltr">com.qreach</span> ثم Push Notifications.</span></div></li>
+  <li><div><b>ارفع مفتاح APNs إلى Firebase</b><span>مشروع <span class="ltr">qreach-3d577</span> ثم Cloud Messaging ثم APNs Authentication Key، مع Key ID <span class="ltr">8L7BXY44V2</span> وTeam ID.</span></div></li>
+  <li><div><b>اسحب آخر نسخة وابنِ وارفع إلى TestFlight</b><span><span class="ltr">git pull</span> ثم <span class="ltr">flutter pub get</span> ثم <span class="ltr">pod install</span>، وافتح <span class="ltr">Runner.xcworkspace</span> وأرشِف وارفع. ثبّت على iPhone حقيقي وسجّل الدخول وأخبرني لأفحص الخادم.</span></div></li>
+  <li><div><b>غيّر كلمة مرور root للخادم</b><span>لأنها أُرسلت في المحادثة.</span></div></li>
+  <li><div><b>احذف ملف مفتاح APNs <span class="ltr">.p8</span> من مجلد التحميلات المؤقت</b><span>بعد رفعه إلى Firebase، وبدّله إن شككت في تسريبه.</span></div></li>
+  <li><div><b>قرارات تنتظرها</b><span>اختيار مزوّد دفع حقيقي، دومين لـ HTTPS، محتوى صفحة الهبوط، وهل يُوحَّد QR وNFC في نوع واحد، وما يظهر في Dynamic Island.</span></div></li>
+</ol>
+
+<div class="footer-note">المراجع التفصيلية في المستودع: <span class="ltr">docs/RELEASE_2026_10_IMPLEMENTATION.md</span> و<span class="ltr">docs/CLIENT_FEEDBACK_REPORT_2026-10.md</span>.</div>
+
+</body>
+</html>

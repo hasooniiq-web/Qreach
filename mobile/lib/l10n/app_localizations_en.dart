@@ -1095,4 +1095,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get paySubscribeButton => 'Subscribe to this plan';
+
+  @override
+  String get tagTypeCode => 'QR + NFC tag';
 }

@@ -14,7 +14,11 @@ class StoreTagBatchRequest extends FormRequest
 
     protected function prepareForValidation(): void
     {
-        $this->merge(['quantity' => \App\Support\NumberInput::clean($this->input('quantity'))]);
+        $this->merge([
+            'quantity' => \App\Support\NumberInput::clean($this->input('quantity')),
+            // The dashboard now creates unified codes only; the old kinds stay accepted for scripts/tests.
+            'tag_type' => $this->input('tag_type', 'code'),
+        ]);
     }
 
     public function rules(): array
@@ -24,7 +28,7 @@ class StoreTagBatchRequest extends FormRequest
 
         return [
             'quantity' => ['required', 'integer', 'min:1', "max:{$max}"],
-            'tag_type' => ['required', 'in:qr,nfc'],
+            'tag_type' => ['required', 'in:code,qr,nfc'],
             'notes' => ['nullable', 'string', 'max:500'],
         ];
     }

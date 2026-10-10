@@ -30,8 +30,15 @@ class QrBatchService
 
     public function __construct(private readonly TagTokenGenerator $tokens) {}
 
-    public function createBatch(int $quantity, ?int $createdByAdminId, string $type = 'qr'): TagBatch
+    /** `code` = a unified code (QR + NFC); `qr` / `nfc` remain for the older single-purpose batches. */
+    public const TYPES = ['code', 'qr', 'nfc'];
+
+    public function createBatch(int $quantity, ?int $createdByAdminId, string $type = 'code'): TagBatch
     {
+        if (! in_array($type, self::TYPES, true)) {
+            throw new \InvalidArgumentException('Unknown code type.');
+        }
+
         if ($quantity < 1 || $quantity > self::MAX_QUANTITY) {
             throw new \InvalidArgumentException('Batch quantity must be between 1 and '.self::MAX_QUANTITY.'.');
         }
@@ -115,15 +122,26 @@ class QrBatchService
 
         $ids = Tag::whereIn('serial_number', $serials)->pluck('id', 'serial_number');
 
-        $children = [];
+        // Capabilities decide the child rows: a QR record for anything printable, an NFC record
+        // for anything a chip can be written for. A unified code gets both.
+        $qrRows = [];
+        $nfcRows = [];
         foreach ($positions as $i => $position) {
             $tagId = $ids[$serials[$i]];
-            $children[] = $type === 'qr'
-                ? ['tag_id' => $tagId, 'error_correction_level' => self::ERROR_CORRECTION, 'print_sheet_position' => $position, 'created_at' => $now, 'updated_at' => $now]
-                : ['tag_id' => $tagId, 'provisioning_status' => 'unprovisioned', 'created_at' => $now, 'updated_at' => $now];
+            if (in_array($type, ['code', 'qr'], true)) {
+                $qrRows[] = ['tag_id' => $tagId, 'error_correction_level' => self::ERROR_CORRECTION, 'print_sheet_position' => $position, 'created_at' => $now, 'updated_at' => $now];
+            }
+            if (in_array($type, ['code', 'nfc'], true)) {
+                $nfcRows[] = ['tag_id' => $tagId, 'provisioning_status' => 'unprovisioned', 'created_at' => $now, 'updated_at' => $now];
+            }
         }
 
-        DB::table($type === 'qr' ? 'qr_tags' : 'nfc_tags')->insert($children);
+        if ($qrRows) {
+            DB::table('qr_tags')->insert($qrRows);
+        }
+        if ($nfcRows) {
+            DB::table('nfc_tags')->insert($nfcRows);
+        }
     }
 
     private function generateBatchCode(string $type): string

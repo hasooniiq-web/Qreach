@@ -6,22 +6,19 @@
         @csrf
 
         <x-card padding="p-6">
-            <fieldset>
-                <legend class="mb-3 text-sm font-semibold text-ink-900">١. نوع الرمز</legend>
-                <div class="grid grid-cols-2 gap-3">
-                    @foreach (['qr' => ['QR', 'ملصق مطبوع يُمسح بكاميرا الهاتف', 'qrcode'], 'nfc' => ['NFC', 'شريحة تُقرأ بالتقريب من الهاتف', 'nfc']] as $value => [$title, $desc, $icon])
-                        <label class="cursor-pointer">
-                            <input type="radio" name="tag_type" value="{{ $value }}" class="peer sr-only" @checked(old('tag_type', 'qr') === $value)>
-                            <span class="flex h-full flex-col gap-2 rounded-lg border border-ink-200 p-4 transition-colors hover:bg-ink-50 peer-checked:border-brand-black peer-checked:ring-2 peer-checked:ring-brand-yellow peer-focus-visible:ring-2 peer-focus-visible:ring-brand-yellow">
-                                <x-icon :name="$icon" class="size-6 text-ink-700" />
-                                <span class="text-sm font-semibold text-ink-900">{{ $title }}</span>
-                                <span class="text-xs text-ink-500">{{ $desc }}</span>
-                            </span>
-                        </label>
-                    @endforeach
-                </div>
-                @error('tag_type')<p class="mt-2 text-xs text-status-danger" role="alert">{{ $message }}</p>@enderror
-            </fieldset>
+            <h3 class="mb-3 text-sm font-semibold text-ink-900">١. نوع الرمز</h3>
+            {{-- Every new code is unified: one printed QR and one NFC chip, both holding the same link. --}}
+            <input type="hidden" name="tag_type" value="code">
+            <div class="flex items-start gap-4 rounded-lg border border-brand-black p-4 ring-2 ring-brand-yellow">
+                <span class="flex gap-1 text-ink-700"><x-icon name="qrcode" class="size-6" /><x-icon name="nfc" class="size-6" /></span>
+                <span>
+                    <span class="block text-sm font-semibold text-ink-900">رمز موحّد: QR + NFC</span>
+                    <span class="mt-1 block text-xs leading-relaxed text-ink-500">
+                        كل رمز يحمل ملصق QR مطبوعًا وشريحة NFC تحويان الرابط نفسه. تعتمد الخدمة اليوم على QR، ويمكن كتابة الشريحة لاحقًا دون تغيير الرمز.
+                    </span>
+                </span>
+            </div>
+            @error('tag_type')<p class="mt-2 text-xs text-status-danger" role="alert">{{ $message }}</p>@enderror
         </x-card>
 
         <x-card padding="p-6" class="space-y-5">
