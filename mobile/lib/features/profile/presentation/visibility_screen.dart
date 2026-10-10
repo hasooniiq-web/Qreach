@@ -12,6 +12,8 @@ import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/app_sheet.dart';
+import '../../../shared/widgets/choice_field.dart';
+import '../../vehicles/data/vehicle_options.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/skeleton.dart';
 import '../data/profile_models.dart';
@@ -398,8 +400,9 @@ class _EmergencyCard extends StatefulWidget {
 
 class _EmergencyCardState extends State<_EmergencyCard> {
   late final _name = TextEditingController(text: widget.emergency?.name ?? '');
-  late final _relation =
-      TextEditingController(text: widget.emergency?.relationship ?? '');
+  late String? _relation = (widget.emergency?.relationship ?? '').isEmpty
+      ? null
+      : widget.emergency!.relationship;
   late final _phone =
       TextEditingController(text: widget.emergency?.phone ?? '');
   final _form = GlobalKey<FormState>();
@@ -407,7 +410,6 @@ class _EmergencyCardState extends State<_EmergencyCard> {
   @override
   void dispose() {
     _name.dispose();
-    _relation.dispose();
     _phone.dispose();
     super.dispose();
   }
@@ -417,7 +419,7 @@ class _EmergencyCardState extends State<_EmergencyCard> {
     // Accepts a local Iraqi number with or without the leading trunk zero,
     // as well as one already written with a country code.
     final phone = normalizePhoneInput(_phone.text) ?? _phone.text.trim();
-    widget.onSave(_name.text.trim(), _relation.text.trim(), phone, visible);
+    widget.onSave(_name.text.trim(), (_relation ?? '').trim(), phone, visible);
   }
 
   @override
@@ -438,9 +440,13 @@ class _EmergencyCardState extends State<_EmergencyCard> {
                   : null,
             ),
             const SizedBox(height: AppSpacing.md),
-            TextFormField(
-              controller: _relation,
-              decoration: InputDecoration(labelText: l10n.emergencyRelation),
+            // Father / mother / brother / ... with "Other" at the end for anything else.
+            ChoiceField(
+              label: l10n.emergencyRelation,
+              value: _relation,
+              options: relationshipOptions(
+                  arabic: Localizations.localeOf(context).languageCode == 'ar'),
+              onChanged: (v) => setState(() => _relation = v),
             ),
             const SizedBox(height: AppSpacing.md),
             TextFormField(

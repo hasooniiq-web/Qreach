@@ -36,6 +36,11 @@ class ProfileScreen extends ConsumerWidget {
     final saved = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
+        // Breathing room on both sides: the dialog no longer touches the screen edges.
+        insetPadding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+        contentPadding: const EdgeInsets.fromLTRB(28, 16, 28, 8),
+        titlePadding: const EdgeInsets.fromLTRB(28, 24, 28, 0),
+        actionsPadding: const EdgeInsets.fromLTRB(20, 0, 20, 14),
         title: Text(l10n.editName),
         content: Form(
           key: formKey,
@@ -200,6 +205,11 @@ class ProfileScreen extends ConsumerWidget {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
+          insetPadding:
+              const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+          contentPadding: const EdgeInsets.fromLTRB(28, 16, 28, 8),
+          titlePadding: const EdgeInsets.fromLTRB(28, 24, 28, 0),
+          actionsPadding: const EdgeInsets.fromLTRB(20, 0, 20, 14),
           title: Text(profile.hasPassword
               ? l10n.changePasswordLabel
               : l10n.setPasswordLabel),
