@@ -87,6 +87,11 @@
         @apply block h-10 w-full rounded-lg border border-ink-200 bg-white px-3 text-sm text-ink-900 shadow-xs transition placeholder:text-ink-400 outline-none focus:border-ink-400 focus:ring-4 focus:ring-brand-yellow/30;
     }
 
+    /* A value outside its allowed range (set by admin-ui.js while typing). */
+    .form-control[aria-invalid='true'] {
+        @apply border-status-danger bg-status-danger/5 text-status-danger focus:border-status-danger focus:ring-status-danger/25;
+    }
+
     textarea.form-control {
         @apply h-auto py-2.5;
     }

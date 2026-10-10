@@ -55,7 +55,7 @@ class SystemSettingController extends Controller
             $rules[$key] = ['required', 'integer', "min:{$definition['min']}", "max:{$definition['max']}"];
         }
 
-        $validated = $request->validate($rules);
+        $validated = $request->validate($rules, [], collect(self::DEFINITIONS)->map(fn ($d) => $d['label'])->all());
 
         foreach ($validated as $key => $value) {
             SystemSetting::set($key, $value, $request->user('admin')->id);

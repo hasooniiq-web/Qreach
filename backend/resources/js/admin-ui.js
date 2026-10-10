@@ -20,10 +20,65 @@ function formatThousands(input) {
     input.value = digits === '' ? '' : Number(digits).toLocaleString('en-US');
 }
 
+// Live range check: while typing, a value outside [data-min, data-max] turns the box red,
+// shows the reason under it (in the page language) and blocks submitting. Messages come
+// from the server as data-*-message-ar / -en so the wording lives next to the rule.
+const pageIsArabic = () => !(document.documentElement.lang || 'ar').toLowerCase().startsWith('en');
+
+function validateRange(input) {
+    const digits = input.value.replace(/[٠-٩]/g, (d) => arabicDigits[d]).replace(/\D/g, '');
+    const value = digits === '' ? null : Number(digits);
+    const max = input.dataset.max !== undefined ? Number(input.dataset.max) : null;
+    const min = input.dataset.min !== undefined ? Number(input.dataset.min) : null;
+    const lang = pageIsArabic() ? 'Ar' : 'En';
+
+    let message = '';
+    if (value !== null && max !== null && value > max) message = input.dataset['maxMessage' + lang] || '';
+    else if (value !== null && min !== null && value < min) message = input.dataset['minMessage' + lang] || '';
+
+    let box = input.parentElement.querySelector('[data-range-error]');
+    if (message && !box) {
+        box = document.createElement('p');
+        box.setAttribute('data-range-error', '');
+        box.setAttribute('role', 'alert');
+        box.className = 'mt-1 text-xs font-medium text-status-danger';
+        input.insertAdjacentElement('afterend', box);
+        input.setAttribute('aria-describedby', ((input.getAttribute('aria-describedby') || '') + ' range-error-' + input.id).trim());
+        box.id = 'range-error-' + input.id;
+    }
+
+    if (message) {
+        input.setAttribute('aria-invalid', 'true');
+        box.textContent = message;
+        box.hidden = false;
+    } else {
+        input.removeAttribute('aria-invalid');
+        if (box) box.hidden = true;
+    }
+
+    return message === '';
+}
+
 document.addEventListener('input', (event) => {
     const target = event.target;
-    if (target instanceof HTMLInputElement && target.matches('[data-thousands]')) formatThousands(target);
+    if (!(target instanceof HTMLInputElement) || !target.matches('[data-thousands]')) return;
+    formatThousands(target);
+    validateRange(target);
 });
+
+// Values restored after a failed submit are checked on load too.
+document.querySelectorAll('[data-thousands]').forEach((input) => validateRange(input));
+
+// An out-of-range number never leaves the page; the first bad field is focused.
+document.addEventListener('submit', (event) => {
+    const form = event.target;
+    if (!(form instanceof HTMLFormElement)) return;
+    const bad = [...form.querySelectorAll('[data-thousands]')].find((input) => !validateRange(input));
+    if (bad) {
+        event.preventDefault();
+        bad.focus();
+    }
+}, true);
 
 // ---- Confirmation dialog ------------------------------------------------
 const dialog = document.getElementById('confirm-dialog');

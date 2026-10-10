@@ -56,4 +56,34 @@ class NumberSeparatorTest extends TestCase
         $this->get('/admin/batches/create')->assertOk()->assertSee('data-thousands', false)->assertSee('1,000');
         $this->get('/admin/settings')->assertOk()->assertSee('data-thousands', false);
     }
+
+    public function test_the_quantity_box_carries_its_limit_and_bilingual_messages_for_live_validation(): void
+    {
+        $this->actingAs($this->admin(), 'admin');
+        SystemSetting::set('qr_batch_max_quantity', 1000, null);
+
+        $this->get('/admin/batches/create')->assertOk()
+            ->assertSee('data-max="1000"', false)
+            ->assertSee('الكمية يجب ألا تتجاوز 1,000 رمز في الدفعة الواحدة.')
+            ->assertSee('Quantity must not exceed 1,000 codes per batch.');
+    }
+
+    public function test_the_server_refuses_an_oversize_quantity_with_a_readable_arabic_message(): void
+    {
+        $this->actingAs($this->admin(), 'admin');
+        SystemSetting::set('qr_batch_max_quantity', 1000, null);
+
+        $this->from('/admin/batches/create')->post('/admin/batches', ['quantity' => '1,001'])
+            ->assertSessionHasErrors(['quantity' => 'الكمية يجب ألا تتجاوز 1,000 رمز في الدفعة الواحدة.']);
+
+        $this->assertSame(0, TagBatch::count());
+    }
+
+    public function test_the_settings_inputs_carry_their_ranges(): void
+    {
+        $this->actingAs($this->admin(), 'admin');
+
+        $this->get('/admin/settings')->assertOk()
+            ->assertSee('data-max="20000"', false)->assertSee('القيمة يجب ألا تتجاوز 20,000.');
+    }
 }

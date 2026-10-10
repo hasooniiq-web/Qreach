@@ -26,7 +26,11 @@
 
             @php $maxQuantity = (int) \App\Models\SystemSetting::get('qr_batch_max_quantity', 1000); @endphp
             <x-field label="الكمية" name="quantity" :hint="'الحد الأقصى الحالي '.number_format($maxQuantity).' رمز لكل دفعة، ويمكن رفعه من إعدادات النظام حتى '.number_format(\App\Services\QrBatchService::MAX_QUANTITY).'.'">
-                <input type="text" inputmode="numeric" data-thousands id="quantity" name="quantity" value="{{ number_format((int) old('quantity', 100)) }}" required dir="ltr" class="form-control text-start">
+                <input type="text" inputmode="numeric" data-thousands id="quantity" name="quantity" value="{{ number_format((int) old('quantity', 100)) }}" required dir="ltr" class="form-control text-start"
+                       data-min="1" data-max="{{ $maxQuantity }}"
+                       data-max-message-ar="الكمية يجب ألا تتجاوز {{ number_format($maxQuantity) }} رمز في الدفعة الواحدة."
+                       data-max-message-en="Quantity must not exceed {{ number_format($maxQuantity) }} codes per batch."
+                       data-min-message-ar="أدخل كمية لا تقل عن 1." data-min-message-en="Enter a quantity of at least 1.">
             </x-field>
 
             <x-field label="ملاحظات (اختياري)" name="notes" hint="للاستخدام الداخلي فقط، مثل اسم المورّد أو رقم أمر الطباعة.">

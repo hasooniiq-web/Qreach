@@ -12,7 +12,12 @@
                     @foreach ($settings->only(['otp_code_ttl_minutes', 'otp_resend_cooldown_seconds']) as $setting)
                         <x-field :label="$setting['label']" :name="$setting['key']" :hint="$setting['hint'] ?? null">
                             <input type="text" inputmode="numeric" data-thousands id="{{ $setting['key'] }}" name="{{ $setting['key'] }}"
-                                   value="{{ number_format((int) old($setting['key'], $setting['value'])) }}" required dir="ltr" class="form-control text-start">
+                                   value="{{ number_format((int) old($setting['key'], $setting['value'])) }}" required dir="ltr" class="form-control text-start"
+                                   data-min="{{ $setting['min'] }}" data-max="{{ $setting['max'] }}"
+                                   data-max-message-ar="القيمة يجب ألا تتجاوز {{ number_format($setting['max']) }}."
+                                   data-max-message-en="Value must not exceed {{ number_format($setting['max']) }}."
+                                   data-min-message-ar="القيمة يجب ألا تقل عن {{ number_format($setting['min']) }}."
+                                   data-min-message-en="Value must not be less than {{ number_format($setting['min']) }}.">
                         </x-field>
                     @endforeach
                 </div>
@@ -24,7 +29,12 @@
                     @foreach ($settings->only(['qr_batch_max_quantity']) as $setting)
                         <x-field :label="$setting['label']" :name="$setting['key']" :hint="$setting['hint'] ?? null">
                             <input type="text" inputmode="numeric" data-thousands id="{{ $setting['key'] }}" name="{{ $setting['key'] }}"
-                                   value="{{ number_format((int) old($setting['key'], $setting['value'])) }}" required dir="ltr" class="form-control text-start">
+                                   value="{{ number_format((int) old($setting['key'], $setting['value'])) }}" required dir="ltr" class="form-control text-start"
+                                   data-min="{{ $setting['min'] }}" data-max="{{ $setting['max'] }}"
+                                   data-max-message-ar="القيمة يجب ألا تتجاوز {{ number_format($setting['max']) }}."
+                                   data-max-message-en="Value must not exceed {{ number_format($setting['max']) }}."
+                                   data-min-message-ar="القيمة يجب ألا تقل عن {{ number_format($setting['min']) }}."
+                                   data-min-message-en="Value must not be less than {{ number_format($setting['min']) }}.">
                         </x-field>
                     @endforeach
                 </div>

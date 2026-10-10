@@ -21,6 +21,23 @@ class StoreTagBatchRequest extends FormRequest
         ]);
     }
 
+    public function messages(): array
+    {
+        $max = number_format((int) SystemSetting::get('qr_batch_max_quantity', 1000));
+
+        return [
+            'quantity.required' => 'أدخل الكمية.',
+            'quantity.integer' => 'الكمية يجب أن تكون رقمًا صحيحًا.',
+            'quantity.min' => 'الكمية يجب ألا تقل عن 1.',
+            'quantity.max' => "الكمية يجب ألا تتجاوز {$max} رمز في الدفعة الواحدة.",
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return ['quantity' => 'الكمية', 'tag_type' => 'نوع الرمز', 'notes' => 'الملاحظات'];
+    }
+
     public function rules(): array
     {
         // Admin-configurable via the settings page — see SystemSettingController.
