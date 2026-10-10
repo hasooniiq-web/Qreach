@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_sheet.dart';
@@ -173,20 +172,6 @@ class _CodeSectionState extends ConsumerState<_CodeSection> {
                   size: 240,
                   errorCorrectionLevel: QrErrorCorrectLevel.Q,
                 ),
-              ),
-              const SizedBox(height: AppSpacing.lg),
-              // The raw address is not shown (it is just a long code to the owner);
-              // it can still be copied and shared.
-              AppButton(
-                label: l10n.copyLink,
-                icon: Icons.copy_rounded,
-                style: AppButtonStyle.secondary,
-                onPressed: () async {
-                  final messenger = ScaffoldMessenger.of(context);
-                  await Clipboard.setData(ClipboardData(text: tag.publicUrl));
-                  messenger
-                      .showSnackBar(SnackBar(content: Text(l10n.linkCopied)));
-                },
               ),
             ],
           ),
