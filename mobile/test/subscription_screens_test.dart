@@ -298,7 +298,8 @@ void main() {
       expect(find.text('إضافة طريقة تواصل'), findsNothing);
       expect(find.text('+9647701234567'), findsOneWidget);
 
-      await tester.tap(find.text('متاح في باقة Plus'));
+      await tester.ensureVisible(find.text('الترقية إلى Plus'));
+      await tester.tap(find.text('الترقية إلى Plus'));
       await tester.pumpAndSettle();
       expect(find.text('subscription-route'), findsOneWidget);
     });

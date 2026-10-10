@@ -1709,7 +1709,7 @@ abstract class AppLocalizations {
   /// No description provided for @methodsLockedBody.
   ///
   /// In ar, this message translates to:
-  /// **'أضف إنستغرام وفيسبوك وسناب وتيك توك وواتساب وغيرها، وتحكّم بما يراه الزائر.'**
+  /// **'تتيح لك باقة Plus إضافة إنستغرام وفيسبوك وسناب شات وتيك توك وواتساب، والتحكم بما يراه الزائر.'**
   String get methodsLockedBody;
 
   /// No description provided for @upgradeToPlus.

@@ -215,27 +215,63 @@ class _VisibilityBody extends ConsumerWidget {
         const SizedBox(height: AppSpacing.md),
         if (!profile.canAddMethods)
           AppCard(
-            onTap: () => context.push('/subscription'),
-            child: Row(
+            padding: const EdgeInsets.all(AppSpacing.lg),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                const Icon(Icons.lock_outline),
-                const SizedBox(width: AppSpacing.md),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(l10n.methodsLockedTitle,
-                          style: const TextStyle(fontWeight: FontWeight.w800)),
-                      const SizedBox(height: 2),
-                      Text(l10n.methodsLockedBody,
-                          style:
-                              TextStyle(color: AppColors.ink600, fontSize: 13)),
-                    ],
-                  ),
+                Row(
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                          color: AppColors.brandYellow.withValues(alpha: 0.22),
+                          shape: BoxShape.circle),
+                      child: const Icon(Icons.lock_outline_rounded),
+                    ),
+                    const SizedBox(width: AppSpacing.md),
+                    Expanded(
+                      child: Text(l10n.methodsLockedTitle,
+                          style: const TextStyle(
+                              fontWeight: FontWeight.w800, fontSize: 16)),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: AppSpacing.sm),
-                Text(l10n.upgradeToPlus,
-                    style: const TextStyle(fontWeight: FontWeight.w800)),
+                const SizedBox(height: AppSpacing.md),
+                Text(l10n.methodsLockedBody,
+                    style: TextStyle(
+                        color: AppColors.ink600, fontSize: 13.5, height: 1.5)),
+                const SizedBox(height: AppSpacing.md),
+                // The platforms Plus unlocks, shown as small icons.
+                Wrap(
+                  spacing: 10,
+                  runSpacing: 10,
+                  children: [
+                    for (final type in const [
+                      'instagram',
+                      'facebook',
+                      'snapchat',
+                      'tiktok',
+                      'whatsapp',
+                    ])
+                      Container(
+                        width: 38,
+                        height: 38,
+                        decoration: BoxDecoration(
+                            color: AppColors.ink100,
+                            borderRadius: BorderRadius.circular(12)),
+                        child: Icon(platformIcon(type),
+                            size: 20, color: AppColors.ink700),
+                      ),
+                  ],
+                ),
+                const SizedBox(height: AppSpacing.lg),
+                AppButton(
+                  label: l10n.upgradeToPlus,
+                  icon: Icons.workspace_premium_rounded,
+                  style: AppButtonStyle.accent,
+                  onPressed: () => context.push('/subscription'),
+                ),
               ],
             ),
           ),

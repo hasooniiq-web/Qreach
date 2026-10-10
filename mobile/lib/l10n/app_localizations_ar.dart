@@ -864,7 +864,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get methodsLockedBody =>
-      'أضف إنستغرام وفيسبوك وسناب وتيك توك وواتساب وغيرها، وتحكّم بما يراه الزائر.';
+      'تتيح لك باقة Plus إضافة إنستغرام وفيسبوك وسناب شات وتيك توك وواتساب، والتحكم بما يراه الزائر.';
 
   @override
   String get upgradeToPlus => 'الترقية إلى Plus';
