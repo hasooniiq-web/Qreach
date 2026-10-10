@@ -100,6 +100,27 @@ class AdminManagementController extends Controller
         return redirect()->route('admin.admins.index')->with('status', 'تم تحديث صلاحيات المسؤول.');
     }
 
+    /**
+     * For an admin who lost their phone: removes the authenticator so the next
+     * sign-in forces a fresh enrollment (password still required first).
+     */
+    public function resetTotp(Request $request, Admin $admin): RedirectResponse
+    {
+        if ($admin->id === $request->user('admin')->id) {
+            return back()->withErrors(['admin' => 'لا يمكنك إعادة ضبط التحقق بخطوتين لحسابك من هنا.']);
+        }
+
+        $admin->forceFill(['totp_secret' => null, 'totp_enabled' => false])->save();
+
+        AuditLogger::log('admin.totp_reset', 'admin', $request->user('admin')->id, 'Admin', $admin->id, 'success', [], $request);
+        SecurityEventLogger::log(
+            SecurityEventLogger::PRIVILEGE_CHANGE, 'warning', 'admin', $request->user('admin')->id,
+            ['target_admin_id' => $admin->id, 'change' => 'totp_reset'], $request
+        );
+
+        return back()->with('status', 'أُعيد ضبط التحقق بخطوتين. سيُطلب من المسؤول تفعيله من جديد عند دخوله التالي.');
+    }
+
     public function suspend(Request $request, Admin $admin): RedirectResponse
     {
         if ($admin->id === $request->user('admin')->id) {

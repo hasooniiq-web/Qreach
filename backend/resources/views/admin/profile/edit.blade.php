@@ -43,7 +43,7 @@
             <h3 class="mb-1 text-sm font-semibold text-ink-900">كلمة المرور</h3>
             <p class="mb-4 text-xs text-ink-500">
                 @if ($admin->password_changed_at)
-                    آخر تغيير: {{ $admin->password_changed_at->format('Y-m-d H:i') }}.
+                    آخر تغيير: {{ $admin->password_changed_at->copy()->timezone(config('app.display_timezone'))->format('Y-m-d H:i') }}.
                 @endif
                 12 حرفًا على الأقل. نطلب كلمة المرور الحالية للتأكد أنك أنت.
             </p>
@@ -78,7 +78,7 @@
                         @endforelse
                     </dd>
                 </div>
-                <div><dt class="text-xs text-ink-400">آخر تسجيل دخول</dt><dd class="mt-1 text-ink-900">{{ $admin->last_login_at?->format('Y-m-d H:i') ?? '—' }}</dd></div>
+                <div><dt class="text-xs text-ink-400">آخر تسجيل دخول</dt><dd class="mt-1 text-ink-900">{{ $admin->last_login_at?->copy()->timezone(config('app.display_timezone'))->format('Y-m-d H:i') ?? '—' }}</dd></div>
             </dl>
             <p class="mt-4 text-xs text-ink-400">البريد والأدوار يديرها مدير النظام من صفحة المسؤولين.</p>
         </x-card>

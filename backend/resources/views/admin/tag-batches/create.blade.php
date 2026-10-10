@@ -27,8 +27,9 @@
         <x-card padding="p-6" class="space-y-5">
             <h3 class="text-sm font-semibold text-ink-900">٢. الكمية والتفاصيل</h3>
 
-            <x-field label="الكمية" name="quantity" hint="الحد الأقصى يُحدَّد من إعدادات النظام (الافتراضي 1000 رمز لكل دفعة).">
-                <input type="number" id="quantity" name="quantity" min="1" max="5000" value="{{ old('quantity', 100) }}" required class="form-control">
+            @php $maxQuantity = (int) \App\Models\SystemSetting::get('qr_batch_max_quantity', 1000); @endphp
+            <x-field label="الكمية" name="quantity" :hint="'الحد الأقصى الحالي '.number_format($maxQuantity).' رمز لكل دفعة، ويمكن رفعه من إعدادات النظام حتى '.number_format(\App\Services\QrBatchService::MAX_QUANTITY).'.'">
+                <input type="text" inputmode="numeric" data-thousands id="quantity" name="quantity" value="{{ number_format((int) old('quantity', 100)) }}" required dir="ltr" class="form-control text-start">
             </x-field>
 
             <x-field label="ملاحظات (اختياري)" name="notes" hint="للاستخدام الداخلي فقط، مثل اسم المورّد أو رقم أمر الطباعة.">

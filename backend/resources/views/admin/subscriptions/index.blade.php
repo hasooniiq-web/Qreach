@@ -46,8 +46,8 @@
                 <td class="px-4 py-3 text-ink-900">{{ $subscription->plan->name_ar }}</td>
                 <td class="px-4 py-3 text-ink-600"><x-plan-price :plan="$subscription->plan" /></td>
                 <td class="px-4 py-3"><x-status-badge :status="$effective" /></td>
-                <td class="px-4 py-3 text-ink-500">{{ $subscription->current_period_starts_at?->format('Y-m-d') ?? '—' }}</td>
-                <td class="px-4 py-3 text-ink-500">{{ $subscription->current_period_ends_at?->format('Y-m-d') ?? 'بلا تاريخ انتهاء' }}</td>
+                <td class="px-4 py-3 text-ink-500">{{ $subscription->current_period_starts_at?->copy()->timezone(config('app.display_timezone'))->format('Y-m-d') ?? '—' }}</td>
+                <td class="px-4 py-3 text-ink-500">{{ $subscription->current_period_ends_at?->copy()->timezone(config('app.display_timezone'))->format('Y-m-d') ?? 'بلا تاريخ انتهاء' }}</td>
                 <td class="px-4 py-3 text-end">
                     @if ($canManage && $effective === 'active')
                         <form method="POST" action="{{ route('admin.subscriptions.cancel', $subscription) }}"

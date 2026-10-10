@@ -102,7 +102,7 @@ class TagController extends Controller
         $writer = $format === 'png' ? new PngWriter : new SvgWriter;
         $image = (new Builder(writer: $writer))->build(
             data: $this->publicUrl($tag),
-            errorCorrectionLevel: ErrorCorrectionLevel::High,
+            errorCorrectionLevel: ErrorCorrectionLevel::Quartile,
             size: 600,
             margin: 16,
         );

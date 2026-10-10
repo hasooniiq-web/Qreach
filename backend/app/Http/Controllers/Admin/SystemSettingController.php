@@ -30,7 +30,7 @@ class SystemSettingController extends Controller
         'qr_batch_max_quantity' => [
             'label' => 'الحد الأقصى لعدد الرموز في الدفعة الواحدة',
             'hint' => 'يطبَّق عند إنشاء دفعة QR أو NFC جديدة.',
-            'default' => 1000, 'min' => 1, 'max' => 5000,
+            'default' => 1000, 'min' => 1, 'max' => 20000,
         ],
     ];
 
@@ -45,6 +45,11 @@ class SystemSettingController extends Controller
 
     public function update(Request $request): RedirectResponse
     {
+        // The form shows numbers with thousands separators (1,000); store plain integers.
+        $request->merge(collect(self::DEFINITIONS)->keys()->mapWithKeys(
+            fn ($key) => [$key => \App\Support\NumberInput::clean($request->input($key))]
+        )->all());
+
         $rules = [];
         foreach (self::DEFINITIONS as $key => $definition) {
             $rules[$key] = ['required', 'integer', "min:{$definition['min']}", "max:{$definition['max']}"];

@@ -46,7 +46,7 @@
         </x-card>
 
         @if ($gateway->updated_by)
-            <p class="text-xs text-ink-400">آخر تعديل: {{ $gateway->updatedBy?->name }} — {{ $gateway->updated_at->format('Y-m-d H:i') }}</p>
+            <p class="text-xs text-ink-400">آخر تعديل: {{ $gateway->updatedBy?->name }} — {{ $gateway->updated_at->copy()->timezone(config('app.display_timezone'))->format('Y-m-d H:i') }}</p>
         @endif
 
         @if ($canManage)

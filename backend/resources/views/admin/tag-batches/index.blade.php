@@ -10,7 +10,7 @@
                 <td class="px-4 py-3 uppercase text-ink-600">{{ $batch->tag_type }}</td>
                 <td class="px-4 py-3 tabular-nums text-ink-600">{{ $batch->quantity }}</td>
                 <td class="px-4 py-3"><x-status-badge :status="$batch->status" /></td>
-                <td class="px-4 py-3 text-ink-500">{{ $batch->created_at->format('Y-m-d H:i') }}</td>
+                <td class="px-4 py-3 text-ink-500">{{ $batch->created_at->copy()->timezone(config('app.display_timezone'))->format('Y-m-d H:i') }}</td>
                 <td class="px-4 py-3 text-end">
                     <a href="{{ route('admin.tag-batches.show', $batch) }}" class="text-sm font-medium text-ink-900 hover:underline">عرض</a>
                 </td>

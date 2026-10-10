@@ -16,7 +16,7 @@
     <x-data-table :headers="['الوقت', 'المركبة', 'المالك', 'وصف الزائر', 'الرمز']">
         @forelse ($alerts as $alert)
             <tr class="hover:bg-ink-50">
-                <td class="whitespace-nowrap px-4 py-3 text-ink-500">{{ $alert->created_at->format('Y-m-d H:i') }}</td>
+                <td class="whitespace-nowrap px-4 py-3 text-ink-500">{{ $alert->created_at->copy()->timezone(config('app.display_timezone'))->format('Y-m-d H:i') }}</td>
                 <td class="px-4 py-3 font-medium text-ink-900">
                     @if ($alert->vehicle)
                         <a href="{{ route('admin.vehicles.show', $alert->vehicle) }}" class="hover:underline">{{ $alert->vehicle->nickname ?? $alert->vehicle->plate_number }}</a>

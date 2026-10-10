@@ -15,6 +15,7 @@ use App\Rules\PlainTextOnly;
 use App\Services\MessageImageProcessor;
 use App\Services\PublicContacts;
 use App\Services\SecurityEventLogger;
+use App\Services\TagTokenGenerator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -285,6 +286,7 @@ class ScanController extends Controller
 
     private function resolveActiveTag(string $token, Request $request): ?Tag
     {
+        $token = TagTokenGenerator::normalize($token);
         $tag = Tag::with('vehicle.user')->where('public_token', $token)->first();
 
         // An owner can pause a vehicle from the app: its code then behaves like an

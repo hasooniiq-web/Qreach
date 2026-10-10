@@ -18,7 +18,7 @@
                     <span class="rounded-md bg-brand-yellow px-3 py-1 font-mono text-lg font-bold tracking-widest text-brand-black" dir="ltr">{{ $row->code }}</span>
                 </td>
                 <td class="px-4 py-3 text-ink-500">
-                    {{ $age->format('Y-m-d H:i:s') }}
+                    {{ $age->copy()->timezone(config('app.display_timezone'))->format('Y-m-d H:i:s') }}
                     <span class="text-xs {{ $age->lt(now()->subMinutes(5)) ? 'text-status-danger' : 'text-status-success' }}">
                         ({{ $age->diffForHumans() }}{{ $age->lt(now()->subMinutes(5)) ? ' — قد يكون منتهيًا' : '' }})
                     </span>

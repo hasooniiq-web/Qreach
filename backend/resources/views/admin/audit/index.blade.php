@@ -26,7 +26,7 @@
                 <td class="px-4 py-3 text-ink-600">{{ $log->resource_type }} @if($log->resource_id) #{{ $log->resource_id }} @endif</td>
                 <td class="px-4 py-3"><x-status-badge :status="$log->result" /></td>
                 <td class="px-4 py-3 tabular-nums text-ink-500" dir="ltr">{{ $log->request_ip }}</td>
-                <td class="px-4 py-3 text-ink-500">{{ $log->created_at->format('Y-m-d H:i:s') }}</td>
+                <td class="px-4 py-3 text-ink-500">{{ $log->created_at->copy()->timezone(config('app.display_timezone'))->format('Y-m-d H:i:s') }}</td>
             </tr>
         @empty
             <x-table-empty :cols="6" icon="audit" title="لا توجد سجلات مطابقة"

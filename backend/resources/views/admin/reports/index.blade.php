@@ -55,7 +55,7 @@
         <x-data-table :headers="['التاريخ', 'الإجراء', 'الحالة', 'اللوحة', 'الرمز']">
             @forelse ($rows as $row)
                 <tr class="hover:bg-ink-50">
-                    <td class="px-4 py-3 text-ink-500">{{ $row->created_at->format('Y-m-d H:i') }}</td>
+                    <td class="px-4 py-3 text-ink-500">{{ $row->created_at->copy()->timezone(config('app.display_timezone'))->format('Y-m-d H:i') }}</td>
                     <td class="px-4 py-3 font-medium text-ink-900">{{ $actions[$row->action_type] ?? $row->action_type }}</td>
                     <td class="px-4 py-3"><x-status-badge :status="$row->status === 'success' ? 'success' : 'failure'" /></td>
                     <td class="px-4 py-3 text-ink-600">{{ $row->vehicle?->plate_number ?? '—' }}</td>
@@ -69,7 +69,7 @@
         <x-data-table :headers="['التاريخ', 'الحالة', 'اللوحة', 'الرسالة']">
             @forelse ($rows as $row)
                 <tr class="hover:bg-ink-50">
-                    <td class="px-4 py-3 text-ink-500">{{ $row->created_at->format('Y-m-d H:i') }}</td>
+                    <td class="px-4 py-3 text-ink-500">{{ $row->created_at->copy()->timezone(config('app.display_timezone'))->format('Y-m-d H:i') }}</td>
                     <td class="px-4 py-3"><x-status-badge :status="$row->status" /></td>
                     <td class="px-4 py-3 text-ink-600">{{ $row->vehicle?->plate_number ?? '—' }}</td>
                     <td class="max-w-[320px] truncate px-4 py-3 text-ink-600">{{ $row->message }}</td>

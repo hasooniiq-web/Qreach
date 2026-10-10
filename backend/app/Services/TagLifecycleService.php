@@ -37,7 +37,7 @@ class TagLifecycleService
             // vehicle when scanned at the same moment.
             Vehicle::where('id', $vehicle->id)->lockForUpdate()->first();
 
-            $tag = Tag::where('public_token', $publicToken)->lockForUpdate()->first();
+            $tag = Tag::where('public_token', TagTokenGenerator::normalize($publicToken))->lockForUpdate()->first();
 
             if (! $tag) {
                 throw new TagActivationException('الرمز غير صالح.', 'TAG_NOT_FOUND');

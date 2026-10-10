@@ -10,6 +10,21 @@ document.addEventListener('change', (event) => {
     }
 });
 
+// ---- Numbers with thousands separators ----------------------------------
+// <input data-thousands> shows 1,000 as the admin types; the server strips the
+// commas (App\Support\NumberInput), so either form is accepted.
+const arabicDigits = { '٠': '0', '١': '1', '٢': '2', '٣': '3', '٤': '4', '٥': '5', '٦': '6', '٧': '7', '٨': '8', '٩': '9' };
+
+function formatThousands(input) {
+    const digits = input.value.replace(/[٠-٩]/g, (d) => arabicDigits[d]).replace(/\D/g, '');
+    input.value = digits === '' ? '' : Number(digits).toLocaleString('en-US');
+}
+
+document.addEventListener('input', (event) => {
+    const target = event.target;
+    if (target instanceof HTMLInputElement && target.matches('[data-thousands]')) formatThousands(target);
+});
+
 // ---- Confirmation dialog ------------------------------------------------
 const dialog = document.getElementById('confirm-dialog');
 let pendingForm = null;
@@ -24,7 +39,21 @@ document.addEventListener('submit', (event) => {
     dialog.querySelector('[data-confirm-title]').textContent = form.dataset.confirmTitle || 'تأكيد الإجراء';
     dialog.querySelector('[data-confirm-message]').textContent = form.dataset.confirm;
     dialog.querySelector('[data-confirm-accept]').textContent = form.dataset.confirmLabel || 'تأكيد';
+
+    // Optional free-text reason (copied into the form's hidden field on accept).
+    const reasonWrap = dialog.querySelector('[data-confirm-reason-wrap]');
+    const reasonInput = dialog.querySelector('[data-confirm-reason]');
+    dialog.querySelector('[data-confirm-reason-error]')?.classList.add('hidden');
+    if (form.dataset.reasonName && reasonWrap && reasonInput) {
+        dialog.querySelector('[data-confirm-reason-label]').textContent = form.dataset.reasonLabel || 'السبب';
+        reasonInput.value = '';
+        reasonWrap.classList.remove('hidden');
+    } else {
+        reasonWrap?.classList.add('hidden');
+    }
+
     dialog.showModal();
+    if (form.dataset.reasonName) reasonInput?.focus();
 });
 
 dialog?.addEventListener('click', (event) => {
@@ -33,6 +62,18 @@ dialog?.addEventListener('click', (event) => {
 
     if (target.matches('[data-confirm-accept]') && pendingForm) {
         const form = pendingForm;
+
+        if (form.dataset.reasonName) {
+            const reason = dialog.querySelector('[data-confirm-reason]').value.trim();
+            if (reason === '') {
+                dialog.querySelector('[data-confirm-reason-error]').classList.remove('hidden');
+                dialog.querySelector('[data-confirm-reason]').focus();
+                return; // keep the dialog open until a reason is given
+            }
+            const field = form.querySelector(`[name="${form.dataset.reasonName}"]`);
+            if (field) field.value = reason;
+        }
+
         pendingForm = null;
         dialog.close();
         // form.submit() bypasses the submit event, so this doesn't re-trigger the confirm.

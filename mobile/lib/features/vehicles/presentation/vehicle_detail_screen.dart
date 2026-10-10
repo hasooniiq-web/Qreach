@@ -171,7 +171,7 @@ class _CodeSectionState extends ConsumerState<_CodeSection> {
                 child: QrImageView(
                   data: tag.publicUrl,
                   size: 240,
-                  errorCorrectionLevel: QrErrorCorrectLevel.H,
+                  errorCorrectionLevel: QrErrorCorrectLevel.Q,
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),

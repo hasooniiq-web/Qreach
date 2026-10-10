@@ -25,7 +25,7 @@
                 </td>
                 <td class="px-4 py-3 text-ink-600">{{ $user->vehicles_count }}</td>
                 <td class="px-4 py-3"><x-status-badge :status="$user->status" /></td>
-                <td class="px-4 py-3 text-ink-500">{{ $user->created_at->format('Y-m-d') }}</td>
+                <td class="px-4 py-3 text-ink-500">{{ $user->created_at->copy()->timezone(config('app.display_timezone'))->format('Y-m-d') }}</td>
                 <td class="px-4 py-3 text-end">
                     <a href="{{ route('admin.users.show', $user) }}" class="text-sm font-medium text-ink-900 hover:underline">عرض</a>
                 </td>

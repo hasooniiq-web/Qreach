@@ -31,4 +31,17 @@
             <a href="{{ route('admin.admins.index') }}" class="text-sm text-ink-500 hover:underline">إلغاء</a>
         </div>
     </form>
+    @if ($admin->id !== auth('admin')->id() && auth('admin')->user()->hasPermission('admins.update'))
+        <x-card padding="p-6" class="mt-6 max-w-lg">
+            <h3 class="mb-1 text-sm font-semibold text-ink-900">التحقق بخطوتين</h3>
+            <p class="mb-4 text-sm text-ink-500">الحالة: {{ $admin->totp_enabled ? 'مفعّل' : 'غير مفعّل بعد' }}. إن فقد هذا المسؤول هاتفه، أعد ضبطه ليفعّله من جديد عند دخوله التالي.</p>
+            <form method="POST" action="{{ route('admin.admins.totp.reset', $admin) }}"
+                  data-confirm-title="إعادة ضبط التحقق بخطوتين؟"
+                  data-confirm="سيُحذف تطبيق المصادقة الحالي لهذا المسؤول، وسيُطلب منه تفعيل واحد جديد عند تسجيل دخوله."
+                  data-confirm-label="إعادة الضبط">
+                @csrf
+                <button type="submit" class="btn-danger" @disabled(! $admin->totp_enabled)>إعادة ضبط التحقق بخطوتين</button>
+            </form>
+        </x-card>
+    @endif
 </x-layouts.admin>

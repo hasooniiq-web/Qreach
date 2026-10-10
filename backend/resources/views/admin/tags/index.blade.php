@@ -32,20 +32,18 @@
                     @endif
                 </td>
                 <td class="px-4 py-3"><x-status-badge :status="$tag->status" /></td>
-                <td class="px-4 py-3 text-ink-500">{{ $tag->created_at->format('Y-m-d') }}</td>
+                <td class="px-4 py-3 text-ink-500">{{ $tag->created_at->copy()->timezone(config('app.display_timezone'))->format('Y-m-d') }}</td>
                 <td class="px-4 py-3 text-end">
                     @if (!in_array($tag->status, ['revoked', 'replaced']))
-                        <details class="relative inline-block text-start">
-                            <summary class="cursor-pointer list-none text-sm font-medium text-status-danger hover:underline">إلغاء</summary>
-                            <form method="POST" action="{{ route('admin.tags.revoke', $tag) }}"
-                                  class="absolute end-0 z-10 mt-2 w-64 space-y-2 rounded-lg border border-ink-200 bg-white p-3 shadow-lg">
-                                @csrf
-                                <label class="block text-xs font-medium text-ink-700">سبب الإلغاء</label>
-                                <input type="text" name="reason" required maxlength="255" class="form-control !py-1.5">
-                                <p class="text-xs text-ink-500">الإلغاء نهائي ولا يمكن التراجع عنه.</p>
-                                <button type="submit" class="btn-danger w-full !py-1.5 text-xs">تأكيد الإلغاء</button>
-                            </form>
-                        </details>
+                        <form method="POST" action="{{ route('admin.tags.revoke', $tag) }}" class="inline"
+                              data-confirm-title="إلغاء الرمز {{ $tag->serial_number }}؟"
+                              data-confirm="الإلغاء نهائي ولا يمكن التراجع عنه: لن يعمل هذا الرمز بعد الآن."
+                              data-confirm-label="تأكيد الإلغاء"
+                              data-reason-name="reason" data-reason-label="سبب الإلغاء">
+                            @csrf
+                            <input type="hidden" name="reason" value="">
+                            <button type="submit" class="text-sm font-medium text-status-danger hover:underline">إلغاء</button>
+                        </form>
                     @endif
                 </td>
             </tr>

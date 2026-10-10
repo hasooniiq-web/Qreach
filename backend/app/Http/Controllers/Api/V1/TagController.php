@@ -7,6 +7,7 @@ use App\Http\Requests\Api\ActivateTagRequest;
 use App\Http\Resources\TagResource;
 use App\Models\Vehicle;
 use App\Services\TagLifecycleService;
+use App\Services\TagTokenGenerator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -53,6 +54,7 @@ class TagController extends Controller
 
     public function show(Request $request, string $token): JsonResponse
     {
+        $token = TagTokenGenerator::normalize($token);
         $vehicle = Vehicle::where('user_id', $request->user()->id)
             ->whereHas('tags', fn ($q) => $q->where('public_token', $token))
             ->firstOrFail();

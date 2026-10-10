@@ -1,6 +1,6 @@
 <x-layouts.admin :title="'الرمز '.$tag->serial_number">
     <x-page-header :title="$tag->serial_number"
-                   :subtitle="strtoupper($tag->type).' — أُنشئ في '.$tag->created_at->format('Y-m-d H:i')"
+                   :subtitle="strtoupper($tag->type).' — أُنشئ في '.$tag->created_at->copy()->timezone(config('app.display_timezone'))->format('Y-m-d H:i')"
                    :back="route('admin.tags.index')" backLabel="كل الرموز">
         <x-slot:actions><x-status-badge :status="$tag->status" /></x-slot:actions>
     </x-page-header>
@@ -48,7 +48,7 @@
                             <dd class="font-mono text-xs text-ink-900" dir="ltr">{{ $tag->nfcTag?->chip_uid ?? '—' }}</dd>
                         </div>
                     @endif
-                    <div><dt class="text-xs text-ink-400">تاريخ الربط</dt><dd class="text-ink-900">{{ $tag->assigned_at?->format('Y-m-d') ?? '—' }}</dd></div>
+                    <div><dt class="text-xs text-ink-400">تاريخ الربط</dt><dd class="text-ink-900">{{ $tag->assigned_at?->copy()->timezone(config('app.display_timezone'))->format('Y-m-d') ?? '—' }}</dd></div>
                 </dl>
             </x-card>
 
@@ -122,7 +122,7 @@
                     @if ($event->reason)<p class="mt-1 text-xs text-ink-500">{{ $event->reason }}</p>@endif
                     <p class="mt-1 text-xs text-ink-400">
                         {{ match($event->performed_by_type) { 'admin' => 'مسؤول', 'customer' => 'المالك', default => 'النظام' } }}
-                        — {{ $event->created_at->format('Y-m-d H:i') }}
+                        — {{ $event->created_at->copy()->timezone(config('app.display_timezone'))->format('Y-m-d H:i') }}
                     </p>
                 </div>
             </div>

@@ -81,7 +81,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
 
     Route::middleware('admin')->group(function () {
         Route::get('totp/challenge', [AuthController::class, 'showTotpChallenge'])->name('totp.challenge');
-        Route::post('totp/verify', [AuthController::class, 'verifyTotp'])->name('totp.verify');
+        Route::post('totp/verify', [AuthController::class, 'verifyTotp'])
+            ->middleware('throttle:admin-login')->name('totp.verify');
+        Route::get('totp/setup', [AuthController::class, 'showTotpSetup'])->name('totp.setup');
+        Route::post('totp/setup', [AuthController::class, 'confirmTotpSetup'])
+            ->middleware('throttle:admin-login')->name('totp.setup.confirm');
 
         Route::get('password/change', [PasswordController::class, 'edit'])->name('password.change');
         Route::put('password', [PasswordController::class, 'update'])->name('password.update');
@@ -247,6 +251,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
             });
             Route::put('admins/{admin}', [AdminManagementController::class, 'update'])
                 ->middleware('admin.permission:admins.update')->name('admins.update');
+            Route::post('admins/{admin}/totp/reset', [AdminManagementController::class, 'resetTotp'])
+                ->middleware('admin.permission:admins.update')->name('admins.totp.reset');
             Route::post('admins/{admin}/suspend', [AdminManagementController::class, 'suspend'])
                 ->middleware('admin.permission:admins.update')->name('admins.suspend');
             Route::post('admins/{admin}/activate', [AdminManagementController::class, 'activate'])

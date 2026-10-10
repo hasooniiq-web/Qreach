@@ -5,26 +5,35 @@ namespace App\Services;
 use App\Models\Tag;
 use App\Models\TagBatch;
 use App\Models\TagLifecycleEvent;
-use Endroid\QrCode\Builder\Builder;
-use Endroid\QrCode\ErrorCorrectionLevel;
-use Endroid\QrCode\Writer\PngWriter;
-use Endroid\QrCode\Writer\SvgWriter;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 
 /**
- * QR batch generation (sections 10, 19). Runs inside a single transaction
+ * QR / NFC batch generation (sections 10, 19). Runs inside a single transaction
  * so a batch is either fully generated or not created at all — no partial
  * batches with gaps in numbering.
+ *
+ * Rows are written in bulk, 500 at a time. The QR *image* is not rendered here:
+ * it is drawn on demand from the current APP_URL (Admin\TagController::image),
+ * so creating a batch of thousands of codes is a few seconds of inserts rather
+ * than thousands of image renders — which is what used to force a low cap.
  */
 class QrBatchService
 {
+    /** Hard ceiling per batch; the admin-editable setting (system settings) can only go up to this. */
+    public const MAX_QUANTITY = 20000;
+
+    /** Error-correction level stored with each QR code (Q = ~25% recoverable damage). */
+    public const ERROR_CORRECTION = 'Q';
+
+    private const CHUNK = 500;
+
     public function __construct(private readonly TagTokenGenerator $tokens) {}
 
     public function createBatch(int $quantity, ?int $createdByAdminId, string $type = 'qr'): TagBatch
     {
-        if ($quantity < 1 || $quantity > 5000) {
-            throw new \InvalidArgumentException('Batch quantity must be between 1 and 5000.');
+        if ($quantity < 1 || $quantity > self::MAX_QUANTITY) {
+            throw new \InvalidArgumentException('Batch quantity must be between 1 and '.self::MAX_QUANTITY.'.');
         }
 
         return DB::transaction(function () use ($quantity, $createdByAdminId, $type) {
@@ -36,35 +45,20 @@ class QrBatchService
                 'created_by' => $createdByAdminId,
             ]);
 
-            $sequenceStart = (Tag::max('id') ?? 0) + 1;
+            $sequence = (Tag::max('id') ?? 0) + 1;
+            $created = 0;
 
-            for ($i = 0; $i < $quantity; $i++) {
-                $tag = Tag::create([
-                    'public_token' => $this->tokens->generatePublicToken(),
-                    'serial_number' => $this->tokens->generateSerialNumber($type, $sequenceStart + $i),
-                    'type' => $type,
-                    'batch_id' => $batch->id,
-                    'status' => 'generated',
-                ]);
-
-                if ($type === 'qr') {
-                    $tag->qrTag()->create([
-                        'error_correction_level' => 'H',
-                        'print_sheet_position' => $i + 1,
-                    ]);
-                    $this->renderQrImages($tag);
-                } else {
-                    $tag->nfcTag()->create(['provisioning_status' => 'unprovisioned']);
-                }
+            foreach (array_chunk(range(1, $quantity), self::CHUNK) as $positions) {
+                $this->insertChunk($batch, $type, $positions, $sequence + $created);
+                $created += count($positions);
             }
 
             $batch->update(['status' => 'generated', 'generated_at' => now()]);
 
             // "Created" — the first entry in every tag's immutable lifecycle ledger.
             $now = now();
-            $tagIds = $batch->tags()->pluck('id');
-            foreach ($tagIds->chunk(500) as $chunk) {
-                TagLifecycleEvent::insert($chunk->map(fn ($id) => [
+            foreach ($batch->tags()->pluck('id')->chunk(self::CHUNK) as $ids) {
+                TagLifecycleEvent::insert($ids->map(fn ($id) => [
                     'tag_id' => $id,
                     'previous_status' => null,
                     'new_status' => 'generated',
@@ -84,35 +78,52 @@ class QrBatchService
     }
 
     /**
-     * Renders and stores PNG + SVG for the public scan URL. High error
-     * correction ('H') per section 19 so a printed, slightly damaged/dirty
-     * sticker still scans reliably.
+     * @param  list<int>  $positions  1-based positions of this chunk inside the batch
      */
-    private function renderQrImages(Tag $tag): void
+    private function insertChunk(TagBatch $batch, string $type, array $positions, int $firstSequence): void
     {
-        $url = config('app.url').'/t/'.$tag->public_token;
+        $count = count($positions);
+        $tokens = $this->tokens->generateMany($count);
+        $now = now();
 
-        $png = (new Builder(writer: new PngWriter))->build(
-            data: $url,
-            errorCorrectionLevel: ErrorCorrectionLevel::High,
-            size: 600,
-            margin: 16,
-        );
+        // Serial numbers are sequential; skip past any that already exist (checked once per chunk).
+        do {
+            $serials = [];
+            foreach ($positions as $i => $_) {
+                $serials[] = $this->tokens->formatSerial($type, $firstSequence + $i);
+            }
+            $clash = Tag::whereIn('serial_number', $serials)->exists();
+            if ($clash) {
+                $firstSequence += $count;
+            }
+        } while ($clash);
 
-        $svg = (new Builder(writer: new SvgWriter))->build(
-            data: $url,
-            errorCorrectionLevel: ErrorCorrectionLevel::High,
-            size: 600,
-            margin: 16,
-        );
+        $rows = [];
+        foreach ($positions as $i => $_) {
+            $rows[] = [
+                'uuid' => (string) Str::uuid(),
+                'public_token' => $tokens[$i],
+                'serial_number' => $serials[$i],
+                'type' => $type,
+                'batch_id' => $batch->id,
+                'status' => 'generated',
+                'created_at' => $now,
+                'updated_at' => $now,
+            ];
+        }
+        Tag::insert($rows);
 
-        $pngPath = "qr/{$tag->serial_number}.png";
-        $svgPath = "qr/{$tag->serial_number}.svg";
+        $ids = Tag::whereIn('serial_number', $serials)->pluck('id', 'serial_number');
 
-        Storage::disk('local')->put($pngPath, $png->getString());
-        Storage::disk('local')->put($svgPath, $svg->getString());
+        $children = [];
+        foreach ($positions as $i => $position) {
+            $tagId = $ids[$serials[$i]];
+            $children[] = $type === 'qr'
+                ? ['tag_id' => $tagId, 'error_correction_level' => self::ERROR_CORRECTION, 'print_sheet_position' => $position, 'created_at' => $now, 'updated_at' => $now]
+                : ['tag_id' => $tagId, 'provisioning_status' => 'unprovisioned', 'created_at' => $now, 'updated_at' => $now];
+        }
 
-        $tag->qrTag->update(['image_png_path' => $pngPath, 'image_svg_path' => $svgPath]);
+        DB::table($type === 'qr' ? 'qr_tags' : 'nfc_tags')->insert($children);
     }
 
     private function generateBatchCode(string $type): string

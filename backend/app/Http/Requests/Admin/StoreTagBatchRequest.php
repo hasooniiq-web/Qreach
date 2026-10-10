@@ -12,6 +12,11 @@ class StoreTagBatchRequest extends FormRequest
         return true;
     }
 
+    protected function prepareForValidation(): void
+    {
+        $this->merge(['quantity' => \App\Support\NumberInput::clean($this->input('quantity'))]);
+    }
+
     public function rules(): array
     {
         // Admin-configurable via the settings page — see SystemSettingController.

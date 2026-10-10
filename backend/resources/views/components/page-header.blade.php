@@ -3,7 +3,8 @@
 --}}
 @props(['title', 'subtitle' => null, 'back' => null, 'backLabel' => 'رجوع'])
 
-<div class="mb-6" data-page-header>
+{{-- relative + z-30: dropdown menus in the actions slot must paint above the cards that follow. --}}
+<div class="relative z-30 mb-6" data-page-header>
     @if ($back)
         <a href="{{ $back }}" class="mb-3 inline-flex items-center gap-1.5 text-xs font-medium text-ink-500 transition-colors hover:text-ink-900">
             <x-icon name="arrow-left" class="size-3.5" style="transform: scaleX(-1)" /> {{ $backLabel }}

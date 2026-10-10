@@ -59,6 +59,8 @@ class AuthController extends Controller
         }
 
         $request->session()->regenerate();
+        // The authenticator code is asked on every sign-in, never carried over from an earlier one.
+        $request->session()->forget('admin_totp_verified_at');
 
         $admin->forceFill([
             'failed_login_attempts' => 0,
@@ -78,6 +80,7 @@ class AuthController extends Controller
             return redirect()->route('admin.totp.challenge');
         }
 
+        // No authenticator yet: the dashboard middleware sends the admin to enrollment.
         return redirect()->intended(route('admin.dashboard'));
     }
 
@@ -92,7 +95,7 @@ class AuthController extends Controller
 
         $admin = auth('admin')->user();
 
-        if (! Google2FA::verifyKey(decrypt($admin->totp_secret), $request->input('code'))) {
+        if (! Google2FA::verifyKey($admin->totp_secret, preg_replace('/\s+/', '', (string) $request->input('code')))) {
             SecurityEventLogger::log(SecurityEventLogger::AUTH_FAILURE, 'warning', 'admin', $admin->id, ['stage' => 'totp'], $request);
 
             throw ValidationException::withMessages([
@@ -103,6 +106,54 @@ class AuthController extends Controller
         $request->session()->put('admin_totp_verified_at', now()->toIso8601String());
 
         return redirect()->intended(route('admin.dashboard'));
+    }
+
+    /** First-time enrollment of an authenticator app (mandatory for every admin). */
+    public function showTotpSetup(Request $request): View|RedirectResponse
+    {
+        $admin = auth('admin')->user();
+
+        if ($admin->totp_enabled) {
+            return redirect()->route('admin.dashboard');
+        }
+
+        // Kept in the session so a page refresh shows the same QR the admin may already have scanned.
+        $secret = $request->session()->get('admin_totp_pending_secret');
+        if (! $secret) {
+            $secret = Google2FA::generateSecretKey();
+            $request->session()->put('admin_totp_pending_secret', $secret);
+        }
+
+        $otpauth = Google2FA::getQRCodeUrl(config('app.name', 'Qreach'), $admin->email, $secret);
+        $svg = (new \Endroid\QrCode\Builder\Builder(writer: new \Endroid\QrCode\Writer\SvgWriter))
+            ->build(data: $otpauth, size: 220, margin: 6)->getString();
+
+        return view('admin.auth.totp-setup', [
+            'qr' => 'data:image/svg+xml;base64,'.base64_encode($svg),
+            'secret' => trim(chunk_split($secret, 4, ' ')),
+        ]);
+    }
+
+    public function confirmTotpSetup(Request $request): RedirectResponse
+    {
+        $request->validate(['code' => ['required', 'string']]);
+
+        $admin = auth('admin')->user();
+        $secret = $request->session()->get('admin_totp_pending_secret');
+
+        if (! $secret || ! Google2FA::verifyKey($secret, preg_replace('/\s+/', '', $request->input('code')))) {
+            SecurityEventLogger::log(SecurityEventLogger::AUTH_FAILURE, 'warning', 'admin', $admin->id, ['stage' => 'totp_setup'], $request);
+
+            throw ValidationException::withMessages(['code' => 'رمز التحقق غير صحيح. تأكد من مسح الرمز في التطبيق وأن وقت هاتفك مضبوط تلقائيًا.']);
+        }
+
+        $admin->forceFill(['totp_secret' => $secret, 'totp_enabled' => true])->save();
+        $request->session()->forget('admin_totp_pending_secret');
+        $request->session()->put('admin_totp_verified_at', now()->toIso8601String());
+
+        AuditLogger::log('admin.totp_enabled', 'admin', $admin->id, 'Admin', $admin->id, 'success', [], $request);
+
+        return redirect()->intended(route('admin.dashboard'))->with('status', 'تم تفعيل التحقق بخطوتين.');
     }
 
     public function logout(Request $request): RedirectResponse

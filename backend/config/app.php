@@ -68,6 +68,11 @@ return [
     'timezone' => 'UTC',
 
     /*
+     | Times are stored in UTC; the dashboard shows them in this zone (Iraq, UTC+3, no DST).
+     */
+    'display_timezone' => env('APP_DISPLAY_TIMEZONE', 'Asia/Baghdad'),
+
+    /*
     |--------------------------------------------------------------------------
     | Application Locale Configuration
     |--------------------------------------------------------------------------

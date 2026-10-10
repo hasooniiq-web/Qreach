@@ -73,7 +73,18 @@ function build(canvas, config) {
                     display: !doughnut && config.datasets.length > 1,
                     position: 'top',
                     align: 'end',
-                    labels: { usePointStyle: true, pointStyle: 'circle', boxWidth: 8, color: p.text, font: { family: 'Noto Sans Arabic', size: 12 } },
+                    labels: {
+                        usePointStyle: true,
+                        pointStyle: 'circle',
+                        boxWidth: 8,
+                        boxHeight: 8,
+                        padding: 20,
+                        color: p.text,
+                        font: { family: 'Noto Sans Arabic', size: 12 },
+                        // Breathing room between each dot and its label.
+                        generateLabels: (chart) => Chart.defaults.plugins.legend.labels.generateLabels(chart)
+                            .map((item) => ({ ...item, text: `  ${item.text}  ` })),
+                    },
                 },
                 tooltip: {
                     rtl: true,

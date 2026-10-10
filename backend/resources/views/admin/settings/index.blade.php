@@ -11,8 +11,8 @@
                 <div class="space-y-5">
                     @foreach ($settings->only(['otp_code_ttl_minutes', 'otp_resend_cooldown_seconds']) as $setting)
                         <x-field :label="$setting['label']" :name="$setting['key']" :hint="$setting['hint'] ?? null">
-                            <input type="number" id="{{ $setting['key'] }}" name="{{ $setting['key'] }}" min="{{ $setting['min'] }}" max="{{ $setting['max'] }}"
-                                   value="{{ old($setting['key'], $setting['value']) }}" required class="form-control">
+                            <input type="text" inputmode="numeric" data-thousands id="{{ $setting['key'] }}" name="{{ $setting['key'] }}"
+                                   value="{{ number_format((int) old($setting['key'], $setting['value'])) }}" required dir="ltr" class="form-control text-start">
                         </x-field>
                     @endforeach
                 </div>
@@ -23,8 +23,8 @@
                 <div class="space-y-5">
                     @foreach ($settings->only(['qr_batch_max_quantity']) as $setting)
                         <x-field :label="$setting['label']" :name="$setting['key']" :hint="$setting['hint'] ?? null">
-                            <input type="number" id="{{ $setting['key'] }}" name="{{ $setting['key'] }}" min="{{ $setting['min'] }}" max="{{ $setting['max'] }}"
-                                   value="{{ old($setting['key'], $setting['value']) }}" required class="form-control">
+                            <input type="text" inputmode="numeric" data-thousands id="{{ $setting['key'] }}" name="{{ $setting['key'] }}"
+                                   value="{{ number_format((int) old($setting['key'], $setting['value'])) }}" required dir="ltr" class="form-control text-start">
                         </x-field>
                     @endforeach
                 </div>

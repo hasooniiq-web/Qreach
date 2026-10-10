@@ -55,6 +55,11 @@
         -webkit-text-size-adjust: 100%;
     }
 
+    /* The dashboard (admin + its login) reads slightly larger: its content area is wide. */
+    html[data-dashboard] {
+        font-size: 106.25%;
+    }
+
     body {
         @apply bg-canvas text-ink-900 antialiased;
         font-feature-settings: 'tnum' off;
@@ -86,8 +91,19 @@
         @apply h-auto py-2.5;
     }
 
+    /* Our own chevron so it sits comfortably inside the field (the native one hugs the edge). */
     select.form-control {
-        @apply pe-8;
+        appearance: none;
+        -webkit-appearance: none;
+        padding-inline-end: 2.25rem;
+        background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2371717A' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'><path d='m6 9 6 6 6-6'/></svg>");
+        background-repeat: no-repeat;
+        background-size: 1rem;
+        background-position: right 0.85rem center;
+    }
+
+    [dir='rtl'] select.form-control {
+        background-position: left 0.85rem center;
     }
 
     .btn-primary,
@@ -386,12 +402,13 @@ details[data-menu][open] > .menu-panel {
     --color-surface: #111113;
     --color-brand-black: #09090B;
 
-    --color-ink-900: #FAFAFA;
-    --color-ink-800: #E4E4E7;
-    --color-ink-700: #D4D4D8;
-    --color-ink-600: #A1A1AA;
-    --color-ink-500: #8B8B94;
-    --color-ink-400: #71717A;
+    /* Text tiers stay clearly legible on the dark surfaces (secondary text was too grey). */
+    --color-ink-900: #FFFFFF;
+    --color-ink-800: #F4F4F5;
+    --color-ink-700: #E4E4E7;
+    --color-ink-600: #D4D4D8;
+    --color-ink-500: #B8B8C1;
+    --color-ink-400: #9A9AA4;
     --color-ink-300: #52525B;
     --color-ink-200: #27272A;
     --color-ink-100: #1D1D21;

@@ -5,8 +5,7 @@
         <select name="status" data-auto-submit aria-label="الحالة" class="form-control w-auto">
             <option value="">كل الحالات</option>
             <option value="active" @selected(request('status') === 'active')>نشط</option>
-            <option value="inactive" @selected(request('status') === 'inactive')>غير نشط</option>
-            <option value="archived" @selected(request('status') === 'archived')>مؤرشف</option>
+            <option value="inactive" @selected(request('status') === 'inactive')>موقوف (أوقفه المالك مؤقتًا)</option>
         </select>
         <button type="submit" class="btn-primary">بحث</button>
     </x-filter-bar>

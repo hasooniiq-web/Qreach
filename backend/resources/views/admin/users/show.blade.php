@@ -22,7 +22,7 @@
     <x-card class="mb-4">
         <dl class="grid grid-cols-2 gap-4 text-sm sm:grid-cols-4">
             <div><dt class="text-xs text-ink-400">رقم الهاتف</dt><dd class="mt-1 tabular-nums text-ink-900" dir="ltr">{{ $user->phone }}</dd></div>
-            <div><dt class="text-xs text-ink-400">تاريخ التسجيل</dt><dd class="mt-1 text-ink-900">{{ $user->created_at->format('Y-m-d') }}</dd></div>
+            <div><dt class="text-xs text-ink-400">تاريخ التسجيل</dt><dd class="mt-1 text-ink-900">{{ $user->created_at->copy()->timezone(config('app.display_timezone'))->format('Y-m-d') }}</dd></div>
             <div><dt class="text-xs text-ink-400">آخر دخول</dt><dd class="mt-1 text-ink-900">{{ $user->last_login_at?->diffForHumans() ?? '—' }}</dd></div>
             <div><dt class="text-xs text-ink-400">عدد المركبات</dt><dd class="mt-1 text-ink-900">{{ $user->vehicles->count() }}</dd></div>
             <div><dt class="text-xs text-ink-400">عدد الأجهزة</dt><dd class="mt-1 text-ink-900">{{ $user->devices->count() }}</dd></div>
@@ -45,7 +45,7 @@
                 </p>
                 <p class="mt-1 text-xs text-ink-500">
                     @if ($activeSubscription?->current_period_ends_at)
-                        ينتهي في {{ $activeSubscription->current_period_ends_at->format('Y-m-d') }}
+                        ينتهي في {{ $activeSubscription->current_period_ends_at->copy()->timezone(config('app.display_timezone'))->format('Y-m-d') }}
                     @elseif ($plan->publicContactTypes() === [])
                         المراسلة فقط — لا تُعرض بيانات تواصل مباشرة للزوار.
                     @endif
@@ -142,7 +142,7 @@
                 <div class="flex items-start gap-3 border-b border-ink-100 px-5 py-3 last:border-0">
                     <span class="mt-1.5 size-1.5 shrink-0 rounded-full bg-ink-300"></span>
                     <p class="flex-1 text-sm text-ink-800">{{ $item['text'] }}</p>
-                    <time class="shrink-0 text-xs text-ink-400">{{ $item['at']->format('Y-m-d H:i') }}</time>
+                    <time class="shrink-0 text-xs text-ink-400">{{ $item['at']->copy()->timezone(config('app.display_timezone'))->format('Y-m-d H:i') }}</time>
                 </div>
             @empty
                 <p class="px-5 py-8 text-center text-sm text-ink-400">لا يوجد نشاط مسجَّل بعد.</p>

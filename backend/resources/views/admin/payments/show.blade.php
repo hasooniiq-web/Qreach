@@ -18,13 +18,13 @@
                 <div><dt class="text-xs text-ink-400">المُسترد</dt><dd class="mt-0.5 tabular-nums text-ink-900">{{ number_format($payment->refunded_amount_cents) }} {{ $payment->currency }}</dd></div>
                 <div><dt class="text-xs text-ink-400">البوابة</dt><dd class="mt-0.5 text-ink-900">{{ $driver?->label() ?? $payment->gateway }} @if ($payment->metadata['test_mode'] ?? false)<span class="text-ink-400">(وضع اختبار)</span>@endif</dd></div>
                 <div><dt class="text-xs text-ink-400">مرجع البوابة</dt><dd class="mt-0.5 break-all text-ink-900" dir="ltr">{{ $payment->gateway_reference ?? '—' }}</dd></div>
-                <div><dt class="text-xs text-ink-400">أُنشئت</dt><dd class="mt-0.5 text-ink-900">{{ $payment->created_at->format('Y-m-d H:i') }}</dd></div>
-                <div><dt class="text-xs text-ink-400">تاريخ الدفع</dt><dd class="mt-0.5 text-ink-900">{{ $payment->paid_at?->format('Y-m-d H:i') ?? '—' }}</dd></div>
+                <div><dt class="text-xs text-ink-400">أُنشئت</dt><dd class="mt-0.5 text-ink-900">{{ $payment->created_at->copy()->timezone(config('app.display_timezone'))->format('Y-m-d H:i') }}</dd></div>
+                <div><dt class="text-xs text-ink-400">تاريخ الدفع</dt><dd class="mt-0.5 text-ink-900">{{ $payment->paid_at?->copy()->timezone(config('app.display_timezone'))->format('Y-m-d H:i') ?? '—' }}</dd></div>
                 @if ($payment->failure_reason)
                     <div class="sm:col-span-2"><dt class="text-xs text-ink-400">سبب الفشل</dt><dd class="mt-0.5 text-status-danger">{{ $payment->failure_reason }}</dd></div>
                 @endif
                 @if ($payment->subscription)
-                    <div class="sm:col-span-2"><dt class="text-xs text-ink-400">الاشتراك الناتج</dt><dd class="mt-0.5 text-ink-900">حتى {{ $payment->subscription->current_period_ends_at?->format('Y-m-d') ?? '—' }} ({{ $payment->subscription->status }})</dd></div>
+                    <div class="sm:col-span-2"><dt class="text-xs text-ink-400">الاشتراك الناتج</dt><dd class="mt-0.5 text-ink-900">حتى {{ $payment->subscription->current_period_ends_at?->copy()->timezone(config('app.display_timezone'))->format('Y-m-d') ?? '—' }} ({{ $payment->subscription->status }})</dd></div>
                 @endif
             </dl>
         </x-card>
@@ -56,7 +56,7 @@
     <x-data-table :headers="['الوقت', 'النوع', 'النتيجة', 'التوقيع']">
         @forelse ($payment->events as $event)
             <tr>
-                <td class="px-4 py-3 text-ink-500">{{ $event->created_at->format('Y-m-d H:i:s') }}</td>
+                <td class="px-4 py-3 text-ink-500">{{ $event->created_at->copy()->timezone(config('app.display_timezone'))->format('Y-m-d H:i:s') }}</td>
                 <td class="px-4 py-3 text-ink-900">{{ ['callback' => 'إشعار من البوابة', 'status_check' => 'استعلام عن الحالة', 'refund' => 'استرداد'][$event->type] ?? $event->type }}</td>
                 <td class="px-4 py-3 text-ink-600" dir="ltr">{{ $event->outcome }}</td>
                 <td class="px-4 py-3">{!! $event->signature_valid ? '<span class="text-status-success">صالح</span>' : '<span class="text-status-danger">مرفوض</span>' !!}</td>

@@ -252,7 +252,7 @@
 
             <main id="main-content" tabindex="-1" class="min-h-0 flex-1 overflow-y-auto outline-none">
                 @php $body = (string) $slot; @endphp
-                <div class="mx-auto w-full max-w-7xl p-4 sm:p-6 lg:p-8">
+                <div class="mx-auto w-full max-w-[110rem] p-4 sm:p-6 lg:px-10 lg:py-8">
                     {{-- Pages that render their own <x-page-header> (marked data-page-header) keep it;
                          every other page gets the same large title so no page starts without one. --}}
                     @unless (str_contains($body, 'data-page-header'))
@@ -287,6 +287,12 @@
                 <h2 data-confirm-title class="text-base font-semibold"></h2>
                 <p data-confirm-message class="mt-1.5 text-sm text-ink-600"></p>
             </div>
+        </div>
+        {{-- Shown only for forms that declare data-reason-name (e.g. cancelling a code). --}}
+        <div data-confirm-reason-wrap class="hidden px-6 pb-5">
+            <label for="confirm-reason" data-confirm-reason-label class="mb-1.5 block text-sm font-medium text-ink-700"></label>
+            <textarea id="confirm-reason" data-confirm-reason rows="3" maxlength="255" class="form-control"></textarea>
+            <p data-confirm-reason-error class="mt-1 hidden text-xs text-status-danger" role="alert">هذا الحقل مطلوب.</p>
         </div>
         <div class="flex justify-end gap-2 border-t border-ink-100 bg-ink-50/70 px-6 py-3">
             <button type="button" data-confirm-cancel class="btn-secondary">إلغاء</button>
