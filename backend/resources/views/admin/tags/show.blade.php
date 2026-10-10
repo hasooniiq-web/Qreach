@@ -83,7 +83,7 @@
                             <div>
                                 <label for="new_tag_serial" class="mb-1 block text-xs font-medium text-ink-700">الرقم التسلسلي للرمز الجديد ({{ strtoupper($tag->type) }} غير مُعيّن)</label>
                                 <input list="replacement-candidates" id="new_tag_serial" name="new_tag_serial" required
-                                       value="{{ old('new_tag_serial') }}" dir="ltr" class="form-control text-start" placeholder="ST-Q-2026-000123">
+                                       value="{{ old('new_tag_serial') }}" dir="ltr" class="form-control text-start" placeholder="ST-C-20261010-000123">
                                 <datalist id="replacement-candidates">
                                     @foreach ($replacementCandidates as $serial)
                                         <option value="{{ $serial }}"></option>

@@ -94,10 +94,21 @@ class TagTokenGenerator
         return $token;
     }
 
-    /** Human-readable serial printed on the physical tag, e.g. ST-Q-2026-000048. */
+    /**
+     * Human-readable serial printed on the physical tag. A unified code carries the
+     * full generation date — ST-C-20261010-000150 (day, month, year) — so when a code
+     * was made can be read off the sticker; older kinds keep ST-Q-2026-000048.
+     * The number is at least 6 digits and simply grows past that (ids are 64-bit),
+     * so there is no ceiling at millions of codes.
+     */
     public function formatSerial(string $type, int $sequence): string
     {
-        return sprintf('%s-%s-%06d', $this->serialPrefix($type), now()->format('Y'), $sequence);
+        return sprintf('%s-%s-%06d', $this->serialPrefix($type), $this->datePart($type), $sequence);
+    }
+
+    private function datePart(string $type): string
+    {
+        return $type === 'code' ? now()->format('Ymd') : now()->format('Y');
     }
 
     /** ST-C = unified code (QR + NFC); ST-Q / ST-N are the older single-purpose kinds. */
@@ -113,7 +124,7 @@ class TagTokenGenerator
     public function generateSerialNumber(string $type, int $sequence): string
     {
         $prefix = $this->serialPrefix($type);
-        $year = now()->format('Y');
+        $year = $this->datePart($type);
         $serial = sprintf('%s-%s-%06d', $prefix, $year, $sequence);
 
         // Extremely unlikely to collide (sequence is batch-scoped and

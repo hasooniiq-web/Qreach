@@ -89,6 +89,20 @@ class UnifiedCodeTest extends TestCase
         $this->get('/admin/qr')->assertOk()->assertSee('QR + NFC');
     }
 
+    public function test_a_unified_serial_carries_the_generation_date_and_scales_past_millions(): void
+    {
+        $batch = app(QrBatchService::class)->createBatch(2, null, 'code');
+        $serial = $batch->tags()->first()->serial_number;
+
+        $this->assertMatchesRegularExpression('/^ST-C-\d{8}-\d{6,}$/', $serial);
+        $this->assertStringContainsString('-'.now()->format('Ymd').'-', $serial);
+
+        $generator = new \App\Services\TagTokenGenerator;
+        $this->assertSame('ST-C-'.now()->format('Ymd').'-000150', $generator->formatSerial('code', 150));
+        $this->assertSame('ST-C-'.now()->format('Ymd').'-10000000', $generator->formatSerial('code', 10_000_000));
+        // Older kinds keep their year-only form.
+        $this->assertSame('ST-Q-'.now()->format('Y').'-000150', $generator->formatSerial('qr', 150));
+    }
     public function test_older_single_purpose_batches_still_work(): void
     {
         $qr = app(QrBatchService::class)->createBatch(2, null, 'qr');

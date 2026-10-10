@@ -149,6 +149,6 @@ class QrBatchService
         $prefix = strtoupper($type);
         $sequence = TagBatch::where('tag_type', $type)->count() + 1;
 
-        return sprintf('ST-%s-%s-%04d', $prefix, now()->format('Y'), $sequence);
+        return sprintf('ST-%s-%s-%04d', $prefix, now()->format('Ymd'), $sequence);
     }
 }
