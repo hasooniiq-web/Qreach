@@ -21,6 +21,9 @@ class AvatarProcessor
             return null;
         }
 
+        // A selfie is stored sideways with an EXIF flag; turn it upright before cropping.
+        $source = ImageOrientation::upright($source, $file->getRealPath());
+
         $width = imagesx($source);
         $height = imagesy($source);
         $side = min($width, $height);

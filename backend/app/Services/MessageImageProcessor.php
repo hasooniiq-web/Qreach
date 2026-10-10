@@ -26,7 +26,7 @@ class MessageImageProcessor
             return null;
         }
 
-        $source = $this->fixOrientation($source, $path);
+        $source = ImageOrientation::upright($source, $path);
 
         $width = imagesx($source);
         $height = imagesy($source);
@@ -44,19 +44,5 @@ class MessageImageProcessor
         $bytes = ob_get_clean();
 
         return $bytes !== false && $bytes !== '' ? $bytes : null;
-    }
-
-    /** @param \GdImage $source */
-    private function fixOrientation($source, string $path): \GdImage
-    {
-        $exif = @exif_read_data($path);
-        $orientation = $exif['Orientation'] ?? 1;
-
-        return match ($orientation) {
-            3 => imagerotate($source, 180, 0),
-            6 => imagerotate($source, -90, 0),
-            8 => imagerotate($source, 90, 0),
-            default => $source,
-        };
     }
 }
