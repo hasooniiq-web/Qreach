@@ -83,7 +83,7 @@
     "plateNumber": "رقم اللوحة",
     "nickname": "الاسم (اختياري)",
     "make": "الشركة المصنعة",
-    "model": "الطراز",
+    "model": "الموديل",
     "year": "سنة الصنع",
     "color": "اللون",
     "vehicleType": "نوع المركبة",
@@ -425,5 +425,11 @@
     "payOpenFailed": "تعذّر فتح صفحة الدفع.",
     "payTestNotice": "كانت هذه عملية دفع تجريبية. لم يُخصم أي مبلغ حقيقي.",
     "paySubscribeButton": "اشترك في هذه الباقة",
-    "tagTypeCode": "رمز QR + NFC"
+    "tagTypeCode": "رمز QR + NFC",
+    "pickerSearch": "بحث",
+    "pickerOther": "أخرى (اكتبها)",
+    "pickerOtherHint": "اكتبها هنا",
+    "pickerChoose": "اختر",
+    "pickerNoResults": "لا توجد نتائج",
+    "modelHint": "مثل: كورولا، سوناتا"
 }

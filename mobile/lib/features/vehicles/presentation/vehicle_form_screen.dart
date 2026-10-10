@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../shared/widgets/app_button.dart';
+import '../../../shared/widgets/choice_field.dart';
+import '../data/car_catalog.dart';
+import '../data/vehicle_options.dart';
 import 'package:go_router/go_router.dart';
 import '../../../shared/widgets/iraqi_plate.dart';
 import '../../../shared/widgets/plate_labels.dart';
@@ -24,9 +27,9 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
   final _formKey = GlobalKey<FormState>();
   final _plateController = TextEditingController();
   final _nicknameController = TextEditingController();
-  final _makeController = TextEditingController();
-  final _modelController = TextEditingController();
-  final _colorController = TextEditingController();
+  String? _make;
+  String? _model;
+  String? _color;
   final _letterController = TextEditingController();
   String _vehicleType = 'sedan';
   String _plateType = 'private';
@@ -39,9 +42,6 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
     _plateController.dispose();
     _letterController.dispose();
     _nicknameController.dispose();
-    _makeController.dispose();
-    _modelController.dispose();
-    _colorController.dispose();
     super.dispose();
   }
 
@@ -61,15 +61,9 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
         plateLetter: _letterController.text.trim(),
         plateGovernorate: _governorate,
         nickname: _nicknameController.text.trim(),
-        make: _makeController.text.trim().isEmpty
-            ? null
-            : _makeController.text.trim(),
-        model: _modelController.text.trim().isEmpty
-            ? null
-            : _modelController.text.trim(),
-        color: _colorController.text.trim().isEmpty
-            ? null
-            : _colorController.text.trim(),
+        make: (_make ?? '').trim().isEmpty ? null : _make!.trim(),
+        model: (_model ?? '').trim().isEmpty ? null : _model!.trim(),
+        color: (_color ?? '').trim().isEmpty ? null : _color!.trim(),
         vehicleType: _vehicleType,
       );
       await ref.read(vehicleListControllerProvider.notifier).create(vehicle);
@@ -84,6 +78,9 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+    final catalog =
+        ref.watch(carCatalogProvider).valueOrNull ?? CarCatalog.empty;
     final types = {
       'sedan': l10n.sedan,
       'suv': l10n.suv,
@@ -157,14 +154,13 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
                   const SizedBox(width: AppSpacing.md),
                   Expanded(
                     flex: 2,
-                    child: DropdownButtonFormField<String>(
+                    child: ChoiceField(
+                      label: l10n.plateGovernorate,
                       value: _governorate,
-                      isExpanded: true,
-                      decoration:
-                          InputDecoration(labelText: l10n.plateGovernorate),
-                      items: [
+                      allowOther: false,
+                      options: [
                         for (final g in iraqGovernorates)
-                          DropdownMenuItem(value: g, child: Text(g)),
+                          ChoiceOption(value: g, label: g),
                       ],
                       onChanged: (v) => setState(() => _governorate = v),
                     ),
@@ -223,30 +219,40 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
               const SizedBox(height: AppSpacing.xl),
               Text(l10n.vehicleFormMore, style: sectionStyle),
               const SizedBox(height: AppSpacing.md),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: _makeController,
-                      textInputAction: TextInputAction.next,
-                      decoration: InputDecoration(labelText: l10n.make),
-                    ),
-                  ),
-                  const SizedBox(width: AppSpacing.md),
-                  Expanded(
-                    child: TextFormField(
-                      controller: _modelController,
-                      textInputAction: TextInputAction.next,
-                      decoration: InputDecoration(labelText: l10n.model),
-                    ),
-                  ),
+              ChoiceField(
+                label: l10n.make,
+                value: _make,
+                searchable: true,
+                options: [
+                  for (final m in catalog.makes)
+                    ChoiceOption(
+                        value: m.label(isArabic), label: m.label(isArabic)),
                 ],
+                onChanged: (v) => setState(() {
+                  // A different make has different models.
+                  if (v != _make) _model = null;
+                  _make = v;
+                }),
               ),
               const SizedBox(height: AppSpacing.md),
-              TextFormField(
-                controller: _colorController,
-                textInputAction: TextInputAction.done,
-                decoration: InputDecoration(labelText: l10n.color),
+              ChoiceField(
+                label: l10n.model,
+                hint: l10n.modelHint,
+                value: _model,
+                searchable: true,
+                options: [
+                  for (final name
+                      in (catalog.find(_make)?.models ?? const <String>[]))
+                    ChoiceOption(value: name, label: name),
+                ],
+                onChanged: (v) => setState(() => _model = v),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              ChoiceField(
+                label: l10n.color,
+                value: _color,
+                options: vehicleColorOptions(arabic: isArabic),
+                onChanged: (v) => setState(() => _color = v),
               ),
               const SizedBox(height: AppSpacing.xxl),
               AppButton(

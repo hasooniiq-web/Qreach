@@ -425,5 +425,11 @@
     "payOpenFailed": "Could not open the payment page.",
     "payTestNotice": "This was a test payment. Nothing real was charged.",
     "paySubscribeButton": "Subscribe to this plan",
-    "tagTypeCode": "QR + NFC tag"
+    "tagTypeCode": "QR + NFC tag",
+    "pickerSearch": "Search",
+    "pickerOther": "Other (type it)",
+    "pickerOtherHint": "Type it here",
+    "pickerChoose": "Choose",
+    "pickerNoResults": "No matches",
+    "modelHint": "e.g. Corolla, Sonata"
 }

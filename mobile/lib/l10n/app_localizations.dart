@@ -473,7 +473,7 @@ abstract class AppLocalizations {
   /// No description provided for @model.
   ///
   /// In ar, this message translates to:
-  /// **'الطراز'**
+  /// **'الموديل'**
   String get model;
 
   /// No description provided for @year.
@@ -2131,6 +2131,42 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'رمز QR + NFC'**
   String get tagTypeCode;
+
+  /// No description provided for @pickerSearch.
+  ///
+  /// In ar, this message translates to:
+  /// **'بحث'**
+  String get pickerSearch;
+
+  /// No description provided for @pickerOther.
+  ///
+  /// In ar, this message translates to:
+  /// **'أخرى (اكتبها)'**
+  String get pickerOther;
+
+  /// No description provided for @pickerOtherHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'اكتبها هنا'**
+  String get pickerOtherHint;
+
+  /// No description provided for @pickerChoose.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر'**
+  String get pickerChoose;
+
+  /// No description provided for @pickerNoResults.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد نتائج'**
+  String get pickerNoResults;
+
+  /// No description provided for @modelHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'مثل: كورولا، سوناتا'**
+  String get modelHint;
 }
 
 class _AppLocalizationsDelegate

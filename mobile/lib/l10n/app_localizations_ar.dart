@@ -207,7 +207,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get make => 'الشركة المصنعة';
 
   @override
-  String get model => 'الطراز';
+  String get model => 'الموديل';
 
   @override
   String get year => 'سنة الصنع';
@@ -1088,4 +1088,22 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get tagTypeCode => 'رمز QR + NFC';
+
+  @override
+  String get pickerSearch => 'بحث';
+
+  @override
+  String get pickerOther => 'أخرى (اكتبها)';
+
+  @override
+  String get pickerOtherHint => 'اكتبها هنا';
+
+  @override
+  String get pickerChoose => 'اختر';
+
+  @override
+  String get pickerNoResults => 'لا توجد نتائج';
+
+  @override
+  String get modelHint => 'مثل: كورولا، سوناتا';
 }

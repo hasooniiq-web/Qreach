@@ -1098,4 +1098,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tagTypeCode => 'QR + NFC tag';
+
+  @override
+  String get pickerSearch => 'Search';
+
+  @override
+  String get pickerOther => 'Other (type it)';
+
+  @override
+  String get pickerOtherHint => 'Type it here';
+
+  @override
+  String get pickerChoose => 'Choose';
+
+  @override
+  String get pickerNoResults => 'No matches';
+
+  @override
+  String get modelHint => 'e.g. Corolla, Sonata';
 }
