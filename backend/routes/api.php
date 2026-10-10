@@ -50,6 +50,8 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::get('tags/{token}', [TagController::class, 'show'])->name('tags.show');
 
         Route::put('devices/push-token', [DeviceController::class, 'updatePushToken'])->name('devices.push-token');
+        Route::post('devices/push-diagnostic', [DeviceController::class, 'pushDiagnostic'])
+            ->middleware('throttle:20,1')->name('devices.push-diagnostic');
 
         Route::get('contact-requests', [ContactRequestController::class, 'index'])->name('contact-requests.index');
         Route::get('contact-requests/{uuid}', [ContactRequestController::class, 'show'])->name('contact-requests.show');

@@ -6,6 +6,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\UpdatePushTokenRequest;
 use App\Models\Device;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 /**
  * Push-notification device registration (section 15). A device row is
@@ -34,5 +36,25 @@ class DeviceController extends Controller
         );
 
         return response()->json(['message' => 'تم تسجيل الجهاز للإشعارات.']);
+    }
+
+    /**
+     * Why a phone could not obtain a push token (e.g. no APNs token from Apple).
+     * The app reports it; it is only logged — nothing is stored or acted on — so
+     * a failing iPhone can be diagnosed from the server without a debugger.
+     */
+    public function pushDiagnostic(Request $request): JsonResponse
+    {
+        $data = $request->validate([
+            'platform' => ['required', 'in:ios,android'],
+            'reason' => ['required', 'string', 'max:80'],
+            'permission' => ['nullable', 'string', 'max:40'],
+            'has_apns_token' => ['nullable', 'boolean'],
+            'detail' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        Log::warning('push diagnostic', ['user_id' => $request->user()->id] + $data);
+
+        return response()->json(['ok' => true]);
     }
 }

@@ -73,10 +73,15 @@ class PushNotificationService {
     // A new login (possibly another account) must register the token again.
     _sentToken = null;
 
+    String? permission;
     try {
       final messaging = FirebaseMessaging.instance;
       final settings = await messaging.requestPermission();
-      if (settings.authorizationStatus == AuthorizationStatus.denied) return;
+      permission = settings.authorizationStatus.name;
+      if (settings.authorizationStatus == AuthorizationStatus.denied) {
+        _report('permission_denied', permission: permission);
+        return;
+      }
 
       // FCM tokens rotate (app reinstall, data clear, or periodic refresh).
       // Subscribed *before* anything that can return early: on iOS the first
@@ -105,6 +110,8 @@ class PushNotificationService {
           // arrives later.
           debugPrint(
               'APNs token unavailable — check the Push Notifications capability and provisioning profile.');
+          _report('apns_token_null',
+              permission: permission, hasApnsToken: false);
           return;
         }
       }
@@ -112,11 +119,31 @@ class PushNotificationService {
       final token = await messaging.getToken();
       if (token != null) {
         await _sendTokenToBackend(token);
+      } else {
+        _report('fcm_token_null', permission: permission, hasApnsToken: true);
       }
     } catch (e) {
       // Push is optional; never let it break login or app start.
       debugPrint('Push registration failed: $e');
+      _report('exception', permission: permission, detail: e.toString());
     }
+  }
+
+  /// Tells the backend why this phone has no push token, so a failing iPhone can
+  /// be diagnosed from the server log. Best-effort and silent: it never throws.
+  Future<void> _report(String reason,
+      {String? permission, bool? hasApnsToken, String? detail}) async {
+    try {
+      await _client.dio.post('/devices/push-diagnostic', data: {
+        'platform':
+            defaultTargetPlatform == TargetPlatform.iOS ? 'ios' : 'android',
+        'reason': reason,
+        if (permission != null) 'permission': permission,
+        if (hasApnsToken != null) 'has_apns_token': hasApnsToken,
+        if (detail != null)
+          'detail': detail.length > 450 ? detail.substring(0, 450) : detail,
+      });
+    } catch (_) {}
   }
 
   Future<void> _sendTokenToBackend(String token) async {
