@@ -49,7 +49,7 @@
   /* ---------- Headings ---------- */
   h2.part { display: flex; align-items: center; gap: 4mm; margin: 0 0 6mm; font-size: 21pt; font-weight: 800; }
   h2.part .num { background: var(--black); color: var(--yellow); width: 13mm; height: 13mm; border-radius: 3.5mm; display: inline-flex; align-items: center; justify-content: center; font-size: 15pt; }
-  h3 { margin: 8mm 0 3mm; font-size: 13pt; font-weight: 700; padding-inline-start: 3.5mm; border-inline-start: 1.6mm solid var(--yellow); line-height: 1.3; }
+  h3 { break-after: avoid; margin: 8mm 0 3mm; font-size: 13pt; font-weight: 700; padding-inline-start: 3.5mm; border-inline-start: 1.6mm solid var(--yellow); line-height: 1.3; }
   p.lead { color: var(--ink-700); margin: 0 0 5mm; }
   .page-break { break-before: page; }
 
@@ -99,7 +99,7 @@
     <div class="logo"><img src="file:///D:/Qreach/mobile/assets/images/logo_full.png" alt="QReach"></div>
     <div class="kicker">QReach SmartTag</div>
     <h1>تقرير العمل<br><span>الكامل لليوم</span></h1>
-    <div class="sub">ما أُنجز وما لم يُنجز: لوحة التحكم والخادم أولًا، ثم تطبيق الجوال، مع قائمة الإجراءات المطلوبة منك.</div>
+    <div class="sub">ما أُنجز وما لم يُنجز: لوحة التحكم والخادم أولًا، ثم تطبيق الجوال.</div>
     <div class="meta">
       <div>التاريخ<b>10 أكتوبر 2026</b></div>
       <div>الخادم<b><span class="ltr">77.42.10.126</span></b></div>
@@ -110,20 +110,19 @@
 
 <!-- ================= SUMMARY ================= -->
 <h2 class="part"><span class="num">·</span>الملخص التنفيذي</h2>
-<p class="lead">أُنجزت جولة كبيرة شملت لوحة التحكم والخادم وتطبيق الجوال. كل تعديلات الباك اند منشورة على الخادم ومرفوعة إلى GitHub، وما بقي مفتوحًا يتطلب أساسًا بيانات أو قرارات خارجية (مزوّد دفع، إعدادات Apple وFirebase، دومين).</p>
+<p class="lead">أُنجزت جولة كبيرة شملت لوحة التحكم والخادم وتطبيق الجوال. كل تعديلات الباك اند منشورة على الخادم ومرفوعة إلى GitHub، والعمل المتبقي في لوحة التحكم هو HTTPS وصفحة الهبوط (Landing Page) فقط؛ أما تطبيق الجوال فلم تُربط فيه لغاية الآن بوابة دفع فعلية.</p>
 
 <div class="kpis">
-  <div class="kpi dark"><div class="v">232</div><div class="l">اختبار ناجح في الباك اند</div></div>
-  <div class="kpi dark"><div class="v">74</div><div class="l">اختبار ناجح في التطبيق</div></div>
+  <div class="kpi dark"><div class="v">243</div><div class="l">اختبار ناجح في الباك اند</div></div>
+  <div class="kpi dark"><div class="v">75</div><div class="l">اختبار ناجح في التطبيق</div></div>
   <div class="kpi"><div class="v">20</div><div class="l">ملاحظة عميل تمت معالجتها</div></div>
-  <div class="kpi"><div class="v">5</div><div class="l">إجراءات مطلوبة منك</div></div>
+  <div class="kpi"><div class="v">2</div><div class="l">بنود متبقية: HTTPS وLanding Page</div></div>
 </div>
 
 <div class="rows">
   <div class="row"><span class="chip done">منشور</span><div><div class="t">لوحة التحكم والخادم</div><div class="d">آخر نسخة على <span class="ltr">http://77.42.10.126</span> بما فيها reCAPTCHA والتحقق بخطوتين الإلزامي.</div></div></div>
   <div class="row"><span class="chip done">مرفوع</span><div><div class="t">GitHub</div><div class="d">المستودعان <span class="ltr">Qreach</span> و<span class="ltr">Qreach-Mobile</span> محدّثان وبمحتوى متطابق للتطبيق.</div></div></div>
   <div class="row"><span class="chip todo">بانتظارك</span><div><div class="t">إشعارات iPhone والدفع الحقيقي</div><div class="d">يتطلبان إعدادات Apple وFirebase وحساب تاجر لدى مزوّد دفع.</div></div></div>
-  <div class="row"><span class="chip warn">تنبيه</span><div><div class="t">البوابة التجريبية للدفع مفعّلة على الخادم</div><div class="d">يستطيع أي عميل "الدفع" بها مجانًا؛ الأفضل تعطيلها فورًا.</div></div></div>
 </div>
 
 <!-- ================= DASHBOARD ================= -->
@@ -133,9 +132,10 @@
 <div class="rows">
   <div class="row"><span class="chip done">تم</span><div><div class="t">إنشاء المسؤول بكلمة مرور تحددها أنت</div><div class="d">حقل كلمة مرور (12 حرفًا على الأقل) وخيار إلزامه بتغييرها عند أول دخول. حذفت من الخادم المسؤولين اللذين أضفتهما.</div></div></div>
   <div class="row"><span class="chip done">تم</span><div><div class="t">التحقق بخطوتين (Google Authenticator) إلزامي</div><div class="d">اكتشفت أنه لا توجد طريقة لتفعيله وأن فيه خطأ في فك التشفير. بنيت شاشة تفعيل (QR ومفتاح يدوي)، ورمز عند كل دخول، وإعادة ضبط من مسؤول آخر عند ضياع الهاتف.</div></div></div>
-  <div class="row"><span class="chip done">تم</span><div><div class="t">reCAPTCHA على دخول المسؤولين</div><div class="d">مربع «أنا لست روبوتًا» (v2) والتحقق من الخادم قبل تجربة أي كلمة مرور، ويفشل بأمان إن تعذّر الوصول إلى Google. المفتاحان الأولان كانا من نوع غير مناسب فعطّلته مؤقتًا حتى وصل مفتاح صحيح.</div></div></div>
+  <div class="row"><span class="chip done">تم</span><div><div class="t">reCAPTCHA على دخول المسؤولين</div><div class="d">مربع «أنا لست روبوتًا» (v2) مفعّل في صفحة الدخول، والخادم يتحقق من التوكن عند Google قبل تجربة أي كلمة مرور، ويرفض الدخول بأمان إن تعذّر الوصول إلى Google.</div></div></div>
   <div class="row"><span class="chip done">تم</span><div><div class="t">جلسة واحدة لكل حساب عميل</div><div class="d">الدخول من جهاز جديد يُلغي الجلسة القديمة من الخادم بقفل على الصف، والجهاز القديم يتلقى <span class="ltr">SESSION_REPLACED</span>. عمر التوكن 90 يومًا.</div></div></div>
   <div class="row"><span class="chip done">تم</span><div><div class="t">حذف المحادثات بعد 7 أيام</div><div class="d">من وقت آخر رسالة بحسب ساعة الخادم، كل ساعة، مع حذف الصور والنسخ المخزنة وتنظيف الصور اليتيمة. الحذف نهائي.</div></div></div>
+  <div class="row"><span class="chip done">تم</span><div><div class="t">توحيد QR وNFC في رمز واحد</div><div class="d">كل رمز جديد يحمل ملصق QR وسجل شريحة NFC بالرابط نفسه (سيريال <span class="ltr">ST-C-…</span>). صفحة «دفعة جديدة» تنشئ رموزًا موحّدة فقط، والطباعة والتصدير والتصفية تدعمها. الرموز القديمة تبقى تعمل.</div></div></div>
 </div>
 
 <h3>الدفع الإلكتروني (بنية كاملة)</h3>
@@ -150,11 +150,12 @@
 <div class="rows">
   <div class="row"><span class="chip done">تم</span><div><div class="t">رموز QR (النقاط 1 و2 و5 و14)</div><div class="d">26 حرفًا بترميز Crockford Base32 من مولّد آمن (<span class="ltr">random_bytes</span>)، تبدأ بحرف أو رقم، فلا يظهر <span class="ltr">#NAME?</span> في Excel. مستوى تصحيح الأخطاء Q. الرموز القديمة (43 حرفًا) تبقى صالحة.</div></div></div>
   <div class="row"><span class="chip done">تم</span><div><div class="t">حد الدفعة (النقطة 10)</div><div class="d">أُزيل رسم صور QR أثناء الإنشاء (لا تُقرأ في أي مكان) وصار الإدخال بالجملة: 3000 رمز في نحو نصف ثانية. السقف 20,000.</div></div></div>
+    <div class="row"><span class="chip done">تم</span><div><div class="t">تحقق فوري من حقول الأرقام</div><div class="d">أثناء الكتابة، إذا تجاوزت الكمية الحد (أو نزلت عن الأدنى) يحمرّ المربع وتظهر رسالة بلغة الصفحة (عربي / English) ويُمنع الإرسال. ينطبق على كمية الدفعة وحد الدفعة في الإعدادات، والخادم يرفض أيضًا برسالة عربية مقروءة.</div></div></div>
   <div class="row"><span class="chip done">تم</span><div><div class="t">البحث (النقطة 19)</div><div class="d">وُجد خللان: حساسية الأحرف في PostgreSQL، وصيغة الهاتف <span class="ltr">+964</span> مقابل <span class="ltr">0770</span>. صار يفهم الصيغ والأرقام العربية ويبحث بالرمز العام.</div></div></div>
   <div class="row"><span class="chip done">تم</span><div><div class="t">توقيت العراق (النقطة 20)</div><div class="d">العرض بتوقيت <span class="ltr">Asia/Baghdad</span> في كل اللوحة، والتخزين يبقى UTC.</div></div></div>
   <div class="row"><span class="chip done">تم</span><div><div class="t">الواجهة (النقاط 3 و4 و6 و7 و8 و9 و12 و13 و17)</div><div class="d">قائمة التصدير فوق الجدول، الأحداث الأمنية بالعربية مع شرح «تمت المراجعة»، عرض أوسع وخط أكبر، فواصل الأرقام، نص أوضح في الوضع الداكن، سهم القوائم، حذف حالة «مؤرشف» غير المستخدمة، حوار إلغاء الرمز بسبب إلزامي، ومسافة مفتاح الرسم.</div></div></div>
   <div class="row"><span class="chip done">تم</span><div><div class="t">إصلاح تعتيم الصفحة</div><div class="d">لم تعد الصفحة تبقى معتمة بعد إلغاء نافذة التأكيد.</div></div></div>
-  <div class="row"><span class="chip info">شرح</span><div><div class="t">النقاط 11 و15 و18</div><div class="d">11: شريحة NFC تحمل رابط الـ QR نفسه ويمكن طباعة QR بديلًا. 15: HTTP لأن الخادم على IP بلا دومين. 18: صفحة الهبوط تنتظر تحديد المحتوى.</div></div></div>
+    <div class="row"><span class="chip info">شرح</span><div><div class="t">النقاط 11 و15 و18</div><div class="d">11: نُفِّذ التوحيد (رمز واحد = QR + NFC). 15 و18: HTTPS وصفحة الهبوط، انظر «ما لم يتم».</div></div></div>
 </div>
 
 <h3>الخادم</h3>
@@ -164,20 +165,27 @@
 
 <h3>ما لم يتم</h3>
 <div class="rows">
-  <div class="row"><span class="chip todo">لم يتم</span><div><div class="t">الدفع بمزوّد حقيقي</div><div class="d">لا مزوّد مربوط (زين كاش / FIB / كي كارد). المطلوب حساب تاجر ووثائقه، وHTTPS.</div></div></div>
-  <div class="row"><span class="chip todo">لم يتم</span><div><div class="t">HTTPS والدومين</div><div class="d">أوقفتَ الموضوع؛ الخادم ما زال على HTTP.</div></div></div>
-  <div class="row"><span class="chip todo">لم يتم</span><div><div class="t">صفحة الهبوط (Landing Page)</div><div class="d">لم تُنشأ بعد.</div></div></div>
-  <div class="row"><span class="chip todo">لم يتم</span><div><div class="t">توحيد QR وNFC في نوع رمز واحد</div><div class="d">تغيير في نموذج البيانات يحتاج قرارك.</div></div></div>
-  <div class="row"><span class="chip todo">لم يتم</span><div><div class="t">وضع QR الأبجدي-الرقمي الكثيف</div><div class="d">يتطلب جعل الرابط كله بأحرف كبيرة وقبول المسار <span class="ltr">/T/</span>.</div></div></div>
-  <div class="row"><span class="chip todo">لم يتم</span><div><div class="t">صفحة الطباعة على صفحات</div><div class="d">الدفعات الكبيرة جدًا تُبطئ الصفحة لأنها تحمّل صورة لكل رمز.</div></div></div>
-  <div class="row"><span class="chip todo">لم يتم</span><div><div class="t">ترجمة أسماء إجراءات سجل التدقيق</div><div class="d">مثل <span class="ltr">qr.revoked</span> ما زالت بالإنجليزية.</div></div></div>
-  <div class="row"><span class="chip todo">لم يتم</span><div><div class="t">مراجعة الواجهة بصريًا في المتصفح</div><div class="d">الأسهم والوضع الداكن ومفتاح الرسم لم تُفحص بصريًا؛ تغطيها اختبارات النص فقط.</div></div></div>
+  <div class="row"><span class="chip todo">لم يتم</span><div><div class="t">HTTPS</div><div class="d">الخادم يعمل حاليًا على HTTP لأنه بلا دومين، ولا تصدر شهادة موثوقة لعنوان IP. المطلوب: دومين + Let's Encrypt، وبعدها تتحول الروابط تلقائيًا إلى <span class="ltr">https</span>.</div></div></div>
+  <div class="row"><span class="chip todo">لم يتم</span><div><div class="t">Landing Page</div><div class="d">لم تُنشأ بعد. تُكتب بالإنجليزية (English) وتُنشأ بعد تثبيت الشعار واعتماد المحتوى.</div></div></div>
+</div>
+
+<h3>لماذا الدفعة بعدد محدود وليست بلا حد؟</h3>
+<p class="lead">الحد هو على <b>الدفعة الواحدة</b> فقط (حاليًا قابل للضبط حتى 20,000 رمز من إعدادات النظام)، أما <b>العدد الكلي للرموز فغير محدود</b>: تُنشئ ما تشاء من الدفعات. والأسباب:</p>
+<div class="rows">
+  <div class="row"><span class="chip info">سبب 1</span><div><div class="t">الدفعة تُنشأ في طلب واحد وعملية قاعدة بيانات واحدة</div><div class="d">لضمان أنها تُنشأ كاملة أو لا تُنشأ إطلاقًا (بلا أرقام ناقصة). عدد غير محدود يعرّض الطلب لانتهاء المهلة أو نفاد الذاكرة وتجميد الخادم.</div></div></div>
+  <div class="row"><span class="chip info">سبب 2</span><div><div class="t">حماية من الخطأ في الإدخال</div><div class="d">خطأ بسيط مثل إضافة أصفار (10 ملايين بدل 10 آلاف) قد يملأ قاعدة البيانات ويعطّل النظام قبل أن يلاحظ أحد.</div></div></div>
+  <div class="row"><span class="chip info">سبب 3</span><div><div class="t">الطباعة والتصدير</div><div class="d">صفحة الطباعة تحمّل صورة QR لكل رمز، فالأعداد الضخمة جدًا في صفحة واحدة تبطئ المتصفح. والدفعة في الواقع تقابل دفعة طباعة فعلية (ملصقات تُطلب من المطبعة مرة واحدة).</div></div></div>
+  <div class="row"><span class="chip info">سبب 4</span><div><div class="t">تتبّع أوضح</div><div class="d">لكل دفعة رمز وتاريخ وحالة (أُنشئت ← أُرسلت للطباعة ← جاهزة للربط)، فتقسيم الكميات الكبيرة إلى دفعات أسهل في المتابعة والمراجعة.</div></div></div>
+</div>
+<div class="note y"><b>هل يمكن رفع الحد؟</b>نعم، يُضبط من إعدادات النظام حتى 20,000، ورفعه أكثر تغيير بسيط في الكود، ويُفضَّل معه تقسيم صفحة الطباعة على صفحات.</div>
+
+<h3>ملاحظات فنية للعلم</h3>
+<div class="rows">
+  <div class="row"><span class="chip info">ملاحظة</span><div><div class="t">الرموز القديمة (43 حرفًا)</div><div class="d">تبقى صالحة لأنها مطبوعة. التي تبدأ منها بـ <span class="ltr">-</span> يظهر <span class="ltr">#NAME?</span> في Excel، ويُنصح بإعادة توليد دفعات الاختبار.</div></div></div>
+  <div class="row"><span class="chip info">ملاحظة</span><div><div class="t">وضع QR الأبجدي-الرقمي الكثيف</div><div class="d">الرمز الجديد بأحرف كبيرة وأرقام، لكن الرابط الكامل فيه أحرف صغيرة. للاستفادة الكاملة يلزم رابط كله بأحرف كبيرة.</div></div></div>
 </div>
 
 <h3>أخطاء وتنبيهات</h3>
-<div class="note"><b>عطل قصير بعد نشر إصلاح التعتيم</b>ظهر خطأ 500 في صفحة الدخول لدقائق بسبب ملكية مجلدات الخادم (خطأ في أمر النشر). أُصلح دون فقد بيانات، وسأضبط الملكية بعد كل نشر.</div>
-<div class="note"><b>ملف غير مقصود في GitHub</b>رفعتُ بالخطأ الملف <span class="ltr">house-tour.html</span> (لا علاقة له بالمشروع) ثم أزلته من التتبع، لكنه باقٍ في تاريخ المستودع.</div>
-<div class="note"><b>البوابة التجريبية للدفع مفعّلة على الخادم</b>لم أفعّلها أنا. يستطيع أي عميل "الدفع" بها مجانًا. يُنصح بتعطيلها من لوحة التحكم ثم بوابات الدفع.</div>
 <div class="note y"><b>التحقق بخطوتين إلزامي الآن</b>سيُطلب منك التفعيل عند أول دخول، فجهّز تطبيق Google Authenticator. الرموز القديمة التي تبدأ بـ <span class="ltr">-</span> ما زالت تظهر <span class="ltr">#NAME?</span> في Excel، فيُنصح بإعادة توليد دفعات الاختبار.</div>
 
 <!-- ================= APP ================= -->
@@ -191,33 +199,22 @@
   <div class="row"><span class="chip done">تم</span><div><div class="t">صور في المحادثة</div><div class="d">إرفاق صورة بالكاميرا أو المعرض مع معاينة وإزالة، وتحقق من النوع والحجم (حتى 8 ميغابايت) في التطبيق والخادم.</div></div></div>
   <div class="row"><span class="chip done">تم</span><div><div class="t">الدفع داخل التطبيق</div><div class="d">اشتراك ثم مراجعة السعر والمزايا واختيار وسيلة الدفع وفتح صفحة الدفع، فشاشة تنتظر تأكيد الخادم وتعرض الإيصال أو الفشل. حلّت محل طلب الترقية القديم.</div></div></div>
   <div class="row"><span class="chip done">تم</span><div><div class="t">الجلسة الواحدة</div><div class="d">الجهاز القديم يخرج تلقائيًا برسالة توضح السبب، بعد أن كان التطبيق لا يتفاعل مع انتهاء الجلسة أصلًا.</div></div></div>
+    <div class="row"><span class="chip done">تم</span><div><div class="t">عرض الرمز الموحّد</div><div class="d">شاشة المركبة تعرض «رمز QR + NFC» بأيقونة مناسبة.</div></div></div>
   <div class="row"><span class="chip done">تم</span><div><div class="t">NFC على iPhone</div><div class="d">تفعيل القراءة، وإصلاح صلاحية Apple (<span class="ltr">TAG</span> فقط) بعد رفض الرفع بسبب <span class="ltr">NDEF</span>.</div></div></div>
   <div class="row"><span class="chip done">تم</span><div><div class="t">تحسينات الإشعارات في الكود</div><div class="d">عرضها والتطبيق مفتوح على iOS، فتح المحادثة عند الضغط، انتظار أطول لتوكن Apple، وبيانات APNs صريحة من الخادم.</div></div></div>
-  <div class="row"><span class="chip done">تم</span><div><div class="t">البناء والرفع</div><div class="d">سكربت Xcode Cloud (<span class="ltr">ci_post_clone.sh</span>) لحل خطأ الحزم، ومستوى QR صار Q، والإصدار <span class="ltr">0.1.0+13</span>. 74 اختبارًا ناجحًا وبناء APK تجريبي ناجح.</div></div></div>
+  <div class="row"><span class="chip done">تم</span><div><div class="t">البناء والرفع</div><div class="d">سكربت Xcode Cloud (<span class="ltr">ci_post_clone.sh</span>) لحل خطأ الحزم، ومستوى QR صار Q، والإصدار <span class="ltr">0.1.0+13</span>. 75 اختبارًا ناجحًا وبناء APK تجريبي ناجح.</div></div></div>
 </div>
 
 <h3>ما لم يتم</h3>
 <div class="rows">
-  <div class="row"><span class="chip warn">لا يعمل</span><div><div class="t">إشعارات iPhone</div><div class="d">التوكن ما زال فارغًا على الخادم، أي أن الآيفون لم يحصل على توكن من Apple. الخادم وFirebase سليمان. الحل في إعدادات Apple وFirebase (انظر القائمة التالية).</div></div></div>
-  <div class="row"><span class="chip todo">لم يتم</span><div><div class="t">Dynamic Island / Live Activity</div><div class="d">لم أنفّذه عمدًا: أحداث QReach لحظية فرادى وتعرض محتوى على شاشة القفل. أنفّذه إن حدّدت ما يظهر في الجزيرة.</div></div></div>
-  <div class="row"><span class="chip todo">لم يتم</span><div><div class="t">سجل المدفوعات داخل التطبيق</div><div class="d">الإيصال يظهر بعد الدفع فقط.</div></div></div>
-  <div class="row"><span class="chip todo">لم يتم</span><div><div class="t">الدفع الفعلي من التطبيق</div><div class="d">لا يعمل إلى أن يُربط مزوّد حقيقي وتُفعَّل وسيلة دفع.</div></div></div>
-  <div class="row"><span class="chip todo">لم يتم</span><div><div class="t">اختبار على أجهزة حقيقية</div><div class="d">لم أجرّب NFC وصور المحادثة والدفع على iPhone.</div></div></div>
-  <div class="row"><span class="chip todo">لم يتم</span><div><div class="t">نسخة جديدة على TestFlight</div><div class="d">تحتاج منك بعد تفعيل الصلاحيات وسحب آخر نسخة من <span class="ltr">Qreach-Mobile</span>.</div></div></div>
+  <div class="row"><span class="chip todo">لم يتم</span><div><div class="t">ربط بوابة دفع فعلية</div><div class="d">لم تُربط لغاية الآن بوابة دفع فعلية. شاشة الدفع والإيصال جاهزة وتعمل مع البوابة التجريبية فقط، وستعمل مع أي مزوّد حقيقي فور ربطه من الخادم دون تغيير في التطبيق.</div></div></div>
 </div>
 
-<!-- ================= ACTIONS ================= -->
-<h2 class="part page-break"><span class="num">3</span>المطلوب منك بالترتيب</h2>
-<ol class="steps">
-  <li><div><b>عطّل البوابة التجريبية على الخادم</b><span>لوحة التحكم ثم بوابات الدفع ثم إلغاء التفعيل، أو أطلب مني.</span></div></li>
-  <li><div><b>جهّز Google Authenticator</b><span>ثبّته على هاتفك قبل أول دخول، وسيظهر لك رمز QR لإضافة الحساب. الدخول من <span class="ltr">http://77.42.10.126/admin/login</span>.</span></div></li>
-  <li><div><b>فعّل Push على <span class="ltr">com.qreach</span> في Apple</b><span>developer.apple.com ثم Identifiers ثم <span class="ltr">com.qreach</span> ثم Push Notifications.</span></div></li>
-  <li><div><b>ارفع مفتاح APNs إلى Firebase</b><span>مشروع <span class="ltr">qreach-3d577</span> ثم Cloud Messaging ثم APNs Authentication Key، مع Key ID <span class="ltr">8L7BXY44V2</span> وTeam ID.</span></div></li>
-  <li><div><b>اسحب آخر نسخة وابنِ وارفع إلى TestFlight</b><span><span class="ltr">git pull</span> ثم <span class="ltr">flutter pub get</span> ثم <span class="ltr">pod install</span>، وافتح <span class="ltr">Runner.xcworkspace</span> وأرشِف وارفع. ثبّت على iPhone حقيقي وسجّل الدخول وأخبرني لأفحص الخادم.</span></div></li>
-  <li><div><b>غيّر كلمة مرور root للخادم</b><span>لأنها أُرسلت في المحادثة.</span></div></li>
-  <li><div><b>احذف ملف مفتاح APNs <span class="ltr">.p8</span> من مجلد التحميلات المؤقت</b><span>بعد رفعه إلى Firebase، وبدّله إن شككت في تسريبه.</span></div></li>
-  <li><div><b>قرارات تنتظرها</b><span>اختيار مزوّد دفع حقيقي، دومين لـ HTTPS، محتوى صفحة الهبوط، وهل يُوحَّد QR وNFC في نوع واحد، وما يظهر في Dynamic Island.</span></div></li>
-</ol>
+<h3>ملاحظات فنية للعلم</h3>
+<div class="rows">
+  <div class="row"><span class="chip info">ملاحظة</span><div><div class="t">Dynamic Island / Live Activity</div><div class="d">لم يُنفَّذ بقرار فني (وُثّق في التقرير): أحداث QReach لحظية فرادى وتعرض محتوى على شاشة القفل.</div></div></div>
+  <div class="row"><span class="chip info">ملاحظة</span><div><div class="t">إشعارات iPhone</div><div class="d">الخادم وFirebase جاهزان؛ تبقى إعدادات Apple (Push على <span class="ltr">com.qreach</span>) ومفتاح APNs في Firebase، ثم بناء جديد على جهاز حقيقي.</div></div></div>
+</div>
 
 <div class="footer-note">المراجع التفصيلية في المستودع: <span class="ltr">docs/RELEASE_2026_10_IMPLEMENTATION.md</span> و<span class="ltr">docs/CLIENT_FEEDBACK_REPORT_2026-10.md</span>.</div>
 
