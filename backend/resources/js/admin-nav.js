@@ -123,7 +123,18 @@ document.addEventListener('click', (e) => {
 });
 
 document.addEventListener('submit', (e) => {
-    if (!e.defaultPrevented) startProgress();
+    // Decided after every other submit listener has run: the confirmation dialog
+    // (admin-ui.js) cancels the submit, and a page that is not really navigating
+    // must not be left dimmed.
+    setTimeout(() => {
+        if (!e.defaultPrevented) startProgress();
+    }, 0);
+});
+
+// Belt and braces: whenever a confirmation dialog closes, the page is interactive again.
+document.getElementById('confirm-dialog')?.addEventListener('close', () => {
+    bar?.removeAttribute('data-active');
+    document.body.removeAttribute('data-navigating');
 });
 
 // Coming back through the back/forward cache must not leave the bar running.
