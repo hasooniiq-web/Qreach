@@ -38,6 +38,13 @@ return [
     // TEMPORARY: show the latest OTP per phone in the dashboard (dev only, never in production).
     'dev_otp_inbox' => (bool) env('DEV_OTP_INBOX', false),
 
+    // Google reCAPTCHA v2 ("I'm not a robot") on the admin login. Both keys come from
+    // https://www.google.com/recaptcha/admin; with either missing the check is simply off.
+    'recaptcha' => [
+        'site_key' => env('RECAPTCHA_SITE_KEY'),
+        'secret_key' => env('RECAPTCHA_SECRET_KEY'),
+    ],
+
     'firebase' => [
         // Service-account key (NOT google-services.json). See App\Services\FcmSender.
         'credentials' => env('FIREBASE_CREDENTIALS'),

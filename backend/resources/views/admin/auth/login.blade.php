@@ -22,6 +22,13 @@
             تذكرني على هذا الجهاز
         </label>
 
+        @php $recaptcha = app(\App\Services\Recaptcha::class); @endphp
+        @if ($recaptcha->enabled())
+            {{-- Google reCAPTCHA v2 checkbox. Loaded from google.com (allowed for this page only by the CSP). --}}
+            <div class="g-recaptcha" data-sitekey="{{ $recaptcha->siteKey() }}" data-theme="light"></div>
+            <script src="https://www.google.com/recaptcha/api.js?hl=ar" async defer></script>
+        @endif
+
         <button type="submit" class="btn-primary !h-10 w-full">دخول</button>
     </form>
 </x-layouts.guest>

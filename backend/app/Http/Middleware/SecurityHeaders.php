@@ -36,10 +36,15 @@ class SecurityHeaders
         }
 
         if (! $response->headers->has('Content-Security-Policy')) {
+            // Google's widget needs its own script, frame and image hosts — granted only on the admin login page.
+            $captcha = $request->is('admin/login') && app(\App\Services\Recaptcha::class)->enabled();
+
             $response->headers->set(
                 'Content-Security-Policy',
-                "default-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; ".
-                "font-src 'self' https://fonts.gstatic.com; script-src 'self'; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
+                "default-src 'self'; img-src 'self' data:".($captcha ? ' https://www.gstatic.com https://www.google.com' : '')."; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com".($captcha ? ' https://www.gstatic.com' : '').'; '.
+                "font-src 'self' https://fonts.gstatic.com; script-src 'self'".($captcha ? ' https://www.google.com/recaptcha/ https://www.gstatic.com/recaptcha/' : '').'; '.
+                ($captcha ? 'frame-src https://www.google.com/recaptcha/ https://recaptcha.google.com/recaptcha/; ' : '').
+                "frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
             );
         }
 

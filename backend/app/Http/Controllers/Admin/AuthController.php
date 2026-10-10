@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Services\AuditLogger;
+use App\Services\Recaptcha;
 use App\Services\SecurityEventLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -30,6 +31,14 @@ class AuthController extends Controller
             'email' => ['required', 'email'],
             'password' => ['required', 'string'],
         ]);
+
+        // Before any password is tried, so a bot is stopped without touching an account's failed-attempt counter.
+        $recaptcha = app(Recaptcha::class);
+        if (! $recaptcha->verify($request->input('g-recaptcha-response'), $request->ip())) {
+            SecurityEventLogger::log(SecurityEventLogger::AUTH_FAILURE, 'info', 'admin', null, ['stage' => 'recaptcha'], $request);
+
+            throw ValidationException::withMessages(['email' => 'أكّد أنك لست روبوتًا (reCAPTCHA) ثم حاول مرة أخرى.']);
+        }
 
         $admin = Admin::where('email', $request->string('email'))->first();
 
