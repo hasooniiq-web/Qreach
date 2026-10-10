@@ -1116,4 +1116,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get modelHint => 'e.g. Corolla, Sonata';
+
+  @override
+  String get copyLink => 'Copy link';
+
+  @override
+  String get linkCopied => 'Link copied';
 }

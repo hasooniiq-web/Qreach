@@ -431,5 +431,7 @@
     "pickerOtherHint": "Type it here",
     "pickerChoose": "Choose",
     "pickerNoResults": "No matches",
-    "modelHint": "e.g. Corolla, Sonata"
+    "modelHint": "e.g. Corolla, Sonata",
+    "copyLink": "Copy link",
+    "linkCopied": "Link copied"
 }

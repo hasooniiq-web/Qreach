@@ -1106,4 +1106,10 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get modelHint => 'مثل: كورولا، سوناتا';
+
+  @override
+  String get copyLink => 'نسخ الرابط';
+
+  @override
+  String get linkCopied => 'تم نسخ الرابط';
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_sheet.dart';
@@ -174,13 +175,19 @@ class _CodeSectionState extends ConsumerState<_CodeSection> {
                 ),
               ),
               const SizedBox(height: AppSpacing.lg),
-              Text(l10n.codeLinkLabel,
-                  style: TextStyle(color: AppColors.ink500, fontSize: 12)),
-              const SizedBox(height: 4),
-              SelectableText(tag.publicUrl,
-                  textDirection: TextDirection.ltr,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontSize: 12)),
+              // The raw address is not shown (it is just a long code to the owner);
+              // it can still be copied and shared.
+              AppButton(
+                label: l10n.copyLink,
+                icon: Icons.copy_rounded,
+                style: AppButtonStyle.secondary,
+                onPressed: () async {
+                  final messenger = ScaffoldMessenger.of(context);
+                  await Clipboard.setData(ClipboardData(text: tag.publicUrl));
+                  messenger
+                      .showSnackBar(SnackBar(content: Text(l10n.linkCopied)));
+                },
+              ),
             ],
           ),
         ),
@@ -304,54 +311,67 @@ class _VehicleHero extends StatelessWidget {
       if (vehicle.color != null) vehicle.color!,
     ];
 
+    final statusColor =
+        isProtected ? const Color(0xFF4CD264) : const Color(0xFFFF6B5E);
+
+    // Compact and calmer than before: a soft gradient, one status pill, the name,
+    // the plate beside a small car, and a single line of small detail chips.
     return Container(
-      padding: const EdgeInsets.all(AppSpacing.xl),
+      padding: const EdgeInsets.fromLTRB(
+          AppSpacing.lg, AppSpacing.lg, AppSpacing.lg, AppSpacing.lg),
       decoration: BoxDecoration(
-        color: AppColors.brandBlack,
+        gradient: const LinearGradient(
+          begin: AlignmentDirectional.topEnd,
+          end: AlignmentDirectional.bottomStart,
+          colors: [Color(0xFF26262B), AppColors.brandBlack],
+        ),
         borderRadius: AppRadius.rLg,
+        border: Border.all(color: Colors.white.withValues(alpha: 0.08)),
         boxShadow: AppShadows.raised,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Icon(isProtected ? Icons.link_rounded : Icons.link_off_rounded,
-                  size: 22,
-                  color: isProtected
-                      ? const Color(0xFF4CD264)
-                      : const Color(0xFFFF6B5E)),
-              const SizedBox(width: AppSpacing.sm),
-              Text(
-                isProtected
-                    ? l10n.vehicleProtected
-                    : l10n.vehicleNotProtectedYet,
-                style: TextStyle(
-                    color: isProtected
-                        ? const Color(0xFF4CD264)
-                        : const Color(0xFFFF6B5E),
-                    fontWeight: FontWeight.w700),
-              ),
-            ],
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+            decoration: BoxDecoration(
+              color: statusColor.withValues(alpha: 0.14),
+              borderRadius: BorderRadius.circular(999),
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(
+                    isProtected
+                        ? Icons.verified_user_rounded
+                        : Icons.link_off_rounded,
+                    size: 14,
+                    color: statusColor),
+                const SizedBox(width: 5),
+                Text(
+                  isProtected
+                      ? l10n.vehicleProtected
+                      : l10n.vehicleNotProtectedYet,
+                  style: TextStyle(
+                      color: statusColor,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w700),
+                ),
+              ],
+            ),
           ),
-          const SizedBox(height: AppSpacing.lg),
+          const SizedBox(height: AppSpacing.md),
           Text(vehicle.displayName,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: const TextStyle(
                   color: AppColors.brandWhite,
-                  fontSize: 26,
+                  fontSize: 21,
                   fontWeight: FontWeight.w800)),
           const SizedBox(height: AppSpacing.md),
           Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              VehicleThumb(
-                kind: thumbKindFor(
-                    vehicleType: vehicle.vehicleType,
-                    plateType: vehicle.plateType),
-                color: Colors.white.withValues(alpha: 0.9),
-                cutout: AppColors.brandBlack,
-                width: 84,
-              ),
-              const Spacer(),
               Hero(
                 tag: 'plate-${vehicle.id}',
                 child: IraqiPlate(
@@ -359,30 +379,41 @@ class _VehicleHero extends StatelessWidget {
                   letter: vehicle.plateLetter,
                   governorate: vehicle.plateGovernorate,
                   type: PlateType.fromCode(vehicle.plateType),
-                  width: 190,
+                  width: 168,
                 ),
+              ),
+              const Spacer(),
+              VehicleThumb(
+                kind: thumbKindFor(
+                    vehicleType: vehicle.vehicleType,
+                    plateType: vehicle.plateType),
+                color: Colors.white.withValues(alpha: 0.85),
+                cutout: AppColors.brandBlack,
+                width: 64,
               ),
             ],
           ),
-          const SizedBox(height: AppSpacing.lg),
-          Wrap(
-            spacing: AppSpacing.sm,
-            runSpacing: AppSpacing.sm,
-            children: [
-              for (final fact in facts)
-                Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 12, vertical: 5),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withValues(alpha: 0.12),
-                    borderRadius: BorderRadius.circular(999),
+          if (facts.isNotEmpty) ...[
+            const SizedBox(height: AppSpacing.md),
+            Wrap(
+              spacing: 6,
+              runSpacing: 6,
+              children: [
+                for (final fact in facts)
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withValues(alpha: 0.10),
+                      borderRadius: BorderRadius.circular(999),
+                    ),
+                    child: Text(fact,
+                        style: const TextStyle(
+                            color: AppColors.brandWhite, fontSize: 11)),
                   ),
-                  child: Text(fact,
-                      style: const TextStyle(
-                          color: AppColors.brandWhite, fontSize: 12)),
-                ),
-            ],
-          ),
+              ],
+            ),
+          ],
         ],
       ),
     );

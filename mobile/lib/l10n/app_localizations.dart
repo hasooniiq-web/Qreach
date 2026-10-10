@@ -2167,6 +2167,18 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'مثل: كورولا، سوناتا'**
   String get modelHint;
+
+  /// No description provided for @copyLink.
+  ///
+  /// In ar, this message translates to:
+  /// **'نسخ الرابط'**
+  String get copyLink;
+
+  /// No description provided for @linkCopied.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم نسخ الرابط'**
+  String get linkCopied;
 }
 
 class _AppLocalizationsDelegate

@@ -431,5 +431,7 @@
     "pickerOtherHint": "اكتبها هنا",
     "pickerChoose": "اختر",
     "pickerNoResults": "لا توجد نتائج",
-    "modelHint": "مثل: كورولا، سوناتا"
+    "modelHint": "مثل: كورولا، سوناتا",
+    "copyLink": "نسخ الرابط",
+    "linkCopied": "تم نسخ الرابط"
 }
