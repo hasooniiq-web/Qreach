@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Plain HTTP is allowed for the Qreach server only, until it gets a domain
-     and a TLS certificate; everything else stays HTTPS-only. Remove this
-     (and the iOS NSAppTransportSecurity exception) once HTTPS is in place. -->
+<!-- The server is reached over HTTPS only (https://qreach.online). Plain HTTP is
+     refused for every host. -->
 <network-security-config>
-    <domain-config cleartextTrafficPermitted="true">
-        <domain includeSubdomains="false">77.42.10.126</domain>
-    </domain-config>
+    <base-config cleartextTrafficPermitted="false" />
 </network-security-config>

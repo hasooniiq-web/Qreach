@@ -6,7 +6,7 @@ import 'api_exception.dart';
 /// Base URL is compile-time configurable so a debug build can point at a
 /// local backend without editing source:
 ///   flutter run --dart-define=API_BASE_URL=http://10.0.2.2:8000/api/v1
-const _defaultBaseUrl = 'http://77.42.10.126/api/v1';
+const _defaultBaseUrl = 'https://qreach.online/api/v1';
 const String apiBaseUrl =
     String.fromEnvironment('API_BASE_URL', defaultValue: _defaultBaseUrl);
 

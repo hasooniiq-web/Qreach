@@ -10,17 +10,6 @@
 	<string>Qreach SmartTag</string>
 	<key>NSCameraUsageDescription</key>
 	<string>يحتاج التطبيق إلى الكاميرا لمسح رمز QR الخاص بالمركبة.</string>
-	<key>NSAppTransportSecurity</key>
-	<dict>
-		<key>NSExceptionDomains</key>
-		<dict>
-			<key>77.42.10.126</key>
-			<dict>
-				<key>NSExceptionAllowsInsecureHTTPLoads</key>
-				<true/>
-			</dict>
-		</dict>
-	</dict>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>يحتاج التطبيق إلى الصور لإرفاق صورة في المحادثة أو في ملفك الشخصي.</string>
 	<key>NFCReaderUsageDescription</key>
