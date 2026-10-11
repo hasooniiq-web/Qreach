@@ -14,7 +14,7 @@
         @forelse ($requests as $upgrade)
             <tr class="hover:bg-ink-50">
                 <td class="px-4 py-3">
-                    <a href="{{ route('admin.users.show', $upgrade->user) }}" class="font-medium text-ink-900 hover:underline">{{ $upgrade->user->name ?? 'بدون اسم' }}</a>
+                    <a href="{{ route('admin.users.show', $upgrade->user) }}" class="font-medium text-ink-900 hover:underline">{{ $upgrade->user->display_name }}</a>
                     <p class="text-xs tabular-nums text-ink-400" dir="ltr">{{ $upgrade->user->phone }}</p>
                 </td>
                 <td class="px-4 py-3 text-ink-900">{{ $upgrade->plan->name_ar }}</td>

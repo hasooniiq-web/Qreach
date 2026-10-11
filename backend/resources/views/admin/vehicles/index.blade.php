@@ -10,13 +10,13 @@
         <button type="submit" class="btn-primary">بحث</button>
     </x-filter-bar>
 
-    <x-data-table :headers="['المركبة', 'رقم اللوحة', 'المالك', 'الرموز', 'الحالة', '']">
+    <x-data-table :headers="['المركبة', 'رقم اللوحة', 'المالك', 'الرمز النشط', 'الحالة', '']">
         @forelse ($vehicles as $vehicle)
             <tr class="hover:bg-ink-50">
-                <td class="px-4 py-3 font-medium text-ink-900">{{ $vehicle->nickname ?? '—' }} <span class="font-normal text-ink-400">{{ $vehicle->make }} {{ $vehicle->model }}</span></td>
+                <td class="px-4 py-3 font-medium text-ink-900">{{ $vehicle->nickname ?: '—' }}@if (trim($vehicle->make.' '.$vehicle->model)) <span class="font-normal text-ink-400">({{ trim($vehicle->make.' '.$vehicle->model) }})</span>@endif</td>
                 <td class="px-4 py-3 tabular-nums text-ink-600">{{ $vehicle->plate_number }}</td>
                 <td class="px-4 py-3 tabular-nums text-ink-600" dir="ltr">{{ $vehicle->user->phone }}</td>
-                <td class="px-4 py-3 text-ink-600">{{ $vehicle->tags_count }}</td>
+                <td class="px-4 py-3 text-ink-600">{{ $vehicle->active_tags_count }}@if ($vehicle->ended_tags_count) <span class="text-xs text-ink-400">(+{{ $vehicle->ended_tags_count }} ملغى/مستبدل)</span>@endif</td>
                 <td class="px-4 py-3"><x-status-badge :status="$vehicle->status" /></td>
                 <td class="px-4 py-3 text-end">
                     <a href="{{ route('admin.vehicles.show', $vehicle) }}" class="text-sm font-medium text-ink-900 hover:underline">عرض</a>

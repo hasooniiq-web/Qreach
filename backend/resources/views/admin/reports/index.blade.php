@@ -33,7 +33,7 @@
         @endif
         <button type="submit" class="btn-primary">تطبيق</button>
         @if ($canExport)
-            <a href="{{ route('admin.reports.export', request()->query()) }}" class="btn-secondary ms-auto">تصدير CSV</a>
+            <a href="{{ route('admin.reports.export', request()->query()) }}" data-no-progress class="btn-secondary ms-auto">تصدير CSV</a>
         @endif
     </x-filter-bar>
 

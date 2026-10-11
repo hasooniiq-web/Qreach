@@ -124,7 +124,7 @@
                 <a href="{{ route('admin.users.show', $u) }}" class="flex items-center gap-3 border-b border-ink-100 px-5 py-3 transition-colors last:border-0 hover:bg-ink-50">
                     <span class="flex size-9 shrink-0 items-center justify-center rounded-full bg-ink-100 text-sm font-semibold text-ink-600">{{ mb_substr($u->name ?? '؟', 0, 1) }}</span>
                     <div class="min-w-0 flex-1">
-                        <p class="truncate text-sm font-medium text-ink-900">{{ $u->name ?? 'بدون اسم' }}</p>
+                        <p class="truncate text-sm font-medium text-ink-900">{{ $u->display_name }}</p>
                         <p class="text-xs tabular-nums text-ink-500" dir="ltr">{{ $u->phone }}</p>
                     </div>
                     <span class="text-xs text-ink-400">{{ $u->vehicles_count }} مركبة</span>

@@ -14,6 +14,7 @@ class VehicleModel extends Equatable {
     this.make,
     this.model,
     this.year,
+    this.vin,
     this.color,
     this.vehicleType,
     this.description,
@@ -33,6 +34,7 @@ class VehicleModel extends Equatable {
   final String? make;
   final String? model;
   final int? year;
+  final String? vin;
   final String? color;
   final String? vehicleType;
   final String? description;
@@ -53,6 +55,7 @@ class VehicleModel extends Equatable {
         make: json['make'] as String?,
         model: json['model'] as String?,
         year: json['year'] as int?,
+        vin: json['vin'] as String?,
         color: json['color'] as String?,
         vehicleType: json['vehicle_type'] as String?,
         description: json['description'] as String?,
@@ -74,9 +77,27 @@ class VehicleModel extends Equatable {
         if (make != null) 'make': make,
         if (model != null) 'model': model,
         if (year != null) 'year': year,
+        if (vin != null && vin!.isNotEmpty) 'vin': vin,
         if (color != null) 'color': color,
         if (vehicleType != null) 'vehicle_type': vehicleType,
         if (description != null) 'description': description,
+      };
+
+  /// Edit payload: a field the owner emptied is sent as null so it is cleared
+  /// on the server (create omits empty fields instead).
+  Map<String, dynamic> toUpdateJson() => {
+        'plate_number': plateNumber,
+        'nickname': (nickname ?? '').isEmpty ? null : nickname,
+        'plate_type': plateType,
+        'plate_letter': (plateLetter ?? '').isEmpty ? null : plateLetter,
+        'plate_governorate':
+            (plateGovernorate ?? '').isEmpty ? null : plateGovernorate,
+        'make': make,
+        'model': model,
+        'year': year,
+        'vin': (vin ?? '').isEmpty ? null : vin,
+        'color': color,
+        if (vehicleType != null) 'vehicle_type': vehicleType,
       };
 
   @override
@@ -91,6 +112,7 @@ class VehicleModel extends Equatable {
         make,
         model,
         year,
+        vin,
         color,
         vehicleType,
         description,

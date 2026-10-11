@@ -35,7 +35,7 @@
                 <td class="px-4 py-3"><x-status-badge :status="$tag->status" /></td>
                 <td class="px-4 py-3 text-ink-500">{{ $tag->created_at->copy()->timezone(config('app.display_timezone'))->format('Y-m-d') }}</td>
                 <td class="px-4 py-3 text-end">
-                    @if (!in_array($tag->status, ['revoked', 'replaced']))
+                    @if ($tag->isCancellable())
                         <form method="POST" action="{{ route('admin.tags.revoke', $tag) }}" class="inline"
                               data-confirm-title="إلغاء الرمز {{ $tag->serial_number }}؟"
                               data-confirm="الإلغاء نهائي ولا يمكن التراجع عنه: لن يعمل هذا الرمز بعد الآن."

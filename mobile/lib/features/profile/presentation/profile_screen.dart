@@ -143,9 +143,11 @@ class ProfileScreen extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
     final currentController = TextEditingController();
     final newController = TextEditingController();
+    final repeatController = TextEditingController();
     final formKey = GlobalKey<FormState>();
     var obscureCurrent = true;
     var obscureNew = true;
+    var obscureRepeat = true;
 
     final saved = await showDialog<bool>(
       context: context,
@@ -182,13 +184,13 @@ class ProfileScreen extends ConsumerWidget {
                     validator: (v) =>
                         (v == null || v.isEmpty) ? l10n.requiredField : null,
                   ),
+                if (profile.hasPassword) const SizedBox(height: 14),
                 TextFormField(
                   controller: newController,
                   autofocus: !profile.hasPassword,
                   obscureText: obscureNew,
                   decoration: InputDecoration(
                     labelText: l10n.newPasswordLabel,
-                    hintText: l10n.passwordHint,
                     suffixIcon: IconButton(
                       icon: Icon(obscureNew
                           ? Icons.visibility_outlined
@@ -198,6 +200,24 @@ class ProfileScreen extends ConsumerWidget {
                   ),
                   validator: (v) => (v == null || v.length < 8)
                       ? l10n.passwordTooShort
+                      : null,
+                ),
+                const SizedBox(height: 14),
+                TextFormField(
+                  controller: repeatController,
+                  obscureText: obscureRepeat,
+                  decoration: InputDecoration(
+                    labelText: l10n.repeatPasswordLabel,
+                    suffixIcon: IconButton(
+                      icon: Icon(obscureRepeat
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined),
+                      onPressed: () =>
+                          setState(() => obscureRepeat = !obscureRepeat),
+                    ),
+                  ),
+                  validator: (v) => v != newController.text
+                      ? l10n.passwordsDontMatch
                       : null,
                 ),
               ],
@@ -223,6 +243,7 @@ class ProfileScreen extends ConsumerWidget {
     if (saved != true || !context.mounted) {
       currentController.dispose();
       newController.dispose();
+      repeatController.dispose();
       return;
     }
 
@@ -241,6 +262,7 @@ class ProfileScreen extends ConsumerWidget {
     } finally {
       currentController.dispose();
       newController.dispose();
+      repeatController.dispose();
     }
   }
 
@@ -316,7 +338,8 @@ class ProfileScreen extends ConsumerWidget {
             ),
             for (final entry in {
               'ar': l10n.languageArabic,
-              'en': l10n.languageEnglish
+              'en': l10n.languageEnglish,
+              'ckb': l10n.languageKurdish,
             }.entries)
               ListTile(
                 title: Text(entry.value),

@@ -102,6 +102,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get newPasswordLabel => 'New password';
 
   @override
+  String get repeatPasswordLabel => 'Repeat new password';
+
+  @override
+  String get passwordsDontMatch => 'The two passwords do not match';
+
+  @override
   String get passwordChanged => 'Password changed';
 
   @override
@@ -175,10 +181,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'We\'re building a full notification center for scan and activity alerts.';
 
   @override
-  String get vehicleProtected => 'Protected';
+  String get vehicleProtected => 'Linked';
 
   @override
-  String get vehicleNotProtectedYet => 'Not protected yet';
+  String get vehicleNotProtectedYet => 'Not linked';
 
   @override
   String get noVehicleYetHomeTitle => 'Add your first vehicle';
@@ -400,6 +406,79 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get subStatusActive => 'Active';
+
+  @override
+  String get onboard1Title => 'Link your code to your vehicle';
+
+  @override
+  String get onboard1Body =>
+      'Add your vehicle, then scan the QR code or tap your phone on the NFC chip to link it. Stick it on the vehicle and protection starts right away.';
+
+  @override
+  String get onboard2Title => 'A report, not a nuisance';
+
+  @override
+  String get onboard2Body =>
+      'When someone scans the code they pick a reason and send it. You get a notification and follow the reply from Conversations — without anyone seeing your number.';
+
+  @override
+  String get onboard3Title => 'You control what shows';
+
+  @override
+  String get onboard3Body =>
+      'Under What visitors see, choose what a visitor can see: your name, phone or an emergency contact. Under Subscription you renew your plan and add more contact methods.';
+
+  @override
+  String get onboardSkip => 'Skip';
+
+  @override
+  String get onboardNext => 'Next';
+
+  @override
+  String get onboardStart => 'Get started';
+
+  @override
+  String get subStatusGrace => 'Grace period';
+
+  @override
+  String planGraceBanner(String date) {
+    return 'Your subscription ended. You have until $date to renew without losing anything; after that you return to Basic and your data stays saved.';
+  }
+
+  @override
+  String renewalCanceledNote(String date) {
+    return 'Renewal is turned off. Your plan stays active until $date.';
+  }
+
+  @override
+  String get cancelAnnualPlan => 'Cancel annual subscription';
+
+  @override
+  String get cancelAnnualTitle => 'Cancel the annual subscription?';
+
+  @override
+  String cancelAnnualBody(String date) {
+    return 'Your subscription will not renew. Your plan keeps working until $date and you keep every remaining day.';
+  }
+
+  @override
+  String get cancelAnnualConfirm => 'Cancel renewal';
+
+  @override
+  String get keepSubscription => 'Keep subscription';
+
+  @override
+  String get resumeRenewal => 'Turn renewal back on';
+
+  @override
+  String get renewalCanceledDone =>
+      'Renewal turned off. Your plan works until the end of the period.';
+
+  @override
+  String get renewalResumedDone => 'Renewal turned back on.';
+
+  @override
+  String get renewNow => 'Renew now';
 
   @override
   String get subStatusExpired => 'Expired';
@@ -750,6 +829,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get languageEnglish => 'English';
+
+  @override
+  String get languageKurdish => 'کوردی';
 
   @override
   String get plateTypeTitle => 'Plate type';
@@ -1103,10 +1185,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pickerSearch => 'Search';
 
   @override
-  String get pickerOther => 'Other (type it)';
-
-  @override
-  String get pickerOtherHint => 'Type it here';
+  String get pickerOther => 'Other';
 
   @override
   String get pickerChoose => 'Choose';
@@ -1116,6 +1195,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get modelHint => 'e.g. Corolla, Sonata';
+
+  @override
+  String get editVehicle => 'Edit vehicle';
+
+  @override
+  String get editVehicleAction => 'Edit';
+
+  @override
+  String get vinLabel => 'VIN (optional)';
+
+  @override
+  String get vinInvalid =>
+      'Invalid VIN (Latin letters and digits, no I, O or Q).';
 
   @override
   String get copyLink => 'Copy link';

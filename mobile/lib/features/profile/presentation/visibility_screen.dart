@@ -464,7 +464,9 @@ class _EmergencyCardState extends State<_EmergencyCard> {
               label: l10n.emergencyRelation,
               value: _relation,
               options: relationshipOptions(
-                  arabic: Localizations.localeOf(context).languageCode == 'ar'),
+                  arabic: Localizations.localeOf(context).languageCode != 'en',
+                  kurdish:
+                      Localizations.localeOf(context).languageCode == 'ckb'),
               onChanged: (v) => setState(() => _relation = v),
             ),
             const SizedBox(height: AppSpacing.md),

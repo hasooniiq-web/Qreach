@@ -20,6 +20,7 @@ use App\Http\Controllers\Admin\SubscriptionController;
 use App\Http\Controllers\Admin\SystemSettingController;
 use App\Http\Controllers\Admin\TagBatchController;
 use App\Http\Controllers\Admin\TagController;
+use App\Http\Controllers\Admin\TradeController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\VehicleController;
 use App\Http\Controllers\Public\PaymentGatewayController as PublicPaymentGatewayController;
@@ -139,6 +140,22 @@ Route::prefix('admin')->name('admin.')->group(function () {
                 ->middleware('admin.permission:users.suspend')->name('users.suspend');
             Route::post('users/{user}/activate', [UserController::class, 'activate'])
                 ->middleware('admin.permission:users.suspend')->name('users.activate');
+
+            // Stock of stickers and the wholesale accounts book (staff only). Literal
+            // segments (customers/create) come before the wildcards.
+            Route::middleware('admin.permission:trade.view')->prefix('trade')->name('trade.')->group(function () {
+                Route::get('/', [TradeController::class, 'index'])->name('index');
+                Route::get('customers/create', [TradeController::class, 'createCustomer'])
+                    ->middleware('admin.permission:trade.manage')->name('customers.create');
+                Route::get('customers/{customer}', [TradeController::class, 'showCustomer'])->name('customers.show');
+                Route::get('receipts/{entry}', [TradeController::class, 'receipt'])->name('receipt');
+            });
+            Route::middleware(['admin.permission:trade.manage', 'throttle:60,1'])->prefix('trade')->name('trade.')->group(function () {
+                Route::post('customers', [TradeController::class, 'storeCustomer'])->name('customers.store');
+                Route::post('customers/{customer}/sales', [TradeController::class, 'storeSale'])->name('sales.store');
+                Route::post('customers/{customer}/payments', [TradeController::class, 'storePayment'])->name('payments.store');
+                Route::post('entries/{entry}/void', [TradeController::class, 'void'])->name('entries.void');
+            });
 
             // Electronic payments: records + refunds, and gateway settings (credentials).
             Route::middleware('admin.permission:payments.view')->group(function () {

@@ -1,5 +1,5 @@
 <x-layouts.admin title="تفاصيل المستخدم">
-    <x-page-header :title="$user->name ?? 'بدون اسم'" :back="route('admin.users.index')" backLabel="كل المستخدمين">
+    <x-page-header :title="$user->display_name" :back="route('admin.users.index')" backLabel="كل المستخدمين">
         <x-slot:actions>
             <x-status-badge :status="$user->status" />
             @if ($user->status === 'active')

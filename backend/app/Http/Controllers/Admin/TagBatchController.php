@@ -102,7 +102,11 @@ class TagBatchController extends Controller
             ->header('Content-Disposition', "attachment; filename=\"{$tagBatch->batch_code}.json\"");
     }
 
-    /** Plain-text export: one human-readable serial number per line — for a print shop's own tooling. */
+    /**
+     * Plain-text export: one code per line — the serial number, then the unique
+     * address that goes into the QR/NFC chip, tab-separated (opens cleanly in a
+     * spreadsheet and is trivial to split in a print shop's own tooling).
+     */
     public function exportText(Request $request, TagBatch $tagBatch): StreamedResponse
     {
         AuditLogger::log('qr.batch_exported', 'admin', $request->user('admin')->id, 'TagBatch', $tagBatch->id, 'success', ['format' => 'text']);
@@ -110,9 +114,11 @@ class TagBatchController extends Controller
         $filename = "{$tagBatch->batch_code}.txt";
 
         return response()->streamDownload(function () use ($tagBatch) {
-            $tagBatch->tags()->orderBy('id')->chunk(500, function ($tags) {
+            $base = rtrim(config('app.url'), '/');
+
+            $tagBatch->tags()->orderBy('id')->chunk(500, function ($tags) use ($base) {
                 foreach ($tags as $tag) {
-                    echo $tag->serial_number.PHP_EOL;
+                    echo $tag->serial_number."\t".$base.'/t/'.$tag->public_token.PHP_EOL;
                 }
             });
         }, $filename, ['Content-Type' => 'text/plain; charset=UTF-8']);

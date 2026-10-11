@@ -67,6 +67,10 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::put('notifications/{id}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
 
         Route::get('subscription', [SubscriptionController::class, 'show'])->name('subscription.show');
+        Route::post('subscription/cancel-renewal', [SubscriptionController::class, 'cancelRenewal'])
+            ->middleware('throttle:10,1')->name('subscription.cancel-renewal');
+        Route::post('subscription/resume-renewal', [SubscriptionController::class, 'resumeRenewal'])
+            ->middleware('throttle:10,1')->name('subscription.resume-renewal');
         Route::post('subscription/upgrade-requests', [SubscriptionController::class, 'requestUpgrade'])
             ->middleware('throttle:5,1')->name('subscription.upgrade');
 

@@ -3,10 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../providers.dart';
 
-/// The app language: Arabic (default) or English. The choice is remembered
+/// The app language: Arabic (default), English or Kurdish (Sorani). The choice is remembered
 /// on the device, and flipping it also flips the text direction (RTL/LTR).
 class LocaleController extends Notifier<Locale> {
-  static const supported = [Locale('ar'), Locale('en')];
+  static const supported = [Locale('ar'), Locale('en'), Locale('ckb')];
 
   @override
   Locale build() {
@@ -17,7 +17,9 @@ class LocaleController extends Notifier<Locale> {
   Future<void> _restore() async {
     try {
       final saved = await ref.read(secureStorageProvider).readLocale();
-      if (saved == 'en' || saved == 'ar') state = Locale(saved!);
+      if (saved == 'en' || saved == 'ar' || saved == 'ckb') {
+        state = Locale(saved!);
+      }
     } catch (_) {
       // Storage can be unavailable; Arabic stays.
     }

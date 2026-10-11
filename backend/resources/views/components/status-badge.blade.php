@@ -36,6 +36,7 @@
         'trialing' => ['accent', 'تجريبي'],
         'past_due' => ['bad', 'متأخر السداد'],
         'unresolved' => ['muted', 'قيد المراجعة'],
+        'grace' => ['accent', 'فترة سماح'],
     ];
     [$classes, $label] = $map[$status] ?? ['muted', $status];
 @endphp

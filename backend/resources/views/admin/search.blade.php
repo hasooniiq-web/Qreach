@@ -27,7 +27,7 @@
                         <a href="{{ route('admin.users.show', $u) }}" class="flex items-center justify-between gap-3 rounded-lg px-4 py-3 transition-colors hover:bg-ink-50">
                             <span class="flex items-center gap-3">
                                 <span class="flex size-8 items-center justify-center rounded-full bg-ink-100 text-ink-600"><x-icon name="users" class="size-4" /></span>
-                                <span class="text-sm font-medium text-ink-900">{{ $u->name ?? 'بدون اسم' }}</span>
+                                <span class="text-sm font-medium text-ink-900">{{ $u->display_name }}</span>
                             </span>
                             <span class="text-sm tabular-nums text-ink-500" dir="ltr">{{ $u->phone }}</span>
                         </a>

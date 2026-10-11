@@ -36,8 +36,16 @@ class Tag extends Model
 
     public const STATUS_CANCELLED = 'revoked';
 
-    /** Statuses a tag may still be activated/replaced-into from. */
-    public const ASSIGNABLE_STATUSES = ['generated', 'available', 'unassigned'];
+    /**
+     * Statuses a tag may be activated/replaced-into from. The lifecycle is strictly
+     * sequential (generated -> printing -> unassigned -> assigned), so a code that
+     * has not been sent to print yet ("generated") can never be assigned.
+     * `available` is the legacy spelling of `unassigned`.
+     */
+    public const ASSIGNABLE_STATUSES = ['printing', 'unassigned', 'available'];
+
+    /** Statuses a tag can be cancelled from: only a code that was assigned before. */
+    public const CANCELLABLE_STATUSES = ['assigned', 'activated'];
 
     protected $fillable = [
         'public_token', 'serial_number', 'type', 'batch_id', 'status', 'vehicle_id',
@@ -128,6 +136,11 @@ class Tag extends Model
     public function isAvailableForActivation(): bool
     {
         return in_array($this->status, self::ASSIGNABLE_STATUSES, true);
+    }
+
+    public function isCancellable(): bool
+    {
+        return in_array($this->status, self::CANCELLABLE_STATUSES, true);
     }
 
     public function getRouteKeyName(): string

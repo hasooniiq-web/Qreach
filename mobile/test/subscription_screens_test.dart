@@ -43,6 +43,8 @@ class FakeSubscriptionRepository implements SubscriptionRepository {
   SubscriptionInfo info;
   ProfileModel? profile;
   final List<String> upgradeRequests = [];
+  int cancelRenewals = 0;
+  int resumeRenewals = 0;
 
   @override
   Future<SubscriptionInfo> fetch() async => info;
@@ -50,6 +52,12 @@ class FakeSubscriptionRepository implements SubscriptionRepository {
   @override
   Future<void> requestUpgrade(String planSlug) async =>
       upgradeRequests.add(planSlug);
+
+  @override
+  Future<void> cancelRenewal() async => cancelRenewals++;
+
+  @override
+  Future<void> resumeRenewal() async => resumeRenewals++;
 }
 
 class FakeProfileRepository implements ProfileRepository {
@@ -150,6 +158,9 @@ SubscriptionInfo _info({
   bool isDefault = true,
   String? status,
   bool pending = false,
+  bool renewalCanceled = false,
+  bool canCancelRenewal = false,
+  DateTime? graceEndsAt,
 }) =>
     SubscriptionInfo(
       plan: plan,
@@ -158,6 +169,9 @@ SubscriptionInfo _info({
       endsAt: status == null ? null : DateTime.utc(2027, 9, 25),
       plans: const [_basic, _pro],
       pendingUpgrade: pending,
+      renewalCanceled: renewalCanceled,
+      canCancelRenewal: canCancelRenewal,
+      graceEndsAt: graceEndsAt,
     );
 
 Widget _app(FakeSubscriptionRepository repo, Widget screen,
@@ -246,6 +260,76 @@ void main() {
 
       expect(
           find.textContaining('انتهى اشتراكك في 2027-09-25'), findsOneWidget);
+    });
+
+    testWidgets('cancelling the annual plan asks first and keeps the remaining days',
+        (tester) async {
+      _tall(tester);
+      final repo = FakeSubscriptionRepository(
+          info: _info(
+              plan: _pro,
+              isDefault: false,
+              status: 'active',
+              canCancelRenewal: true));
+
+      await tester.pumpWidget(_app(repo, const SubscriptionScreen()));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('إلغاء الاشتراك السنوي'));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('ولا تخسر أيًّا من الأيام المتبقية'),
+          findsOneWidget);
+
+      // Backing out does nothing.
+      await tester.tap(find.text('إبقاء الاشتراك'));
+      await tester.pumpAndSettle();
+      expect(repo.cancelRenewals, 0);
+
+      await tester.tap(find.text('إلغاء الاشتراك السنوي'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('إلغاء التجديد'));
+      await tester.pumpAndSettle();
+      expect(repo.cancelRenewals, 1);
+    });
+
+    testWidgets('a stopped renewal says when the plan ends and can be resumed',
+        (tester) async {
+      _tall(tester);
+      final repo = FakeSubscriptionRepository(
+          info: _info(
+              plan: _pro,
+              isDefault: false,
+              status: 'active',
+              renewalCanceled: true));
+
+      await tester.pumpWidget(_app(repo, const SubscriptionScreen()));
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('تبقى باقتك فعّالة حتى 2027-09-25'),
+          findsOneWidget);
+      expect(find.text('إلغاء الاشتراك السنوي'), findsNothing);
+
+      await tester.tap(find.text('إعادة تفعيل التجديد'));
+      await tester.pumpAndSettle();
+      expect(repo.resumeRenewals, 1);
+    });
+
+    testWidgets('inside the grace week the screen explains it and offers renewal',
+        (tester) async {
+      _tall(tester);
+      final repo = FakeSubscriptionRepository(
+          info: _info(
+              plan: _pro,
+              isDefault: false,
+              status: 'grace',
+              graceEndsAt: DateTime.utc(2027, 10, 2)));
+
+      await tester.pumpWidget(_app(repo, const SubscriptionScreen()));
+      await tester.pumpAndSettle();
+
+      expect(find.textContaining('لديك حتى 2027-10-02 لتجديده'), findsOneWidget);
+      expect(find.text('فترة سماح'), findsOneWidget);
+      expect(find.text('تجديد الآن'), findsOneWidget);
     });
 
     testWidgets('a pending upgrade disables the request button',

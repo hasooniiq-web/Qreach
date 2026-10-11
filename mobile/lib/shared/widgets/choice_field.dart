@@ -18,8 +18,8 @@ class ChoiceOption {
 
 /// A form field that opens a tidy bottom sheet of choices instead of the
 /// platform dropdown (which overflowed and mis-aligned on RTL). Optionally
-/// searchable, and optionally ends with "Other…" so a value that is not in the
-/// list can still be typed — the typed text becomes the value.
+/// searchable, and optionally ends with a plain "Other" choice. "Other" is a
+/// value like any other — nothing is typed — so every answer comes from the list.
 class ChoiceField extends StatelessWidget {
   const ChoiceField({
     super.key,
@@ -31,7 +31,6 @@ class ChoiceField extends StatelessWidget {
     this.searchable = false,
     this.hint,
     this.enabled = true,
-    this.otherTitle,
   });
 
   final String label;
@@ -43,9 +42,6 @@ class ChoiceField extends StatelessWidget {
   final String? hint;
   final bool enabled;
 
-  /// Title of the "type it yourself" dialog; defaults to the field label.
-  final String? otherTitle;
-
   ChoiceOption? get _selected {
     for (final o in options) {
       if (o.value == value) return o;
@@ -55,7 +51,8 @@ class ChoiceField extends StatelessWidget {
 
   Future<void> _open(BuildContext context) async {
     FocusScope.of(context).unfocus();
-    final result = await showModalBottomSheet<_Picked>(
+    final l10n = AppLocalizations.of(context)!;
+    final picked = await showModalBottomSheet<String>(
       context: context,
       isScrollControlled: true,
       useSafeArea: true,
@@ -66,47 +63,12 @@ class ChoiceField extends StatelessWidget {
         title: label,
         options: options,
         selected: value,
-        allowOther: allowOther,
+        otherLabel: allowOther ? l10n.pickerOther : null,
         searchable: searchable || options.length > 12,
       ),
     );
-    if (result == null || !context.mounted) return;
-
-    if (result.other) {
-      final typed = await _askOther(context);
-      if (typed != null && typed.trim().isNotEmpty) onChanged(typed.trim());
-    } else {
-      onChanged(result.value);
-    }
-  }
-
-  Future<String?> _askOther(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-    final controller = TextEditingController(
-        text: _selected == null && (value ?? '').isNotEmpty ? value : '');
-    return showDialog<String>(
-      context: context,
-      builder: (context) => AlertDialog(
-        insetPadding: const EdgeInsets.symmetric(horizontal: 28, vertical: 24),
-        contentPadding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
-        title: Text(otherTitle ?? label),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          textInputAction: TextInputAction.done,
-          onSubmitted: (v) => Navigator.of(context).pop(v),
-          decoration: InputDecoration(hintText: l10n.pickerOtherHint),
-        ),
-        actions: [
-          TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(l10n.cancel)),
-          TextButton(
-              onPressed: () => Navigator.of(context).pop(controller.text),
-              child: Text(l10n.save)),
-        ],
-      ),
-    );
+    if (picked == null || !context.mounted) return;
+    onChanged(picked);
   }
 
   @override
@@ -147,25 +109,21 @@ class ChoiceField extends StatelessWidget {
   }
 }
 
-class _Picked {
-  const _Picked(this.value, {this.other = false});
-  final String? value;
-  final bool other;
-}
-
 class _Sheet extends StatefulWidget {
   const _Sheet({
     required this.title,
     required this.options,
     required this.selected,
-    required this.allowOther,
+    required this.otherLabel,
     required this.searchable,
   });
 
   final String title;
   final List<ChoiceOption> options;
   final String? selected;
-  final bool allowOther;
+
+  /// The plain "Other" choice (also its stored value); null = not offered.
+  final String? otherLabel;
   final bool searchable;
 
   @override
@@ -228,7 +186,7 @@ class _SheetState extends State<_Sheet> {
               padding: const EdgeInsets.fromLTRB(
                   AppSpacing.sm, AppSpacing.xs, AppSpacing.sm, AppSpacing.xl),
               children: [
-                if (shown.isEmpty && !widget.allowOther)
+                if (shown.isEmpty && widget.otherLabel == null)
                   Padding(
                     padding: const EdgeInsets.all(AppSpacing.xl),
                     child: Text(l10n.pickerNoResults,
@@ -249,17 +207,23 @@ class _SheetState extends State<_Sheet> {
                         : null,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12)),
-                    onTap: () => Navigator.of(context).pop(_Picked(o.value)),
+                    onTap: () => Navigator.of(context).pop(o.value),
                   ),
-                if (widget.allowOther)
+                if (widget.otherLabel != null)
                   ListTile(
-                    leading: const Icon(Icons.edit_outlined),
-                    title: Text(l10n.pickerOther,
-                        style: const TextStyle(fontWeight: FontWeight.w700)),
+                    leading: const Icon(Icons.more_horiz_rounded),
+                    title: Text(widget.otherLabel!,
+                        style: TextStyle(
+                            fontWeight: widget.selected == widget.otherLabel
+                                ? FontWeight.w800
+                                : FontWeight.w700)),
+                    trailing: widget.selected == widget.otherLabel
+                        ? Icon(Icons.check_circle_rounded,
+                            color: AppColors.brandBlack)
+                        : null,
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12)),
-                    onTap: () => Navigator.of(context)
-                        .pop(const _Picked(null, other: true)),
+                    onTap: () => Navigator.of(context).pop(widget.otherLabel),
                   ),
               ],
             ),

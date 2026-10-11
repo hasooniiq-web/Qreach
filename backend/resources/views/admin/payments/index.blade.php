@@ -35,7 +35,7 @@
         @forelse ($payments as $payment)
             <tr class="hover:bg-ink-50">
                 <td class="px-4 py-3">
-                    <a href="{{ route('admin.users.show', $payment->user) }}" class="font-medium text-ink-900 hover:underline">{{ $payment->user->name ?? 'بدون اسم' }}</a>
+                    <a href="{{ route('admin.users.show', $payment->user) }}" class="font-medium text-ink-900 hover:underline">{{ $payment->user->display_name }}</a>
                     <p class="text-xs tabular-nums text-ink-400" dir="ltr">{{ $payment->user->phone }}</p>
                 </td>
                 <td class="px-4 py-3 text-ink-900">{{ $payment->plan?->name_ar ?? '—' }}</td>

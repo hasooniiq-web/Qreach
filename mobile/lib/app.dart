@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'core/locale/kurdish_localizations.dart';
 import 'core/locale/locale_controller.dart';
 import 'core/providers.dart';
 import 'features/auth/presentation/auth_controller.dart';
@@ -81,6 +82,7 @@ class _QreachAppState extends ConsumerState<QreachApp>
       supportedLocales: LocaleController.supported,
       localizationsDelegates: const [
         AppLocalizations.delegate,
+        ...kurdishLocalizationDelegates,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,

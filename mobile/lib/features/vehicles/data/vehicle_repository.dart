@@ -31,7 +31,7 @@ class VehicleRepository {
   Future<VehicleModel> update(String id, VehicleModel vehicle) async {
     final response = await _client.dio.put<Map<String, dynamic>>(
         '/vehicles/$id',
-        data: vehicle.toCreateJson());
+        data: vehicle.toUpdateJson());
     return VehicleModel.fromJson(
         response.data!['data'] as Map<String, dynamic>);
   }

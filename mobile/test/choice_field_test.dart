@@ -37,14 +37,14 @@ void main() {
     await tester.tap(find.text('اللون'));
     await tester.pumpAndSettle();
     expect(find.text('أبيض'), findsOneWidget);
-    expect(find.text('أخرى (اكتبها)'), findsOneWidget);
+    expect(find.text('أخرى'), findsOneWidget);
 
     await tester.tap(find.text('أسود'));
     await tester.pumpAndSettle();
     expect(picked, 'أسود');
   });
 
-  testWidgets('a value that is not in the list can be typed (Other)',
+  testWidgets('Other is a plain choice: nothing is typed, the value is "أخرى"',
       (tester) async {
     String? picked;
     await tester.pumpWidget(_host(StatefulBuilder(
@@ -58,14 +58,12 @@ void main() {
 
     await tester.tap(find.text('الشركة المصنعة'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('أخرى (اكتبها)'));
-    await tester.pumpAndSettle();
-    await tester.enterText(find.byType(TextField), 'ماركة جديدة');
-    await tester.tap(find.text('حفظ'));
+    await tester.tap(find.text('أخرى'));
     await tester.pumpAndSettle();
 
-    expect(picked, 'ماركة جديدة');
-    expect(find.text('ماركة جديدة'), findsOneWidget);
+    // No text box is opened — the sheet closes with the value set.
+    expect(find.byType(TextField), findsNothing);
+    expect(picked, 'أخرى');
   });
 
   testWidgets('without Other (governorate) there is no free text option',
@@ -81,7 +79,7 @@ void main() {
     await tester.tap(find.text('المحافظة'));
     await tester.pumpAndSettle();
     expect(find.text('بغداد'), findsOneWidget);
-    expect(find.text('أخرى (اكتبها)'), findsNothing);
+    expect(find.text('أخرى'), findsNothing);
   });
 
   test('the car catalog finds a make by either language', () {

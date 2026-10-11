@@ -56,7 +56,7 @@
                 <h3 class="mb-3 text-sm font-semibold text-ink-900">المركبة والمالك</h3>
                 @if ($tag->vehicle)
                     <a href="{{ route('admin.vehicles.show', $tag->vehicle) }}" class="text-sm font-medium text-ink-900 hover:underline">{{ $tag->vehicle->plate_number }}</a>
-                    <p class="text-sm text-ink-500">{{ $tag->vehicle->user?->name ?? 'بدون اسم' }} — <span dir="ltr">{{ $tag->vehicle->user?->phone }}</span></p>
+                    <p class="text-sm text-ink-500">{{ $tag->vehicle->user?->display_name }} — <span dir="ltr">{{ $tag->vehicle->user?->phone }}</span></p>
                     @if ($tag->vehicle->user)
                         <a href="{{ route('admin.users.show', $tag->vehicle->user) }}" class="text-xs font-medium text-ink-600 hover:underline">عرض ملف المستخدم ←</a>
                     @endif
@@ -83,7 +83,7 @@
                             <div>
                                 <label for="new_tag_serial" class="mb-1 block text-xs font-medium text-ink-700">الرقم التسلسلي للرمز الجديد ({{ strtoupper($tag->type) }} غير مُعيّن)</label>
                                 <input list="replacement-candidates" id="new_tag_serial" name="new_tag_serial" required
-                                       value="{{ old('new_tag_serial') }}" dir="ltr" class="form-control text-start" placeholder="ST-C-20261010-000123">
+                                       value="{{ old('new_tag_serial') }}" dir="ltr" class="form-control text-start" placeholder="ST-C26-8K7M2P-4">
                                 <datalist id="replacement-candidates">
                                     @foreach ($replacementCandidates as $serial)
                                         <option value="{{ $serial }}"></option>

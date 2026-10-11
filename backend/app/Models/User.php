@@ -96,4 +96,12 @@ class User extends Authenticatable
     {
         return 'uuid';
     }
+
+    /** The name shown to staff: the account name, else the phone number, never a blank. */
+    public function getDisplayNameAttribute(): string
+    {
+        $name = trim((string) $this->name);
+
+        return $name !== '' ? $name : ((string) $this->phone ?: 'بدون اسم');
+    }
 }

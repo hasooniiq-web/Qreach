@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/design/motion.dart';
 import '../../../core/design/tokens.dart';
+import '../../../core/network/api_client.dart';
+import '../../../core/providers.dart';
 import '../../../shared/widgets/app_button.dart';
 
 import '../../../core/theme/app_colors.dart';
@@ -51,7 +53,17 @@ class SubscriptionScreen extends ConsumerWidget {
                 _LapsedBanner(date: formatDate(info.endsAt!)),
                 const SizedBox(height: AppSpacing.md),
               ],
+              if (info.inGrace && info.graceEndsAt != null) ...[
+                _Banner(
+                    text: l10n.planGraceBanner(formatDate(info.graceEndsAt!))),
+                const SizedBox(height: AppSpacing.md),
+              ],
               FadeSlideIn(child: _CurrentPlanCard(info: info)),
+              if (info.endsAt != null &&
+                  (info.canCancelRenewal || info.renewalCanceled)) ...[
+                const SizedBox(height: AppSpacing.md),
+                _RenewalControl(info: info),
+              ],
               const SizedBox(height: AppSpacing.xl),
               FadeSlideIn(
                 index: 1,
@@ -100,6 +112,17 @@ class _LapsedBanner extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    return _Banner(text: l10n.planExpiredBanner(date));
+  }
+}
+
+class _Banner extends StatelessWidget {
+  const _Banner({required this.text});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(AppSpacing.md),
       decoration: BoxDecoration(
@@ -110,7 +133,7 @@ class _LapsedBanner extends StatelessWidget {
         children: [
           const Icon(Icons.info_outline, size: 20),
           const SizedBox(width: AppSpacing.md),
-          Expanded(child: Text(l10n.planExpiredBanner(date))),
+          Expanded(child: Text(text)),
         ],
       ),
     );
@@ -280,9 +303,14 @@ class _PlanCard extends StatelessWidget {
             const SizedBox(height: AppSpacing.sm),
             Text(plan.description!, style: TextStyle(color: AppColors.ink500)),
           ],
-          if (!isCurrent && !plan.isFree) ...[
+          // Also offered on the current paid plan inside its grace week: renewing
+          // then loses nothing.
+          if ((!isCurrent || info.inGrace) && !plan.isFree) ...[
             const SizedBox(height: AppSpacing.lg),
-            _UpgradeButton(plan: plan, pending: info.pendingUpgrade),
+            _UpgradeButton(
+                plan: plan,
+                pending: info.pendingUpgrade,
+                renew: isCurrent && info.inGrace),
           ],
         ],
       ),
@@ -294,10 +322,12 @@ class _PlanCard extends StatelessWidget {
 /// "upgrade request" for an admin to approve; a request made earlier can still
 /// be pending and is shown as such.)
 class _UpgradeButton extends StatelessWidget {
-  const _UpgradeButton({required this.plan, required this.pending});
+  const _UpgradeButton(
+      {required this.plan, required this.pending, this.renew = false});
 
   final PlanModel plan;
   final bool pending;
+  final bool renew;
 
   @override
   Widget build(BuildContext context) {
@@ -313,9 +343,106 @@ class _UpgradeButton extends StatelessWidget {
     }
 
     return AppButton(
-      label: l10n.paySubscribeButton,
+      label: renew ? l10n.renewNow : l10n.paySubscribeButton,
       icon: Icons.lock_outline_rounded,
       onPressed: () => context.push('/subscription/checkout/${plan.slug}'),
+    );
+  }
+}
+
+
+/// Stop (or resume) the yearly renewal. Stopping keeps the plan working until the
+/// end of the period already paid for — no day is lost.
+class _RenewalControl extends ConsumerStatefulWidget {
+  const _RenewalControl({required this.info});
+
+  final SubscriptionInfo info;
+
+  @override
+  ConsumerState<_RenewalControl> createState() => _RenewalControlState();
+}
+
+class _RenewalControlState extends ConsumerState<_RenewalControl> {
+  bool _busy = false;
+
+  Future<void> _cancel() async {
+    final l10n = AppLocalizations.of(context)!;
+    final date = formatDate(widget.info.endsAt!);
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text(l10n.cancelAnnualTitle),
+        content: Text(l10n.cancelAnnualBody(date),
+            style: const TextStyle(height: 1.5)),
+        actionsAlignment: MainAxisAlignment.spaceBetween,
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(l10n.keepSubscription)),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: Text(l10n.cancelAnnualConfirm,
+                style: TextStyle(
+                    color: AppColors.statusDanger,
+                    fontWeight: FontWeight.w700)),
+          ),
+        ],
+      ),
+    );
+    if (ok != true || !mounted) return;
+    await _run(() => ref.read(subscriptionRepositoryProvider).cancelRenewal(),
+        l10n.renewalCanceledDone);
+  }
+
+  Future<void> _resume() async {
+    final l10n = AppLocalizations.of(context)!;
+    await _run(() => ref.read(subscriptionRepositoryProvider).resumeRenewal(),
+        l10n.renewalResumedDone);
+  }
+
+  Future<void> _run(Future<void> Function() action, String done) async {
+    setState(() => _busy = true);
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await action();
+      ref.invalidate(subscriptionProvider);
+      messenger.showSnackBar(SnackBar(content: Text(done)));
+    } catch (e) {
+      messenger
+          .showSnackBar(SnackBar(content: Text(asApiException(e).message)));
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final info = widget.info;
+
+    if (info.renewalCanceled) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _Banner(text: l10n.renewalCanceledNote(formatDate(info.endsAt!))),
+          const SizedBox(height: AppSpacing.md),
+          AppButton(
+            label: l10n.resumeRenewal,
+            icon: Icons.autorenew_rounded,
+            style: AppButtonStyle.secondary,
+            loading: _busy,
+            onPressed: _busy ? null : _resume,
+          ),
+        ],
+      );
+    }
+
+    return AppButton(
+      label: l10n.cancelAnnualPlan,
+      icon: Icons.event_busy_rounded,
+      style: AppButtonStyle.secondary,
+      loading: _busy,
+      onPressed: _busy ? null : _cancel,
     );
   }
 }

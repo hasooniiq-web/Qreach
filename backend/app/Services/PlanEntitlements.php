@@ -18,13 +18,14 @@ use App\Models\User;
  */
 class PlanEntitlements
 {
-    /** The subscription currently granting access, if any (active/trialing and not past its end date). */
+    /** The subscription currently granting access, if any (active/trialing, inside its period or its grace week). */
     public function activeSubscription(User $user): ?Subscription
     {
         return $user->subscriptions()
             ->with('plan')
             ->whereIn('status', ['active', 'trialing'])
-            ->where(fn ($q) => $q->whereNull('current_period_ends_at')->orWhere('current_period_ends_at', '>', now()))
+            // The paid period plus its grace week (config subscriptions.grace_days).
+            ->where(fn ($q) => $q->whereNull('current_period_ends_at')->orWhere('current_period_ends_at', '>', now()->subDays(Subscription::graceDays())))
             ->latest('id')
             ->get()
             ->sortByDesc(fn (Subscription $s) => $s->plan->price_cents)

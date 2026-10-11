@@ -52,12 +52,8 @@ class QrBatchService
                 'created_by' => $createdByAdminId,
             ]);
 
-            $sequence = (Tag::max('id') ?? 0) + 1;
-            $created = 0;
-
             foreach (array_chunk(range(1, $quantity), self::CHUNK) as $positions) {
-                $this->insertChunk($batch, $type, $positions, $sequence + $created);
-                $created += count($positions);
+                $this->insertChunk($batch, $type, $positions);
             }
 
             $batch->update(['status' => 'generated', 'generated_at' => now()]);
@@ -87,23 +83,12 @@ class QrBatchService
     /**
      * @param  list<int>  $positions  1-based positions of this chunk inside the batch
      */
-    private function insertChunk(TagBatch $batch, string $type, array $positions, int $firstSequence): void
+    private function insertChunk(TagBatch $batch, string $type, array $positions): void
     {
         $count = count($positions);
         $tokens = $this->tokens->generateMany($count);
+        $serials = $this->tokens->generateSerials($type, $count);
         $now = now();
-
-        // Serial numbers are sequential; skip past any that already exist (checked once per chunk).
-        do {
-            $serials = [];
-            foreach ($positions as $i => $_) {
-                $serials[] = $this->tokens->formatSerial($type, $firstSequence + $i);
-            }
-            $clash = Tag::whereIn('serial_number', $serials)->exists();
-            if ($clash) {
-                $firstSequence += $count;
-            }
-        } while ($clash);
 
         $rows = [];
         foreach ($positions as $i => $_) {

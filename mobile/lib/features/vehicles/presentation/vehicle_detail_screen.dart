@@ -547,26 +547,41 @@ class _VehicleActionsState extends ConsumerState<_VehicleActions> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Expanded(
-          child: AppButton(
-            label: _disabled ? l10n.enableVehicle : l10n.disableVehicle,
-            icon: _disabled
-                ? Icons.play_circle_outline_rounded
-                : Icons.pause_circle_outline_rounded,
-            style: AppButtonStyle.secondary,
-            onPressed: _busy ? null : _toggle,
-          ),
+        AppButton(
+          label: l10n.editVehicleAction,
+          icon: Icons.edit_outlined,
+          style: AppButtonStyle.secondary,
+          onPressed: _busy
+              ? null
+              : () => context.push('/vehicles/${widget.vehicleId}/edit',
+                  extra: widget.vehicle),
         ),
-        const SizedBox(width: AppSpacing.md),
-        Expanded(
-          child: AppButton(
-            label: l10n.delete,
-            icon: Icons.delete_outline_rounded,
-            style: AppButtonStyle.danger,
-            onPressed: _busy ? null : _delete,
-          ),
+        const SizedBox(height: AppSpacing.md),
+        Row(
+          children: [
+            Expanded(
+              child: AppButton(
+                label: _disabled ? l10n.enableVehicle : l10n.disableVehicle,
+                icon: _disabled
+                    ? Icons.play_circle_outline_rounded
+                    : Icons.pause_circle_outline_rounded,
+                style: AppButtonStyle.secondary,
+                onPressed: _busy ? null : _toggle,
+              ),
+            ),
+            const SizedBox(width: AppSpacing.md),
+            Expanded(
+              child: AppButton(
+                label: l10n.delete,
+                icon: Icons.delete_outline_rounded,
+                style: AppButtonStyle.danger,
+                onPressed: _busy ? null : _delete,
+              ),
+            ),
+          ],
         ),
       ],
     );

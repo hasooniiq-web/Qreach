@@ -6,6 +6,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:intl/intl.dart' as intl;
 
 import 'app_localizations_ar.dart';
+import 'app_localizations_ckb.dart';
 import 'app_localizations_en.dart';
 
 // ignore_for_file: type=lint
@@ -95,7 +96,8 @@ abstract class AppLocalizations {
   /// A list of this localizations delegate's supported locales.
   static const List<Locale> supportedLocales = <Locale>[
     Locale('ar'),
-    Locale('en')
+    Locale('en'),
+    Locale('ckb')
   ];
 
   /// No description provided for @appName.
@@ -278,6 +280,18 @@ abstract class AppLocalizations {
   /// **'كلمة المرور الجديدة'**
   String get newPasswordLabel;
 
+  /// No description provided for @repeatPasswordLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'تكرار كلمة المرور الجديدة'**
+  String get repeatPasswordLabel;
+
+  /// No description provided for @passwordsDontMatch.
+  ///
+  /// In ar, this message translates to:
+  /// **'كلمتا المرور غير متطابقتين'**
+  String get passwordsDontMatch;
+
   /// No description provided for @passwordChanged.
   ///
   /// In ar, this message translates to:
@@ -407,13 +421,13 @@ abstract class AppLocalizations {
   /// No description provided for @vehicleProtected.
   ///
   /// In ar, this message translates to:
-  /// **'محمية'**
+  /// **'مربوطة'**
   String get vehicleProtected;
 
   /// No description provided for @vehicleNotProtectedYet.
   ///
   /// In ar, this message translates to:
-  /// **'غير محمية بعد'**
+  /// **'غير مربوطة'**
   String get vehicleNotProtectedYet;
 
   /// No description provided for @noVehicleYetHomeTitle.
@@ -641,7 +655,7 @@ abstract class AppLocalizations {
   /// No description provided for @statusAssigned.
   ///
   /// In ar, this message translates to:
-  /// **'مربوط'**
+  /// **'مربوطة'**
   String get statusAssigned;
 
   /// No description provided for @statusRevoked.
@@ -823,6 +837,132 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'فعّال'**
   String get subStatusActive;
+
+  /// No description provided for @onboard1Title.
+  ///
+  /// In ar, this message translates to:
+  /// **'اربط رمزك بمركبتك'**
+  String get onboard1Title;
+
+  /// No description provided for @onboard1Body.
+  ///
+  /// In ar, this message translates to:
+  /// **'أضف مركبتك، ثم امسح رمز QR أو قرّب هاتفك من شريحة NFC لربطه بها. يلصق الرمز على المركبة وتبدأ الحماية فورًا.'**
+  String get onboard1Body;
+
+  /// No description provided for @onboard2Title.
+  ///
+  /// In ar, this message translates to:
+  /// **'يصلك بلاغ لا إزعاج'**
+  String get onboard2Title;
+
+  /// No description provided for @onboard2Body.
+  ///
+  /// In ar, this message translates to:
+  /// **'عندما يمسح أحدهم الرمز يختار سبب البلاغ ويرسله، فيصلك إشعار وتتابع الرد من «المحادثات» دون أن يعرف رقمك.'**
+  String get onboard2Body;
+
+  /// No description provided for @onboard3Title.
+  ///
+  /// In ar, this message translates to:
+  /// **'أنت تتحكم بما يظهر'**
+  String get onboard3Title;
+
+  /// No description provided for @onboard3Body.
+  ///
+  /// In ar, this message translates to:
+  /// **'من «ما يظهر للزائر» اختر ما يراه الزائر: الاسم أو الهاتف أو جهة اتصال للطوارئ. وفي «الاشتراك» تجدّد باقتك وتضيف وسائل تواصل أكثر.'**
+  String get onboard3Body;
+
+  /// No description provided for @onboardSkip.
+  ///
+  /// In ar, this message translates to:
+  /// **'تخطي'**
+  String get onboardSkip;
+
+  /// No description provided for @onboardNext.
+  ///
+  /// In ar, this message translates to:
+  /// **'التالي'**
+  String get onboardNext;
+
+  /// No description provided for @onboardStart.
+  ///
+  /// In ar, this message translates to:
+  /// **'ابدأ الآن'**
+  String get onboardStart;
+
+  /// No description provided for @subStatusGrace.
+  ///
+  /// In ar, this message translates to:
+  /// **'فترة سماح'**
+  String get subStatusGrace;
+
+  /// No description provided for @planGraceBanner.
+  ///
+  /// In ar, this message translates to:
+  /// **'انتهى اشتراكك. لديك حتى {date} لتجديده دون أن تخسر شيئًا، وبعدها تعود باقتك إلى الأساسية وتبقى بياناتك محفوظة.'**
+  String planGraceBanner(String date);
+
+  /// No description provided for @renewalCanceledNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إيقاف التجديد. تبقى باقتك فعّالة حتى {date}.'**
+  String renewalCanceledNote(String date);
+
+  /// No description provided for @cancelAnnualPlan.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء الاشتراك السنوي'**
+  String get cancelAnnualPlan;
+
+  /// No description provided for @cancelAnnualTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء الاشتراك السنوي؟'**
+  String get cancelAnnualTitle;
+
+  /// No description provided for @cancelAnnualBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'لن يتجدد اشتراكك. تبقى باقتك تعمل حتى {date} ولا تخسر أيًّا من الأيام المتبقية.'**
+  String cancelAnnualBody(String date);
+
+  /// No description provided for @cancelAnnualConfirm.
+  ///
+  /// In ar, this message translates to:
+  /// **'إلغاء التجديد'**
+  String get cancelAnnualConfirm;
+
+  /// No description provided for @keepSubscription.
+  ///
+  /// In ar, this message translates to:
+  /// **'إبقاء الاشتراك'**
+  String get keepSubscription;
+
+  /// No description provided for @resumeRenewal.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة تفعيل التجديد'**
+  String get resumeRenewal;
+
+  /// No description provided for @renewalCanceledDone.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إيقاف التجديد. باقتك تعمل حتى نهاية المدة.'**
+  String get renewalCanceledDone;
+
+  /// No description provided for @renewalResumedDone.
+  ///
+  /// In ar, this message translates to:
+  /// **'تمت إعادة تفعيل التجديد.'**
+  String get renewalResumedDone;
+
+  /// No description provided for @renewNow.
+  ///
+  /// In ar, this message translates to:
+  /// **'تجديد الآن'**
+  String get renewNow;
 
   /// No description provided for @subStatusExpired.
   ///
@@ -1477,6 +1617,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'English'**
   String get languageEnglish;
+
+  /// No description provided for @languageKurdish.
+  ///
+  /// In ar, this message translates to:
+  /// **'کوردی'**
+  String get languageKurdish;
 
   /// No description provided for @plateTypeTitle.
   ///
@@ -2141,14 +2287,8 @@ abstract class AppLocalizations {
   /// No description provided for @pickerOther.
   ///
   /// In ar, this message translates to:
-  /// **'أخرى (اكتبها)'**
+  /// **'أخرى'**
   String get pickerOther;
-
-  /// No description provided for @pickerOtherHint.
-  ///
-  /// In ar, this message translates to:
-  /// **'اكتبها هنا'**
-  String get pickerOtherHint;
 
   /// No description provided for @pickerChoose.
   ///
@@ -2167,6 +2307,30 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'مثل: كورولا، سوناتا'**
   String get modelHint;
+
+  /// No description provided for @editVehicle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل المركبة'**
+  String get editVehicle;
+
+  /// No description provided for @editVehicleAction.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعديل'**
+  String get editVehicleAction;
+
+  /// No description provided for @vinLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الهيكل (VIN) — اختياري'**
+  String get vinLabel;
+
+  /// No description provided for @vinInvalid.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم الهيكل غير صالح (أرقام وحروف لاتينية بدون I وO وQ).'**
+  String get vinInvalid;
 
   /// No description provided for @copyLink.
   ///
@@ -2192,7 +2356,7 @@ class _AppLocalizationsDelegate
 
   @override
   bool isSupported(Locale locale) =>
-      <String>['ar', 'en'].contains(locale.languageCode);
+      <String>['ar', 'ckb', 'en'].contains(locale.languageCode);
 
   @override
   bool shouldReload(_AppLocalizationsDelegate old) => false;
@@ -2203,6 +2367,8 @@ AppLocalizations lookupAppLocalizations(Locale locale) {
   switch (locale.languageCode) {
     case 'ar':
       return AppLocalizationsAr();
+    case 'ckb':
+      return AppLocalizationsCkb();
     case 'en':
       return AppLocalizationsEn();
   }

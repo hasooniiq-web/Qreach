@@ -8,6 +8,7 @@ import '../data/notification_model.dart';
 
 IconData notificationIcon(NotificationModel n) {
   if (n.type == 'contact_request') return Icons.forum_outlined;
+  if (n.type == 'subscription') return Icons.workspace_premium_outlined;
   return switch (n.actionType) {
     'emergency' => Icons.warning_amber_rounded,
     'vehicle_block' => Icons.directions_car_outlined,

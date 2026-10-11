@@ -9,6 +9,7 @@ import '../../../shared/widgets/iraqi_plate.dart';
 import '../../../shared/widgets/plate_labels.dart';
 
 import '../../../core/network/api_client.dart';
+import '../../../core/providers.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../l10n/app_localizations.dart';
@@ -17,7 +18,10 @@ import '../data/vehicle_model.dart';
 import 'vehicle_controller.dart';
 
 class VehicleFormScreen extends ConsumerStatefulWidget {
-  const VehicleFormScreen({super.key});
+  const VehicleFormScreen({super.key, this.vehicle});
+
+  /// Set when editing an existing vehicle; null adds a new one.
+  final VehicleModel? vehicle;
 
   @override
   ConsumerState<VehicleFormScreen> createState() => _VehicleFormScreenState();
@@ -30,6 +34,8 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
   String? _make;
   String? _model;
   String? _color;
+  int? _year;
+  final _vinController = TextEditingController();
   final _letterController = TextEditingController();
   String _vehicleType = 'sedan';
   String _plateType = 'private';
@@ -37,11 +43,32 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
   bool _submitting = false;
   String? _error;
 
+  bool get _editing => widget.vehicle != null;
+
+  @override
+  void initState() {
+    super.initState();
+    final v = widget.vehicle;
+    if (v == null) return;
+    _plateController.text = v.plateNumber;
+    _nicknameController.text = v.nickname ?? '';
+    _letterController.text = v.plateLetter ?? '';
+    _vinController.text = v.vin ?? '';
+    _make = v.make;
+    _model = v.model;
+    _color = v.color;
+    _year = v.year;
+    _vehicleType = v.vehicleType ?? 'sedan';
+    _plateType = v.plateType;
+    _governorate = v.plateGovernorate;
+  }
+
   @override
   void dispose() {
     _plateController.dispose();
     _letterController.dispose();
     _nicknameController.dispose();
+    _vinController.dispose();
     super.dispose();
   }
 
@@ -55,7 +82,7 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
 
     try {
       final vehicle = VehicleModel(
-        id: '',
+        id: widget.vehicle?.id ?? '',
         plateNumber: _plateController.text.trim(),
         plateType: _plateType,
         plateLetter: _letterController.text.trim(),
@@ -63,10 +90,20 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
         nickname: _nicknameController.text.trim(),
         make: (_make ?? '').trim().isEmpty ? null : _make!.trim(),
         model: (_model ?? '').trim().isEmpty ? null : _model!.trim(),
+        year: _year,
+        vin: _vinController.text.trim().toUpperCase(),
         color: (_color ?? '').trim().isEmpty ? null : _color!.trim(),
         vehicleType: _vehicleType,
       );
-      await ref.read(vehicleListControllerProvider.notifier).create(vehicle);
+      if (_editing) {
+        await ref
+            .read(vehicleRepositoryProvider)
+            .update(widget.vehicle!.id, vehicle);
+        ref.invalidate(vehicleDetailProvider(widget.vehicle!.id));
+        await ref.read(vehicleListControllerProvider.notifier).refresh();
+      } else {
+        await ref.read(vehicleListControllerProvider.notifier).create(vehicle);
+      }
       if (mounted) context.pop();
     } catch (e) {
       setState(() => _error = asApiException(e).message);
@@ -78,7 +115,11 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final isArabic = Localizations.localeOf(context).languageCode == 'ar';
+    // Arabic-script data (makes, stored colour names) is used for Kurdish too; only
+    // the colour labels have a Kurdish spelling.
+    final code = Localizations.localeOf(context).languageCode;
+    final isArabic = code != 'en';
+    final isKurdish = code == 'ckb';
     final catalog =
         ref.watch(carCatalogProvider).valueOrNull ?? CarCatalog.empty;
     final types = {
@@ -97,7 +138,8 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
         ?.copyWith(fontWeight: FontWeight.w700);
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.addVehicle)),
+      appBar: AppBar(
+          title: Text(_editing ? l10n.editVehicle : l10n.addVehicle)),
       body: SafeArea(
         child: Form(
           key: _formKey,
@@ -248,11 +290,41 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
                 onChanged: (v) => setState(() => _model = v),
               ),
               const SizedBox(height: AppSpacing.md),
+              // Model year: 1900 up to next year (a car can arrive before its
+              // model year starts).
+              ChoiceField(
+                label: l10n.year,
+                value: _year?.toString(),
+                allowOther: false,
+                searchable: true,
+                options: [
+                  for (var y = DateTime.now().year + 1; y >= 1900; y--)
+                    ChoiceOption(value: '$y', label: '$y'),
+                ],
+                onChanged: (v) => setState(() => _year = int.tryParse(v ?? '')),
+              ),
+              const SizedBox(height: AppSpacing.md),
               ChoiceField(
                 label: l10n.color,
                 value: _color,
-                options: vehicleColorOptions(arabic: isArabic),
+                options: vehicleColorOptions(arabic: isArabic, kurdish: isKurdish),
                 onChanged: (v) => setState(() => _color = v),
+              ),
+              const SizedBox(height: AppSpacing.md),
+              TextFormField(
+                controller: _vinController,
+                textDirection: TextDirection.ltr,
+                textCapitalization: TextCapitalization.characters,
+                maxLength: 32,
+                decoration: InputDecoration(
+                    labelText: l10n.vinLabel, counterText: ''),
+                validator: (v) {
+                  final s = (v ?? '').trim();
+                  if (s.isEmpty) return null;
+                  return RegExp(r'^[A-HJ-NPR-Za-hj-npr-z0-9]+$').hasMatch(s)
+                      ? null
+                      : l10n.vinInvalid;
+                },
               ),
               const SizedBox(height: AppSpacing.xxl),
               AppButton(

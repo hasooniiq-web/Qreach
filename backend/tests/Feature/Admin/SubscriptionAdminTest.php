@@ -65,7 +65,7 @@ class SubscriptionAdminTest extends TestCase
         $user = User::factory()->create(['name' => 'منتهي الاشتراك']);
         Subscription::create([
             'user_id' => $user->id, 'plan_id' => $this->pro()->id, 'status' => 'active',
-            'current_period_starts_at' => now()->subYear(), 'current_period_ends_at' => now()->subDay(),
+            'current_period_starts_at' => now()->subYear(), 'current_period_ends_at' => now()->subDays(10),
         ]);
 
         $this->actingAs($super, 'admin')->get('/admin/subscriptions?status=expired')

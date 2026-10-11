@@ -19,7 +19,10 @@ class VehicleController extends Controller
                     ->orWhereHas('user', fn ($q) => $q->where('phone', 'like', $term));
             })
             ->when($request->filled('status'), fn ($query) => $query->where('status', $request->string('status')))
-            ->withCount('tags')
+            ->withCount([
+                'tags as active_tags_count' => fn ($q) => $q->whereIn('status', \App\Models\Tag::CANCELLABLE_STATUSES),
+                'tags as ended_tags_count' => fn ($q) => $q->whereIn('status', ['revoked', 'replaced', 'disabled']),
+            ])
             ->latest()
             ->paginate(20)
             ->withQueryString();

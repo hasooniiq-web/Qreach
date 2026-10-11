@@ -40,7 +40,7 @@
             @php $effective = $subscription->effectiveStatus(); @endphp
             <tr class="hover:bg-ink-50">
                 <td class="px-4 py-3">
-                    <a href="{{ route('admin.users.show', $subscription->user) }}" class="font-medium text-ink-900 hover:underline">{{ $subscription->user->name ?? 'بدون اسم' }}</a>
+                    <a href="{{ route('admin.users.show', $subscription->user) }}" class="font-medium text-ink-900 hover:underline">{{ $subscription->user->display_name }}</a>
                     <p class="text-xs tabular-nums text-ink-400" dir="ltr">{{ $subscription->user->phone }}</p>
                 </td>
                 <td class="px-4 py-3 text-ink-900">{{ $subscription->plan->name_ar }}</td>

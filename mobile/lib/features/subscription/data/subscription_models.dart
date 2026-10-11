@@ -79,6 +79,9 @@ class SubscriptionInfo extends Equatable {
     required this.endsAt,
     required this.plans,
     required this.pendingUpgrade,
+    this.graceEndsAt,
+    this.renewalCanceled = false,
+    this.canCancelRenewal = false,
   });
 
   /// The plan currently in force (Basic when there is no active subscription).
@@ -91,6 +94,15 @@ class SubscriptionInfo extends Equatable {
   final DateTime? endsAt;
   final List<PlanModel> plans;
   final bool pendingUpgrade;
+
+  /// The paid period is over but the plan still works until this moment.
+  final DateTime? graceEndsAt;
+
+  /// The customer stopped the yearly renewal; the plan runs to [endsAt].
+  final bool renewalCanceled;
+  final bool canCancelRenewal;
+
+  bool get inGrace => subscriptionStatus == 'grace';
 
   /// True when a paid plan was in force but has since lapsed.
   bool get hasLapsed =>
@@ -109,10 +121,24 @@ class SubscriptionInfo extends Equatable {
           .map((p) => PlanModel.fromJson(p as Map<String, dynamic>))
           .toList(),
       pendingUpgrade: json['pending_upgrade'] as bool? ?? false,
+      graceEndsAt: sub?['grace_ends_at'] != null
+          ? DateTime.tryParse(sub!['grace_ends_at'] as String)
+          : null,
+      renewalCanceled: sub?['renewal_canceled'] as bool? ?? false,
+      canCancelRenewal: sub?['can_cancel_renewal'] as bool? ?? false,
     );
   }
 
   @override
-  List<Object?> get props =>
-      [plan, isDefault, subscriptionStatus, endsAt, plans, pendingUpgrade];
+  List<Object?> get props => [
+        plan,
+        isDefault,
+        subscriptionStatus,
+        endsAt,
+        plans,
+        pendingUpgrade,
+        graceEndsAt,
+        renewalCanceled,
+        canCancelRenewal,
+      ];
 }

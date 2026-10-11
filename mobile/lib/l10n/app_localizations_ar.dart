@@ -101,6 +101,12 @@ class AppLocalizationsAr extends AppLocalizations {
   String get newPasswordLabel => 'كلمة المرور الجديدة';
 
   @override
+  String get repeatPasswordLabel => 'تكرار كلمة المرور الجديدة';
+
+  @override
+  String get passwordsDontMatch => 'كلمتا المرور غير متطابقتين';
+
+  @override
   String get passwordChanged => 'تم تغيير كلمة المرور';
 
   @override
@@ -173,10 +179,10 @@ class AppLocalizationsAr extends AppLocalizations {
       'نعمل على إضافة مركز إشعارات كامل لعمليات المسح والنشاط.';
 
   @override
-  String get vehicleProtected => 'محمية';
+  String get vehicleProtected => 'مربوطة';
 
   @override
-  String get vehicleNotProtectedYet => 'غير محمية بعد';
+  String get vehicleNotProtectedYet => 'غير مربوطة';
 
   @override
   String get noVehicleYetHomeTitle => 'أضف مركبتك الأولى';
@@ -292,7 +298,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get statusActive => 'نشط';
 
   @override
-  String get statusAssigned => 'مربوط';
+  String get statusAssigned => 'مربوطة';
 
   @override
   String get statusRevoked => 'ملغى';
@@ -395,6 +401,79 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get subStatusActive => 'فعّال';
+
+  @override
+  String get onboard1Title => 'اربط رمزك بمركبتك';
+
+  @override
+  String get onboard1Body =>
+      'أضف مركبتك، ثم امسح رمز QR أو قرّب هاتفك من شريحة NFC لربطه بها. يلصق الرمز على المركبة وتبدأ الحماية فورًا.';
+
+  @override
+  String get onboard2Title => 'يصلك بلاغ لا إزعاج';
+
+  @override
+  String get onboard2Body =>
+      'عندما يمسح أحدهم الرمز يختار سبب البلاغ ويرسله، فيصلك إشعار وتتابع الرد من «المحادثات» دون أن يعرف رقمك.';
+
+  @override
+  String get onboard3Title => 'أنت تتحكم بما يظهر';
+
+  @override
+  String get onboard3Body =>
+      'من «ما يظهر للزائر» اختر ما يراه الزائر: الاسم أو الهاتف أو جهة اتصال للطوارئ. وفي «الاشتراك» تجدّد باقتك وتضيف وسائل تواصل أكثر.';
+
+  @override
+  String get onboardSkip => 'تخطي';
+
+  @override
+  String get onboardNext => 'التالي';
+
+  @override
+  String get onboardStart => 'ابدأ الآن';
+
+  @override
+  String get subStatusGrace => 'فترة سماح';
+
+  @override
+  String planGraceBanner(String date) {
+    return 'انتهى اشتراكك. لديك حتى $date لتجديده دون أن تخسر شيئًا، وبعدها تعود باقتك إلى الأساسية وتبقى بياناتك محفوظة.';
+  }
+
+  @override
+  String renewalCanceledNote(String date) {
+    return 'تم إيقاف التجديد. تبقى باقتك فعّالة حتى $date.';
+  }
+
+  @override
+  String get cancelAnnualPlan => 'إلغاء الاشتراك السنوي';
+
+  @override
+  String get cancelAnnualTitle => 'إلغاء الاشتراك السنوي؟';
+
+  @override
+  String cancelAnnualBody(String date) {
+    return 'لن يتجدد اشتراكك. تبقى باقتك تعمل حتى $date ولا تخسر أيًّا من الأيام المتبقية.';
+  }
+
+  @override
+  String get cancelAnnualConfirm => 'إلغاء التجديد';
+
+  @override
+  String get keepSubscription => 'إبقاء الاشتراك';
+
+  @override
+  String get resumeRenewal => 'إعادة تفعيل التجديد';
+
+  @override
+  String get renewalCanceledDone =>
+      'تم إيقاف التجديد. باقتك تعمل حتى نهاية المدة.';
+
+  @override
+  String get renewalResumedDone => 'تمت إعادة تفعيل التجديد.';
+
+  @override
+  String get renewNow => 'تجديد الآن';
 
   @override
   String get subStatusExpired => 'منتهي';
@@ -746,6 +825,9 @@ class AppLocalizationsAr extends AppLocalizations {
   String get languageEnglish => 'English';
 
   @override
+  String get languageKurdish => 'کوردی';
+
+  @override
   String get plateTypeTitle => 'نوع اللوحة';
 
   @override
@@ -1093,10 +1175,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get pickerSearch => 'بحث';
 
   @override
-  String get pickerOther => 'أخرى (اكتبها)';
-
-  @override
-  String get pickerOtherHint => 'اكتبها هنا';
+  String get pickerOther => 'أخرى';
 
   @override
   String get pickerChoose => 'اختر';
@@ -1106,6 +1185,19 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get modelHint => 'مثل: كورولا، سوناتا';
+
+  @override
+  String get editVehicle => 'تعديل المركبة';
+
+  @override
+  String get editVehicleAction => 'تعديل';
+
+  @override
+  String get vinLabel => 'رقم الهيكل (VIN) — اختياري';
+
+  @override
+  String get vinInvalid =>
+      'رقم الهيكل غير صالح (أرقام وحروف لاتينية بدون I وO وQ).';
 
   @override
   String get copyLink => 'نسخ الرابط';

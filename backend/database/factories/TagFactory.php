@@ -17,7 +17,7 @@ class TagFactory extends Factory
             'public_token' => Str::random(43),
             'serial_number' => 'ST-'.strtoupper(fake()->unique()->bothify('?-####-######')),
             'type' => 'qr',
-            'status' => 'generated',
+            'status' => 'unassigned',
         ];
     }
 }

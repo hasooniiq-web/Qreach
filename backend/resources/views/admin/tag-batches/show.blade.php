@@ -10,9 +10,9 @@
                 <details data-menu class="relative">
                     <summary class="btn-secondary cursor-pointer list-none">تصدير ▾</summary>
                     <div class="menu-panel absolute end-0 top-full z-40 mt-2 w-48 rounded-xl border border-ink-200 bg-surface p-1.5 shadow-(--shadow-pop)">
-                        <a href="{{ route('admin.tag-batches.export', $batch) }}" class="block rounded-lg px-2.5 py-2 text-sm text-ink-800 hover:bg-ink-100">CSV (كامل)</a>
-                        <a href="{{ route('admin.tag-batches.export.codes', $batch) }}" class="block rounded-lg px-2.5 py-2 text-sm text-ink-800 hover:bg-ink-100">رموز فقط (JSON)</a>
-                        <a href="{{ route('admin.tag-batches.export.text', $batch) }}" class="block rounded-lg px-2.5 py-2 text-sm text-ink-800 hover:bg-ink-100">نص عادي (سطر لكل رمز)</a>
+                        <a href="{{ route('admin.tag-batches.export', $batch) }}" data-no-progress class="block rounded-lg px-2.5 py-2 text-sm text-ink-800 hover:bg-ink-100">CSV (كامل)</a>
+                        <a href="{{ route('admin.tag-batches.export.codes', $batch) }}" data-no-progress class="block rounded-lg px-2.5 py-2 text-sm text-ink-800 hover:bg-ink-100">رموز فقط (JSON)</a>
+                        <a href="{{ route('admin.tag-batches.export.text', $batch) }}" data-no-progress class="block rounded-lg px-2.5 py-2 text-sm text-ink-800 hover:bg-ink-100">نص (الرقم التسلسلي + الرابط الفريد)</a>
                     </div>
                 </details>
             @endif
@@ -21,6 +21,13 @@
             @endif
         </x-slot:actions>
     </x-page-header>
+
+    @if (filled($batch->notes))
+        <x-card class="mb-5">
+            <h3 class="mb-1 text-sm font-semibold text-ink-900">ملاحظات الدفعة</h3>
+            <p class="whitespace-pre-line text-sm text-ink-700">{{ $batch->notes }}</p>
+        </x-card>
+    @endif
 
     @if ($admin->hasPermission('printing.create'))
         <x-card class="mb-5">

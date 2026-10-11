@@ -12,7 +12,7 @@
         <x-card class="lg:col-span-2">
             <h3 class="mb-4 text-sm font-semibold text-ink-900">البيانات</h3>
             <dl class="grid gap-x-6 gap-y-4 text-sm sm:grid-cols-2">
-                <div><dt class="text-xs text-ink-400">العميل</dt><dd class="mt-0.5"><a href="{{ route('admin.users.show', $payment->user) }}" class="font-medium text-ink-900 hover:underline">{{ $payment->user->name ?? 'بدون اسم' }}</a> <span class="tabular-nums text-ink-400" dir="ltr">{{ $payment->user->phone }}</span></dd></div>
+                <div><dt class="text-xs text-ink-400">العميل</dt><dd class="mt-0.5"><a href="{{ route('admin.users.show', $payment->user) }}" class="font-medium text-ink-900 hover:underline">{{ $payment->user->display_name }}</a> <span class="tabular-nums text-ink-400" dir="ltr">{{ $payment->user->phone }}</span></dd></div>
                 <div><dt class="text-xs text-ink-400">الباقة</dt><dd class="mt-0.5 text-ink-900">{{ $payment->plan?->name_ar ?? '—' }}</dd></div>
                 <div><dt class="text-xs text-ink-400">المبلغ</dt><dd class="mt-0.5 font-semibold tabular-nums text-ink-900">{{ number_format($payment->amount_cents) }} {{ $payment->currency }}</dd></div>
                 <div><dt class="text-xs text-ink-400">المُسترد</dt><dd class="mt-0.5 tabular-nums text-ink-900">{{ number_format($payment->refunded_amount_cents) }} {{ $payment->currency }}</dd></div>

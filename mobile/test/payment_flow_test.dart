@@ -37,6 +37,12 @@ class _Subscriptions implements SubscriptionRepository {
 
   @override
   Future<void> requestUpgrade(String planSlug) async {}
+
+  @override
+  Future<void> cancelRenewal() async {}
+
+  @override
+  Future<void> resumeRenewal() async {}
 }
 
 class _Payments implements PaymentRepository {

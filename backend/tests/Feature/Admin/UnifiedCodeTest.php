@@ -38,7 +38,8 @@ class UnifiedCodeTest extends TestCase
         $this->assertSame(12, $batch->tags()->has('nfcTag')->count());
 
         $tag = $batch->tags()->first();
-        $this->assertStringStartsWith('ST-C-', $tag->serial_number);
+        $this->assertMatchesRegularExpression('/^ST-C\d{2}-[0-9A-HJKMNP-TV-Z]{6}-[0-9A-HJKMNP-TV-Z]$/', $tag->serial_number);
+        $this->assertTrue(\App\Services\TagTokenGenerator::isValidSerial($tag->serial_number));
         $this->assertTrue($tag->hasQr() && $tag->hasNfc());
         $this->assertSame('QR + NFC', $tag->typeLabel());
         $this->assertSame('Q', $tag->qrTag->error_correction_level);
@@ -73,7 +74,7 @@ class UnifiedCodeTest extends TestCase
         $this->get("/admin/batches/{$batch->id}")->assertOk()->assertSee('طباعة الرموز');
         $this->get("/admin/batches/{$batch->id}/print")->assertOk();
         $csv = $this->get("/admin/batches/{$batch->id}/export")->assertOk()->streamedContent();
-        $this->assertStringContainsString('ST-C-', $csv);
+        $this->assertMatchesRegularExpression('/ST-C\d{2}-/', $csv);
         $this->assertStringContainsString('code', $csv);
     }
 
@@ -89,20 +90,43 @@ class UnifiedCodeTest extends TestCase
         $this->get('/admin/qr')->assertOk()->assertSee('QR + NFC');
     }
 
-    public function test_a_unified_serial_carries_the_generation_date_and_scales_past_millions(): void
+    public function test_new_serials_use_the_year_random_payload_and_check_character_format(): void
     {
-        $batch = app(QrBatchService::class)->createBatch(2, null, 'code');
-        $serial = $batch->tags()->first()->serial_number;
+        $batch = app(QrBatchService::class)->createBatch(50, null, 'code');
+        $serials = $batch->tags()->pluck('serial_number');
 
-        $this->assertMatchesRegularExpression('/^ST-C-\d{8}-\d{6,}$/', $serial);
-        $this->assertStringContainsString('-'.now()->format('Ymd').'-', $serial);
+        $this->assertCount(50, $serials->unique());
+        foreach ($serials as $serial) {
+            $this->assertMatchesRegularExpression('/^ST-C'.now()->format('y').'-[0-9A-HJKMNP-TV-Z]{6}-[0-9A-HJKMNP-TV-Z]$/', $serial);
+            $this->assertTrue(\App\Services\TagTokenGenerator::isValidSerial($serial), $serial);
+        }
 
+        // A mistyped character is caught by the check character.
+        $good = $serials->first();
+        $payload = $good[7];
+        $wrong = $good;
+        $wrong[7] = $payload === '2' ? '3' : '2';
+        $this->assertFalse(\App\Services\TagTokenGenerator::isValidSerial($wrong));
+        $this->assertFalse(\App\Services\TagTokenGenerator::isValidSerial('ST-C-20261010-000150'));
+    }
+
+    public function test_legacy_serial_formatting_is_kept_for_existing_rows(): void
+    {
         $generator = new \App\Services\TagTokenGenerator;
         $this->assertSame('ST-C-'.now()->format('Ymd').'-000150', $generator->formatSerial('code', 150));
-        $this->assertSame('ST-C-'.now()->format('Ymd').'-10000000', $generator->formatSerial('code', 10_000_000));
-        // Older kinds keep their year-only form.
         $this->assertSame('ST-Q-'.now()->format('Y').'-000150', $generator->formatSerial('qr', 150));
     }
+
+    public function test_the_text_export_has_the_serial_and_the_unique_address(): void
+    {
+        $this->actingAs($this->admin(), 'admin');
+        $batch = app(QrBatchService::class)->createBatch(2, null);
+        $tag = $batch->tags()->first();
+
+        $text = $this->get("/admin/batches/{$batch->id}/export/text")->assertOk()->streamedContent();
+        $this->assertStringContainsString($tag->serial_number."\t".rtrim(config('app.url'), '/').'/t/'.$tag->public_token, $text);
+    }
+
     public function test_older_single_purpose_batches_still_work(): void
     {
         $qr = app(QrBatchService::class)->createBatch(2, null, 'qr');
@@ -111,7 +135,8 @@ class UnifiedCodeTest extends TestCase
         $this->assertSame(2, $qr->tags()->has('qrTag')->count());
         $this->assertSame(0, $qr->tags()->has('nfcTag')->count());
         $this->assertSame(2, $nfc->tags()->has('nfcTag')->count());
-        $this->assertStringStartsWith('ST-N-', $nfc->tags()->first()->serial_number);
+        $this->assertMatchesRegularExpression('/^ST-N\d{2}-/', $nfc->tags()->first()->serial_number);
+        $this->assertMatchesRegularExpression('/^ST-Q\d{2}-/', $qr->tags()->first()->serial_number);
     }
 
     public function test_an_unknown_type_is_rejected(): void
@@ -129,6 +154,8 @@ class UnifiedCodeTest extends TestCase
         $old = app(QrBatchService::class)->createBatch(1, null, 'qr')->tags()->first();
         $new = app(QrBatchService::class)->createBatch(1, null, 'code')->tags()->first();
         $old->update(['status' => 'assigned', 'vehicle_id' => \App\Models\Vehicle::factory()->create()->id]);
+        // Only a code that was sent to print can take over a vehicle.
+        $new->update(['status' => 'unassigned']);
 
         $this->get("/admin/qr/{$old->public_token}")->assertOk()->assertSee($new->serial_number);
     }

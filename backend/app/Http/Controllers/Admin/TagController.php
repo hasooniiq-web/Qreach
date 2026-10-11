@@ -37,7 +37,11 @@ class TagController extends Controller
     {
         $request->validate(['reason' => ['required', 'string', 'max:255']]);
 
-        $this->lifecycle->revoke($tag, $request->input('reason'), 'admin', $request->user('admin')->id);
+        try {
+            $this->lifecycle->revoke($tag, $request->input('reason'), 'admin', $request->user('admin')->id);
+        } catch (TagActivationException $e) {
+            return back()->withErrors(['reason' => $e->getMessage()]);
+        }
 
         return back()->with('status', 'تم إلغاء الرمز بنجاح.');
     }

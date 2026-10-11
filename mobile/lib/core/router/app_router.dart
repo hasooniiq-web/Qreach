@@ -12,6 +12,8 @@ import '../../features/contacts/presentation/contact_thread_screen.dart';
 import '../../features/contacts/presentation/contacts_screen.dart';
 import '../../features/home/presentation/home_screen.dart';
 import '../../features/notifications/presentation/notifications_screen.dart';
+import '../../features/onboarding/onboarding_controller.dart';
+import '../../features/onboarding/onboarding_screen.dart';
 import '../../features/profile/presentation/profile_screen.dart';
 import '../../features/profile/presentation/visibility_screen.dart';
 import '../../features/server/server_setup_screen.dart';
@@ -22,6 +24,7 @@ import '../../features/subscription/presentation/subscription_screen.dart';
 import '../../features/tags/presentation/scan_screen.dart';
 import '../../features/vehicles/presentation/vehicle_detail_screen.dart';
 import '../../features/vehicles/presentation/vehicle_form_screen.dart';
+import '../../features/vehicles/data/vehicle_model.dart';
 import '../../features/vehicles/presentation/vehicle_list_screen.dart';
 import '../design/page_transitions.dart';
 import '../splash_screen.dart';
@@ -36,6 +39,8 @@ import '../splash_screen.dart';
 /// over the tabs.
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authControllerProvider);
+  // null while the stored flag loads; false on the very first launch.
+  final onboardingSeen = ref.watch(onboardingSeenProvider);
 
   return GoRouter(
     initialLocation: '/',
@@ -45,9 +50,15 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       if (authState is AuthUnknown) return '/';
       final onServer = state.matchedLocation == '/server';
+      final onOnboarding = state.matchedLocation == '/onboarding';
       if (authState is AuthUnauthenticated) {
+        // First launch: the three-page walkthrough before the login choice.
+        if (onboardingSeen == null) return '/';
+        if (onboardingSeen == false) return onOnboarding ? null : '/onboarding';
+        if (onOnboarding) return '/login';
         return (loggingIn || onServer) ? null : '/login';
       }
+      if (onOnboarding) return '/home';
       if (authState is AuthLocked) {
         return onLock ? null : '/lock';
       }
@@ -59,6 +70,10 @@ final routerProvider = Provider<GoRouter>((ref) {
     },
     routes: [
       GoRoute(path: '/', builder: (context, state) => const SplashScreen()),
+      GoRoute(
+        path: '/onboarding',
+        builder: (context, state) => const OnboardingScreen(),
+      ),
       GoRoute(
         path: '/login',
         pageBuilder: animatedPage((context, state) => const AuthChoiceScreen()),
@@ -128,6 +143,11 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/vehicles/new',
         pageBuilder:
             animatedPage((context, state) => const VehicleFormScreen()),
+      ),
+      GoRoute(
+        path: '/vehicles/:id/edit',
+        pageBuilder: animatedPage((context, state) =>
+            VehicleFormScreen(vehicle: state.extra as VehicleModel?)),
       ),
       GoRoute(
         path: '/vehicles/:id',

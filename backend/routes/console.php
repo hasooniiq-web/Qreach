@@ -30,3 +30,6 @@ Schedule::command('sanctum:prune-expired --hours=24')->daily();
 
 // Payments: ask providers about missing notifications, close abandoned checkouts.
 Schedule::command('payments:maintain')->everyFiveMinutes();
+
+// Subscription reminders (30/10/1 day before, at expiry, after the grace week). Idempotent per period.
+Schedule::command('subscriptions:remind')->dailyAt('06:00');

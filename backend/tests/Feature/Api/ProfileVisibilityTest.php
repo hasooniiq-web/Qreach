@@ -34,7 +34,7 @@ class ProfileVisibilityTest extends TestCase
     {
         Subscription::create([
             'user_id' => $user->id, 'plan_id' => SubscriptionPlan::where('slug', 'plus')->value('id'), 'status' => 'active',
-            'current_period_starts_at' => now()->subDay(), 'current_period_ends_at' => $active ? now()->addYear() : now()->subMinute(),
+            'current_period_starts_at' => now()->subDay(), 'current_period_ends_at' => $active ? now()->addYear() : now()->subDays(Subscription::graceDays() + 1),
         ]);
     }
 

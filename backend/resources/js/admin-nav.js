@@ -119,6 +119,10 @@ document.addEventListener('click', (e) => {
     const href = a.getAttribute('href') || '';
     if (href.startsWith('#') || href.startsWith('javascript:') || href.startsWith('mailto:') || href.startsWith('tel:')) return;
     if (a.origin !== location.origin) return;
+    // A file download never replaces the page, so no navigation ever finishes and
+    // the dimmed "loading" state would stay on until a manual refresh. Exports are
+    // marked by their address (/export...) or by data-no-progress.
+    if (a.hasAttribute('data-no-progress') || /\/export(\/|$|\?)/.test(a.pathname)) return;
     startProgress();
 });
 

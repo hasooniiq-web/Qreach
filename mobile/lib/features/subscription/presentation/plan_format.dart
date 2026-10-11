@@ -23,6 +23,7 @@ String subscriptionStatusLabel(BuildContext context, String status) {
   final l10n = AppLocalizations.of(context)!;
   return switch (status) {
     'active' => l10n.subStatusActive,
+    'grace' => l10n.subStatusGrace,
     'trialing' => l10n.subStatusTrialing,
     'canceled' => l10n.subStatusCanceled,
     'past_due' => l10n.subStatusPastDue,

@@ -13,7 +13,7 @@
     <x-data-table :headers="['المستخدم', 'رقم الهاتف', 'الباقة', 'المركبات', 'الحالة', 'تاريخ التسجيل', '']">
         @forelse ($users as $user)
             <tr class="hover:bg-ink-50">
-                <td class="px-4 py-3 font-medium text-ink-900">{{ $user->name ?? 'بدون اسم' }}</td>
+                <td class="px-4 py-3 font-medium text-ink-900">{{ $user->display_name }}</td>
                 <td class="px-4 py-3 tabular-nums text-ink-600" dir="ltr">{{ $user->phone }}</td>
                 <td class="px-4 py-3">
                     @php $paid = $user->subscriptions->first(fn ($s) => $s->isCurrentlyActive())?->plan; @endphp

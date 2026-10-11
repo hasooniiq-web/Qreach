@@ -72,7 +72,7 @@
             // glance instead of as a wall of identical rows (still labeled
             // with text too, never color/icon alone).
             $platformStyle = [
-                'phone' => ['phone', 'bg-ink-900 text-white'],
+                'phone' => ['phone', 'bg-brand-yellow text-brand-black'],
                 'whatsapp' => ['chat-bubble', 'bg-[#25D366]/15 text-[#128C7E]'],
                 'telegram' => ['send', 'bg-[#229ED9]/15 text-[#229ED9]'],
                 'instagram' => ['camera', 'bg-[#E1306C]/15 text-[#E1306C]'],
@@ -157,7 +157,7 @@
                         <input type="radio" name="reason" value="{{ $value }}" class="peer sr-only" @checked(old('reason') === $value) required>
                         {{-- The chosen reason turns solid yellow with a check mark: unmistakable on the dark page
                              (the old black-on-black selection looked like nothing had happened). --}}
-                        <span class="flex h-full min-h-24 flex-col justify-between gap-3 rounded-xl border-2 border-ink-200 bg-white p-3.5 text-sm font-semibold text-ink-900 transition peer-checked:border-brand-yellow peer-checked:bg-brand-yellow peer-checked:text-brand-black peer-checked:shadow-lg peer-checked:ring-4 peer-checked:ring-brand-yellow/40 peer-focus-visible:ring-2 peer-focus-visible:ring-brand-yellow">
+                        <span class="flex h-full min-h-24 flex-col justify-between gap-3 rounded-xl border-2 border-ink-200 bg-surface p-3.5 text-sm font-semibold text-ink-900 transition peer-checked:border-brand-yellow peer-checked:bg-brand-yellow peer-checked:text-brand-black peer-checked:shadow-lg peer-checked:ring-4 peer-checked:ring-brand-yellow/40 peer-focus-visible:ring-2 peer-focus-visible:ring-brand-yellow">
                             <x-icon :name="$icon" class="size-6" />
                             {{ $label }}
                         </span>

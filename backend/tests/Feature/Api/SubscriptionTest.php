@@ -17,7 +17,7 @@ use Tests\TestCase;
  * Basic = messaging only; Pro = messaging + showing the owner's chosen
  * phone/Instagram/extra info. Entitlements are enforced server-side: the
  * API refuses Basic owners, and the public scan page re-checks the plan on
- * every render so a lapsed subscription hides details immediately.
+ * every render so a lapsed subscription (after its grace week) hides details.
  */
 class SubscriptionTest extends TestCase
 {
@@ -89,7 +89,7 @@ class SubscriptionTest extends TestCase
     public function test_an_expired_pro_subscription_falls_back_to_basic(): void
     {
         $user = User::factory()->create();
-        $this->grantPro($user, now()->subDay());
+        $this->grantPro($user, now()->subDays(10));
 
         $this->getJson('/api/v1/subscription', $this->bearer($user))
             ->assertJsonPath('plan.slug', 'basic')
@@ -154,7 +154,7 @@ class SubscriptionTest extends TestCase
     public function test_extra_platforms_disappear_once_the_plus_subscription_lapses(): void
     {
         $owner = User::factory()->create();
-        $this->grantPro($owner, now()->subMinute());
+        $this->grantPro($owner, now()->subDays(10));
         ContactMethod::create(['user_id' => $owner->id, 'type' => 'instagram', 'value' => 'my.car', 'privacy_state' => 'public']);
         $tag = $this->assignedTagFor($owner);
 

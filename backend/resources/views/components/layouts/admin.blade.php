@@ -46,6 +46,7 @@
             'الإدارة' => [
                 ['icon' => 'star', 'label' => 'الاشتراكات والباقات', 'route' => 'admin.subscriptions.index', 'badge' => 'upgrade_requests', 'permission' => 'subscriptions.view'],
                 ['icon' => 'audit', 'label' => 'المدفوعات', 'route' => 'admin.payments.index', 'permission' => 'payments.view'],
+                ['icon' => 'batch', 'label' => 'المخزون والحسابات', 'route' => 'admin.trade.index', 'permission' => 'trade.view'],
                 ['icon' => 'settings', 'label' => 'بوابات الدفع', 'route' => 'admin.payment-gateways.index', 'permission' => 'payment_gateways.view'],
                 ['icon' => 'users', 'label' => 'المسؤولون', 'route' => 'admin.admins.index', 'permission' => 'admins.view'],
                 ['icon' => 'shield', 'label' => 'الأدوار والصلاحيات', 'route' => 'admin.roles.index', 'permission' => 'roles.view'],
@@ -82,6 +83,7 @@
             'admin.subscriptions' => ['الاشتراكات والباقات', 'admin.subscriptions.index'],
             'admin.plans' => ['الاشتراكات والباقات', 'admin.subscriptions.index'],
             'admin.payments' => ['المدفوعات', 'admin.payments.index'],
+            'admin.trade' => ['المخزون والحسابات', 'admin.trade.index'],
             'admin.payment-gateways' => ['بوابات الدفع', 'admin.payment-gateways.index'],
             'admin.admins' => ['المسؤولون والصلاحيات', 'admin.admins.index'],
             'admin.settings' => ['إعدادات النظام', 'admin.settings.index'],

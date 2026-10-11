@@ -144,7 +144,8 @@ class _Header extends StatelessWidget {
     final hasName = name?.isNotEmpty == true;
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 12, 16, 0),
+      padding: const EdgeInsets.fromLTRB(
+          AppSpacing.lg, AppSpacing.md, AppSpacing.lg, 0),
       child: Row(
         children: [
           Container(
@@ -195,7 +196,7 @@ class _SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 0, 12, 4),
+      padding: const EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.xs, 4),
       child: Row(
         children: [
           Text(title, style: AppText.section(context).copyWith(fontSize: 18)),
@@ -248,7 +249,11 @@ class VehicleCarousel extends StatefulWidget {
 }
 
 class _VehicleCarouselState extends State<VehicleCarousel> {
-  final _controller = PageController(viewportFraction: 0.9);
+  /// Gap kept between two neighbouring cards (half on each side of a card).
+  static const double _cardGap = 6;
+
+  PageController _controller = PageController();
+  double _fraction = 1;
   Timer? _timer;
   int _page = 0;
   bool _touching = false;
@@ -259,6 +264,38 @@ class _VehicleCarouselState extends State<VehicleCarousel> {
     if (widget.autoplay) {
       _timer = Timer.periodic(const Duration(seconds: 5), (_) => _advance());
     }
+  }
+
+  /// A single vehicle fills the page margin exactly like every other block on
+  /// the screen. With several, the same 16 px margin is kept on the leading
+  /// edge and the next card peeks in on the other side.
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _syncController();
+  }
+
+  @override
+  void didUpdateWidget(covariant VehicleCarousel oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    _syncController();
+  }
+
+  void _syncController() {
+    final width = MediaQuery.sizeOf(context).width;
+    final fraction = widget.vehicles.length > 1
+        ? ((width - 2 * (AppSpacing.lg - _cardGap)) / width).clamp(0.5, 1.0)
+        : 1.0;
+    if ((fraction - _fraction).abs() < 0.001 && _controller.hasClients) return;
+    if ((fraction - _fraction).abs() < 0.001) {
+      _fraction = fraction;
+      return;
+    }
+    final old = _controller;
+    _fraction = fraction;
+    _controller = PageController(viewportFraction: fraction, initialPage: 0);
+    _page = 0;
+    WidgetsBinding.instance.addPostFrameCallback((_) => old.dispose());
   }
 
   void _advance() {
@@ -306,7 +343,8 @@ class _VehicleCarouselState extends State<VehicleCarousel> {
                   );
                 },
                 child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                  padding: EdgeInsets.symmetric(
+                      horizontal: count > 1 ? _cardGap : AppSpacing.lg),
                   child: _VehicleCard(vehicle: widget.vehicles[i]),
                 ),
               ),
@@ -584,7 +622,8 @@ class _ConversationRow extends StatelessWidget {
       onTap: () => context.push('/contacts/${c.id}'),
       scale: 0.985,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        padding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.lg, vertical: AppSpacing.sm + 2),
         child: Row(
           children: [
             AnimatedContainer(

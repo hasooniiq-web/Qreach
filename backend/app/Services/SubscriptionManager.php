@@ -23,6 +23,7 @@ class SubscriptionManager
 
         return DB::transaction(function () use ($user, $plan, $adminId, $days) {
             [$subscription, $action] = $this->applyGrant($user, $plan, $days);
+            $this->recordUpgrade($user, $plan, $adminId, 'منحها المسؤول مباشرة');
 
             AuditLogger::log($action, 'admin', $adminId, 'Subscription', $subscription->id, 'success', [
                 'user_id' => $user->id, 'plan' => $plan->slug, 'days' => $days,
@@ -43,6 +44,7 @@ class SubscriptionManager
 
         return DB::transaction(function () use ($payment, $plan, $days) {
             [$subscription, $action] = $this->applyGrant($payment->user, $plan, $days);
+            $this->recordUpgrade($payment->user, $plan, null, 'تفعيل تلقائي بعد دفع إلكتروني ناجح');
 
             AuditLogger::log($action, 'system', null, 'Subscription', $subscription->id, 'success', [
                 'user_id' => $payment->user_id, 'plan' => $plan->slug, 'days' => $days, 'payment_id' => $payment->id,
@@ -50,6 +52,36 @@ class SubscriptionManager
 
             return $subscription;
         });
+    }
+
+    /**
+     * Every plan change, however it happened, appears in the upgrade-requests
+     * history: a waiting request from this user is closed as approved, and when
+     * there was none (an admin grant, or a payment) an approved entry is added so
+     * the "approved" list is the complete record of who was upgraded and how.
+     */
+    private function recordUpgrade(User $user, SubscriptionPlan $plan, ?int $adminId, string $note): void
+    {
+        $pending = PlanUpgradeRequest::where('user_id', $user->id)
+            ->where('plan_id', $plan->id)
+            ->where('status', 'pending')
+            ->latest('id')
+            ->first();
+
+        if ($pending) {
+            $pending->update(['status' => 'approved', 'handled_by' => $adminId, 'handled_at' => now()]);
+
+            return;
+        }
+
+        PlanUpgradeRequest::create([
+            'user_id' => $user->id,
+            'plan_id' => $plan->id,
+            'status' => 'approved',
+            'note' => $note,
+            'handled_by' => $adminId,
+            'handled_at' => now(),
+        ]);
     }
 
     /** @return array{0: Subscription, 1: string} the subscription and the audit action describing what happened */
@@ -62,9 +94,13 @@ class SubscriptionManager
             ->lockForUpdate()
             ->first();
 
-        if ($existing && $existing->isCurrentlyActive()) {
+        if ($existing && $existing->grantsAccess()) {
+            // Extends from the later of the old end and now: renewing inside the grace week
+            // must not hand back days that were already used up.
+            $base = $existing->current_period_ends_at?->isFuture() ? $existing->current_period_ends_at : now();
             $existing->update([
-                'current_period_ends_at' => ($existing->current_period_ends_at ?? now())->copy()->addDays($days),
+                'current_period_ends_at' => $base->copy()->addDays($days),
+                'renewal_canceled_at' => null,
             ]);
 
             return [$existing, 'admin.subscription_extended'];
@@ -88,6 +124,32 @@ class SubscriptionManager
         AuditLogger::log('admin.subscription_canceled', 'admin', $adminId, 'Subscription', $subscription->id, 'success', [
             'user_id' => $subscription->user_id, 'plan_id' => $subscription->plan_id,
         ]);
+    }
+
+    /**
+     * The customer stops the yearly renewal. Nothing is taken away: the status stays
+     * active and the plan keeps working until the end of the period already paid for.
+     */
+    public function cancelRenewal(Subscription $subscription, string $actorType = 'customer', ?int $actorId = null): Subscription
+    {
+        if ($subscription->renewal_canceled_at === null) {
+            $subscription->update(['renewal_canceled_at' => now()]);
+            AuditLogger::log('subscription.renewal_canceled', $actorType, $actorId, 'Subscription', $subscription->id, 'success', [
+                'ends_at' => $subscription->current_period_ends_at?->toIso8601String(),
+            ]);
+        }
+
+        return $subscription;
+    }
+
+    public function resumeRenewal(Subscription $subscription, string $actorType = 'customer', ?int $actorId = null): Subscription
+    {
+        if ($subscription->renewal_canceled_at !== null) {
+            $subscription->update(['renewal_canceled_at' => null]);
+            AuditLogger::log('subscription.renewal_resumed', $actorType, $actorId, 'Subscription', $subscription->id, 'success');
+        }
+
+        return $subscription;
     }
 
     public function approveUpgrade(PlanUpgradeRequest $request, int $adminId): Subscription

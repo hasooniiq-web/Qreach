@@ -30,6 +30,8 @@ class TagTokenGenerator
 
     private const LENGTH = 26;
 
+    private const SERIAL_PAYLOAD_LENGTH = 6;
+
     public function generatePublicToken(): string
     {
         do {
@@ -95,7 +97,90 @@ class TagTokenGenerator
     }
 
     /**
-     * Human-readable serial printed on the physical tag. A unified code carries the
+     * Serials for new codes: `ST-C26-8K7M2P-4`.
+     *
+     *   ST   product prefix        C  category (C = unified QR+NFC, Q, N)
+     *   26   year (2 digits)       8K7M2P  6 random Crockford Base32 characters
+     *   4    check character (Luhn mod 32 over everything before it)
+     *
+     * The check character catches a mistyped or misread serial before any lookup.
+     * The serial is printed on the sticker and is NOT a secret — it only finds a
+     * record. The thing that opens the public page is the long random token in
+     * the QR/NFC address, never this value.
+     *
+     * @return list<string>
+     */
+    public function generateSerials(string $type, int $count): array
+    {
+        $category = $this->serialCategory($type);
+        $year = now()->format('y');
+        $serials = [];
+
+        while (count($serials) < $count) {
+            while (count($serials) < $count) {
+                $payload = '';
+                for ($i = 0; $i < self::SERIAL_PAYLOAD_LENGTH; $i++) {
+                    $payload .= self::ALPHABET[random_int(0, 31)];
+                }
+                $serials[self::composeSerial($category, $year, $payload)] = true;
+            }
+
+            $taken = Tag::whereIn('serial_number', array_keys($serials))->pluck('serial_number')->all();
+            foreach ($taken as $serial) {
+                unset($serials[$serial]);
+            }
+        }
+
+        return array_keys($serials);
+    }
+
+    public static function composeSerial(string $category, string $year, string $payload): string
+    {
+        return sprintf('ST-%s%s-%s-%s', $category, $year, $payload, self::checkCharacter('ST'.$category.$year.$payload));
+    }
+
+    /** Luhn mod-32 check character over characters that all belong to the alphabet. */
+    public static function checkCharacter(string $body): string
+    {
+        $n = strlen(self::ALPHABET);
+        $factor = 2;
+        $sum = 0;
+
+        for ($i = strlen($body) - 1; $i >= 0; $i--) {
+            $code = strpos(self::ALPHABET, $body[$i]);
+            if ($code === false) {
+                throw new \InvalidArgumentException('Character outside the serial alphabet: '.$body[$i]);
+            }
+
+            $addend = $factor * $code;
+            $factor = $factor === 2 ? 1 : 2;
+            $sum += intdiv($addend, $n) + ($addend % $n);
+        }
+
+        return self::ALPHABET[($n - ($sum % $n)) % $n];
+    }
+
+    /** True for a serial in the new format whose check character matches. */
+    public static function isValidSerial(string $serial): bool
+    {
+        if (! preg_match('/^ST-([CQN])(\d{2})-([0-9A-HJKMNP-TV-Z]{6})-([0-9A-HJKMNP-TV-Z])$/', strtoupper($serial), $m)) {
+            return false;
+        }
+
+        return self::composeSerial($m[1], $m[2], $m[3]) === strtoupper($serial);
+    }
+
+    private function serialCategory(string $type): string
+    {
+        return match ($type) {
+            'nfc' => 'N',
+            'qr' => 'Q',
+            default => 'C',
+        };
+    }
+
+    /**
+     * LEGACY (existing rows keep their serial): ST-C-20261010-000150. A unified code carries the
      * full generation date — ST-C-20261010-000150 (day, month, year) — so when a code
      * was made can be read off the sticker; older kinds keep ST-Q-2026-000048.
      * The number is at least 6 digits and simply grows past that (ids are 64-bit),

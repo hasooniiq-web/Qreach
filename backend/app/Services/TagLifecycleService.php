@@ -53,6 +53,10 @@ class TagLifecycleService
                 throw new TagActivationException('تم استبدال هذا الرمز برمز جديد ولا يمكن استخدامه بعد الآن.', 'TAG_REPLACED');
             }
 
+            if ($tag->status === Tag::STATUS_CREATED) {
+                throw new TagActivationException('هذا الرمز لم يُرسل للطباعة بعد ولا يمكن ربطه.', 'TAG_NOT_READY');
+            }
+
             if (! in_array($tag->status, Tag::ASSIGNABLE_STATUSES, true)) {
                 throw new TagActivationException('هذا الرمز مُفعّل بالفعل ولا يمكن ربطه مرة أخرى.', 'TAG_ALREADY_ACTIVATED');
             }
@@ -126,6 +130,10 @@ class TagLifecycleService
             }
             if ($tag->status === Tag::STATUS_REPLACED) {
                 throw new TagActivationException('تم استبدال هذا الرمز بالفعل.', 'TAG_REPLACED');
+            }
+            // Cancellation only ends the life of a code that was assigned before.
+            if (! $tag->isCancellable()) {
+                throw new TagActivationException('لا يمكن إلغاء إلا رمز تم تعيينه لمركبة.', 'TAG_NOT_ASSIGNED');
             }
 
             $previousStatus = $tag->status;
