@@ -84,6 +84,16 @@
                     @endif
                 </div>
                 @error('plan')<p class="w-full text-xs text-status-danger" role="alert">{{ $message }}</p>@enderror
+                {{-- The same activation the app's "I have a voucher" screen does, done by staff for a customer. --}}
+                <form method="POST" action="{{ route('admin.users.voucher.redeem', $user) }}" class="flex w-full flex-wrap items-end gap-2 border-t border-ink-100 pt-3">
+                    @csrf
+                    <div class="min-w-[240px] flex-1">
+                        <label for="voucher-code" class="mb-1 block text-xs text-ink-500">التفعيل بقسيمة (رقم من 16 خانة)</label>
+                        <input id="voucher-code" name="code" value="{{ old('code') }}" inputmode="numeric" maxlength="32" dir="ltr" placeholder="0000 0000 0000 0000" class="form-control !py-2 text-start tabular-nums">
+                    </div>
+                    <button class="btn-secondary">تفعيل بالقسيمة</button>
+                </form>
+                @error('code')<p class="w-full text-xs text-status-danger" role="alert">{{ $message }}</p>@enderror
             @endif
         </div>
     </x-card>

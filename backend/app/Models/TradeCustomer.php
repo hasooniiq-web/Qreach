@@ -18,7 +18,7 @@ class TradeCustomer extends Model
     /** Sales minus payments, voided entries ignored. Positive = the customer owes us. */
     public function balance(): int
     {
-        $sales = (int) $this->entries()->where('type', TradeEntry::SALE)->whereNull('voided_at')->sum('amount');
+        $sales = (int) $this->entries()->whereIn('type', TradeEntry::CHARGES)->whereNull('voided_at')->sum('amount');
         $paid = (int) $this->entries()->where('type', TradeEntry::PAYMENT)->whereNull('voided_at')->sum('amount');
 
         return $sales - $paid;

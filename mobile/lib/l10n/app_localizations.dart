@@ -838,6 +838,120 @@ abstract class AppLocalizations {
   /// **'فعّال'**
   String get subStatusActive;
 
+  /// No description provided for @voucherEntryTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'لديك قسيمة تفعيل؟'**
+  String get voucherEntryTitle;
+
+  /// No description provided for @voucherEntryBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخل الرقم المكوّن من 16 خانة أو امسح رمز QR لتفعيل الباقة.'**
+  String get voucherEntryBody;
+
+  /// No description provided for @voucherTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تفعيل بقسيمة'**
+  String get voucherTitle;
+
+  /// No description provided for @voucherIntro.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشتريت قسيمة تفعيل من أحد الموزّعين؟ أدخل رقمها المكوّن من 16 خانة أو امسح رمز QR المطبوع عليها، فتُفعَّل باقتك فورًا.'**
+  String get voucherIntro;
+
+  /// No description provided for @voucherFieldLabel.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم القسيمة (16 خانة)'**
+  String get voucherFieldLabel;
+
+  /// No description provided for @voucherActivate.
+  ///
+  /// In ar, this message translates to:
+  /// **'تفعيل'**
+  String get voucherActivate;
+
+  /// No description provided for @voucherScan.
+  ///
+  /// In ar, this message translates to:
+  /// **'مسح رمز QR'**
+  String get voucherScan;
+
+  /// No description provided for @voucherScanHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'وجّه الكاميرا نحو رمز QR المطبوع على القسيمة'**
+  String get voucherScanHint;
+
+  /// No description provided for @voucherNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'تُستخدم كل قسيمة مرة واحدة فقط. إن كانت مستخدمة أو منتهية أو ملغاة فسيخبرك التطبيق.'**
+  String get voucherNote;
+
+  /// No description provided for @voucherSuccessTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تفعيل باقة {plan}'**
+  String voucherSuccessTitle(String plan);
+
+  /// No description provided for @voucherSuccessUntil.
+  ///
+  /// In ar, this message translates to:
+  /// **'باقتك فعّالة حتى {date}.'**
+  String voucherSuccessUntil(String date);
+
+  /// No description provided for @voucherSuccessDays.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم تفعيل الباقة لمدة {days} يومًا.'**
+  String voucherSuccessDays(int days);
+
+  /// No description provided for @voucherErrInvalid.
+  ///
+  /// In ar, this message translates to:
+  /// **'رقم القسيمة غير موجود. تأكد منه وأعد المحاولة.'**
+  String get voucherErrInvalid;
+
+  /// No description provided for @voucherErrFormat.
+  ///
+  /// In ar, this message translates to:
+  /// **'الرقم غير مكتمل أو غير صحيح. تأكد أنه 16 رقمًا.'**
+  String get voucherErrFormat;
+
+  /// No description provided for @voucherErrUsed.
+  ///
+  /// In ar, this message translates to:
+  /// **'هذه القسيمة مستخدمة من قبل.'**
+  String get voucherErrUsed;
+
+  /// No description provided for @voucherErrExpired.
+  ///
+  /// In ar, this message translates to:
+  /// **'انتهت صلاحية هذه القسيمة.'**
+  String get voucherErrExpired;
+
+  /// No description provided for @voucherErrRevoked.
+  ///
+  /// In ar, this message translates to:
+  /// **'هذه القسيمة ملغاة ولا يمكن استخدامها.'**
+  String get voucherErrRevoked;
+
+  /// No description provided for @voucherErrThrottled.
+  ///
+  /// In ar, this message translates to:
+  /// **'محاولات كثيرة خلال وقت قصير. انتظر دقيقة ثم حاول مجددًا.'**
+  String get voucherErrThrottled;
+
+  /// No description provided for @voucherErrLocked.
+  ///
+  /// In ar, this message translates to:
+  /// **'تجاوزت عدد المحاولات المسموح بها. حاول بعد ساعة.'**
+  String get voucherErrLocked;
+
   /// No description provided for @onboard1Title.
   ///
   /// In ar, this message translates to:

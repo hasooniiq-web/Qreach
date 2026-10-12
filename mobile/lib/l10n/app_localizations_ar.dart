@@ -403,6 +403,76 @@ class AppLocalizationsAr extends AppLocalizations {
   String get subStatusActive => 'فعّال';
 
   @override
+  String get voucherEntryTitle => 'لديك قسيمة تفعيل؟';
+
+  @override
+  String get voucherEntryBody =>
+      'أدخل الرقم المكوّن من 16 خانة أو امسح رمز QR لتفعيل الباقة.';
+
+  @override
+  String get voucherTitle => 'تفعيل بقسيمة';
+
+  @override
+  String get voucherIntro =>
+      'اشتريت قسيمة تفعيل من أحد الموزّعين؟ أدخل رقمها المكوّن من 16 خانة أو امسح رمز QR المطبوع عليها، فتُفعَّل باقتك فورًا.';
+
+  @override
+  String get voucherFieldLabel => 'رقم القسيمة (16 خانة)';
+
+  @override
+  String get voucherActivate => 'تفعيل';
+
+  @override
+  String get voucherScan => 'مسح رمز QR';
+
+  @override
+  String get voucherScanHint => 'وجّه الكاميرا نحو رمز QR المطبوع على القسيمة';
+
+  @override
+  String get voucherNote =>
+      'تُستخدم كل قسيمة مرة واحدة فقط. إن كانت مستخدمة أو منتهية أو ملغاة فسيخبرك التطبيق.';
+
+  @override
+  String voucherSuccessTitle(String plan) {
+    return 'تم تفعيل باقة $plan';
+  }
+
+  @override
+  String voucherSuccessUntil(String date) {
+    return 'باقتك فعّالة حتى $date.';
+  }
+
+  @override
+  String voucherSuccessDays(int days) {
+    return 'تم تفعيل الباقة لمدة $days يومًا.';
+  }
+
+  @override
+  String get voucherErrInvalid =>
+      'رقم القسيمة غير موجود. تأكد منه وأعد المحاولة.';
+
+  @override
+  String get voucherErrFormat =>
+      'الرقم غير مكتمل أو غير صحيح. تأكد أنه 16 رقمًا.';
+
+  @override
+  String get voucherErrUsed => 'هذه القسيمة مستخدمة من قبل.';
+
+  @override
+  String get voucherErrExpired => 'انتهت صلاحية هذه القسيمة.';
+
+  @override
+  String get voucherErrRevoked => 'هذه القسيمة ملغاة ولا يمكن استخدامها.';
+
+  @override
+  String get voucherErrThrottled =>
+      'محاولات كثيرة خلال وقت قصير. انتظر دقيقة ثم حاول مجددًا.';
+
+  @override
+  String get voucherErrLocked =>
+      'تجاوزت عدد المحاولات المسموح بها. حاول بعد ساعة.';
+
+  @override
   String get onboard1Title => 'اربط رمزك بمركبتك';
 
   @override

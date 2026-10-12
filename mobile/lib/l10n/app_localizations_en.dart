@@ -408,6 +408,77 @@ class AppLocalizationsEn extends AppLocalizations {
   String get subStatusActive => 'Active';
 
   @override
+  String get voucherEntryTitle => 'Have an activation voucher?';
+
+  @override
+  String get voucherEntryBody =>
+      'Enter the 16-digit number or scan the QR code to activate your plan.';
+
+  @override
+  String get voucherTitle => 'Activate with a voucher';
+
+  @override
+  String get voucherIntro =>
+      'Bought an activation voucher from a reseller? Enter its 16-digit number or scan the QR printed on it and your plan switches on right away.';
+
+  @override
+  String get voucherFieldLabel => 'Voucher number (16 digits)';
+
+  @override
+  String get voucherActivate => 'Activate';
+
+  @override
+  String get voucherScan => 'Scan QR code';
+
+  @override
+  String get voucherScanHint =>
+      'Point the camera at the QR code printed on the voucher';
+
+  @override
+  String get voucherNote =>
+      'Each voucher can be used once. If it is already used, expired or cancelled, the app will tell you.';
+
+  @override
+  String voucherSuccessTitle(String plan) {
+    return '$plan is now active';
+  }
+
+  @override
+  String voucherSuccessUntil(String date) {
+    return 'Your plan is active until $date.';
+  }
+
+  @override
+  String voucherSuccessDays(int days) {
+    return 'Your plan was activated for $days days.';
+  }
+
+  @override
+  String get voucherErrInvalid =>
+      'This voucher number does not exist. Check it and try again.';
+
+  @override
+  String get voucherErrFormat =>
+      'The number is incomplete or wrong. Make sure it has 16 digits.';
+
+  @override
+  String get voucherErrUsed => 'This voucher has already been used.';
+
+  @override
+  String get voucherErrExpired => 'This voucher has expired.';
+
+  @override
+  String get voucherErrRevoked =>
+      'This voucher was cancelled and cannot be used.';
+
+  @override
+  String get voucherErrThrottled =>
+      'Too many attempts in a short time. Wait a minute and try again.';
+
+  @override
+  String get voucherErrLocked => 'Too many attempts. Try again in an hour.';
+
+  @override
   String get onboard1Title => 'Link your code to your vehicle';
 
   @override

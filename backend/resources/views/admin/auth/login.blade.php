@@ -17,11 +17,6 @@
                    class="form-control text-start">
         </div>
 
-        <label class="flex items-center gap-2 text-sm text-ink-600">
-            <input type="checkbox" name="remember" class="size-4 rounded border-ink-300 accent-brand-yellow">
-            تذكرني على هذا الجهاز
-        </label>
-
         @php $recaptcha = app(\App\Services\Recaptcha::class); @endphp
         @if ($recaptcha->enabled())
             {{-- Google reCAPTCHA v2 checkbox. Loaded from google.com (allowed for this page only by the CSP). --}}

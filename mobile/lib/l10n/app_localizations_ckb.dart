@@ -409,6 +409,77 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get subStatusActive => 'چالاک';
 
   @override
+  String get voucherEntryTitle => 'کارتی چالاککردنت هەیە؟';
+
+  @override
+  String get voucherEntryBody =>
+      'ژمارە 16 ڕەقەمییەکە بنووسە یان کۆدی QR سکان بکە بۆ چالاککردنی پاکێجەکە.';
+
+  @override
+  String get voucherTitle => 'چالاککردن بە کارت';
+
+  @override
+  String get voucherIntro =>
+      'کارتی چالاککردنت لە دابەشکەرێک کڕیوە؟ ژمارە 16 ڕەقەمییەکەی بنووسە یان کۆدی QR ی سەر کارتەکە سکان بکە، پاکێجەکەت دەستبەجێ چالاک دەبێت.';
+
+  @override
+  String get voucherFieldLabel => 'ژمارەی کارت (16 ڕەقەم)';
+
+  @override
+  String get voucherActivate => 'چالاککردن';
+
+  @override
+  String get voucherScan => 'سکانکردنی کۆدی QR';
+
+  @override
+  String get voucherScanHint => 'کامێراکە ڕووبکە لە کۆدی QR ی سەر کارتەکە';
+
+  @override
+  String get voucherNote =>
+      'هەر کارتێک تەنها یەکجار بەکاردێت. ئەگەر بەکارهاتبێت یان بەسەرچووبێت یان هەڵوەشێنرابێتەوە، بەرنامەکە پێت دەڵێت.';
+
+  @override
+  String voucherSuccessTitle(String plan) {
+    return 'پاکێجی $plan چالاک کرا';
+  }
+
+  @override
+  String voucherSuccessUntil(String date) {
+    return 'پاکێجەکەت چالاکە هەتا $date.';
+  }
+
+  @override
+  String voucherSuccessDays(int days) {
+    return 'پاکێجەکە بۆ ماوەی $days ڕۆژ چالاک کرا.';
+  }
+
+  @override
+  String get voucherErrInvalid =>
+      'ئەم ژمارەی کارتە بوونی نییە. بیپشکنە و دووبارە هەوڵبدەرەوە.';
+
+  @override
+  String get voucherErrFormat =>
+      'ژمارەکە تەواو نییە یان هەڵەیە. دڵنیابە لە 16 ڕەقەم.';
+
+  @override
+  String get voucherErrUsed => 'ئەم کارتە پێشتر بەکارهاتووە.';
+
+  @override
+  String get voucherErrExpired => 'ماوەی ئەم کارتە بەسەرچووە.';
+
+  @override
+  String get voucherErrRevoked =>
+      'ئەم کارتە هەڵوەشێنراوەتەوە و ناتوانرێت بەکاربهێنرێت.';
+
+  @override
+  String get voucherErrThrottled =>
+      'هەوڵی زۆر لە ماوەیەکی کورتدا. خولەکێک چاوەڕێ بکە و دووبارە هەوڵبدەرەوە.';
+
+  @override
+  String get voucherErrLocked =>
+      'لە ژمارەی هەوڵە ڕێگەپێدراوەکان تێپەڕیت. دوای کاتژمێرێک هەوڵبدەرەوە.';
+
+  @override
   String get onboard1Title => 'کۆدەکەت بە ئۆتۆمبێلەکەتەوە ببەستەرەوە';
 
   @override

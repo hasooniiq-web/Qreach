@@ -29,7 +29,7 @@ class TradeController extends Controller
         $customers = TradeCustomer::query()
             ->when($request->filled('q'), fn ($q) => $q->where('name', 'like', '%'.$request->string('q').'%')
                 ->orWhere('phone', 'like', '%'.$request->string('q').'%'))
-            ->withSum(['entries as sales_total' => fn ($q) => $q->where('type', TradeEntry::SALE)->whereNull('voided_at')], 'amount')
+            ->withSum(['entries as sales_total' => fn ($q) => $q->whereIn('type', TradeEntry::CHARGES)->whereNull('voided_at')], 'amount')
             ->withSum(['entries as paid_total' => fn ($q) => $q->where('type', TradeEntry::PAYMENT)->whereNull('voided_at')], 'amount')
             ->withSum(['entries as delivered_qty' => fn ($q) => $q->where('type', TradeEntry::SALE)->whereNull('voided_at')], 'quantity')
             ->orderBy('name');
@@ -89,17 +89,17 @@ class TradeController extends Controller
 
     public function showCustomer(Request $request, TradeCustomer $customer): View|\Illuminate\Http\Response
     {
-        $entriesQuery = $customer->entries()->with('batch')->orderByDesc('occurred_on')->orderByDesc('id');
+        $entriesQuery = $customer->entries()->with('batch', 'voucherBatch')->orderByDesc('occurred_on')->orderByDesc('id');
 
         if ($export = $this->exportRows($request, 'account-'.$customer->id, 'كشف حساب: '.$customer->name, ['التاريخ', 'القيد', 'رقم الوصل', 'الدفعة', 'الكمية', 'سعر الستيكر', 'المبلغ', 'ملاحظة'], $entriesQuery,
             fn ($e) => [
                 $e->occurred_on->format('Y-m-d'),
-                ($e->type === 'sale' ? 'تسليم ملصقات' : 'دفعة مستلمة').($e->isVoided() ? ' (مُلغى: '.$e->void_reason.')' : ''),
+                ($e->type === 'sale' ? 'تسليم ملصقات' : ($e->type === 'voucher_sale' ? 'قسائم تفعيل' : 'دفعة مستلمة')).($e->isVoided() ? ' (مُلغى: '.$e->void_reason.')' : ''),
                 (string) ($e->receipt_number ?: '—'),
-                (string) ($e->batch?->batch_code ?? '—'),
+                (string) ($e->batch?->batch_code ?? $e->voucherBatch?->batch_code ?? '—'),
                 $e->quantity !== null ? (int) $e->quantity : '—',
                 $e->unit_price !== null ? (int) $e->unit_price : '—',
-                ($e->type === 'sale' ? '+' : '−').number_format((int) $e->amount),
+                ($e->isCharge() ? '+' : '−').number_format((int) $e->amount),
                 (string) ($e->note ?: ''),
             ],
             summary: ['الرصيد (د.ع)' => $customer->balance()],
@@ -186,7 +186,7 @@ class TradeController extends Controller
             'entry' => $entry,
             // The customer's position right after this payment (entries up to and including it).
             'balanceAfter' => (int) TradeEntry::where('customer_id', $entry->customer_id)->whereNull('voided_at')
-                ->where('id', '<=', $entry->id)->where('type', TradeEntry::SALE)->sum('amount')
+                ->where('id', '<=', $entry->id)->whereIn('type', TradeEntry::CHARGES)->sum('amount')
                 - (int) TradeEntry::where('customer_id', $entry->customer_id)->whereNull('voided_at')
                     ->where('id', '<=', $entry->id)->where('type', TradeEntry::PAYMENT)->sum('amount'),
         ]);

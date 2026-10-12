@@ -12,6 +12,7 @@ import '../features/notifications/data/notification_repository.dart';
 import '../features/profile/data/profile_repository.dart';
 import '../features/subscription/data/payment_repository.dart';
 import '../features/subscription/data/subscription_repository.dart';
+import '../features/subscription/data/voucher_repository.dart';
 import '../features/tags/data/tag_repository.dart';
 import '../features/vehicles/data/vehicle_repository.dart';
 
@@ -53,6 +54,10 @@ final pushNotificationServiceProvider =
 
 final paymentRepositoryProvider = Provider<PaymentRepository>((ref) {
   return PaymentRepository(ref.watch(apiClientProvider));
+});
+
+final voucherRepositoryProvider = Provider<VoucherRepository>((ref) {
+  return VoucherRepository(ref.watch(apiClientProvider));
 });
 
 final subscriptionRepositoryProvider = Provider<SubscriptionRepository>((ref) {

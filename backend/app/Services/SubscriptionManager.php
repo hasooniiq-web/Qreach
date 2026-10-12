@@ -7,6 +7,7 @@ use App\Models\PlanUpgradeRequest;
 use App\Models\Subscription;
 use App\Models\SubscriptionPlan;
 use App\Models\User;
+use App\Models\Voucher;
 use Illuminate\Support\Facades\DB;
 
 /**
@@ -82,6 +83,27 @@ class SubscriptionManager
             'handled_by' => $adminId,
             'handled_at' => now(),
         ]);
+    }
+
+    /**
+     * Switches the voucher's plan on for its duration (extending a plan the customer
+     * already has). Called only by VoucherService, inside its redemption transaction.
+     */
+    public function activateFromVoucher(User $user, Voucher $voucher, ?int $adminId = null): Subscription
+    {
+        $plan = $voucher->batch->plan;
+        $days = (int) $voucher->batch->duration_days;
+
+        return DB::transaction(function () use ($user, $voucher, $plan, $days, $adminId) {
+            [$subscription, $action] = $this->applyGrant($user, $plan, $days);
+            $this->recordUpgrade($user, $plan, $adminId, 'تفعيل بقسيمة '.$voucher->batch->batch_code);
+
+            AuditLogger::log($action, $adminId ? 'admin' : 'system', $adminId, 'Subscription', $subscription->id, 'success', [
+                'user_id' => $user->id, 'plan' => $plan->slug, 'days' => $days, 'voucher_id' => $voucher->id,
+            ]);
+
+            return $subscription;
+        });
     }
 
     /** @return array{0: Subscription, 1: string} the subscription and the audit action describing what happened */

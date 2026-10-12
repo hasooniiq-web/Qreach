@@ -81,6 +81,8 @@
                 <td class="px-4 py-3 text-ink-900">
                     @if ($entry->type === 'sale')
                         تسليم ملصقات
+                    @elseif ($entry->type === 'voucher_sale')
+                        قسائم تفعيل
                     @else
                         دفعة مستلمة
                         <a href="{{ route('admin.trade.receipt', $entry) }}" class="ms-1 text-xs tabular-nums text-ink-500 hover:underline" dir="ltr">{{ $entry->receipt_number }}</a>
@@ -88,11 +90,11 @@
                     @if ($entry->note)<p class="text-xs text-ink-500">{{ $entry->note }}</p>@endif
                     @if ($entry->isVoided())<p class="text-xs text-status-danger">مُلغى: {{ $entry->void_reason }}</p>@endif
                 </td>
-                <td class="px-4 py-3 tabular-nums text-ink-600">{{ $entry->batch?->batch_code ?? '—' }}</td>
+                <td class="px-4 py-3 tabular-nums text-ink-600">{{ $entry->batch?->batch_code ?? $entry->voucherBatch?->batch_code ?? '—' }}</td>
                 <td class="px-4 py-3 tabular-nums text-ink-600">{{ $entry->quantity !== null ? number_format($entry->quantity) : '—' }}</td>
                 <td class="px-4 py-3 tabular-nums text-ink-600">{{ $entry->unit_price !== null ? number_format($entry->unit_price) : '—' }}</td>
-                <td class="px-4 py-3 font-semibold tabular-nums {{ $entry->type === 'sale' ? 'text-ink-900' : 'text-status-success' }} {{ $entry->isVoided() ? 'line-through' : '' }}">
-                    {{ $entry->type === 'sale' ? '+' : '−' }}{{ number_format($entry->amount) }}
+                <td class="px-4 py-3 font-semibold tabular-nums {{ $entry->isCharge() ? 'text-ink-900' : 'text-status-success' }} {{ $entry->isVoided() ? 'line-through' : '' }}">
+                    {{ $entry->isCharge() ? '+' : '−' }}{{ number_format($entry->amount) }}
                 </td>
                 <td class="px-4 py-3 text-end">
                     @if ($canManage && ! $entry->isVoided())

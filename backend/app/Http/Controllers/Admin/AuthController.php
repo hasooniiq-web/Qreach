@@ -43,7 +43,8 @@ class AuthController extends Controller
         $admin = Admin::where('email', $request->string('email'))->first();
 
         if (! $admin || $admin->isLocked() || ! Auth::guard('admin')->attempt(
-            $request->only('email', 'password'), $request->boolean('remember')
+            // Never "remembered": closing the browser ends the session and asks for a login again.
+            $request->only('email', 'password'), false
         )) {
             if ($admin) {
                 $admin->increment('failed_login_attempts');

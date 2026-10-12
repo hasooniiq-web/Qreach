@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\SystemSettingController;
 use App\Http\Controllers\Admin\TagBatchController;
 use App\Http\Controllers\Admin\TagController;
 use App\Http\Controllers\Admin\TradeController;
+use App\Http\Controllers\Admin\VoucherController as AdminVoucherController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\VehicleController;
 use App\Http\Controllers\Public\PaymentGatewayController as PublicPaymentGatewayController;
@@ -141,6 +142,26 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::post('users/{user}/activate', [UserController::class, 'activate'])
                 ->middleware('admin.permission:users.suspend')->name('users.activate');
 
+            // Activation vouchers: 16-digit serials that switch a plan on. Literal segments first.
+            Route::prefix('vouchers')->name('vouchers.')->group(function () {
+                Route::middleware('admin.permission:vouchers.create')->group(function () {
+                    Route::get('create', [AdminVoucherController::class, 'create'])->name('create');
+                    Route::post('/', [AdminVoucherController::class, 'store'])->name('store');
+                    Route::put('batches/{voucherBatch}/recipient', [AdminVoucherController::class, 'updateRecipient'])->name('recipient');
+                    Route::post('batches/{voucherBatch}/bill', [AdminVoucherController::class, 'bill'])->name('bill');
+                });
+                Route::middleware('admin.permission:vouchers.view')->group(function () {
+                    Route::get('/', [AdminVoucherController::class, 'index'])->name('index');
+                    Route::get('batches/{voucherBatch}', [AdminVoucherController::class, 'show'])->name('show');
+                });
+                Route::get('batches/{voucherBatch}/export/{format}', [AdminVoucherController::class, 'export'])
+                    ->middleware('admin.permission:vouchers.export')->name('export');
+                Route::middleware('admin.permission:vouchers.revoke')->group(function () {
+                    Route::post('{voucher}/revoke', [AdminVoucherController::class, 'revoke'])->name('revoke');
+                    Route::post('batches/{voucherBatch}/revoke', [AdminVoucherController::class, 'revokeBatch'])->name('revoke-batch');
+                });
+            });
+
             // Stock of stickers and the wholesale accounts book (staff only). Literal
             // segments (customers/create) come before the wildcards.
             Route::middleware('admin.permission:trade.view')->prefix('trade')->name('trade.')->group(function () {
@@ -182,6 +203,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
                 Route::post('subscriptions/requests/{upgradeRequest}/reject', [SubscriptionController::class, 'reject'])->name('subscriptions.requests.reject');
                 Route::post('subscriptions/{subscription}/cancel', [SubscriptionController::class, 'cancel'])->name('subscriptions.cancel');
                 Route::post('users/{user}/subscription', [SubscriptionController::class, 'grant'])->name('users.subscription.grant');
+                Route::post('users/{user}/voucher', [AdminVoucherController::class, 'redeemForUser'])->name('users.voucher.redeem');
                 Route::put('plans/{plan}', [PlanController::class, 'update'])->name('plans.update');
             });
 

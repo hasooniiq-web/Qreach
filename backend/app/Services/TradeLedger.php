@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\TagBatch;
+use App\Models\VoucherBatch;
 use App\Models\TradeCustomer;
 use App\Models\TradeEntry;
 use Illuminate\Support\Carbon;
@@ -71,6 +72,39 @@ class TradeLedger
         });
     }
 
+    /**
+     * Bills a whole voucher batch to a reseller: quantity x unit price. Vouchers are not
+     * stickers, so this changes what the customer owes but never the sticker stock.
+     */
+    public function recordVoucherSale(TradeCustomer $customer, VoucherBatch $batch, int $unitPrice, Carbon $date, ?string $note, ?int $adminId): TradeEntry
+    {
+        return DB::transaction(function () use ($customer, $batch, $unitPrice, $date, $note, $adminId) {
+            if (TradeEntry::where('voucher_batch_id', $batch->id)->where('type', TradeEntry::VOUCHER_SALE)->whereNull('voided_at')->exists()) {
+                throw ValidationException::withMessages(['unit_price' => 'سُجّل بيع هذه الدفعة مسبقًا. ألغِ القيد القديم أولًا إن أردت تعديله.']);
+            }
+
+            $entry = TradeEntry::create([
+                'customer_id' => $customer->id,
+                'type' => TradeEntry::VOUCHER_SALE,
+                'voucher_batch_id' => $batch->id,
+                'quantity' => $batch->quantity,
+                'unit_price' => $unitPrice,
+                'amount' => $batch->quantity * $unitPrice,
+                'occurred_on' => $date->toDateString(),
+                'note' => $note,
+                'created_by' => $adminId,
+            ]);
+
+            $batch->update(['customer_id' => $customer->id, 'unit_price' => $unitPrice]);
+
+            AuditLogger::log('trade.voucher_sale_recorded', 'admin', $adminId, 'TradeEntry', $entry->id, 'success', [
+                'customer_id' => $customer->id, 'batch' => $batch->batch_code, 'quantity' => $batch->quantity, 'amount' => $entry->amount,
+            ]);
+
+            return $entry;
+        });
+    }
+
     public function recordPayment(TradeCustomer $customer, int $amount, Carbon $date, ?string $note, ?int $adminId): TradeEntry
     {
         return DB::transaction(function () use ($customer, $amount, $date, $note, $adminId) {
@@ -123,7 +157,7 @@ class TradeLedger
     {
         $produced = (int) TagBatch::sum('quantity');
         $delivered = (int) TradeEntry::where('type', TradeEntry::SALE)->whereNull('voided_at')->sum('quantity');
-        $sales = (int) TradeEntry::where('type', TradeEntry::SALE)->whereNull('voided_at')->sum('amount');
+        $sales = (int) TradeEntry::whereIn('type', TradeEntry::CHARGES)->whereNull('voided_at')->sum('amount');
         $received = (int) TradeEntry::where('type', TradeEntry::PAYMENT)->whereNull('voided_at')->sum('amount');
 
         return [

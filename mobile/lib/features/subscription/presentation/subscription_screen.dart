@@ -64,6 +64,8 @@ class SubscriptionScreen extends ConsumerWidget {
                 const SizedBox(height: AppSpacing.md),
                 _RenewalControl(info: info),
               ],
+              const SizedBox(height: AppSpacing.md),
+              FadeSlideIn(index: 1, child: const _VoucherEntry()),
               const SizedBox(height: AppSpacing.xl),
               FadeSlideIn(
                 index: 1,
@@ -443,6 +445,49 @@ class _RenewalControlState extends ConsumerState<_RenewalControl> {
       style: AppButtonStyle.secondary,
       loading: _busy,
       onPressed: _busy ? null : _cancel,
+    );
+  }
+}
+
+
+/// The way in to the voucher screen: a tile under the current plan.
+class _VoucherEntry extends StatelessWidget {
+  const _VoucherEntry();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return AppCard(
+      onTap: () => context.push('/subscription/voucher'),
+      child: Row(
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: AppColors.brandYellow.withValues(alpha: 0.25),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(Icons.confirmation_number_outlined,
+                color: AppColors.ink900),
+          ),
+          const SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(l10n.voucherEntryTitle,
+                    style: const TextStyle(fontWeight: FontWeight.w700)),
+                const SizedBox(height: 2),
+                Text(l10n.voucherEntryBody,
+                    style: TextStyle(color: AppColors.ink500, fontSize: 12.5)),
+              ],
+            ),
+          ),
+          Icon(Icons.chevron_right_rounded, color: AppColors.ink300),
+        ],
+      ),
     );
   }
 }

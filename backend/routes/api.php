@@ -67,6 +67,8 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::put('notifications/{id}/read', [NotificationController::class, 'markRead'])->name('notifications.read');
 
         Route::get('subscription', [SubscriptionController::class, 'show'])->name('subscription.show');
+        Route::post('subscription/redeem', [\App\Http\Controllers\Api\V1\VoucherController::class, 'redeem'])
+            ->middleware('throttle:20,1')->name('subscription.redeem');
         Route::post('subscription/cancel-renewal', [SubscriptionController::class, 'cancelRenewal'])
             ->middleware('throttle:10,1')->name('subscription.cancel-renewal');
         Route::post('subscription/resume-renewal', [SubscriptionController::class, 'resumeRenewal'])

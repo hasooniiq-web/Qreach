@@ -41,6 +41,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'payments' => ['view', 'refund'],
             'payment_gateways' => ['view', 'manage'],
             'trade' => ['view', 'manage'],
+            'vouchers' => ['view', 'create', 'export', 'revoke'],
         ];
 
         $groupNamesAr = [
@@ -49,7 +50,7 @@ class RolesAndPermissionsSeeder extends Seeder
             'notifications' => 'الإشعارات', 'reports' => 'التقارير', 'analytics' => 'التحليلات',
             'security' => 'الأمان', 'audit' => 'سجلات التدقيق', 'audit_logs' => 'سجلات التدقيق', 'admins' => 'المسؤولون',
             'roles' => 'الأدوار والصلاحيات', 'permissions' => 'الصلاحيات', 'settings' => 'الإعدادات', 'subscriptions' => 'الاشتراكات',
-            'payments' => 'المدفوعات', 'payment_gateways' => 'بوابات الدفع', 'trade' => 'المخزون والحسابات',
+            'payments' => 'المدفوعات', 'payment_gateways' => 'بوابات الدفع', 'trade' => 'المخزون والحسابات', 'vouchers' => 'قسائم التفعيل',
         ];
 
         $permissions = [];
