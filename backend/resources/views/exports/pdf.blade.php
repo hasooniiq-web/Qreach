@@ -2,7 +2,7 @@
 <head>
 <meta charset="utf-8">
 <style>
-    body { font-family: notosansarabic; direction: rtl; text-align: right; color: #09090B; font-size: 9.5pt; }
+    body { font-family: plexarabic; direction: rtl; text-align: right; color: #09090B; font-size: 9.5pt; }
     .head { width: 100%; border-collapse: collapse; margin-bottom: 8px; }
     .head td { vertical-align: middle; }
     .title { font-size: 18pt; font-weight: bold; color: #09090B; }

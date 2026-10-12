@@ -9,7 +9,7 @@ use Mpdf\Mpdf;
 
 /**
  * One table, two files: the same title, filters, summary and rows become an Excel
- * workbook or a PDF in the dashboard's look (black and yellow, Noto Sans Arabic).
+ * workbook or a PDF in the dashboard's look (black and yellow, IBM Plex Sans Arabic).
  */
 final class TableExport
 {
@@ -81,10 +81,11 @@ final class TableExport
             'tempDir' => $tmp,
             'fontDir' => array_merge($fontDirs, [resource_path('fonts')]),
             'fontdata' => $fontData + [
-                // Shaping is done by mPDF's own Arabic engine (OTL tables of this font are not parsed).
-                'notosansarabic' => ['R' => 'NotoSansArabic.ttf', 'B' => 'NotoSansArabic.ttf', 'useOTL' => 0],
+                // IBM Plex Sans Arabic: clean, covers Arabic and Kurdish letters, and its OpenType
+                // tables are shaped correctly by mPDF (the dashboard's Noto font's tables are not).
+                'plexarabic' => ['R' => 'IBMPlexSansArabic-Regular.ttf', 'B' => 'IBMPlexSansArabic-Bold.ttf', 'useOTL' => 0xFF, 'useKashida' => 0],
             ],
-            'default_font' => 'notosansarabic',
+            'default_font' => 'plexarabic',
             'directionality' => 'rtl',
             'autoScriptToLang' => true,
             'autoLangToFont' => false,
