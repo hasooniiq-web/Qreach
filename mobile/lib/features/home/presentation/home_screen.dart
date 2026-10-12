@@ -196,7 +196,10 @@ class _SectionHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(AppSpacing.lg, 0, AppSpacing.xs, 4),
+      // Directional: the title side (right in Arabic/Kurdish) gets the 16 page
+      // margin; the "view all" button on the other side has its own padding.
+      padding: const EdgeInsetsDirectional.fromSTEB(
+          AppSpacing.lg, 0, AppSpacing.xs, 4),
       child: Row(
         children: [
           Text(title, style: AppText.section(context).copyWith(fontSize: 18)),
