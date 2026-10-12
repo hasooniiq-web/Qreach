@@ -1194,7 +1194,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pickerNoResults => 'No matches';
 
   @override
-  String get modelHint => 'e.g. Corolla, Sonata';
+  String get modelHint => 'Type it, e.g. G class';
 
   @override
   String get editVehicle => 'Edit vehicle';

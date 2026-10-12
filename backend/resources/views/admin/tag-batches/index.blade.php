@@ -3,6 +3,8 @@
         <a href="{{ route('admin.tag-batches.create') }}" class="btn-accent">+ إنشاء دفعة جديدة</a>
     </div>
 
+    <div class="mb-3 flex justify-end"><x-export-buttons /></div>
+
     <x-data-table :headers="['رمز الدفعة', 'النوع', 'الكمية', 'ملاحظات', 'الحالة', 'تاريخ الإنشاء', '']">
         @forelse ($batches as $batch)
             <tr class="hover:bg-ink-50">

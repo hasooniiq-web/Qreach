@@ -17,18 +17,32 @@ use Illuminate\View\View;
 
 class TagController extends Controller
 {
+    use \App\Http\Controllers\Concerns\ExportsTables;
+
     public function __construct(private readonly TagLifecycleService $lifecycle) {}
 
-    public function index(Request $request): View
+    public function index(Request $request): View|\Illuminate\Http\Response
     {
         $tags = Tag::query()
             ->with('vehicle.user')
             ->when($request->filled('q'), fn ($q) => $q->where('serial_number', 'like', '%'.$request->string('q').'%'))
             ->when($request->filled('status'), fn ($q) => $q->where('status', $request->string('status')))
             ->when($request->filled('type'), fn ($q) => $q->where('type', $request->string('type')))
-            ->latest()
-            ->paginate(30)
-            ->withQueryString();
+            ->latest();
+
+        if ($export = $this->exportRows($request, 'codes', 'رموز QR و NFC', ['الرقم التسلسلي', 'النوع', 'المركبة', 'الحالة', 'تاريخ الإنشاء'], $tags,
+            fn ($t) => [
+                (string) $t->serial_number,
+                $t->typeLabel(),
+                $t->vehicle?->plate_number ?? '—',
+                \App\Support\Export\Labels::status($t->status),
+                \App\Support\Export\Labels::date($t->created_at),
+            ],
+            filters: $this->filterLines($request, ['q' => 'بحث', 'type' => 'النوع', 'status' => 'الحالة'], ['type' => \App\Models\Tag::typeLabels()]))) {
+            return $export;
+        }
+
+        $tags = $tags->paginate(30)->withQueryString();
 
         return view('admin.tags.index', compact('tags'));
     }

@@ -11,15 +11,30 @@ use Illuminate\View\View;
 
 class SecurityEventController extends Controller
 {
-    public function index(Request $request): View
+    use \App\Http\Controllers\Concerns\ExportsTables;
+
+    public function index(Request $request): View|\Illuminate\Http\Response
     {
         $events = SecurityEvent::query()
             ->when($request->filled('severity'), fn ($q) => $q->where('severity', $request->string('severity')))
             ->when($request->filled('event_type'), fn ($q) => $q->where('event_type', $request->string('event_type')))
             ->when($request->boolean('unresolved_only'), fn ($q) => $q->where('resolved', false))
-            ->latest()
-            ->paginate(30)
-            ->withQueryString();
+            ->latest();
+
+        if ($export = $this->exportRows($request, 'security-events', 'الأحداث الأمنية', ['الحدث', 'المستوى', 'الجهة الفاعلة', 'عنوان IP', 'التاريخ', 'الحالة'], $events,
+            fn ($e) => [
+                (string) $e->event_type,
+                \App\Support\Export\Labels::status($e->severity),
+                (string) $e->actor_type,
+                (string) $e->request_ip,
+                \App\Support\Export\Labels::date($e->created_at, true),
+                $e->resolved ? 'تمت المراجعة' : 'قيد المراجعة',
+            ],
+            filters: $this->filterLines($request, ['severity' => 'المستوى', 'event_type' => 'نوع الحدث', 'unresolved_only' => 'غير المراجَع فقط']))) {
+            return $export;
+        }
+
+        $events = $events->paginate(30)->withQueryString();
 
         $eventTypes = SecurityEvent::select('event_type')->distinct()->pluck('event_type');
 

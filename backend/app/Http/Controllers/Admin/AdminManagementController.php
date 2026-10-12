@@ -23,9 +23,23 @@ use Illuminate\View\View;
  */
 class AdminManagementController extends Controller
 {
-    public function index(): View
+    use \App\Http\Controllers\Concerns\ExportsTables;
+
+    public function index(Request $request): View|\Illuminate\Http\Response
     {
-        $admins = Admin::with('roles')->latest()->paginate(20);
+        $query = Admin::with('roles')->latest();
+
+        if ($export = $this->exportRows($request, 'admins', 'المسؤولون', ['الاسم', 'البريد الإلكتروني', 'الأدوار', 'الحالة'], $query,
+            fn ($a) => [
+                (string) $a->name,
+                (string) $a->email,
+                $a->roles->pluck('name_ar')->implode('، ') ?: '—',
+                \App\Support\Export\Labels::status($a->status),
+            ])) {
+            return $export;
+        }
+
+        $admins = $query->paginate(20);
 
         return view('admin.admins.index', compact('admins'));
     }

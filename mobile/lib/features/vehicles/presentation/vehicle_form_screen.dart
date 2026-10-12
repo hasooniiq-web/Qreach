@@ -32,7 +32,8 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
   final _plateController = TextEditingController();
   final _nicknameController = TextEditingController();
   String? _make;
-  String? _model;
+  // The model is typed (e.g. "G class", "Camry SE"): there are too many to list.
+  final _modelController = TextEditingController();
   String? _color;
   int? _year;
   final _vinController = TextEditingController();
@@ -55,7 +56,7 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
     _letterController.text = v.plateLetter ?? '';
     _vinController.text = v.vin ?? '';
     _make = v.make;
-    _model = v.model;
+    _modelController.text = v.model ?? '';
     _color = v.color;
     _year = v.year;
     _vehicleType = v.vehicleType ?? 'sedan';
@@ -69,6 +70,7 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
     _letterController.dispose();
     _nicknameController.dispose();
     _vinController.dispose();
+    _modelController.dispose();
     super.dispose();
   }
 
@@ -89,7 +91,9 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
         plateGovernorate: _governorate,
         nickname: _nicknameController.text.trim(),
         make: (_make ?? '').trim().isEmpty ? null : _make!.trim(),
-        model: (_model ?? '').trim().isEmpty ? null : _model!.trim(),
+        model: _modelController.text.trim().isEmpty
+            ? null
+            : _modelController.text.trim(),
         year: _year,
         vin: _vinController.text.trim().toUpperCase(),
         color: (_color ?? '').trim().isEmpty ? null : _color!.trim(),
@@ -270,24 +274,19 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
                     ChoiceOption(
                         value: m.label(isArabic), label: m.label(isArabic)),
                 ],
-                onChanged: (v) => setState(() {
-                  // A different make has different models.
-                  if (v != _make) _model = null;
-                  _make = v;
-                }),
+                onChanged: (v) => setState(() => _make = v),
               ),
               const SizedBox(height: AppSpacing.md),
-              ChoiceField(
-                label: l10n.model,
-                hint: l10n.modelHint,
-                value: _model,
-                searchable: true,
-                options: [
-                  for (final name
-                      in (catalog.find(_make)?.models ?? const <String>[]))
-                    ChoiceOption(value: name, label: name),
-                ],
-                onChanged: (v) => setState(() => _model = v),
+              TextFormField(
+                controller: _modelController,
+                maxLength: 100,
+                textInputAction: TextInputAction.next,
+                textDirection: TextDirection.ltr,
+                decoration: InputDecoration(
+                  labelText: l10n.model,
+                  hintText: l10n.modelHint,
+                  counterText: '',
+                ),
               ),
               const SizedBox(height: AppSpacing.md),
               // Model year: 1900 up to next year (a car can arrive before its

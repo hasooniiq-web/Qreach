@@ -14,12 +14,14 @@ use Illuminate\View\View;
 /** Payment records for staff: what was paid, what failed and why, and refunds. */
 class PaymentController extends Controller
 {
+    use \App\Http\Controllers\Concerns\ExportsTables;
+
     public function __construct(
         private readonly PaymentService $payments,
         private readonly GatewayRegistry $gateways,
     ) {}
 
-    public function index(Request $request): View
+    public function index(Request $request): View|\Illuminate\Http\Response
     {
         $status = $request->string('status')->toString();
         $q = trim($request->string('q')->toString());
@@ -32,7 +34,25 @@ class PaymentController extends Controller
                 ->orWhere('gateway_reference', 'like', "%{$q}%")
                 ->orWhere('uuid', 'like', "%{$q}%")
                 ->orWhereHas('user', fn ($u) => $u->where('phone', 'like', "%{$q}%")->orWhere('name', 'like', "%{$q}%"))))
-            ->latest('id')->paginate(25)->withQueryString();
+            ->latest('id');
+
+        if ($export = $this->exportRows($request, 'payments', 'المدفوعات', ['العميل', 'الهاتف', 'الباقة', 'المبلغ', 'المُسترد', 'البوابة', 'الحالة', 'رقم الإيصال', 'التاريخ'], $payments,
+            fn ($p) => [
+                $p->user->display_name,
+                (string) $p->user->phone,
+                (string) ($p->plan?->name_ar ?? '—'),
+                number_format((int) $p->amount_cents).' '.$p->currency,
+                number_format((int) $p->refunded_amount_cents),
+                (string) ($this->gateways->all()[$p->gateway]?->label() ?? $p->gateway),
+                \App\Support\Export\Labels::status($p->status),
+                (string) ($p->receipt_number ?: '—'),
+                \App\Support\Export\Labels::date($p->created_at, true),
+            ],
+            filters: $this->filterLines($request, ['status' => 'الحالة', 'gateway' => 'البوابة', 'q' => 'بحث'], ['status' => ['pending' => 'بانتظار الدفع', 'succeeded' => 'ناجحة', 'failed' => 'فاشلة', 'refunded' => 'مستردّة']]))) {
+            return $export;
+        }
+
+        $payments = $payments->paginate(25)->withQueryString();
 
         $totals = [
             'succeeded' => (int) Payment::where('status', 'succeeded')->sum('amount_cents') - (int) Payment::where('status', 'succeeded')->sum('refunded_amount_cents'),

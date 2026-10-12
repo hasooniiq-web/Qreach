@@ -35,6 +35,8 @@
         </select>
     </x-filter-bar>
 
+    <div class="mb-3 flex justify-end"><x-export-buttons /></div>
+
     <x-data-table :headers="['المشترك', 'الباقة', 'السعر', 'الحالة', 'بداية الاشتراك', 'ينتهي في', '']">
         @forelse ($subscriptions as $subscription)
             @php $effective = $subscription->effectiveStatus(); @endphp

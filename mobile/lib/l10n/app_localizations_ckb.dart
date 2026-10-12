@@ -1199,7 +1199,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get pickerNoResults => 'هیچ ئەنجامێک نییە';
 
   @override
-  String get modelHint => 'وەک: کۆرۆلا، سۆنات';
+  String get modelHint => 'خۆت بینووسە، وەک: G class';
 
   @override
   String get editVehicle => 'دەستکاریکردنی ئۆتۆمبێل';

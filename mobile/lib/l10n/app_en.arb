@@ -457,7 +457,7 @@
     "pickerOther": "Other",
     "pickerChoose": "Choose",
     "pickerNoResults": "No matches",
-    "modelHint": "e.g. Corolla, Sonata",
+    "modelHint": "Type it, e.g. G class",
     "editVehicle": "Edit vehicle",
     "editVehicleAction": "Edit",
     "vinLabel": "VIN (optional)",

@@ -31,6 +31,8 @@
         <button class="btn-primary">بحث</button>
     </x-filter-bar>
 
+    <div class="mb-3 flex justify-end"><x-export-buttons /></div>
+
     <x-data-table :headers="['العميل', 'الباقة', 'المبلغ', 'البوابة', 'الحالة', 'التاريخ', '']">
         @forelse ($payments as $payment)
             <tr class="hover:bg-ink-50">

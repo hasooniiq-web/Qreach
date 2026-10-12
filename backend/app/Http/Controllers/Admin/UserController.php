@@ -16,6 +16,8 @@ use Illuminate\View\View;
 
 class UserController extends Controller
 {
+    use \App\Http\Controllers\Concerns\ExportsTables;
+
     /** @var array<string, string> */
     private const AUDIT_LABELS = [
         'admin.user_suspended' => 'أوقف مسؤول الحساب', 'admin.user_activated' => 'أعاد مسؤول تفعيل الحساب',
@@ -30,7 +32,7 @@ class UserController extends Controller
         'assigned' => 'رُبط بالمركبة', 'replaced' => 'استُبدل', 'revoked' => 'أُلغي',
     ];
 
-    public function index(Request $request): View
+    public function index(Request $request): View|\Illuminate\Http\Response
     {
         $users = User::query()
             ->when($request->filled('q'), function ($query) use ($request) {
@@ -40,9 +42,22 @@ class UserController extends Controller
             ->when($request->filled('status'), fn ($query) => $query->where('status', $request->string('status')))
             ->with('subscriptions.plan')
             ->withCount('vehicles')
-            ->latest()
-            ->paginate(20)
-            ->withQueryString();
+            ->latest();
+
+        if ($export = $this->exportRows($request, 'users', 'المستخدمون', ['المستخدم', 'رقم الهاتف', 'الباقة', 'المركبات', 'الحالة', 'تاريخ التسجيل'], $users,
+            fn ($u) => [
+                $u->display_name,
+                (string) $u->phone,
+                $u->subscriptions->first(fn ($s) => $s->isCurrentlyActive())?->plan?->name_ar ?? 'الأساسية',
+                (int) $u->vehicles_count,
+                \App\Support\Export\Labels::status($u->status),
+                \App\Support\Export\Labels::date($u->created_at),
+            ],
+            filters: $this->filterLines($request, ['q' => 'بحث', 'status' => 'الحالة'], ['status' => ['active' => 'نشط', 'suspended' => 'موقوف']]))) {
+            return $export;
+        }
+
+        $users = $users->paginate(20)->withQueryString();
 
         return view('admin.users.index', compact('users'));
     }

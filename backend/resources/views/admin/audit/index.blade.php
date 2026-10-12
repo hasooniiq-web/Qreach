@@ -18,6 +18,8 @@
         <button type="submit" class="btn-primary">تصفية</button>
     </x-filter-bar>
 
+    <div class="mb-3 flex justify-end"><x-export-buttons /></div>
+
     <x-data-table :headers="['الإجراء', 'الجهة الفاعلة', 'المورد', 'النتيجة', 'عنوان IP', 'التاريخ']">
         @forelse ($logs as $log)
             <tr class="hover:bg-ink-50">

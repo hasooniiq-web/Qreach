@@ -9,7 +9,9 @@ use Illuminate\View\View;
 
 class VehicleController extends Controller
 {
-    public function index(Request $request): View
+    use \App\Http\Controllers\Concerns\ExportsTables;
+
+    public function index(Request $request): View|\Illuminate\Http\Response
     {
         $vehicles = Vehicle::query()
             ->with('user')
@@ -23,9 +25,24 @@ class VehicleController extends Controller
                 'tags as active_tags_count' => fn ($q) => $q->whereIn('status', \App\Models\Tag::CANCELLABLE_STATUSES),
                 'tags as ended_tags_count' => fn ($q) => $q->whereIn('status', ['revoked', 'replaced', 'disabled']),
             ])
-            ->latest()
-            ->paginate(20)
-            ->withQueryString();
+            ->latest();
+
+        if ($export = $this->exportRows($request, 'vehicles', 'المركبات', ['المركبة', 'رقم اللوحة', 'الشركة والطراز', 'سنة الصنع', 'المالك', 'هاتف المالك', 'الرمز النشط', 'الحالة'], $vehicles,
+            fn ($v) => [
+                (string) ($v->nickname ?: '—'),
+                (string) $v->plate_number,
+                trim($v->make.' '.$v->model) ?: '—',
+                $v->year ? (string) $v->year : '—',
+                $v->user?->display_name ?? '—',
+                (string) ($v->user?->phone ?? ''),
+                (int) $v->active_tags_count,
+                \App\Support\Export\Labels::status($v->status),
+            ],
+            filters: $this->filterLines($request, ['q' => 'بحث', 'status' => 'الحالة'], ['status' => ['active' => 'نشط', 'inactive' => 'موقوف']]))) {
+            return $export;
+        }
+
+        $vehicles = $vehicles->paginate(20)->withQueryString();
 
         return view('admin.vehicles.index', compact('vehicles'));
     }

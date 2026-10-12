@@ -20,9 +20,11 @@ use Illuminate\View\View;
  */
 class TradeController extends Controller
 {
+    use \App\Http\Controllers\Concerns\ExportsTables;
+
     public function __construct(private readonly TradeLedger $ledger) {}
 
-    public function index(Request $request): View
+    public function index(Request $request): View|\Illuminate\Http\Response
     {
         $customers = TradeCustomer::query()
             ->when($request->filled('q'), fn ($q) => $q->where('name', 'like', '%'.$request->string('q').'%')
@@ -30,9 +32,28 @@ class TradeController extends Controller
             ->withSum(['entries as sales_total' => fn ($q) => $q->where('type', TradeEntry::SALE)->whereNull('voided_at')], 'amount')
             ->withSum(['entries as paid_total' => fn ($q) => $q->where('type', TradeEntry::PAYMENT)->whereNull('voided_at')], 'amount')
             ->withSum(['entries as delivered_qty' => fn ($q) => $q->where('type', TradeEntry::SALE)->whereNull('voided_at')], 'quantity')
-            ->orderBy('name')
-            ->paginate(25)
-            ->withQueryString();
+            ->orderBy('name');
+
+        if ($export = $this->exportRows($request, 'trade-customers', 'المخزون والحسابات — العملاء', ['العميل', 'الهاتف', 'المُسلَّم', 'مجموع البيع', 'المدفوع', 'المتبقي عليه'], $customers,
+            fn ($c) => [
+                (string) $c->name,
+                (string) ($c->phone ?: '—'),
+                (int) $c->delivered_qty,
+                (int) $c->sales_total,
+                (int) $c->paid_total,
+                (int) $c->sales_total - (int) $c->paid_total,
+            ],
+            summary: [
+                'في المخزون' => $this->ledger->totals()['stock'],
+                'مُسلَّم للتجار' => $this->ledger->totals()['delivered'],
+                'مجموع البيع (د.ع)' => $this->ledger->totals()['sales'],
+                'المتبقي على التجار (د.ع)' => $this->ledger->totals()['outstanding'],
+            ],
+            filters: $this->filterLines($request, ['q' => 'بحث']))) {
+            return $export;
+        }
+
+        $customers = $customers->paginate(25)->withQueryString();
 
         $batches = TagBatch::query()->latest('id')->limit(12)->get()
             ->map(fn (TagBatch $b) => [
@@ -66,9 +87,27 @@ class TradeController extends Controller
         return redirect()->route('admin.trade.customers.show', $customer)->with('status', 'تمت إضافة العميل.');
     }
 
-    public function showCustomer(TradeCustomer $customer): View
+    public function showCustomer(Request $request, TradeCustomer $customer): View|\Illuminate\Http\Response
     {
-        $entries = $customer->entries()->with('batch')->orderByDesc('occurred_on')->orderByDesc('id')->paginate(40);
+        $entriesQuery = $customer->entries()->with('batch')->orderByDesc('occurred_on')->orderByDesc('id');
+
+        if ($export = $this->exportRows($request, 'account-'.$customer->id, 'كشف حساب: '.$customer->name, ['التاريخ', 'القيد', 'رقم الوصل', 'الدفعة', 'الكمية', 'سعر الستيكر', 'المبلغ', 'ملاحظة'], $entriesQuery,
+            fn ($e) => [
+                $e->occurred_on->format('Y-m-d'),
+                ($e->type === 'sale' ? 'تسليم ملصقات' : 'دفعة مستلمة').($e->isVoided() ? ' (مُلغى: '.$e->void_reason.')' : ''),
+                (string) ($e->receipt_number ?: '—'),
+                (string) ($e->batch?->batch_code ?? '—'),
+                $e->quantity !== null ? (int) $e->quantity : '—',
+                $e->unit_price !== null ? (int) $e->unit_price : '—',
+                ($e->type === 'sale' ? '+' : '−').number_format((int) $e->amount),
+                (string) ($e->note ?: ''),
+            ],
+            summary: ['الرصيد (د.ع)' => $customer->balance()],
+            filters: ['الهاتف: '.($customer->phone ?: '—')])) {
+            return $export;
+        }
+
+        $entries = $entriesQuery->paginate(40);
 
         $batches = TagBatch::query()->latest('id')->limit(30)->get()
             ->map(fn (TagBatch $b) => ['batch' => $b, 'remaining' => $this->ledger->remainingInBatch($b)])

@@ -9,6 +9,8 @@
         </select>
     </x-filter-bar>
 
+    <div class="mb-3 flex justify-end"><x-export-buttons /></div>
+
     <x-data-table :headers="['الزائر', 'المركبة', 'الرسالة', 'الحالة', 'التاريخ', '']">
         @forelse ($requests as $request)
             <tr class="hover:bg-ink-50 {{ $request->status === 'new' ? 'font-medium' : '' }}">

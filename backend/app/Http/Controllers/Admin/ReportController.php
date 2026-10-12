@@ -21,6 +21,8 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
  */
 class ReportController extends Controller
 {
+    use \App\Http\Controllers\Concerns\ExportsTables;
+
     private const REPORTS = [
         'scans' => 'عمليات المسح',
         'contact_requests' => 'طلبات التواصل',
@@ -35,10 +37,47 @@ class ReportController extends Controller
         'contact_owner' => 'مراسلة المالك',
     ];
 
-    public function index(Request $request): View
+    public function index(Request $request): View|\Illuminate\Http\Response
     {
         [$report, $from, $to] = $this->resolve($request);
         $query = $this->query($report, $request, $from, $to);
+
+        // Excel / PDF of exactly this report and range. Needs the export permission, like the CSV.
+        if ($this->exportFormat($request) !== null) {
+            abort_unless($request->user('admin')->hasPermission('reports.export'), 403);
+
+            $labels = \App\Support\Export\Labels::class;
+            $filters = ['الفترة: من '.$from->toDateString().' إلى '.$to->toDateString()]
+                + $this->filterLines($request, ['action' => 'الإجراء', 'status' => 'الحالة'], ['action' => self::ACTIONS, 'status' => ['new' => 'جديد', 'read' => 'مقروء', 'responded' => 'تم الرد', 'closed' => 'مغلق']]);
+
+            $summaryRows = $report === 'scans'
+                ? (clone $query)->reorder()->selectRaw('action_type, count(*) as total')->groupBy('action_type')->pluck('total', 'action_type')
+                : (clone $query)->reorder()->selectRaw('status, count(*) as total')->groupBy('status')->pluck('total', 'status');
+            $summary = ['الإجمالي' => (clone $query)->count()];
+            foreach ($summaryRows as $key => $count) {
+                $summary[$report === 'scans' ? (self::ACTIONS[$key] ?? $key) : $labels::status($key)] = (int) $count;
+            }
+
+            return $this->exportRows($request, $report, 'تقرير '.self::REPORTS[$report], $report === 'scans'
+                ? ['التاريخ', 'الإجراء', 'الحالة', 'اللوحة', 'الرقم التسلسلي للرمز']
+                : ['التاريخ', 'الحالة', 'اللوحة', 'الرقم التسلسلي للرمز', 'الرسالة'], $query,
+                fn ($row) => $report === 'scans' ? [
+                    $row->created_at->copy()->timezone(config('app.display_timezone'))->format('Y-m-d H:i'),
+                    self::ACTIONS[$row->action_type] ?? $row->action_type,
+                    $row->status === 'success' ? 'نجاح' : 'فشل',
+                    $row->vehicle?->plate_number ?? '—',
+                    $row->tag?->serial_number ?? '—',
+                ] : [
+                    $row->created_at->copy()->timezone(config('app.display_timezone'))->format('Y-m-d H:i'),
+                    $labels::status($row->status),
+                    $row->vehicle?->plate_number ?? '—',
+                    $row->tag?->serial_number ?? '—',
+                    (string) $row->message,
+                ],
+                summary: $summary,
+                filters: $filters,
+            );
+        }
 
         $summary = $report === 'scans'
             ? (clone $query)->reorder()->selectRaw('action_type, count(*) as total')->groupBy('action_type')->pluck('total', 'action_type')

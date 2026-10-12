@@ -20,6 +20,8 @@
         <a href="{{ route('admin.tag-batches.create') }}" class="btn-accent shrink-0">+ إنشاء دفعة جديدة</a>
     </div>
 
+    <div class="mb-3 flex justify-end"><x-export-buttons /></div>
+
     <x-data-table :headers="['الرقم التسلسلي', 'النوع', 'المركبة', 'الحالة', 'تاريخ الإنشاء', '']">
         @forelse ($tags as $tag)
             <tr class="hover:bg-ink-50">

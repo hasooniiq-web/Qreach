@@ -12,15 +12,29 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ContactRequestController extends Controller
 {
-    public function index(Request $request): View
+    use \App\Http\Controllers\Concerns\ExportsTables;
+
+    public function index(Request $request): View|\Illuminate\Http\Response
     {
         $requests = ContactRequest::query()
             // A customer may have deleted the vehicle since; the request must still list.
             ->with(['vehicle' => fn ($q) => $q->withTrashed()->with('user')])
             ->when($request->filled('status'), fn ($q) => $q->where('status', $request->string('status')))
-            ->latest()
-            ->paginate(20)
-            ->withQueryString();
+            ->latest();
+
+        if ($export = $this->exportRows($request, 'contact-requests', 'طلبات التواصل', ['الزائر', 'المركبة', 'الرسالة', 'الحالة', 'التاريخ'], $requests,
+            fn ($r) => [
+                (string) ($r->visitor_name ?: 'زائر'),
+                ($r->vehicle?->plate_number ?? '—').($r->vehicle?->trashed() ? ' (محذوفة)' : ''),
+                (string) $r->message,
+                \App\Support\Export\Labels::status($r->status),
+                \App\Support\Export\Labels::date($r->created_at, true),
+            ],
+            filters: $this->filterLines($request, ['status' => 'الحالة'], ['status' => ['new' => 'جديد', 'read' => 'مقروء', 'responded' => 'تم الرد', 'closed' => 'مغلق']]))) {
+            return $export;
+        }
+
+        $requests = $requests->paginate(20)->withQueryString();
 
         return view('admin.contact-requests.index', compact('requests'));
     }

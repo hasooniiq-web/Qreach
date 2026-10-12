@@ -56,6 +56,10 @@
         </x-card>
     @endif
 
+    @if ($admin->hasPermission('printing.export') || $admin->hasPermission('qr.export'))
+    <div class="mb-3 flex justify-end"><x-export-buttons /></div>
+    @endif
+
     <x-data-table :headers="['الرقم التسلسلي', 'الرمز العام', 'الحالة', 'المركبة']">
         @forelse ($tags as $tag)
             <tr class="hover:bg-ink-50">

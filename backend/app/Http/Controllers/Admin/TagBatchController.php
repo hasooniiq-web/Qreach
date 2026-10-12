@@ -16,14 +16,30 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class TagBatchController extends Controller
 {
+    use \App\Http\Controllers\Concerns\ExportsTables;
+
     public function __construct(
         private readonly QrBatchService $batches,
         private readonly TagLifecycleService $lifecycle,
     ) {}
 
-    public function index(): View
+    public function index(Request $request): View|\Illuminate\Http\Response
     {
-        $batches = TagBatch::withCount('tags')->latest()->paginate(20);
+        $query = TagBatch::withCount('tags')->latest();
+
+        if ($export = $this->exportRows($request, 'batches', 'دفعات الرموز', ['رمز الدفعة', 'النوع', 'الكمية', 'ملاحظات', 'الحالة', 'تاريخ الإنشاء'], $query,
+            fn ($b) => [
+                (string) $b->batch_code,
+                \App\Models\Tag::typeLabels()[$b->tag_type] ?? strtoupper((string) $b->tag_type),
+                (int) $b->quantity,
+                (string) ($b->notes ?: '—'),
+                \App\Support\Export\Labels::status($b->status),
+                \App\Support\Export\Labels::date($b->created_at, true),
+            ])) {
+            return $export;
+        }
+
+        $batches = $query->paginate(20);
 
         return view('admin.tag-batches.index', compact('batches'));
     }
@@ -50,9 +66,29 @@ class TagBatchController extends Controller
         return redirect()->route('admin.tag-batches.show', $batch)->with('status', 'تم إنشاء الدفعة بنجاح.');
     }
 
-    public function show(TagBatch $tagBatch): View
+    public function show(Request $request, TagBatch $tagBatch): View|\Illuminate\Http\Response
     {
-        $tags = $tagBatch->tags()->with('qrTag', 'nfcTag', 'vehicle.user')->paginate(50);
+        $query = $tagBatch->tags()->with('qrTag', 'nfcTag', 'vehicle.user')->orderBy('id');
+
+        // The list carries each code's secret address, so it needs the same permission as the other exports.
+        if ($request->query('export')
+            && ! $request->user('admin')->hasPermission('printing.export')
+            && ! $request->user('admin')->hasPermission('qr.export')) {
+            abort(403);
+        }
+
+        if ($export = $this->exportRows($request, 'batch-'.$tagBatch->batch_code, 'دفعة الرموز '.$tagBatch->batch_code, ['الرقم التسلسلي', 'الرابط الفريد', 'الحالة', 'المركبة'], $query,
+            fn ($t) => [
+                (string) $t->serial_number,
+                rtrim(config('app.url'), '/').'/t/'.$t->public_token,
+                \App\Support\Export\Labels::status($t->status),
+                $t->vehicle?->plate_number ?? '—',
+            ],
+            filters: [$tagBatch->quantity.' رمز — '.(\App\Models\Tag::typeLabels()[$tagBatch->tag_type] ?? $tagBatch->tag_type)])) {
+            return $export;
+        }
+
+        $tags = $query->paginate(50);
 
         return view('admin.tag-batches.show', ['batch' => $tagBatch, 'tags' => $tags]);
     }

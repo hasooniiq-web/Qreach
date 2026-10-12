@@ -2305,7 +2305,7 @@ abstract class AppLocalizations {
   /// No description provided for @modelHint.
   ///
   /// In ar, this message translates to:
-  /// **'مثل: كورولا، سوناتا'**
+  /// **'اكتبه بنفسك، مثل: G class'**
   String get modelHint;
 
   /// No description provided for @editVehicle.

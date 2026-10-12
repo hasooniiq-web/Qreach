@@ -13,6 +13,8 @@
         <button type="submit" class="btn-primary">تصفية</button>
     </x-filter-bar>
 
+    <div class="mb-3 flex justify-end"><x-export-buttons /></div>
+
     <x-data-table :headers="['الوقت', 'المركبة', 'المالك', 'وصف الزائر', 'الرمز']">
         @forelse ($alerts as $alert)
             <tr class="hover:bg-ink-50">

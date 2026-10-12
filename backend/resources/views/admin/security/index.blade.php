@@ -52,6 +52,8 @@
         </label>
     </x-filter-bar>
 
+    <div class="mb-3 flex justify-end"><x-export-buttons /></div>
+
     <x-data-table :headers="['الحدث', 'المستوى', 'الجهة الفاعلة', 'عنوان IP', 'التاريخ', 'الحالة', '']">
         @forelse ($events as $event)
             <tr class="hover:bg-ink-50">

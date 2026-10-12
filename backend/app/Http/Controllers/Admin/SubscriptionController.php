@@ -20,9 +20,11 @@ use Illuminate\View\View;
  */
 class SubscriptionController extends Controller
 {
+    use \App\Http\Controllers\Concerns\ExportsTables;
+
     public function __construct(private readonly SubscriptionManager $manager) {}
 
-    public function index(Request $request): View
+    public function index(Request $request): View|\Illuminate\Http\Response
     {
         $now = now();
 
@@ -32,9 +34,23 @@ class SubscriptionController extends Controller
             ->when($request->string('status')->toString() === 'active', fn ($q) => $q->whereIn('status', ['active', 'trialing'])->where(fn ($w) => $w->whereNull('current_period_ends_at')->orWhere('current_period_ends_at', '>', $now)))
             ->when($request->string('status')->toString() === 'expired', fn ($q) => $q->whereIn('status', ['active', 'trialing'])->where('current_period_ends_at', '<=', $now))
             ->when($request->string('status')->toString() === 'canceled', fn ($q) => $q->where('status', 'canceled'))
-            ->latest('id')
-            ->paginate(20)
-            ->withQueryString();
+            ->latest('id');
+
+        if ($export = $this->exportRows($request, 'subscriptions', 'الاشتراكات', ['المشترك', 'الهاتف', 'الباقة', 'السعر', 'الحالة', 'بداية الاشتراك', 'ينتهي في'], $subscriptions,
+            fn ($s) => [
+                $s->user->display_name,
+                (string) $s->user->phone,
+                (string) $s->plan->name_ar,
+                number_format((int) $s->plan->price_cents).' '.$s->plan->currency,
+                \App\Support\Export\Labels::status($s->effectiveStatus()),
+                \App\Support\Export\Labels::date($s->current_period_starts_at),
+                $s->current_period_ends_at ? \App\Support\Export\Labels::date($s->current_period_ends_at) : 'بلا تاريخ انتهاء',
+            ],
+            filters: $this->filterLines($request, ['plan' => 'الباقة', 'status' => 'الحالة'], ['status' => ['active' => 'نشط', 'expired' => 'منتهي', 'canceled' => 'ملغى']]))) {
+            return $export;
+        }
+
+        $subscriptions = $subscriptions->paginate(20)->withQueryString();
 
         $activeSubs = Subscription::query()
             ->with('plan')
@@ -62,7 +78,7 @@ class SubscriptionController extends Controller
         ]);
     }
 
-    public function requests(Request $request): View
+    public function requests(Request $request): View|\Illuminate\Http\Response
     {
         $status = in_array($request->string('status')->toString(), ['pending', 'approved', 'rejected'], true)
             ? $request->string('status')->toString()
@@ -70,9 +86,23 @@ class SubscriptionController extends Controller
 
         $requests = PlanUpgradeRequest::with(['user', 'plan'])
             ->where('status', $status)
-            ->latest('id')
-            ->paginate(20)
-            ->withQueryString();
+            ->latest('id');
+
+        if ($export = $this->exportRows($request, 'upgrade-requests', 'طلبات الترقية', ['المستخدم', 'الهاتف', 'الباقة المطلوبة', 'السعر', 'ملاحظة', 'الحالة', 'تاريخ الطلب'], $requests,
+            fn ($u) => [
+                $u->user->display_name,
+                (string) $u->user->phone,
+                (string) $u->plan->name_ar,
+                number_format((int) $u->plan->price_cents).' '.$u->plan->currency,
+                (string) ($u->note ?: '—'),
+                \App\Support\Export\Labels::status($u->status),
+                \App\Support\Export\Labels::date($u->created_at, true),
+            ],
+            filters: ['الحالة: '.\App\Support\Export\Labels::status($status)])) {
+            return $export;
+        }
+
+        $requests = $requests->paginate(20)->withQueryString();
 
         return view('admin.subscriptions.requests', [
             'requests' => $requests,

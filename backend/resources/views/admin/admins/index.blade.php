@@ -3,6 +3,8 @@
         <a href="{{ route('admin.admins.create') }}" class="btn-accent">+ إضافة مسؤول جديد</a>
     </div>
 
+    <div class="mb-3 flex justify-end"><x-export-buttons /></div>
+
     <x-data-table :headers="['الاسم', 'البريد الإلكتروني', 'الأدوار', 'الحالة', '']">
         @foreach ($admins as $admin)
             <tr class="hover:bg-ink-50">

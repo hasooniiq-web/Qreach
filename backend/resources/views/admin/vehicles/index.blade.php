@@ -10,6 +10,8 @@
         <button type="submit" class="btn-primary">بحث</button>
     </x-filter-bar>
 
+    <div class="mb-3 flex justify-end"><x-export-buttons /></div>
+
     <x-data-table :headers="['المركبة', 'رقم اللوحة', 'المالك', 'الرمز النشط', 'الحالة', '']">
         @forelse ($vehicles as $vehicle)
             <tr class="hover:bg-ink-50">

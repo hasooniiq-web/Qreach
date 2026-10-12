@@ -72,6 +72,8 @@
     @endif
 
     <h2 class="mb-3 text-sm font-semibold text-ink-900">كشف الحساب</h2>
+    <div class="mb-3 flex justify-end"><x-export-buttons /></div>
+
     <x-data-table :headers="['التاريخ', 'القيد', 'الدفعة', 'الكمية', 'سعر الستيكر', 'المبلغ', '']">
         @forelse ($entries as $entry)
             <tr class="hover:bg-ink-50 {{ $entry->isVoided() ? 'opacity-60' : '' }}">

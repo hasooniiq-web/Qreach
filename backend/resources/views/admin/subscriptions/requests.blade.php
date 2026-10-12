@@ -10,6 +10,8 @@
         @endforeach
     </nav>
 
+    <div class="mb-3 flex justify-end"><x-export-buttons /></div>
+
     <x-data-table :headers="['المستخدم', 'الباقة المطلوبة', 'السعر', 'ملاحظة', 'تاريخ الطلب', '']">
         @forelse ($requests as $upgrade)
             <tr class="hover:bg-ink-50">

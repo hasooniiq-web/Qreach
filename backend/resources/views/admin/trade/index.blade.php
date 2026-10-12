@@ -22,6 +22,8 @@
         <button class="btn-primary">بحث</button>
     </x-filter-bar>
 
+    <div class="mb-3 flex justify-end"><x-export-buttons /></div>
+
     <x-data-table :headers="['العميل', 'الهاتف', 'المُسلَّم', 'مجموع البيع', 'المدفوع', 'المتبقي عليه', '']">
         @forelse ($customers as $customer)
             @php

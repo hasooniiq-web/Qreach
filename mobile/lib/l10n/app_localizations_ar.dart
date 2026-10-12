@@ -1184,7 +1184,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get pickerNoResults => 'لا توجد نتائج';
 
   @override
-  String get modelHint => 'مثل: كورولا، سوناتا';
+  String get modelHint => 'اكتبه بنفسك، مثل: G class';
 
   @override
   String get editVehicle => 'تعديل المركبة';
