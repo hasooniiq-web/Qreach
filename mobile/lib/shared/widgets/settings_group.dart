@@ -19,47 +19,52 @@ class SettingsGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // The group carries the page's 16 side margin itself, so the card lines up with
+    // the profile card above it and with the cards on the other screens.
     return FadeSlideIn(
         index: index,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Padding(
-              padding: const EdgeInsetsDirectional.only(
-                  start: AppSpacing.xs, bottom: AppSpacing.sm),
-              child: Text(title,
-                  style: TextStyle(
-                      color: AppColors.ink500,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 0.2)),
-            ),
-            Container(
-              clipBehavior: Clip.antiAlias,
-              decoration: BoxDecoration(
-                color: AppColors.surface,
-                borderRadius: AppRadius.rMd,
-                boxShadow: AppShadows.card,
-                border: AppShadows.hairline,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsetsDirectional.only(
+                    start: AppSpacing.xs, bottom: AppSpacing.sm),
+                child: Text(title,
+                    style: TextStyle(
+                        color: AppColors.ink500,
+                        fontSize: 13,
+                        fontWeight: FontWeight.w700,
+                        letterSpacing: 0.2)),
               ),
-              child: Material(
-                type: MaterialType.transparency,
-                child: Column(
-                  children: [
-                    for (var i = 0; i < rows.length; i++) ...[
-                      if (i > 0)
-                        Divider(
-                            height: 1,
-                            indent: 68,
-                            endIndent: 0,
-                            color: AppColors.ink100),
-                      rows[i],
+              Container(
+                clipBehavior: Clip.antiAlias,
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: AppRadius.rMd,
+                  boxShadow: AppShadows.card,
+                  border: AppShadows.hairline,
+                ),
+                child: Material(
+                  type: MaterialType.transparency,
+                  child: Column(
+                    children: [
+                      for (var i = 0; i < rows.length; i++) ...[
+                        if (i > 0)
+                          Divider(
+                              height: 1,
+                              indent: 68,
+                              endIndent: 0,
+                              color: AppColors.ink100),
+                        rows[i],
+                      ],
                     ],
-                  ],
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ));
   }
 }

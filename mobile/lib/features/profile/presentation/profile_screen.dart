@@ -373,6 +373,8 @@ class ProfileScreen extends ConsumerWidget {
           padding: const EdgeInsets.only(bottom: 120),
           children: [
             FadeSlideIn(child: ScreenHeader(title: l10n.tabProfile)),
+            // Same gap under the title as the vehicles and conversations screens.
+            const SizedBox(height: AppSpacing.sm),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: AppSpacing.lg),
               child: FadeSlideIn(

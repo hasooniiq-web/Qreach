@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/design/motion.dart';
 import '../../core/design/tokens.dart';
 import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_spacing.dart';
 
 /// The large title used at the top of every tab screen: a big, confident
 /// heading with an optional supporting line and a trailing control. It replaces
@@ -22,7 +23,10 @@ class ScreenHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(20, 20, 16, 8),
+      // The same 16 side margin as every card and list on the tab screens, and
+      // room under the title so the first block never sits right against it.
+      padding: const EdgeInsets.fromLTRB(
+          AppSpacing.lg, 20, AppSpacing.lg, AppSpacing.lg),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
