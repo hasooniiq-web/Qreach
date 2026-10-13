@@ -61,6 +61,21 @@ class ScanTest extends TestCase
         $this->assertDatabaseHas('scans', ['tag_id' => $tag->id, 'action_type' => 'view']);
     }
 
+    public function test_the_visitor_page_keeps_the_send_button_in_view(): void
+    {
+        $tag = $this->makeAssignedTag(['nickname' => 'سيارتي']);
+
+        $html = $this->get("/t/{$tag->public_token}")->assertOk()->getContent();
+
+        // The one action sticks to the bottom of the screen, so it never needs a scroll to reach.
+        $this->assertStringContainsString('data-submit-bar', $html);
+        $this->assertMatchesRegularExpression('/sticky bottom-0[^"]*"[^>]*data-submit-bar/', $html);
+        $this->assertStringContainsString('إرسال البلاغ', $html);
+
+        // The six reasons are low rows (icon beside the words), not tall tiles.
+        $this->assertStringNotContainsString('min-h-24', $html);
+        $this->assertSame(6, substr_count($html, 'name="reason"'));
+    }
     public function test_scanning_an_unknown_token_shows_a_generic_invalid_page_not_a_500(): void
     {
         $this->get('/t/this-token-does-not-exist')->assertStatus(200)->assertViewIs('public.invalid');

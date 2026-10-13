@@ -13,18 +13,18 @@
 </head>
 <body class="min-h-dvh bg-ink-50 text-ink-900">
     <div class="mx-auto max-w-md min-h-dvh flex flex-col">
-        <header class="flex items-center gap-2.5 px-5 h-14 shrink-0">
+        <header class="flex items-center gap-2.5 px-5 h-11 shrink-0">
             <div class="flex h-7 w-7 items-center justify-center rounded-full bg-brand-yellow">
                 <span class="text-xs font-bold text-brand-black">Q</span>
             </div>
             <span class="text-sm font-semibold text-ink-900">Qreach <span class="text-ink-400 font-normal">SmartTag</span></span>
         </header>
 
-        <main class="flex-1 px-5 pb-10">
+        <main class="flex-1 px-5 pb-2">
             {{ $slot }}
         </main>
 
-        <footer class="px-5 py-4 text-center text-xs text-ink-400">
+        <footer class="px-5 py-2 text-center text-[11px] text-ink-400">
             هذه الصفحة عامة ولا تتطلب تسجيل الدخول
         </footer>
     </div>
