@@ -30,6 +30,12 @@ class ReferralService
         return max(0, (int) SystemSetting::get('referral_reward_days', 30));
     }
 
+    /** How many friends one account may invite in total. */
+    public function maxInvites(): int
+    {
+        return max(0, (int) SystemSetting::get('referral_max_invites', 2));
+    }
+
     /** How many friends can earn one inviter a reward. */
     public function maxRewards(): int
     {
@@ -123,6 +129,11 @@ class ReferralService
             throw new ReferralException('رمز الدعوة غير صحيح. تأكد من الرمز وأعد المحاولة.', 'REFERRAL_INVALID', 422);
         }
 
+        // Two invitations per account (a setting): after that the code no longer takes anyone new.
+        if (Referral::where('referrer_id', $inviter->id)->count() >= $this->maxInvites()) {
+            throw new ReferralException('وصل صاحب هذا الرمز إلى الحد الأقصى من الدعوات.', 'REFERRAL_FULL', 422);
+        }
+
         try {
             $referral = Referral::create(['referrer_id' => $inviter->id, 'referred_id' => $user->id]);
         } catch (UniqueConstraintViolationException) {
@@ -191,6 +202,8 @@ class ReferralService
             'invited' => $rows->count(),
             'rewarded' => $rows->where('status', 'rewarded')->count(),
             'earned_days' => (int) $rows->where('status', 'rewarded')->sum('reward_days'),
+            'max_invites' => $this->maxInvites(),
+            'remaining_invites' => max(0, $this->maxInvites() - $rows->count()),
         ];
     }
 

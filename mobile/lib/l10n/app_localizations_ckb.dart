@@ -693,6 +693,40 @@ class AppLocalizationsCkb extends AppLocalizations {
   }
 
   @override
+  String relinkPreviousTag(String serial) {
+    return 'دووبارە بەستنەوەی دوایین کۆدی سڕاوە ($serial)';
+  }
+
+  @override
+  String get codeRelinked => 'کۆدەکە دووبارە بە ئۆتۆمبێلەکەوە بەسترایەوە.';
+
+  @override
+  String get channelsTitle => 'ڕێگاکانی کردنەوەی کۆد';
+
+  @override
+  String get channelQr => 'کۆدی QR ی چاپکراو';
+
+  @override
+  String get channelNfc => 'چیپی NFC';
+
+  @override
+  String get channelsHint =>
+      'هەریەکێکیان یان هەردووکیان ڕابگرە: سەردانکەر ناتوانێت بەو ڕێگایەی ڕاتگرتووە کۆدەکە بکاتەوە.';
+
+  @override
+  String get channelsBothOff =>
+      'هەردوو ڕێگاکە ڕاگیراون: کەس ناتوانێت کۆدەکە بکاتەوە هەتا یەکێکیان چالاک بکەیتەوە.';
+
+  @override
+  String get referralErrFull =>
+      'خاوەنی ئەم کۆدە گەیشتووەتە زۆرترین ژمارەی بانگهێشتکردن.';
+
+  @override
+  String referralRemaining(int n) {
+    return 'بانگهێشتی ماوە: $n';
+  }
+
+  @override
   String get cancelAnnualPlan => 'هەڵوەشاندنەوەی ئابوونەی ساڵانە';
 
   @override

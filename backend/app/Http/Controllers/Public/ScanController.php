@@ -41,6 +41,16 @@ class ScanController extends Controller
             return view('public.invalid');
         }
 
+        // The owner may have switched off the QR or the NFC side of this code: the page then
+        // answers exactly like an unlinked code, and nothing is recorded.
+        $channel = $tag->channelOf($request->query('c'), $request->query('s'));
+        if (! $tag->channelEnabled($channel)) {
+            return view('public.invalid');
+        }
+
+        // Proof for the actions on this page that it was opened through an allowed channel.
+        $request->session()->put('scan_ok.'.$tag->public_token, true);
+
         Scan::create([
             'tag_id' => $tag->id,
             'vehicle_id' => $tag->vehicle_id,
@@ -297,6 +307,10 @@ class ScanController extends Controller
         $tag = $this->resolveActiveTag($token, $request);
 
         abort_if(! $tag, 404);
+
+        // With a channel switched off, an action is only accepted from a page that was opened
+        // through an allowed channel (a photographed QR cannot post straight to the endpoint).
+        abort_if($tag->hasDisabledChannel() && ! $request->session()->get('scan_ok.'.$tag->public_token), 404);
 
         return $tag;
     }

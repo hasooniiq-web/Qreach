@@ -15,11 +15,23 @@ class UpdateVehicleRequest extends FormRequest
     {
         return [
             'plate_type' => ['nullable', 'in:private,government,truck,taxi,agricultural'],
-            'plate_letter' => ['nullable', 'string', 'max:4', 'regex:/^[\p{L}]{1,4}$/u'],
+            // One letter; a longer value saved earlier may be sent back unchanged.
+            'plate_letter' => ['nullable', 'string', function ($attribute, $value, $fail) {
+                $current = $this->route('vehicle')?->plate_letter;
+                if ($value !== null && $value !== $current && preg_match('/^[\p{L}]$/u', (string) $value) !== 1) {
+                    $fail('الحرف يجب أن يكون حرفًا واحدًا.');
+                }
+            }],
             'plate_governorate' => ['nullable', 'string', 'max:40'],
             'vin' => ['nullable', 'string', 'max:32', 'regex:/^[A-HJ-NPR-Z0-9]+$/i', 'unique:vehicles,vin,'.$this->route('vehicle')?->id],
             'nickname' => ['sometimes', 'nullable', 'string', 'max:100'],
-            'plate_number' => ['sometimes', 'string', 'max:32'],
+            'plate_number' => ['sometimes', 'string', 'max:32', function ($attribute, $value, $fail) {
+                $vehicle = $this->route('vehicle');
+                $country = strtoupper((string) ($this->input('plate_country') ?: ($vehicle?->plate_country ?: 'IQ')));
+                if ($country === 'IQ' && $value !== $vehicle?->plate_number && preg_match('/^[0-9٠-٩]{1,6}$/u', (string) $value) !== 1) {
+                    $fail('رقم اللوحة أرقام فقط وبحد أقصى 6 مراتب.');
+                }
+            }],
             'plate_country' => ['sometimes', 'nullable', 'string', 'size:2'],
             'make' => ['sometimes', 'nullable', 'string', 'max:100'],
             'model' => ['sometimes', 'nullable', 'string', 'max:100'],

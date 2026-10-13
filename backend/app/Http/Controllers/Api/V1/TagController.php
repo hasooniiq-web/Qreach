@@ -52,6 +52,40 @@ class TagController extends Controller
         return response()->json(['message' => 'تم حذف الرمز من المركبة.']);
     }
 
+    /** Links the code the owner removed last back to this vehicle. */
+    public function relink(Request $request, Vehicle $vehicle): JsonResponse
+    {
+        $this->authorize('update', $vehicle);
+
+        $tag = $this->lifecycle->relink($vehicle, $request->user());
+
+        return (new TagResource($tag))->response();
+    }
+
+    /** Switches the QR side and / or the NFC side of the vehicle's code on or off. */
+    public function channels(Request $request, Vehicle $vehicle): JsonResponse
+    {
+        $this->authorize('update', $vehicle);
+
+        $data = $request->validate([
+            'qr_enabled' => ['required', 'boolean'],
+            'nfc_enabled' => ['required', 'boolean'],
+        ]);
+
+        $tag = $vehicle->tags()->where('status', 'assigned')->first();
+        if (! $tag) {
+            return response()->json(['error' => ['code' => 'NO_TAG', 'message' => 'لا يوجد رمز مرتبط بهذه المركبة.']], 404);
+        }
+
+        $tag->update(['qr_enabled' => $data['qr_enabled'], 'nfc_enabled' => $data['nfc_enabled']]);
+
+        \App\Services\AuditLogger::log('qr.channels_changed', 'customer', $request->user()->id, 'Tag', $tag->id, 'success', [
+            'qr' => (bool) $data['qr_enabled'], 'nfc' => (bool) $data['nfc_enabled'],
+        ], $request);
+
+        return (new TagResource($tag->fresh()))->response();
+    }
+
     public function show(Request $request, string $token): JsonResponse
     {
         $token = TagTokenGenerator::normalize($token);

@@ -115,8 +115,14 @@ class ContactsScreen extends ConsumerWidget {
                               ),
                             ],
                           )
-                        : ListView.builder(
+                        : ListView.separated(
                             key: const ValueKey('data'),
+                            separatorBuilder: (context, i) => Divider(
+                                height: 1,
+                                thickness: 1,
+                                indent: AppSpacing.md,
+                                endIndent: AppSpacing.md,
+                                color: AppColors.ink200),
                             padding: const EdgeInsets.fromLTRB(
                                 AppSpacing.sm, 0, AppSpacing.sm, 120),
                             itemCount: feed.items.length,

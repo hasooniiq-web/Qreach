@@ -1252,6 +1252,60 @@ abstract class AppLocalizations {
   /// **'بقي لك {left, plural, =1{محاولة واحدة} =2{محاولتان} few{{left} محاولات} other{{left} محاولة}} قبل الإيقاف المؤقت.'**
   String attemptsLeft(int left);
 
+  /// No description provided for @relinkPreviousTag.
+  ///
+  /// In ar, this message translates to:
+  /// **'إعادة ربط آخر رمز محذوف ({serial})'**
+  String relinkPreviousTag(String serial);
+
+  /// No description provided for @codeRelinked.
+  ///
+  /// In ar, this message translates to:
+  /// **'أُعيد ربط الرمز بالمركبة.'**
+  String get codeRelinked;
+
+  /// No description provided for @channelsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'طرق فتح الرمز'**
+  String get channelsTitle;
+
+  /// No description provided for @channelQr.
+  ///
+  /// In ar, this message translates to:
+  /// **'رمز QR المطبوع'**
+  String get channelQr;
+
+  /// No description provided for @channelNfc.
+  ///
+  /// In ar, this message translates to:
+  /// **'شريحة NFC'**
+  String get channelNfc;
+
+  /// No description provided for @channelsHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'أوقف أحدهما أو كليهما: الزائر لا يستطيع فتح الرمز من الطريقة الموقوفة.'**
+  String get channelsHint;
+
+  /// No description provided for @channelsBothOff.
+  ///
+  /// In ar, this message translates to:
+  /// **'الطريقتان موقوفتان: لن يظهر الرمز لأحد حتى تُفعّل إحداهما.'**
+  String get channelsBothOff;
+
+  /// No description provided for @referralErrFull.
+  ///
+  /// In ar, this message translates to:
+  /// **'وصل صاحب هذا الرمز إلى الحد الأقصى من الدعوات.'**
+  String get referralErrFull;
+
+  /// No description provided for @referralRemaining.
+  ///
+  /// In ar, this message translates to:
+  /// **'دعوات متبقية: {n}'**
+  String referralRemaining(int n);
+
   /// No description provided for @cancelAnnualPlan.
   ///
   /// In ar, this message translates to:

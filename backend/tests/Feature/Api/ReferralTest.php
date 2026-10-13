@@ -172,6 +172,7 @@ class ReferralTest extends TestCase
     public function test_an_inviter_stops_earning_at_the_cap(): void
     {
         SystemSetting::set('referral_max_rewards', 2);
+        SystemSetting::set('referral_max_invites', 10); // this test is about the reward cap, not the invitation cap
         Cache::flush();
         $inviter = User::factory()->create();
 
@@ -184,6 +185,28 @@ class ReferralTest extends TestCase
         $this->assertSame(2, Referral::where('status', 'rewarded')->count());
         $this->assertSame(1, Referral::where('status', 'capped')->count());
         $this->assertEqualsWithDelta(60, now()->diffInDays($inviter->subscriptions()->first()->current_period_ends_at), 0.1);
+    }
+
+    public function test_an_account_can_invite_only_two_friends(): void
+    {
+        $inviter = User::factory()->create();
+        $code = $this->codeOf($inviter);
+
+        foreach ([1, 2] as $i) {
+            $friend = User::factory()->create();
+            $this->actingAs($friend, 'sanctum')->postJson('/api/v1/referral/apply', ['code' => $code])->assertOk();
+        }
+
+        $third = User::factory()->create();
+        $this->actingAs($third, 'sanctum')->postJson('/api/v1/referral/apply', ['code' => $code])
+            ->assertStatus(422)->assertJsonPath('error.code', 'REFERRAL_FULL');
+        $this->assertSame(2, Referral::where('referrer_id', $inviter->id)->count());
+
+        // The inviter sees how many are left; the third friend is free to use another code.
+        $this->actingAs($inviter, 'sanctum')->getJson('/api/v1/referral')
+            ->assertJsonPath('max_invites', 2)->assertJsonPath('remaining_invites', 0);
+        $other = User::factory()->create();
+        $this->actingAs($third, 'sanctum')->postJson('/api/v1/referral/apply', ['code' => $this->codeOf($other)])->assertOk();
     }
 
     public function test_the_programme_can_be_switched_off(): void

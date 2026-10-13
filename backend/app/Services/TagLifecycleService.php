@@ -110,6 +110,64 @@ class TagLifecycleService
     }
 
     /**
+     * The owner changed their mind: the code they removed from this vehicle last goes back on it.
+     * Only a code the *owner* removed qualifies — one cancelled by staff stays cancelled — and only
+     * while the vehicle has no code and nobody else holds that one.
+     *
+     * @throws TagActivationException
+     */
+    public function relink(Vehicle $vehicle, User $actor): Tag
+    {
+        return DB::transaction(function () use ($vehicle, $actor) {
+            Vehicle::where('id', $vehicle->id)->lockForUpdate()->first();
+
+            if ($vehicle->user_id !== $actor->id) {
+                throw new TagActivationException('لا يمكنك ربط رمز بمركبة لا تملكها.', 'VEHICLE_NOT_OWNED');
+            }
+
+            if (Tag::where('vehicle_id', $vehicle->id)->where('status', Tag::STATUS_ASSIGNED)->exists()) {
+                throw new TagActivationException('هذه المركبة مرتبطة برمز بالفعل.', 'VEHICLE_ALREADY_HAS_TAG');
+            }
+
+            $tag = Tag::where('vehicle_id', $vehicle->id)
+                ->where('status', Tag::STATUS_CANCELLED)
+                ->where('revocation_reason', 'removed by owner')
+                ->orderByDesc('revoked_at')
+                ->orderByDesc('id')
+                ->lockForUpdate()
+                ->first();
+
+            if (! $tag) {
+                throw new TagActivationException('لا يوجد رمز محذوف يمكن إعادة ربطه بهذه المركبة.', 'NO_PREVIOUS_TAG');
+            }
+
+            $tag->update([
+                'status' => Tag::STATUS_ASSIGNED,
+                'revoked_at' => null,
+                'revocation_reason' => null,
+                'assigned_at' => now(),
+            ]);
+
+            TagAssignment::create([
+                'tag_id' => $tag->id,
+                'vehicle_id' => $vehicle->id,
+                'user_id' => $actor->id,
+                'event' => 'assigned',
+                'performed_by_type' => 'customer',
+                'performed_by_id' => $actor->id,
+                'reason' => 'relinked by owner',
+                'assigned_at' => now(),
+            ]);
+
+            $this->recordEvent($tag, Tag::STATUS_CANCELLED, Tag::STATUS_ASSIGNED, 'relinked by owner', 'customer', $actor->id, $vehicle->id, $actor->id);
+
+            AuditLogger::log('qr.relinked', 'customer', $actor->id, 'Tag', $tag->id, 'success', ['vehicle_id' => $vehicle->id]);
+
+            return $tag->fresh();
+        });
+    }
+
+    /**
      * Cancellation (spec: "Cancelled"). Explicit, admin-controlled, never
      * implicit, and irreversible — a cancelled tag can never be assigned or
      * replaced into again (enforced by activate()/replace() both rejecting

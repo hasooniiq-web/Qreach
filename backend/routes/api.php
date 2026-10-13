@@ -44,6 +44,10 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::apiResource('vehicles', VehicleController::class)->parameters(['vehicles' => 'vehicle']);
 
         Route::delete('vehicles/{vehicle}/tag', [TagController::class, 'destroy'])->name('vehicles.tag.destroy');
+        Route::post('vehicles/{vehicle}/tag/relink', [TagController::class, 'relink'])
+            ->middleware('throttle:10,1')->name('vehicles.tag.relink');
+        Route::put('vehicles/{vehicle}/tag/channels', [TagController::class, 'channels'])
+            ->middleware('throttle:30,1')->name('vehicles.tag.channels');
 
         Route::post('tags/activate', [TagController::class, 'activate'])
             ->middleware('throttle:qr-activation')->name('tags.activate');

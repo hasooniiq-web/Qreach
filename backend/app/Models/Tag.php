@@ -50,6 +50,7 @@ class Tag extends Model
     protected $fillable = [
         'public_token', 'serial_number', 'type', 'batch_id', 'status', 'vehicle_id',
         'activated_at', 'assigned_at', 'revoked_at', 'revocation_reason', 'replaced_by_tag_id',
+        'qr_enabled', 'nfc_enabled',
     ];
 
     protected $hidden = ['id', 'uuid'];
@@ -60,7 +61,48 @@ class Tag extends Model
             'activated_at' => 'datetime',
             'assigned_at' => 'datetime',
             'revoked_at' => 'datetime',
+            'qr_enabled' => 'boolean',
+            'nfc_enabled' => 'boolean',
         ];
+    }
+
+    /** The two ways a code is opened: the printed QR, or the NFC chip. */
+    public const CHANNEL_QR = 'qr';
+
+    public const CHANNEL_NFC = 'nfc';
+
+    /** Whether this code answers when opened through that channel. */
+    public function channelEnabled(string $channel): bool
+    {
+        return $channel === self::CHANNEL_NFC ? (bool) $this->nfc_enabled : (bool) $this->qr_enabled;
+    }
+
+    /** True while at least one channel is switched off (the code then needs proof of how it was opened). */
+    public function hasDisabledChannel(): bool
+    {
+        return ! $this->qr_enabled || ! $this->nfc_enabled;
+    }
+
+    /**
+     * What the NFC chip is written with. The extra `s` is a signature only the server can make, so
+     * someone who photographed the printed QR cannot add it: "QR off, NFC on" really keeps the QR out.
+     */
+    public function nfcSignature(): string
+    {
+        return substr(hash_hmac('sha256', $this->public_token.'|nfc', (string) config('app.key')), 0, 16);
+    }
+
+    public function nfcUrl(): string
+    {
+        return rtrim((string) config('app.url'), '/').'/t/'.$this->public_token.'?c=n&s='.$this->nfcSignature();
+    }
+
+    /** Which channel a request came through: signed NFC address, or (anything else) the QR / plain link. */
+    public function channelOf(?string $c, ?string $s): string
+    {
+        return $c === 'n' && is_string($s) && hash_equals($this->nfcSignature(), $s)
+            ? self::CHANNEL_NFC
+            : self::CHANNEL_QR;
     }
 
     protected static function booted(): void

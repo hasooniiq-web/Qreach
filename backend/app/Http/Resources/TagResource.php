@@ -21,6 +21,9 @@ class TagResource extends JsonResource
             'activated_at' => $this->activated_at?->toIso8601String(),
             'assigned_at' => $this->assigned_at?->toIso8601String(),
             'public_url' => url('/t/'.$this->public_token),
+            // Which of the two ways of opening the code are switched on.
+            'qr_enabled' => (bool) $this->qr_enabled,
+            'nfc_enabled' => (bool) $this->nfc_enabled,
         ];
     }
 }

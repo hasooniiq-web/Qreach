@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/phone.dart';
+import '../../../core/utils/phone_input.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/error_banner.dart';
@@ -106,6 +107,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
               controller: _phoneController,
               enabled: !_otpSent,
               keyboardType: TextInputType.phone,
+              inputFormatters: localPhoneFormatters,
               textDirection: TextDirection.ltr,
               decoration: InputDecoration(
                 labelText: l10n.phoneLabel,

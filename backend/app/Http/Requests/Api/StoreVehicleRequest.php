@@ -15,11 +15,18 @@ class StoreVehicleRequest extends FormRequest
     {
         return [
             'plate_type' => ['nullable', 'in:private,government,truck,taxi,agricultural'],
-            'plate_letter' => ['nullable', 'string', 'max:4', 'regex:/^[\p{L}]{1,4}$/u'],
+            // One letter, as on an Iraqi plate.
+            'plate_letter' => ['nullable', 'string', 'regex:/^[\p{L}]$/u'],
             'plate_governorate' => ['nullable', 'string', 'max:40'],
             'vin' => ['nullable', 'string', 'max:32', 'regex:/^[A-HJ-NPR-Z0-9]+$/i', 'unique:vehicles,vin'],
             'nickname' => ['nullable', 'string', 'max:100'],
-            'plate_number' => ['required', 'string', 'max:32'],
+            // Up to six digits (an Iraqi plate); other countries keep their own format.
+            'plate_number' => ['required', 'string', 'max:32', function ($attribute, $value, $fail) {
+                $country = strtoupper((string) ($this->input('plate_country') ?: 'IQ'));
+                if ($country === 'IQ' && preg_match('/^[0-9٠-٩]{1,6}$/u', (string) $value) !== 1) {
+                    $fail('رقم اللوحة أرقام فقط وبحد أقصى 6 مراتب.');
+                }
+            }],
             'plate_country' => ['nullable', 'string', 'size:2'],
             'make' => ['nullable', 'string', 'max:100'],
             'model' => ['nullable', 'string', 'max:100'],

@@ -77,10 +77,11 @@ class TagBatchController extends Controller
             abort(403);
         }
 
-        if ($export = $this->exportRows($request, 'batch-'.$tagBatch->batch_code, 'دفعة الرموز '.$tagBatch->batch_code, ['الرقم التسلسلي', 'الرابط الفريد', 'الحالة', 'المركبة'], $query,
+        if ($export = $this->exportRows($request, 'batch-'.$tagBatch->batch_code, 'دفعة الرموز '.$tagBatch->batch_code, ['الرقم التسلسلي', 'الرابط الفريد (QR)', 'رابط شريحة NFC', 'الحالة', 'المركبة'], $query,
             fn ($t) => [
                 (string) $t->serial_number,
                 rtrim(config('app.url'), '/').'/t/'.$t->public_token,
+                $t->nfcUrl(),
                 \App\Support\Export\Labels::status($t->status),
                 $t->vehicle?->plate_number ?? '—',
             ],
@@ -202,11 +203,13 @@ class TagBatchController extends Controller
     {
         AuditLogger::log('qr.batch_exported', 'admin', $request->user('admin')->id, 'TagBatch', $tagBatch->id, 'success', ['format' => 'codes']);
 
-        $codes = $tagBatch->tags()->get(['serial_number', 'public_token', 'type', 'status'])
+        $codes = $tagBatch->tags()->get(['serial_number', 'public_token', 'type', 'status', 'qr_enabled', 'nfc_enabled'])
             ->map(fn ($tag) => [
                 'serial_number' => $tag->serial_number,
                 'public_token' => $tag->public_token,
                 'public_url' => url('/t/'.$tag->public_token),
+                // Write THIS address on the NFC chip (it carries the signature that marks it as NFC).
+                'nfc_url' => $tag->nfcUrl(),
                 'type' => $tag->type,
                 'status' => $tag->status,
             ]);
@@ -231,7 +234,8 @@ class TagBatchController extends Controller
 
             $tagBatch->tags()->orderBy('id')->chunk(500, function ($tags) use ($base) {
                 foreach ($tags as $tag) {
-                    echo $tag->serial_number."\t".$base.'/t/'.$tag->public_token.PHP_EOL;
+                    // serial <TAB> QR address <TAB> NFC chip address
+                    echo $tag->serial_number."\t".$base.'/t/'.$tag->public_token."\t".$tag->nfcUrl().PHP_EOL;
                 }
             });
         }, $filename, ['Content-Type' => 'text/plain; charset=UTF-8']);
@@ -247,7 +251,7 @@ class TagBatchController extends Controller
 
         return response()->streamDownload(function () use ($tagBatch) {
             $handle = fopen('php://output', 'w');
-            fputcsv($handle, ['serial_number', 'public_token', 'public_url', 'status', 'type']);
+            fputcsv($handle, ['serial_number', 'public_token', 'public_url', 'nfc_url', 'status', 'type']);
 
             $tagBatch->tags()->chunk(200, function ($tags) use ($handle) {
                 foreach ($tags as $tag) {
@@ -255,6 +259,7 @@ class TagBatchController extends Controller
                         $tag->serial_number,
                         $tag->public_token,
                         url('/t/'.$tag->public_token),
+                        $tag->nfcUrl(),
                         $tag->status,
                         $tag->type,
                     ]);

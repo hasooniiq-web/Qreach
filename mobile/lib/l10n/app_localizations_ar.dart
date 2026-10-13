@@ -692,6 +692,40 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String relinkPreviousTag(String serial) {
+    return 'إعادة ربط آخر رمز محذوف ($serial)';
+  }
+
+  @override
+  String get codeRelinked => 'أُعيد ربط الرمز بالمركبة.';
+
+  @override
+  String get channelsTitle => 'طرق فتح الرمز';
+
+  @override
+  String get channelQr => 'رمز QR المطبوع';
+
+  @override
+  String get channelNfc => 'شريحة NFC';
+
+  @override
+  String get channelsHint =>
+      'أوقف أحدهما أو كليهما: الزائر لا يستطيع فتح الرمز من الطريقة الموقوفة.';
+
+  @override
+  String get channelsBothOff =>
+      'الطريقتان موقوفتان: لن يظهر الرمز لأحد حتى تُفعّل إحداهما.';
+
+  @override
+  String get referralErrFull =>
+      'وصل صاحب هذا الرمز إلى الحد الأقصى من الدعوات.';
+
+  @override
+  String referralRemaining(int n) {
+    return 'دعوات متبقية: $n';
+  }
+
+  @override
   String get cancelAnnualPlan => 'إلغاء الاشتراك السنوي';
 
   @override

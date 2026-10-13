@@ -20,6 +20,7 @@ class VehicleModel extends Equatable {
     this.description,
     this.status,
     this.tags = const [],
+    this.previousTagSerial,
   });
 
   final String id;
@@ -40,6 +41,9 @@ class VehicleModel extends Equatable {
   final String? description;
   final String? status;
   final List<TagModel> tags;
+
+  /// Serial of the code the owner removed last, which can be linked again (null when none).
+  final String? previousTagSerial;
 
   String get displayName =>
       nickname?.isNotEmpty == true ? nickname! : plateNumber;
@@ -63,6 +67,9 @@ class VehicleModel extends Equatable {
         tags: (json['tags'] as List<dynamic>? ?? [])
             .map((t) => TagModel.fromJson(t as Map<String, dynamic>))
             .toList(),
+        previousTagSerial:
+            (json['previous_tag'] as Map<String, dynamic>?)?['serial_number']
+                as String?,
       );
 
   Map<String, dynamic> toCreateJson() => {

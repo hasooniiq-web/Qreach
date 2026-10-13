@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/choice_field.dart';
@@ -191,8 +192,14 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
                   Expanded(
                     child: TextFormField(
                       controller: _letterController,
-                      maxLength: 4,
+                      // One letter, as on an Iraqi plate.
+                      maxLength: 1,
                       textInputAction: TextInputAction.next,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                            RegExp(r'[\p{L}]', unicode: true)),
+                        LengthLimitingTextInputFormatter(1),
+                      ],
                       decoration: InputDecoration(
                           labelText: l10n.plateLetter, counterText: ''),
                     ),
@@ -217,11 +224,19 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
               TextFormField(
                 controller: _plateController,
                 textDirection: TextDirection.ltr,
+                // Up to six digits.
+                keyboardType: TextInputType.number,
+                maxLength: 6,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                  LengthLimitingTextInputFormatter(6),
+                ],
                 textInputAction: TextInputAction.next,
                 style: const TextStyle(
                     fontWeight: FontWeight.w700, letterSpacing: 1.5),
                 decoration: InputDecoration(
                   labelText: l10n.plateNumber,
+                  counterText: '',
                   prefixIcon: const Icon(Icons.pin_outlined),
                 ),
                 validator: (v) =>

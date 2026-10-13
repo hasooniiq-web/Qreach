@@ -70,6 +70,7 @@ class _BodyState extends ConsumerState<_Body> {
         'REFERRAL_INVALID' => l10n.referralErrInvalid,
         'REFERRAL_SELF' => l10n.referralErrSelf,
         'REFERRAL_ALREADY' => l10n.referralErrAlready,
+        'REFERRAL_FULL' => l10n.referralErrFull,
         'REFERRAL_NOT_NEW' => l10n.referralErrNotNew,
         'REFERRAL_UNAVAILABLE' => l10n.referralErrUnavailable,
         'NETWORK_ERROR' => l10n.networkError,
@@ -189,6 +190,10 @@ class _BodyState extends ConsumerState<_Body> {
               ],
             ),
           ),
+          const SizedBox(height: AppSpacing.sm),
+          Text(l10n.referralRemaining(info.remainingInvites),
+              textAlign: TextAlign.center,
+              style: TextStyle(color: AppColors.ink500, fontSize: 13)),
           const SizedBox(height: AppSpacing.lg),
           Row(
             children: [

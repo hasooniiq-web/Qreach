@@ -692,6 +692,40 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String relinkPreviousTag(String serial) {
+    return 'Link the last removed code again ($serial)';
+  }
+
+  @override
+  String get codeRelinked => 'The code is linked to the vehicle again.';
+
+  @override
+  String get channelsTitle => 'Ways to open the code';
+
+  @override
+  String get channelQr => 'Printed QR code';
+
+  @override
+  String get channelNfc => 'NFC chip';
+
+  @override
+  String get channelsHint =>
+      'Switch either one or both off: a visitor cannot open the code the way you switched off.';
+
+  @override
+  String get channelsBothOff =>
+      'Both are off: nobody can open the code until you switch one on.';
+
+  @override
+  String get referralErrFull =>
+      'This code owner reached the maximum number of invitations.';
+
+  @override
+  String referralRemaining(int n) {
+    return 'Invitations left: $n';
+  }
+
+  @override
   String get cancelAnnualPlan => 'Cancel annual subscription';
 
   @override

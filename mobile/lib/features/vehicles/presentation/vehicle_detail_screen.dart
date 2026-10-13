@@ -78,10 +78,12 @@ class VehicleDetailScreen extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: AppSpacing.xxl),
-              FadeSlideIn(
-                index: 2,
-                child: _VehicleActions(vehicle: vehicle, vehicleId: vehicleId),
-              ),
+              // Without a linked code the only thing to do is link one (or link the last one back).
+              if (vehicle.tags.any((t) => t.status == 'assigned'))
+                FadeSlideIn(
+                  index: 2,
+                  child: _VehicleActions(vehicle: vehicle, vehicleId: vehicleId),
+                ),
             ],
           ),
         ),
@@ -104,7 +106,41 @@ class _CodeSection extends ConsumerStatefulWidget {
 
 class _CodeSectionState extends ConsumerState<_CodeSection> {
   bool _removing = false;
+  bool _busy = false;
 
+  Future<void> _relink() async {
+    final l10n = AppLocalizations.of(context)!;
+    setState(() => _busy = true);
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await ref.read(vehicleRepositoryProvider).relinkTag(widget.vehicleId);
+      ref.invalidate(vehicleDetailProvider(widget.vehicleId));
+      await ref.read(vehicleListControllerProvider.notifier).refresh();
+      messenger.showSnackBar(SnackBar(content: Text(l10n.codeRelinked)));
+    } catch (e) {
+      messenger
+          .showSnackBar(SnackBar(content: Text(asApiException(e).message)));
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  /// QR and NFC are two doors into the same code: either can be closed.
+  Future<void> _setChannels({required bool qr, required bool nfc}) async {
+    final messenger = ScaffoldMessenger.of(context);
+    setState(() => _busy = true);
+    try {
+      await ref
+          .read(vehicleRepositoryProvider)
+          .setChannels(widget.vehicleId, qr: qr, nfc: nfc);
+      ref.invalidate(vehicleDetailProvider(widget.vehicleId));
+    } catch (e) {
+      messenger
+          .showSnackBar(SnackBar(content: Text(asApiException(e).message)));
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
   Future<void> _remove() async {
     final l10n = AppLocalizations.of(context)!;
     final confirmed = await showDialog<bool>(
@@ -215,8 +251,21 @@ class _CodeSectionState extends ConsumerState<_CodeSection> {
             label: l10n.linkNewTag,
             icon: Icons.qr_code_scanner_rounded,
             style: AppButtonStyle.accent,
-            onPressed: () => context.push('/vehicles/${widget.vehicleId}/scan'),
+            onPressed: _busy
+                ? null
+                : () => context.push('/vehicles/${widget.vehicleId}/scan'),
           ),
+          // The code that was taken off this vehicle last can simply be put back.
+          if (widget.vehicle.previousTagSerial != null) ...[
+            const SizedBox(height: AppSpacing.md),
+            AppButton(
+              label: l10n.relinkPreviousTag(widget.vehicle.previousTagSerial!),
+              icon: Icons.link_rounded,
+              style: AppButtonStyle.secondary,
+              loading: _busy,
+              onPressed: _busy ? null : _relink,
+            ),
+          ],
         ],
       );
     }
@@ -262,6 +311,54 @@ class _CodeSectionState extends ConsumerState<_CodeSection> {
           icon: Icons.qr_code_2_rounded,
           style: AppButtonStyle.secondary,
           onPressed: () => _showQr(context, tag),
+        ),
+        const SizedBox(height: AppSpacing.md),
+        // The two ways a visitor can open this code.
+        AppCard(
+          padding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.lg, vertical: AppSpacing.sm),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top: AppSpacing.sm),
+                child: Text(l10n.channelsTitle,
+                    style: const TextStyle(fontWeight: FontWeight.w800)),
+              ),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                secondary: const Icon(Icons.qr_code_2_rounded),
+                title: Text(l10n.channelQr),
+                value: tag.qrEnabled,
+                onChanged: _busy
+                    ? null
+                    : (v) => _setChannels(qr: v, nfc: tag.nfcEnabled),
+              ),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                secondary: const Icon(Icons.nfc_rounded),
+                title: Text(l10n.channelNfc),
+                value: tag.nfcEnabled,
+                onChanged: _busy
+                    ? null
+                    : (v) => _setChannels(qr: tag.qrEnabled, nfc: v),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacing.sm),
+                child: Text(
+                  !tag.qrEnabled && !tag.nfcEnabled
+                      ? l10n.channelsBothOff
+                      : l10n.channelsHint,
+                  style: TextStyle(
+                      color: !tag.qrEnabled && !tag.nfcEnabled
+                          ? AppColors.statusDanger
+                          : AppColors.ink500,
+                      fontSize: 12.5,
+                      height: 1.5),
+                ),
+              ),
+            ],
+          ),
         ),
         const SizedBox(height: AppSpacing.md),
         Text(l10n.oneCodeNote,

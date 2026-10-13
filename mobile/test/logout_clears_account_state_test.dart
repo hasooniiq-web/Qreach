@@ -31,6 +31,13 @@ class _CountingVehicles implements VehicleRepository {
   Future<void> setStatus(String id, {required bool active}) async {}
   @override
   Future<void> removeTag(String vehicleId) async {}
+
+  @override
+  Future<void> relinkTag(String vehicleId) async {}
+
+  @override
+  Future<void> setChannels(String vehicleId,
+      {required bool qr, required bool nfc}) async {}
 }
 
 class _StubAuth implements AuthRepository {

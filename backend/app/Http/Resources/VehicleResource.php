@@ -27,6 +27,21 @@ class VehicleResource extends JsonResource
             'status' => $this->status,
             'privacy_settings' => $this->privacy_settings,
             'tags' => TagResource::collection($this->whenLoaded('tags')),
+            // The code the owner removed last: it can be linked again in one tap.
+            'previous_tag' => $this->whenLoaded('tags', function () {
+                $assigned = $this->tags->contains(fn ($t) => $t->status === 'assigned');
+                $removed = $this->tags
+                    ->filter(fn ($t) => $t->status === 'revoked' && $t->revocation_reason === 'removed by owner')
+                    ->sortByDesc('revoked_at')
+                    ->first();
+
+                return ! $assigned && $removed
+                    ? [
+                        'serial_number' => $removed->serial_number,
+                        'removed_at' => $removed->revoked_at?->toIso8601String(),
+                    ]
+                    : null;
+            }),
             'created_at' => $this->created_at?->toIso8601String(),
         ];
     }

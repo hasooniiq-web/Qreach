@@ -51,4 +51,16 @@ class VehicleRepository {
   Future<void> removeTag(String vehicleId) async {
     await _client.dio.delete('/vehicles/$vehicleId/tag');
   }
+
+  /// Links the code the owner removed last back to this vehicle.
+  Future<void> relinkTag(String vehicleId) async {
+    await _client.dio.post('/vehicles/$vehicleId/tag/relink');
+  }
+
+  /// Switches the printed QR and / or the NFC chip of the vehicle's code on or off.
+  Future<void> setChannels(String vehicleId,
+      {required bool qr, required bool nfc}) async {
+    await _client.dio.put('/vehicles/$vehicleId/tag/channels',
+        data: {'qr_enabled': qr, 'nfc_enabled': nfc});
+  }
 }

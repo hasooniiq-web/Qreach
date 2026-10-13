@@ -19,7 +19,7 @@ enum ThumbKind {
 }
 
 /// The supplied illustrations (assets/vehicles). A taxi uses the sedan picture;
-/// motorcycle and tractor have no supplied picture yet and stay drawn in code.
+/// only the tractor has no supplied picture yet and stays drawn in code.
 const _assetFor = {
   ThumbKind.sedan: 'sedan',
   ThumbKind.taxi: 'sedan',
@@ -27,6 +27,7 @@ const _assetFor = {
   ThumbKind.pickup: 'pickup',
   ThumbKind.truck: 'truck',
   ThumbKind.bus: 'bus',
+  ThumbKind.motorcycle: 'motorcycle',
   ThumbKind.van: 'van',
   ThumbKind.other: 'other',
 };
@@ -224,18 +225,7 @@ class _ThumbPainter extends CustomPainter {
         wheel(22, 32, 6.5);
         wheel(78, 32, 6.5);
       case ThumbKind.motorcycle:
-        wheel(20, 31, 8);
-        wheel(80, 31, 8);
-        canvas.drawLine(const Offset(20, 31), const Offset(42, 17), stroke);
-        canvas.drawLine(const Offset(42, 17), const Offset(66, 17), stroke);
-        canvas.drawLine(const Offset(66, 17), const Offset(80, 31), stroke);
-        canvas.drawLine(const Offset(42, 17), const Offset(52, 31), stroke);
-        canvas.drawLine(const Offset(66, 17), const Offset(72, 8), stroke);
-        canvas.drawLine(const Offset(68, 8), const Offset(78, 8), stroke);
-        canvas.drawRRect(
-            RRect.fromLTRBR(36, 12, 56, 17, const Radius.circular(2.5)), body);
-        canvas.drawRRect(
-            RRect.fromLTRBR(52, 13, 66, 18, const Radius.circular(2.5)), body);
+        break; // drawn from assets/vehicles/motorcycle.png, never reaches the painter
       case ThumbKind.tractor:
         poly(const [
           Offset(44, 20),

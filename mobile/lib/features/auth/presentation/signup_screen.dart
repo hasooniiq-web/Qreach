@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/phone.dart';
+import '../../../core/utils/phone_input.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/error_banner.dart';
@@ -100,6 +101,7 @@ class _SignupScreenState extends ConsumerState<SignupScreen> {
             TextFormField(
               controller: _phoneController,
               keyboardType: TextInputType.phone,
+              inputFormatters: localPhoneFormatters,
               textDirection: TextDirection.ltr,
               // No "+964" shown anywhere: the system is Iraq-only, so the
               // field just takes the local number as people actually type it

@@ -9,6 +9,8 @@ class TagModel extends Equatable {
     this.activatedAt,
     this.assignedAt,
     required this.publicUrl,
+    this.qrEnabled = true,
+    this.nfcEnabled = true,
   });
 
   final String token;
@@ -18,6 +20,10 @@ class TagModel extends Equatable {
   final DateTime? activatedAt;
   final DateTime? assignedAt;
   final String publicUrl;
+
+  /// Which ways of opening the code are switched on (the printed QR / the NFC chip).
+  final bool qrEnabled;
+  final bool nfcEnabled;
 
   factory TagModel.fromJson(Map<String, dynamic> json) => TagModel(
         token: json['token'] as String,
@@ -31,9 +37,20 @@ class TagModel extends Equatable {
             ? DateTime.tryParse(json['assigned_at'] as String)
             : null,
         publicUrl: json['public_url'] as String,
+        qrEnabled: json['qr_enabled'] as bool? ?? true,
+        nfcEnabled: json['nfc_enabled'] as bool? ?? true,
       );
 
   @override
-  List<Object?> get props =>
-      [token, serialNumber, type, status, activatedAt, assignedAt, publicUrl];
+  List<Object?> get props => [
+        token,
+        serialNumber,
+        type,
+        status,
+        activatedAt,
+        assignedAt,
+        publicUrl,
+        qrEnabled,
+        nfcEnabled,
+      ];
 }

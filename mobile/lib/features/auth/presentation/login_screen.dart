@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/theme/app_spacing.dart';
 import '../../../core/utils/phone.dart';
+import '../../../core/utils/phone_input.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/error_banner.dart';
@@ -79,6 +80,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             TextFormField(
               controller: _phoneController,
               keyboardType: TextInputType.phone,
+              inputFormatters: localPhoneFormatters,
               textDirection: TextDirection.ltr,
               decoration: InputDecoration(
                 labelText: l10n.phoneLabel,
