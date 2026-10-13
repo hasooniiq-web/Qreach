@@ -12,7 +12,9 @@
                 <tr>
                     @foreach ($headers as $header)
                         <th scope="col">
-                            @if ($header === '')
+                            @if ($header === '__select')
+                                <input type="checkbox" data-bulk-all aria-label="تحديد الكل" class="size-4 rounded border-ink-300 accent-brand-yellow">
+                            @elseif ($header === '')
                                 <span class="sr-only">إجراءات</span>
                             @else
                                 {{ $header }}

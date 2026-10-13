@@ -229,6 +229,35 @@ document.addEventListener('click', (event) => {
     boxes.forEach((box) => { box.checked = !allChecked; });
 });
 
+// ---- Bulk selection: tick rows, then use the buttons above the table -------
+function refreshBulk(form) {
+    const items = [...form.querySelectorAll('[data-bulk-item]')];
+    const chosen = items.filter((box) => box.checked).length;
+
+    form.querySelectorAll('[data-bulk-count]').forEach((el) => { el.textContent = String(chosen); });
+    form.querySelectorAll('[data-bulk-submit]').forEach((button) => { button.disabled = chosen === 0; });
+
+    const all = form.querySelector('[data-bulk-all]');
+    if (all) {
+        all.checked = items.length > 0 && chosen === items.length;
+        all.indeterminate = chosen > 0 && chosen < items.length;
+    }
+}
+
+document.addEventListener('change', (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLInputElement)) return;
+    const form = target.closest('form[data-bulk]');
+    if (!form) return;
+
+    if (target.matches('[data-bulk-all]')) {
+        form.querySelectorAll('[data-bulk-item]').forEach((box) => { box.checked = target.checked; });
+    }
+    if (target.matches('[data-bulk-all], [data-bulk-item]')) refreshBulk(form);
+});
+
+document.querySelectorAll('form[data-bulk]').forEach(refreshBulk);
+
 // ---- Tables as cards on a phone: each cell learns its column name ---------
 document.querySelectorAll('table.data-table').forEach((table) => {
     const names = [...table.querySelectorAll('thead th')].map((th) => (th.querySelector('.sr-only') ? '' : th.textContent.trim()));

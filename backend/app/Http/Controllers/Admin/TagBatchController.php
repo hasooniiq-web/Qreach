@@ -120,6 +120,83 @@ class TagBatchController extends Controller
             : 'لا توجد رموز في حالة «أُرسل للطباعة» لتحويلها.');
     }
 
+    /** Several batches at once: send them all to printing, or mark them all as back from the printer. */
+    public function bulkBatches(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'ids' => ['required', 'array', 'min:1', 'max:200'],
+            'ids.*' => ['integer', 'exists:tag_batches,id'],
+            'action' => ['required', 'in:send_to_printing,mark_unassigned'],
+        ], [
+            'ids.required' => 'حدّد دفعة واحدة على الأقل.',
+            'ids.min' => 'حدّد دفعة واحدة على الأقل.',
+        ]);
+
+        $actorId = $request->user('admin')->id;
+        $moved = 0;
+        $batchesTouched = 0;
+
+        foreach (TagBatch::whereIn('id', $data['ids'])->get() as $batch) {
+            $count = $data['action'] === 'send_to_printing'
+                ? $this->lifecycle->sendBatchToPrinting($batch, 'admin', $actorId)
+                : $this->lifecycle->markBatchUnassigned($batch, 'admin', $actorId);
+
+            if ($count > 0) {
+                $moved += $count;
+                $batchesTouched++;
+            }
+        }
+
+        return back()->with('status', $this->bulkBatchesMessage($data['action'], $batchesTouched, count($data['ids']), $moved));
+    }
+
+    /** Several codes of this batch (or one): the same two steps, on exactly the codes ticked. */
+    public function bulkTags(Request $request, TagBatch $tagBatch): RedirectResponse
+    {
+        $data = $request->validate([
+            'ids' => ['required', 'array', 'min:1', 'max:1000'],
+            'ids.*' => ['integer'],
+            'action' => ['required', 'in:send_to_printing,mark_unassigned'],
+        ], [
+            'ids.required' => 'حدّد رمزًا واحدًا على الأقل.',
+            'ids.min' => 'حدّد رمزًا واحدًا على الأقل.',
+        ]);
+
+        // Only codes that really belong to this batch can be moved from its page.
+        $ids = \App\Models\Tag::where('batch_id', $tagBatch->id)->whereIn('id', $data['ids'])->pluck('id');
+
+        [$from, $to] = $data['action'] === 'send_to_printing'
+            ? [\App\Models\Tag::STATUS_CREATED, \App\Models\Tag::STATUS_PRINTING]
+            : [\App\Models\Tag::STATUS_PRINTING, \App\Models\Tag::STATUS_UNASSIGNED];
+
+        $moved = $this->lifecycle->advanceTags($ids, $from, $to, 'admin', $request->user('admin')->id);
+
+        return back()->with('status', $this->bulkCodesMessage($data['action'], $moved, count($data['ids'])));
+    }
+
+    private function bulkBatchesMessage(string $action, int $touched, int $selected, int $moved): string
+    {
+        $state = $action === 'send_to_printing' ? 'أُرسل للطباعة' : 'غير مُعيّن (جاهز للربط)';
+
+        return $moved > 0
+            ? "تم تحويل {$moved} رمزًا في {$touched} من {$selected} دفعة إلى «{$state}»."
+            : 'لم يتغير شيء: لا توجد رموز مؤهلة لهذه الخطوة في الدفعات المحددة.';
+    }
+
+    private function bulkCodesMessage(string $action, int $moved, int $selected): string
+    {
+        $state = $action === 'send_to_printing' ? 'أُرسل للطباعة' : 'غير مُعيّن (جاهز للربط)';
+
+        if ($moved === 0) {
+            return 'لم يتغير شيء: حالة الرموز المحددة لا تسمح بهذه الخطوة.';
+        }
+
+        $left = $selected - $moved;
+
+        return "تم تحويل {$moved} رمزًا إلى «{$state}»."
+            .($left > 0 ? " وتُرك {$left} لأن حالته لا تسمح بهذه الخطوة." : '');
+    }
+
     /** Machine-readable export: every field needed to reprint/re-issue, no user/vehicle data. */
     public function exportCodes(Request $request, TagBatch $tagBatch): JsonResponse
     {

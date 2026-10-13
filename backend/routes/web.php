@@ -256,6 +256,10 @@ Route::prefix('admin')->name('admin.')->group(function () {
                 Route::get('batches/{tagBatch}/export/text', [TagBatchController::class, 'exportText'])->name('tag-batches.export.text');
             });
             Route::middleware('admin.permission:printing.create')->group(function () {
+                // Several at once. Literal segments, so they do not collide with {tagBatch}.
+                Route::post('batches/bulk-status', [TagBatchController::class, 'bulkBatches'])->name('tag-batches.bulk');
+                Route::post('batches/{tagBatch}/tags/bulk-status', [TagBatchController::class, 'bulkTags'])->name('tag-batches.tags.bulk');
+                Route::post('qr/bulk-status', [TagController::class, 'bulkStatus'])->name('tags.bulk');
                 Route::post('batches/{tagBatch}/send-to-printing', [TagBatchController::class, 'sendToPrinting'])->name('tag-batches.send-to-printing');
                 Route::post('batches/{tagBatch}/mark-unassigned', [TagBatchController::class, 'markUnassigned'])->name('tag-batches.mark-unassigned');
             });

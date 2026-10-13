@@ -21,6 +21,31 @@ class TagController extends Controller
 
     public function __construct(private readonly TagLifecycleService $lifecycle) {}
 
+    /** Tick codes in the list and send them to printing / mark them as back from the printer. */
+    public function bulkStatus(Request $request): RedirectResponse
+    {
+        $data = $request->validate([
+            'ids' => ['required', 'array', 'min:1', 'max:1000'],
+            'ids.*' => ['integer'],
+            'action' => ['required', 'in:send_to_printing,mark_unassigned'],
+        ], [
+            'ids.required' => 'حدّد رمزًا واحدًا على الأقل.',
+            'ids.min' => 'حدّد رمزًا واحدًا على الأقل.',
+        ]);
+
+        [$from, $to, $state] = $data['action'] === 'send_to_printing'
+            ? [Tag::STATUS_CREATED, Tag::STATUS_PRINTING, 'أُرسل للطباعة']
+            : [Tag::STATUS_PRINTING, Tag::STATUS_UNASSIGNED, 'غير مُعيّن (جاهز للربط)'];
+
+        $moved = $this->lifecycle->advanceTags($data['ids'], $from, $to, 'admin', $request->user('admin')->id);
+        $left = count($data['ids']) - $moved;
+
+        return back()->with('status', $moved > 0
+            ? "تم تحويل {$moved} رمزًا إلى «{$state}»."
+              .($left > 0 ? " وتُرك {$left} لأن حالته لا تسمح بهذه الخطوة." : '')
+            : 'لم يتغير شيء: حالة الرموز المحددة لا تسمح بهذه الخطوة.');
+    }
+
     public function index(Request $request): View|\Illuminate\Http\Response
     {
         $tags = Tag::query()

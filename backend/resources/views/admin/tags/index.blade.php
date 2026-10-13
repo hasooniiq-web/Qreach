@@ -22,9 +22,20 @@
 
     <div class="mb-3 flex justify-end"><x-export-buttons /></div>
 
-    <x-data-table :headers="['الرقم التسلسلي', 'النوع', 'المركبة', 'الحالة', 'تاريخ الإنشاء', '']">
+    @php $canBulk = auth('admin')->user()->hasPermission('printing.create'); @endphp
+    <form method="POST" action="{{ route('admin.tags.bulk') }}" @if ($canBulk) data-bulk @endif>
+    @if ($canBulk)
+        @csrf
+        <x-bulk-bar noun="رمز" />
+        @error('ids')<p class="mb-3 text-sm text-status-danger">{{ $message }}</p>@enderror
+    @endif
+
+    <x-data-table :headers="array_merge($canBulk ? ['__select'] : [], ['الرقم التسلسلي', 'النوع', 'المركبة', 'الحالة', 'تاريخ الإنشاء', ''])">
         @forelse ($tags as $tag)
             <tr class="hover:bg-ink-50">
+                @if ($canBulk)
+                    <td class="px-4 py-3"><input type="checkbox" name="ids[]" value="{{ $tag->id }}" data-bulk-item aria-label="تحديد الرمز {{ $tag->serial_number }}" class="size-4 rounded border-ink-300 accent-brand-yellow"></td>
+                @endif
                 <td class="px-4 py-3 font-medium tabular-nums text-ink-900"><a href="{{ route('admin.tags.show', $tag) }}" class="hover:underline">{{ $tag->serial_number }}</a></td>
                 <td class="px-4 py-3 uppercase text-ink-600">{{ $tag->typeLabel() }}</td>
                 <td class="px-4 py-3 text-ink-600">
@@ -51,12 +62,13 @@
                 </td>
             </tr>
         @empty
-            <x-table-empty :cols="6" icon="qrcode" title="لا توجد رموز مطابقة"
+            <x-table-empty :cols="$canBulk ? 7 : 6" icon="qrcode" title="لا توجد رموز مطابقة"
                            description="أنشئ دفعة جديدة لتوليد رموز QR أو NFC.">
                 <a href="{{ route('admin.tag-batches.create') }}" class="btn-accent mt-4">إنشاء دفعة جديدة</a>
             </x-table-empty>
         @endforelse
     </x-data-table>
+    </form>
 
     <div class="mt-4">{{ $tags->links() }}</div>
 </x-layouts.admin>

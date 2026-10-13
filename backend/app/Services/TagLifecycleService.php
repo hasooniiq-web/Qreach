@@ -283,6 +283,70 @@ class TagLifecycleService
         });
     }
 
+    /**
+     * Moves exactly these codes one step along the printing path (created -> sent to
+     * printing -> unassigned). A code that is not in the starting state is left alone,
+     * so a mixed selection is safe. Each batch the codes belong to is brought up to date.
+     *
+     * @param  iterable<int>  $tagIds
+     * @return int how many codes moved
+     */
+    public function advanceTags(iterable $tagIds, string $from, string $to, string $actorType, ?int $actorId): int
+    {
+        $ids = collect($tagIds)->map(fn ($id) => (int) $id)->unique()->values();
+        if ($ids->isEmpty()) {
+            return 0;
+        }
+
+        return DB::transaction(function () use ($ids, $from, $to, $actorType, $actorId) {
+            $movable = collect();
+            foreach ($ids->chunk(500) as $chunk) {
+                $movable = $movable->merge(
+                    Tag::whereIn('id', $chunk)->where('status', $from)->lockForUpdate()->pluck('id')
+                );
+            }
+
+            if ($movable->isEmpty()) {
+                return 0;
+            }
+
+            foreach ($movable->chunk(500) as $chunk) {
+                Tag::whereIn('id', $chunk)->update(['status' => $to]);
+            }
+            $this->bulkRecordEvents($movable, $from, $to, $actorType, $actorId);
+
+            $batchIds = collect();
+            foreach ($movable->chunk(500) as $chunk) {
+                $batchIds = $batchIds->merge(Tag::whereIn('id', $chunk)->whereNotNull('batch_id')->distinct()->pluck('batch_id'));
+            }
+            $batchIds->unique()->each(fn ($batchId) => $this->syncBatchStatus((int) $batchId));
+
+            AuditLogger::log('qr.tags_status_changed', $actorType, $actorId, 'Tag', null, 'success', [
+                'count' => $movable->count(), 'from' => $from, 'to' => $to,
+            ]);
+
+            return $movable->count();
+        });
+    }
+
+    /** A batch is "sent to printing" once none of its codes is still only created, "completed" once none is still at the printer. */
+    private function syncBatchStatus(int $batchId): void
+    {
+        $batch = TagBatch::find($batchId);
+        if (! $batch || $batch->status === 'completed') {
+            return;
+        }
+
+        $created = Tag::where('batch_id', $batchId)->where('status', Tag::STATUS_CREATED)->exists();
+        $printing = Tag::where('batch_id', $batchId)->where('status', Tag::STATUS_PRINTING)->exists();
+
+        if (! $created && ! $printing) {
+            $batch->update(['status' => 'completed']);
+        } elseif (! $created) {
+            $batch->update(['status' => 'printed']);
+        }
+    }
+
     private function recordEvent(
         Tag $tag,
         ?string $previousStatus,
