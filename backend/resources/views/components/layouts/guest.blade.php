@@ -11,6 +11,9 @@
     @vite(['resources/css/app.css'])
 </head>
 <body class="min-h-dvh bg-canvas text-ink-900">
+    @if (config('app.test_banner'))
+        <div class="bg-brand-yellow px-3 py-1 text-center text-xs font-bold text-brand-black" role="status">بيئة اختبار — البيانات هنا غير حقيقية</div>
+    @endif
     <div class="grid min-h-dvh lg:grid-cols-2">
         {{-- Brand panel --}}
         <aside class="relative hidden overflow-hidden bg-brand-black p-12 text-white lg:flex lg:flex-col lg:justify-between">

@@ -133,6 +133,11 @@
         </aside>
 
         <div class="flex h-dvh min-w-0 flex-1 flex-col">
+            @if (config('app.test_banner'))
+                <div class="shrink-0 bg-brand-yellow px-3 py-1 text-center text-xs font-bold text-brand-black" role="status">
+                    بيئة اختبار — البيانات هنا غير حقيقية
+                </div>
+            @endif
             <header class="sticky top-0 z-[35] flex h-14 shrink-0 items-center gap-2 border-b border-ink-200 bg-surface/90 px-3 backdrop-blur sm:px-5">
                 <button type="button" id="mobile-nav-open" aria-label="فتح القائمة" class="btn-ghost !size-9 !px-0 lg:hidden">
                     <x-icon name="menu" class="size-5" />

@@ -17,7 +17,7 @@
         <meta name="description" content="{{ $description }}">
         <meta property="og:description" content="{{ $description }}">
     @endif
-    <meta name="robots" content="{{ $robots }}">
+    <meta name="robots" content="{{ config('app.test_banner') ? 'noindex,nofollow' : $robots }}">
     <meta name="theme-color" content="#09090B">
     <meta property="og:title" content="{{ $title }}">
     <meta property="og:type" content="website">
@@ -38,6 +38,9 @@
     </style>
 </head>
 <body class="min-h-dvh bg-white text-ink-900 antialiased">
+    @if (config('app.test_banner'))
+        <div class="bg-brand-yellow px-3 py-1 text-center text-xs font-bold text-brand-black" role="status">TEST ENVIRONMENT — not real data · بيئة اختبار</div>
+    @endif
     <a href="#content" class="sr-only focus:not-sr-only focus:fixed focus:start-3 focus:top-3 focus:z-50 focus:rounded-lg focus:bg-brand-yellow focus:px-4 focus:py-2 focus:font-semibold focus:text-brand-black">{{ trans('site.skip') }}</a>
 
     <header class="sticky top-0 z-40 border-b border-white/10 bg-brand-black/95 text-white backdrop-blur">

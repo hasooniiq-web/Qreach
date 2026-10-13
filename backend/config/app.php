@@ -16,6 +16,12 @@ return [
     'name' => env('APP_NAME', 'Laravel'),
 
     /*
+    | True only on the test site (test.qreach.online): a "test environment — not real data"
+    | ribbon on the dashboard and the public site, and search engines are told to stay away.
+    */
+    'test_banner' => (bool) env('APP_TEST_BANNER', false),
+
+    /*
     |--------------------------------------------------------------------------
     | Application Environment
     |--------------------------------------------------------------------------
