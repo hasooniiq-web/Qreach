@@ -277,11 +277,11 @@ class _ContactThreadScreenState extends ConsumerState<ContactThreadScreen> {
             padding: const EdgeInsets.all(AppSpacing.lg),
             children: const [
               Align(
-                  alignment: AlignmentDirectional.centerEnd,
+                  alignment: Alignment.centerRight,
                   child: SkeletonBox(width: 220, height: 60, radius: 20)),
               SizedBox(height: AppSpacing.md),
               Align(
-                  alignment: AlignmentDirectional.centerStart,
+                  alignment: Alignment.centerLeft,
                   child: SkeletonBox(width: 160, height: 46, radius: 20)),
             ],
           ),
@@ -567,23 +567,20 @@ class _Bubble extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final mine = message.fromOwner;
-    final rtl = Directionality.of(context) == TextDirection.rtl;
-    // The corner nearest the sender is squared off, like a speech tail.
-    final tailOnRight = mine ? !rtl : rtl;
+    // The owner is always on the right and the visitor on the left, in every language
+    // (physical sides, not start/end). The corner nearest the sender is squared off, like a
+    // speech tail.
     const big = Radius.circular(20);
     const small = Radius.circular(6);
     final radius = BorderRadius.only(
       topLeft: big,
       topRight: big,
-      bottomLeft: tailOnRight ? big : small,
-      bottomRight: tailOnRight ? small : big,
+      bottomLeft: mine ? big : small,
+      bottomRight: mine ? small : big,
     );
 
     return Align(
-      // "Start" is the visitor's side, "end" is mine — correct in RTL and LTR.
-      alignment: mine
-          ? AlignmentDirectional.centerEnd
-          : AlignmentDirectional.centerStart,
+      alignment: mine ? Alignment.centerRight : Alignment.centerLeft,
       child: Container(
         margin: const EdgeInsets.only(bottom: AppSpacing.sm),
         padding: const EdgeInsets.fromLTRB(14, 10, 14, 8),
