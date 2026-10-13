@@ -5,6 +5,7 @@ import '../../../core/design/motion.dart';
 import '../../../core/design/tokens.dart';
 import '../../../core/network/api_client.dart';
 import '../../../core/providers.dart';
+import '../../profile/presentation/profile_controller.dart';
 import '../../../shared/widgets/app_button.dart';
 
 import '../../../core/theme/app_colors.dart';
@@ -53,12 +54,26 @@ class SubscriptionScreen extends ConsumerWidget {
                 _LapsedBanner(date: formatDate(info.endsAt!)),
                 const SizedBox(height: AppSpacing.md),
               ],
+              if (info.trial.active && info.trial.endsAt != null) ...[
+                _Banner(
+                    text: l10n
+                        .trialRunningBanner(formatDate(info.trial.endsAt!))),
+                const SizedBox(height: AppSpacing.md),
+              ],
+              if (info.trialEnded) ...[
+                _Banner(text: l10n.trialEndedBanner),
+                const SizedBox(height: AppSpacing.md),
+              ],
               if (info.inGrace && info.graceEndsAt != null) ...[
                 _Banner(
                     text: l10n.planGraceBanner(formatDate(info.graceEndsAt!))),
                 const SizedBox(height: AppSpacing.md),
               ],
               FadeSlideIn(child: _CurrentPlanCard(info: info)),
+              if (info.trial.available) ...[
+                const SizedBox(height: AppSpacing.md),
+                FadeSlideIn(index: 1, child: _TrialCard(days: info.trial.days)),
+              ],
               if (info.endsAt != null &&
                   (info.canCancelRenewal || info.renewalCanceled)) ...[
                 const SizedBox(height: AppSpacing.md),
@@ -449,6 +464,105 @@ class _RenewalControlState extends ConsumerState<_RenewalControl> {
   }
 }
 
+
+/// The one-time free week of Plus. Starting it asks for a confirmation first,
+/// because it cannot be used a second time.
+class _TrialCard extends ConsumerStatefulWidget {
+  const _TrialCard({required this.days});
+
+  final int days;
+
+  @override
+  ConsumerState<_TrialCard> createState() => _TrialCardState();
+}
+
+class _TrialCardState extends ConsumerState<_TrialCard> {
+  bool _busy = false;
+
+  Future<void> _start() async {
+    final l10n = AppLocalizations.of(context)!;
+    final days = widget.days.toString();
+    final ok = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        insetPadding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.lg, vertical: AppSpacing.xl),
+        title: Text(l10n.trialConfirmTitle),
+        content: Text(l10n.trialConfirmBody(days),
+            style: const TextStyle(height: 1.5)),
+        actions: [
+          TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: Text(l10n.cancel)),
+          TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: Text(l10n.trialStartButton)),
+        ],
+      ),
+    );
+    if (ok != true || !mounted) return;
+
+    setState(() => _busy = true);
+    final messenger = ScaffoldMessenger.of(context);
+    try {
+      await ref.read(subscriptionRepositoryProvider).startTrial();
+      ref.invalidate(subscriptionProvider);
+      ref.invalidate(profileProvider);
+      messenger.showSnackBar(SnackBar(content: Text(l10n.trialStarted)));
+    } catch (e) {
+      ref.invalidate(subscriptionProvider);
+      messenger
+          .showSnackBar(SnackBar(content: Text(asApiException(e).message)));
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return AppCard(
+      padding: const EdgeInsets.all(AppSpacing.lg),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Container(
+                width: 44,
+                height: 44,
+                decoration: BoxDecoration(
+                  color: AppColors.brandYellow.withValues(alpha: 0.25),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(Icons.workspace_premium_rounded,
+                    color: AppColors.ink900),
+              ),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Text(l10n.trialCardTitle(widget.days.toString()),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.w800, fontSize: 16)),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.sm),
+          Text(l10n.trialCardBody,
+              style: TextStyle(color: AppColors.ink500, height: 1.5)),
+          const SizedBox(height: AppSpacing.md),
+          AppButton(
+            label: l10n.trialStartButton,
+            icon: Icons.play_arrow_rounded,
+            style: AppButtonStyle.accent,
+            loading: _busy,
+            onPressed: _busy ? null : _start,
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 /// The way in to the voucher screen: a tile under the current plan.
 class _VoucherEntry extends StatelessWidget {

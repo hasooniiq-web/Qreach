@@ -28,6 +28,8 @@ class PlanEntitlements
             ->where(fn ($q) => $q->whereNull('current_period_ends_at')->orWhere('current_period_ends_at', '>', now()->subDays(Subscription::graceDays())))
             ->latest('id')
             ->get()
+            // A trial has no grace week, so the query's widened window is re-checked per row.
+            ->filter(fn (Subscription $s) => $s->grantsAccess())
             ->sortByDesc(fn (Subscription $s) => $s->plan->price_cents)
             ->first();
     }

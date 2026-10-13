@@ -522,6 +522,38 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String trialCardTitle(String days) {
+    return 'Try Plus free for $days days';
+  }
+
+  @override
+  String get trialCardBody =>
+      'No payment, and only once per account. It ends by itself and does not renew.';
+
+  @override
+  String get trialStartButton => 'Start the free trial';
+
+  @override
+  String get trialConfirmTitle => 'Start the free trial?';
+
+  @override
+  String trialConfirmBody(String days) {
+    return 'Plus will work for $days days, then you return to Basic. The trial cannot be repeated once used.';
+  }
+
+  @override
+  String get trialStarted => 'Your free Plus trial has started.';
+
+  @override
+  String trialRunningBanner(String date) {
+    return 'Your free Plus trial ends on $date. Subscribe before then to keep the features.';
+  }
+
+  @override
+  String get trialEndedBanner =>
+      'Your free trial has ended. Subscribe to Plus to keep using its features.';
+
+  @override
   String get cancelAnnualPlan => 'Cancel annual subscription';
 
   @override
@@ -559,6 +591,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get subStatusPastDue => 'Past due';
+
+  @override
+  String get subStatusTrialEnded => 'Trial ended';
 
   @override
   String get subStatusTrialing => 'Trial';
@@ -1006,6 +1041,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get emergencyPhone => 'Phone number';
+
+  @override
+  String get pickFromContacts => 'Choose from contacts';
 
   @override
   String get methodsSection => 'More contact methods';

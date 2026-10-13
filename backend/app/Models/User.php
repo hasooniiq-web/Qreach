@@ -46,6 +46,7 @@ class User extends Authenticatable
     {
         return [
             'phone_verified_at' => 'datetime',
+            'plus_trial_used_at' => 'datetime',
             'email_verified_at' => 'datetime',
             'last_login_at' => 'datetime',
             'show_name_publicly' => 'boolean',

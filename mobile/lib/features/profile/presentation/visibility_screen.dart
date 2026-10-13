@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_native_contact_picker/flutter_native_contact_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -105,47 +106,11 @@ class _VisibilityBody extends ConsumerWidget {
         .titleMedium
         ?.copyWith(fontWeight: FontWeight.w800);
 
-    final shown = [
-      if (profile.showName) l10n.homeOwnerLabel,
-      if (profile.showAvatar) l10n.visAvatarLabel,
-      if (profile.phoneField.visible && profile.phoneField.canShow)
-        l10n.phoneShownLabel,
-      if (profile.emergency?.visible == true) l10n.emergencySection,
-      for (final m in profile.methods)
-        if (m.visible && m.canShow) m.label,
-    ];
-
     return ListView(
       padding: const EdgeInsets.all(AppSpacing.lg),
+      // Dragging the page also closes the keyboard.
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
       children: [
-        Container(
-          padding: const EdgeInsets.all(AppSpacing.lg),
-          decoration: BoxDecoration(
-            color: AppColors.brandBlack,
-            borderRadius: BorderRadius.circular(16),
-          ),
-          child: Row(
-            children: [
-              Icon(
-                  shown.isEmpty
-                      ? Icons.visibility_off_outlined
-                      : Icons.visibility_outlined,
-                  color: AppColors.brandYellow),
-              const SizedBox(width: AppSpacing.md),
-              Expanded(
-                child: Text(
-                  shown.isEmpty
-                      ? l10n.visibilityNoneShown
-                      : l10n.visibilitySharing(shown.join('، ')),
-                  style:
-                      const TextStyle(color: AppColors.brandWhite, height: 1.4),
-                ),
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: AppSpacing.xl),
-
         // Name
         AppCard(
           child: SwitchListTile(
@@ -380,8 +345,11 @@ class _PhoneCardState extends State<_PhoneCard> {
               hintText: '07XXXXXXXXX',
               prefixIcon: const Icon(Icons.phone_outlined),
               suffixIcon: TextButton(
-                onPressed: () =>
-                    widget.onSave(_normalizedOrRaw, widget.field.visible),
+                onPressed: () {
+                  // Leave the field: the keyboard closes and focus is released.
+                  FocusScope.of(context).unfocus();
+                  widget.onSave(_normalizedOrRaw, widget.field.visible);
+                },
                 child: Text(l10n.save),
               ),
             ),
@@ -390,7 +358,10 @@ class _PhoneCardState extends State<_PhoneCard> {
             contentPadding: EdgeInsets.zero,
             value: widget.field.visible && widget.field.canShow,
             onChanged: has && widget.field.canShow
-                ? (v) => widget.onSave(_normalizedOrRaw, v)
+                ? (v) {
+                    FocusScope.of(context).unfocus();
+                    widget.onSave(_normalizedOrRaw, v);
+                  }
                 : null,
             title: Text(l10n.showToVisitors),
           ),
@@ -433,7 +404,34 @@ class _EmergencyCardState extends State<_EmergencyCard> {
     super.dispose();
   }
 
+  /// Opens the phone's own contact picker (no permission needed: the system
+  /// hands over only the contact the user taps) and fills name + number.
+  Future<void> _pickContact() async {
+    FocusScope.of(context).unfocus();
+    try {
+      final picked = await FlutterNativeContactPicker().selectPhoneNumber();
+      if (picked == null || !mounted) return;
+      final number = picked.selectedPhoneNumber ??
+          (picked.phoneNumbers?.isNotEmpty == true
+              ? picked.phoneNumbers!.first
+              : null);
+      setState(() {
+        if ((picked.fullName ?? '').trim().isNotEmpty) {
+          _name.text = picked.fullName!.trim();
+        }
+        if (number != null) {
+          final cleaned = cleanContactNumber(number);
+          _phone.text = normalizePhoneInput(cleaned) ?? cleaned;
+        }
+      });
+    } catch (_) {
+      // The user closed the picker, or the platform refused: nothing to fill.
+    }
+  }
+
   void _save(bool visible) {
+    // Close the keyboard and drop the field focus once the save is pressed.
+    FocusScope.of(context).unfocus();
     if (!_form.currentState!.validate()) return;
     // Accepts a local Iraqi number with or without the leading trunk zero,
     // as well as one already written with a country code.
@@ -451,6 +449,14 @@ class _EmergencyCardState extends State<_EmergencyCard> {
         key: _form,
         child: Column(
           children: [
+            Align(
+              alignment: AlignmentDirectional.centerStart,
+              child: TextButton.icon(
+                onPressed: _pickContact,
+                icon: const Icon(Icons.contacts_outlined, size: 20),
+                label: Text(l10n.pickFromContacts),
+              ),
+            ),
             TextFormField(
               controller: _name,
               decoration: InputDecoration(labelText: l10n.emergencyName),

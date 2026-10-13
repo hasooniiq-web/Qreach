@@ -1024,6 +1024,54 @@ abstract class AppLocalizations {
   /// **'تم إيقاف التجديد. تبقى باقتك فعّالة حتى {date}.'**
   String renewalCanceledNote(String date);
 
+  /// No description provided for @trialCardTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'جرّب باقة بلس مجانًا لمدة {days} أيام'**
+  String trialCardTitle(String days);
+
+  /// No description provided for @trialCardBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'بدون أي دفع، وتُمنح مرة واحدة فقط لكل حساب. تنتهي تلقائيًا ولا تتجدد.'**
+  String get trialCardBody;
+
+  /// No description provided for @trialStartButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'ابدأ التجربة المجانية'**
+  String get trialStartButton;
+
+  /// No description provided for @trialConfirmTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'بدء التجربة المجانية؟'**
+  String get trialConfirmTitle;
+
+  /// No description provided for @trialConfirmBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'ستعمل باقة بلس لمدة {days} أيام ثم تعود إلى الأساسية. لا يمكن إعادة التجربة بعد استخدامها.'**
+  String trialConfirmBody(String days);
+
+  /// No description provided for @trialStarted.
+  ///
+  /// In ar, this message translates to:
+  /// **'بدأت تجربتك المجانية لباقة بلس.'**
+  String get trialStarted;
+
+  /// No description provided for @trialRunningBanner.
+  ///
+  /// In ar, this message translates to:
+  /// **'تجربتك المجانية لباقة بلس تنتهي في {date}. اشترك قبل ذلك لتبقى الميزات.'**
+  String trialRunningBanner(String date);
+
+  /// No description provided for @trialEndedBanner.
+  ///
+  /// In ar, this message translates to:
+  /// **'انتهت تجربتك المجانية. اشترك في بلس لتستمر في استخدام ميزاته.'**
+  String get trialEndedBanner;
+
   /// No description provided for @cancelAnnualPlan.
   ///
   /// In ar, this message translates to:
@@ -1095,6 +1143,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'متأخر السداد'**
   String get subStatusPastDue;
+
+  /// No description provided for @subStatusTrialEnded.
+  ///
+  /// In ar, this message translates to:
+  /// **'انتهت التجربة'**
+  String get subStatusTrialEnded;
 
   /// No description provided for @subStatusTrialing.
   ///
@@ -1935,6 +1989,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'رقم الهاتف'**
   String get emergencyPhone;
+
+  /// No description provided for @pickFromContacts.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختيار من جهات الاتصال'**
+  String get pickFromContacts;
 
   /// No description provided for @methodsSection.
   ///

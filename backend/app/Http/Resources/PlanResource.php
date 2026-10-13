@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use App\Models\SubscriptionPlan;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -9,10 +10,13 @@ class PlanResource extends JsonResource
 {
     public function toArray(Request $request): array
     {
+        $lang = $request->getPreferredLanguage(SubscriptionPlan::LANGUAGES) ?? 'ar';
+
         return [
             'slug' => $this->slug,
-            'name' => $this->name_ar,
-            'description' => $this->description_ar,
+            // Written per language in the dashboard; the app's Accept-Language picks one.
+            'name' => $this->nameIn($lang),
+            'description' => $this->descriptionIn($lang),
             'price' => $this->price_cents,
             'currency' => $this->currency,
             'is_free' => $this->isFree(),

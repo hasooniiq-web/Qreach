@@ -34,6 +34,11 @@ class Subscription extends Model
         return max(0, (int) config('subscriptions.grace_days', 7));
     }
 
+    public function isTrial(): bool
+    {
+        return $this->status === 'trialing';
+    }
+
     private function isLive(): bool
     {
         return in_array($this->status, ['active', 'trialing'], true);
@@ -49,7 +54,8 @@ class Subscription extends Model
     /** The paid period ended less than the grace period ago — still working, renewable without loss. */
     public function isInGrace(): bool
     {
-        return $this->isLive()
+        // A free trial just ends: the grace week protects what a customer paid for.
+        return $this->status === 'active'
             && $this->current_period_ends_at !== null
             && $this->current_period_ends_at->isPast()
             && $this->graceEndsAt()->isFuture();

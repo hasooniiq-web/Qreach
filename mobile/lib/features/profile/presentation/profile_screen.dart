@@ -36,8 +36,9 @@ class ProfileScreen extends ConsumerWidget {
     final saved = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        // Breathing room on both sides: the dialog no longer touches the screen edges.
-        insetPadding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+        // Same side margin as the cards on every page.
+        insetPadding: const EdgeInsets.symmetric(
+            horizontal: AppSpacing.lg, vertical: AppSpacing.xl),
         contentPadding: const EdgeInsets.fromLTRB(28, 16, 28, 8),
         titlePadding: const EdgeInsets.fromLTRB(28, 24, 28, 0),
         actionsPadding: const EdgeInsets.fromLTRB(20, 0, 20, 14),
@@ -153,8 +154,8 @@ class ProfileScreen extends ConsumerWidget {
       context: context,
       builder: (context) => StatefulBuilder(
         builder: (context, setState) => AlertDialog(
-          insetPadding:
-              const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+          insetPadding: const EdgeInsets.symmetric(
+              horizontal: AppSpacing.lg, vertical: AppSpacing.xl),
           contentPadding: const EdgeInsets.fromLTRB(28, 16, 28, 8),
           titlePadding: const EdgeInsets.fromLTRB(28, 24, 28, 0),
           actionsPadding: const EdgeInsets.fromLTRB(20, 0, 20, 14),
@@ -364,7 +365,6 @@ class ProfileScreen extends ConsumerWidget {
     final subscription = ref.watch(subscriptionProvider).valueOrNull;
 
     final name = profile?.name;
-    final sharing = profile?.sharesAnything ?? false;
 
     return Scaffold(
       body: SafeArea(
@@ -479,9 +479,6 @@ class ProfileScreen extends ConsumerWidget {
                 SettingsRow(
                   icon: Icons.visibility_outlined,
                   label: l10n.visibilityTitle,
-                  value: sharing
-                      ? l10n.visibilitySharing(_sharedItems(l10n, profile!))
-                      : l10n.visibilityNoneShown,
                   onTap: () => context.push('/visibility'),
                 ),
               ],
@@ -557,14 +554,4 @@ class ProfileScreen extends ConsumerWidget {
       ),
     );
   }
-
-  String _sharedItems(AppLocalizations l10n, ProfileModel p) => [
-        if (p.phoneField.visible && p.phoneField.canShow)
-          l10n.featurePublicPhone,
-        if (p.showName) l10n.homeOwnerLabel,
-        if (p.showAvatar) l10n.visAvatarLabel,
-        if (p.emergency?.visible == true) l10n.emergencySection,
-        for (final m in p.methods)
-          if (m.visible && m.canShow) m.label,
-      ].join('، ');
 }

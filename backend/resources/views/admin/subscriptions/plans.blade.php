@@ -71,12 +71,22 @@
                         @method('PUT')
                         <h3 class="text-base font-semibold text-ink-900">{{ $plan->name_ar }} <span class="text-xs font-normal text-ink-400" dir="ltr">({{ $plan->slug }})</span></h3>
 
-                        <x-field label="اسم الباقة" :name="'name_ar_'.$plan->id">
-                            <input type="text" id="name_ar_{{ $plan->id }}" name="name_ar" value="{{ old('name_ar', $plan->name_ar) }}" required class="form-control">
-                        </x-field>
-                        <x-field label="وصف مختصر" :name="'description_ar_'.$plan->id">
-                            <input type="text" id="description_ar_{{ $plan->id }}" name="description_ar" value="{{ old('description_ar', $plan->description_ar) }}" maxlength="255" class="form-control">
-                        </x-field>
+                        {{-- The app shows the language the customer chose; an empty language falls back to Arabic. --}}
+                        <fieldset class="space-y-3 rounded-lg border border-ink-100 p-4">
+                            <legend class="px-1 text-xs font-medium text-ink-700">الاسم والوصف بكل لغة (يظهران في التطبيق حسب لغة العميل)</legend>
+                            @foreach ([['ar', 'العربية', 'rtl'], ['en', 'English', 'ltr'], ['ckb', 'کوردی', 'rtl']] as [$lang, $langLabel, $dir])
+                                <div class="space-y-3 border-b border-ink-100 pb-3 last:border-0 last:pb-0">
+                                    <x-field :label="'الاسم — '.$langLabel" :name="'name_'.$lang.'_'.$plan->id" :hint="$lang !== 'ar' ? 'اتركه فارغًا ليظهر بالعربية.' : null">
+                                        <input type="text" id="name_{{ $lang }}_{{ $plan->id }}" name="name_{{ $lang }}" dir="{{ $dir }}" maxlength="100"
+                                               value="{{ old('name_'.$lang, $plan->{'name_'.$lang}) }}" @required($lang === 'ar') class="form-control">
+                                    </x-field>
+                                    <x-field :label="'الوصف — '.$langLabel" :name="'description_'.$lang.'_'.$plan->id">
+                                        <input type="text" id="description_{{ $lang }}_{{ $plan->id }}" name="description_{{ $lang }}" dir="{{ $dir }}" maxlength="255"
+                                               value="{{ old('description_'.$lang, $plan->{'description_'.$lang}) }}" class="form-control">
+                                    </x-field>
+                                </div>
+                            @endforeach
+                        </fieldset>
                         <div class="grid grid-cols-2 gap-3">
                             <x-field label="السعر (د.ع)" :name="'price_cents_'.$plan->id" :hint="$plan->isFree() ? 'الباقة الأساسية مجانية دائمًا.' : null">
                                 <input type="number" id="price_cents_{{ $plan->id }}" name="price_cents" min="0" value="{{ old('price_cents', $plan->price_cents) }}" required @disabled($plan->isFree()) class="form-control disabled:bg-ink-50 disabled:text-ink-400">

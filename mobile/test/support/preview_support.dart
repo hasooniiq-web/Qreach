@@ -347,6 +347,9 @@ class FakeSubscription implements SubscriptionRepository {
 
   @override
   Future<void> resumeRenewal() async {}
+
+  @override
+  Future<void> startTrial() async {}
 }
 
 List<Override> previewOverrides({

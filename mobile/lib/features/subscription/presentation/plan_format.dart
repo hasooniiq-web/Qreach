@@ -25,6 +25,7 @@ String subscriptionStatusLabel(BuildContext context, String status) {
     'active' => l10n.subStatusActive,
     'grace' => l10n.subStatusGrace,
     'trialing' => l10n.subStatusTrialing,
+    'trial_ended' => l10n.subStatusTrialEnded,
     'canceled' => l10n.subStatusCanceled,
     'past_due' => l10n.subStatusPastDue,
     _ => l10n.subStatusExpired,

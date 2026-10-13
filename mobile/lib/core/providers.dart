@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../features/auth/presentation/auth_controller.dart';
 import 'auth/biometric_service.dart';
+import 'locale/locale_controller.dart';
 import 'network/api_client.dart';
 import 'notifications/push_notification_service.dart';
 import 'storage/secure_storage_service.dart';
@@ -27,6 +28,7 @@ final apiClientProvider = Provider<ApiClient>((ref) {
     onSessionInvalid: (code) => ref
         .read(authControllerProvider.notifier)
         .sessionEnded(replaced: code == 'SESSION_REPLACED'),
+    languageCode: () => ref.read(localeProvider).languageCode,
   );
 });
 

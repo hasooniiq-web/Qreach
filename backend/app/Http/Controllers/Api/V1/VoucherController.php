@@ -36,7 +36,7 @@ class VoucherController extends Controller
         $subscription = $this->plans->activeSubscription($user);
 
         return response()->json([
-            'message' => 'تم تفعيل باقة «'.$voucher->batch->plan->name_ar.'» بنجاح.',
+            'message' => 'تم تفعيل باقة «'.$voucher->batch->plan->nameIn($request->getPreferredLanguage(\App\Models\SubscriptionPlan::LANGUAGES)).'» بنجاح.',
             'plan' => new PlanResource($this->plans->planFor($user)),
             'days' => (int) $voucher->batch->duration_days,
             'current_period_ends_at' => $subscription?->current_period_ends_at?->toIso8601String(),

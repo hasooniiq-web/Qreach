@@ -16,7 +16,7 @@ const String apiBaseUrl =
 /// for the network-security-config/ATS enforcement that must accompany this
 /// on each platform (not something Dio itself can guarantee).
 class ApiClient {
-  ApiClient(this._storage, {this.onSessionInvalid})
+  ApiClient(this._storage, {this.onSessionInvalid, this.languageCode})
       : dio = Dio(
           BaseOptions(
             baseUrl: apiBaseUrl,
@@ -35,6 +35,9 @@ class ApiClient {
           if (token != null) {
             options.headers['Authorization'] = 'Bearer $token';
           }
+          // The app language, so the server answers plan names and the like in it.
+          final language = languageCode?.call();
+          if (language != null) options.headers['Accept-Language'] = language;
           handler.next(options);
         },
         onError: (error, handler) {
@@ -53,6 +56,9 @@ class ApiClient {
   /// replaced by a newer login on another device) so the app can drop back to
   /// the login screen. Receives the server's error code, e.g. SESSION_REPLACED.
   final void Function(String code)? onSessionInvalid;
+
+  /// The app's current language code (ar / en / ckb), sent as Accept-Language.
+  final String Function()? languageCode;
 
   void _notifyIfSessionInvalid(DioException error) {
     final request = error.requestOptions;

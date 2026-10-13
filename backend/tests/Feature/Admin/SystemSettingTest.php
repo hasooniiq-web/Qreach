@@ -36,7 +36,7 @@ class SystemSettingTest extends TestCase
         $this->actingAs($admin, 'admin')->put('/admin/settings', [
             'otp_code_ttl_minutes' => 5,
             'otp_resend_cooldown_seconds' => 90,
-            'qr_batch_max_quantity' => 1000,
+            'qr_batch_max_quantity' => 1000, 'plus_trial_days' => 7,
         ])->assertRedirect();
 
         $this->assertSame(90, OtpService::resendCooldownSeconds());
@@ -56,7 +56,7 @@ class SystemSettingTest extends TestCase
         $this->actingAs($admin, 'admin')->put('/admin/settings', [
             'otp_code_ttl_minutes' => 999,
             'otp_resend_cooldown_seconds' => 90,
-            'qr_batch_max_quantity' => 1000,
+            'qr_batch_max_quantity' => 1000, 'plus_trial_days' => 7,
         ])->assertSessionHasErrors('otp_code_ttl_minutes');
 
         $this->assertSame(5, OtpService::ttlMinutes());

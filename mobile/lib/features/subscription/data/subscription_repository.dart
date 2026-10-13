@@ -21,6 +21,11 @@ class SubscriptionRepository {
     await _client.dio.post('/subscription/resume-renewal');
   }
 
+  /// Starts the one-time free trial of Plus.
+  Future<void> startTrial() async {
+    await _client.dio.post('/subscription/trial');
+  }
+
   Future<void> requestUpgrade(String planSlug) async {
     await _client.dio
         .post('/subscription/upgrade-requests', data: {'plan': planSlug});

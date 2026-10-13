@@ -45,6 +45,7 @@ class FakeSubscriptionRepository implements SubscriptionRepository {
   final List<String> upgradeRequests = [];
   int cancelRenewals = 0;
   int resumeRenewals = 0;
+  int trialStarts = 0;
 
   @override
   Future<SubscriptionInfo> fetch() async => info;
@@ -58,6 +59,9 @@ class FakeSubscriptionRepository implements SubscriptionRepository {
 
   @override
   Future<void> resumeRenewal() async => resumeRenewals++;
+
+  @override
+  Future<void> startTrial() async => trialStarts++;
 }
 
 class FakeProfileRepository implements ProfileRepository {
@@ -161,6 +165,7 @@ SubscriptionInfo _info({
   bool renewalCanceled = false,
   bool canCancelRenewal = false,
   DateTime? graceEndsAt,
+  TrialInfo trial = TrialInfo.none,
 }) =>
     SubscriptionInfo(
       plan: plan,
@@ -172,6 +177,7 @@ SubscriptionInfo _info({
       renewalCanceled: renewalCanceled,
       canCancelRenewal: canCancelRenewal,
       graceEndsAt: graceEndsAt,
+      trial: trial,
     );
 
 Widget _app(FakeSubscriptionRepository repo, Widget screen,
@@ -312,6 +318,68 @@ void main() {
       await tester.tap(find.text('إعادة تفعيل التجديد'));
       await tester.pumpAndSettle();
       expect(repo.resumeRenewals, 1);
+    });
+
+    testWidgets('the free trial is offered, asks for confirmation, then starts',
+        (tester) async {
+      _tall(tester);
+      final repo = FakeSubscriptionRepository(
+          info: _info(
+              plan: _basic,
+              trial: const TrialInfo(available: true, days: 7)));
+
+      await tester.pumpWidget(_app(repo, const SubscriptionScreen()));
+      await tester.pumpAndSettle();
+
+      expect(find.text('جرّب باقة بلس مجانًا لمدة 7 أيام'), findsOneWidget);
+
+      await tester.tap(find.text('ابدأ التجربة المجانية'));
+      await tester.pumpAndSettle();
+      // The confirmation dialog: nothing started yet.
+      expect(repo.trialStarts, 0);
+      expect(find.text('بدء التجربة المجانية؟'), findsOneWidget);
+
+      await tester.tap(find.text('ابدأ التجربة المجانية').last);
+      await tester.pumpAndSettle();
+      expect(repo.trialStarts, 1);
+    });
+
+    testWidgets('no trial card once the trial was used or is switched off',
+        (tester) async {
+      _tall(tester);
+      final repo = FakeSubscriptionRepository(
+          info: _info(plan: _basic, trial: const TrialInfo(used: true)));
+
+      await tester.pumpWidget(_app(repo, const SubscriptionScreen()));
+      await tester.pumpAndSettle();
+
+      expect(find.text('ابدأ التجربة المجانية'), findsNothing);
+    });
+
+    testWidgets('a running trial says when it ends; an ended one says so',
+        (tester) async {
+      _tall(tester);
+      final running = FakeSubscriptionRepository(
+          info: _info(
+              plan: _pro,
+              isDefault: false,
+              status: 'trialing',
+              trial: TrialInfo(
+                  used: true, active: true, endsAt: DateTime.utc(2027, 9, 25))));
+
+      await tester.pumpWidget(_app(running, const SubscriptionScreen()));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('2027-09-25'), findsWidgets);
+      expect(find.text('إلغاء الاشتراك السنوي'), findsNothing);
+
+      final ended = FakeSubscriptionRepository(
+          info: _info(
+              plan: _basic,
+              status: 'trial_ended',
+              trial: const TrialInfo(used: true)));
+      await tester.pumpWidget(_app(ended, const SubscriptionScreen()));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('انتهت تجربتك المجانية'), findsOneWidget);
     });
 
     testWidgets('inside the grace week the screen explains it and offers renewal',

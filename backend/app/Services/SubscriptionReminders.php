@@ -30,7 +30,8 @@ class SubscriptionReminders
 
         Subscription::query()
             ->with(['user', 'plan'])
-            ->whereIn('status', ['active', 'trialing'])
+            // A free trial just ends; "renew" reminders are for paid subscriptions.
+            ->where('status', 'active')
             ->whereNotNull('current_period_ends_at')
             ->whereHas('plan', fn ($q) => $q->where('price_cents', '>', 0))
             ->where('current_period_ends_at', '>', now()->subDays(Subscription::graceDays() + 2))

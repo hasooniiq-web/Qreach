@@ -45,3 +45,13 @@ String? normalizePhoneInput(String raw) {
   final withPlus = value.startsWith('+') ? value : '+$value';
   return RegExp(r'^\+[1-9]\d{7,14}$').hasMatch(withPlus) ? withPlus : null;
 }
+
+/// A number picked from the phone's address book comes as the user saved it:
+/// "0770 123 4567", "+964 770-123-4567", "00964 770 1234567", "(0770) 1234567".
+/// Strips the spaces/dashes/brackets and turns an international "00" prefix
+/// into "+", so the result can go straight into [normalizePhoneInput].
+String cleanContactNumber(String raw) {
+  var value = raw.replaceAll(RegExp(r'[\s\-().]'), '');
+  if (value.startsWith('00')) value = '+${value.substring(2)}';
+  return value;
+}

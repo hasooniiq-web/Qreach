@@ -18,13 +18,39 @@ class SubscriptionPlan extends Model
     public const PUBLIC_CONTACT_TYPES = ['phone', 'whatsapp', 'telegram', 'instagram', 'facebook', 'snapchat', 'tiktok', 'twitter', 'linkedin', 'youtube', 'website', 'email', 'other'];
 
     protected $fillable = [
-        'slug', 'name_ar', 'name_en', 'description_ar', 'price_cents', 'currency', 'billing_period_days',
+        'slug', 'name_ar', 'name_en', 'name_ckb', 'description_ar', 'description_en', 'description_ckb', 'price_cents', 'currency', 'billing_period_days',
         'max_vehicles', 'max_tags', 'is_active', 'features', 'sort_order',
     ];
 
     protected function casts(): array
     {
         return ['is_active' => 'boolean', 'features' => 'array'];
+    }
+
+    /** App languages a plan's name and description are written in (Arabic is the required base). */
+    public const LANGUAGES = ['ar', 'en', 'ckb'];
+
+    /** The plan's name in a language; falls back to Arabic when that language was left empty. */
+    public function nameIn(?string $language): string
+    {
+        $value = match ($language) {
+            'en' => $this->name_en,
+            'ckb' => $this->name_ckb,
+            default => $this->name_ar,
+        };
+
+        return filled($value) ? $value : $this->name_ar;
+    }
+
+    public function descriptionIn(?string $language): ?string
+    {
+        $value = match ($language) {
+            'en' => $this->description_en,
+            'ckb' => $this->description_ckb,
+            default => $this->description_ar,
+        };
+
+        return filled($value) ? $value : $this->description_ar;
     }
 
     public function subscriptions(): HasMany

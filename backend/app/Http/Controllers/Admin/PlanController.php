@@ -36,7 +36,11 @@ class PlanController extends Controller
     {
         $data = $request->validate([
             'name_ar' => ['required', 'string', 'max:100'],
+            'name_en' => ['nullable', 'string', 'max:100'],
+            'name_ckb' => ['nullable', 'string', 'max:100'],
             'description_ar' => ['nullable', 'string', 'max:255'],
+            'description_en' => ['nullable', 'string', 'max:255'],
+            'description_ckb' => ['nullable', 'string', 'max:255'],
             'price_cents' => ['required', 'integer', 'min:0', 'max:100000000'],
             'billing_period_days' => ['required', 'integer', 'min:1', 'max:3650'],
             'is_active' => ['nullable', 'boolean'],
@@ -54,7 +58,12 @@ class PlanController extends Controller
 
         $plan->update([
             'name_ar' => $data['name_ar'],
+            // An empty language falls back to Arabic in the app, so a blank is stored as null.
+            'name_en' => $data['name_en'] ?? null,
+            'name_ckb' => $data['name_ckb'] ?? null,
             'description_ar' => $data['description_ar'] ?? null,
+            'description_en' => $data['description_en'] ?? null,
+            'description_ckb' => $data['description_ckb'] ?? null,
             'price_cents' => $data['price_cents'],
             'billing_period_days' => $data['billing_period_days'],
             'is_active' => (bool) ($data['is_active'] ?? false),

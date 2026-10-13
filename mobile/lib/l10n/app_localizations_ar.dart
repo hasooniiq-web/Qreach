@@ -516,6 +516,38 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
+  String trialCardTitle(String days) {
+    return 'جرّب باقة بلس مجانًا لمدة $days أيام';
+  }
+
+  @override
+  String get trialCardBody =>
+      'بدون أي دفع، وتُمنح مرة واحدة فقط لكل حساب. تنتهي تلقائيًا ولا تتجدد.';
+
+  @override
+  String get trialStartButton => 'ابدأ التجربة المجانية';
+
+  @override
+  String get trialConfirmTitle => 'بدء التجربة المجانية؟';
+
+  @override
+  String trialConfirmBody(String days) {
+    return 'ستعمل باقة بلس لمدة $days أيام ثم تعود إلى الأساسية. لا يمكن إعادة التجربة بعد استخدامها.';
+  }
+
+  @override
+  String get trialStarted => 'بدأت تجربتك المجانية لباقة بلس.';
+
+  @override
+  String trialRunningBanner(String date) {
+    return 'تجربتك المجانية لباقة بلس تنتهي في $date. اشترك قبل ذلك لتبقى الميزات.';
+  }
+
+  @override
+  String get trialEndedBanner =>
+      'انتهت تجربتك المجانية. اشترك في بلس لتستمر في استخدام ميزاته.';
+
+  @override
   String get cancelAnnualPlan => 'إلغاء الاشتراك السنوي';
 
   @override
@@ -553,6 +585,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get subStatusPastDue => 'متأخر السداد';
+
+  @override
+  String get subStatusTrialEnded => 'انتهت التجربة';
 
   @override
   String get subStatusTrialing => 'تجريبي';
@@ -998,6 +1033,9 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get emergencyPhone => 'رقم الهاتف';
+
+  @override
+  String get pickFromContacts => 'اختيار من جهات الاتصال';
 
   @override
   String get methodsSection => 'طرق التواصل الإضافية';

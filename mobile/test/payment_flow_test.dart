@@ -43,6 +43,9 @@ class _Subscriptions implements SubscriptionRepository {
 
   @override
   Future<void> resumeRenewal() async {}
+
+  @override
+  Future<void> startTrial() async {}
 }
 
 class _Payments implements PaymentRepository {

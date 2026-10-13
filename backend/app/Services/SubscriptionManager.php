@@ -6,6 +6,7 @@ use App\Models\Payment;
 use App\Models\PlanUpgradeRequest;
 use App\Models\Subscription;
 use App\Models\SubscriptionPlan;
+use App\Models\SystemSetting;
 use App\Models\User;
 use App\Models\Voucher;
 use Illuminate\Support\Facades\DB;
@@ -116,6 +117,18 @@ class SubscriptionManager
             ->lockForUpdate()
             ->first();
 
+        if ($existing && $existing->isTrial() && $existing->grantsAccess()) {
+            // The trial becomes the paid plan: a full period from today, not stacked on the trial's days.
+            $existing->update([
+                'status' => 'active',
+                'current_period_starts_at' => now(),
+                'current_period_ends_at' => now()->addDays($days),
+                'renewal_canceled_at' => null,
+            ]);
+
+            return [$existing, 'admin.subscription_granted'];
+        }
+
         if ($existing && $existing->grantsAccess()) {
             // Extends from the later of the old end and now: renewing inside the grace week
             // must not hand back days that were already used up.
@@ -137,6 +150,73 @@ class SubscriptionManager
         ]);
 
         return [$subscription, 'admin.subscription_granted'];
+    }
+
+    /** Days of the free Plus trial; 0 means the trial is switched off. */
+    public function trialDays(): int
+    {
+        return max(0, (int) SystemSetting::get('plus_trial_days', 7));
+    }
+
+    /**
+     * Why this customer cannot start the trial right now, or null when they can:
+     * 'disabled' | 'used' (one trial per account, ever) | 'subscribed' (already on a paid plan).
+     */
+    public function trialBlockedReason(User $user): ?string
+    {
+        if ($this->trialDays() === 0) {
+            return 'disabled';
+        }
+
+        if ($user->plus_trial_used_at !== null) {
+            return 'used';
+        }
+
+        if (! app(PlanEntitlements::class)->planFor($user)->isFree()) {
+            return 'subscribed';
+        }
+
+        return null;
+    }
+
+    /**
+     * Starts the one-time free trial of Plus. The "used" mark is taken under a row
+     * lock, so a double tap or two parallel requests can only ever start one.
+     *
+     * @throws \DomainException with the reason code from trialBlockedReason()
+     */
+    public function startTrial(User $user): Subscription
+    {
+        return DB::transaction(function () use ($user) {
+            $locked = User::whereKey($user->id)->lockForUpdate()->firstOrFail();
+
+            if ($reason = $this->trialBlockedReason($locked)) {
+                throw new \DomainException($reason);
+            }
+
+            $plan = SubscriptionPlan::where('slug', SubscriptionPlan::PLUS)->where('is_active', true)->first();
+            if (! $plan) {
+                throw new \DomainException('disabled');
+            }
+
+            $days = $this->trialDays();
+            $locked->forceFill(['plus_trial_used_at' => now()])->save();
+            $user->plus_trial_used_at = $locked->plus_trial_used_at;
+
+            $subscription = Subscription::create([
+                'user_id' => $locked->id,
+                'plan_id' => $plan->id,
+                'status' => 'trialing',
+                'current_period_starts_at' => now(),
+                'current_period_ends_at' => now()->addDays($days),
+            ]);
+
+            AuditLogger::log('subscription.trial_started', 'customer', $locked->id, 'Subscription', $subscription->id, 'success', [
+                'plan' => $plan->slug, 'days' => $days,
+            ]);
+
+            return $subscription;
+        });
     }
 
     public function cancel(Subscription $subscription, int $adminId): void

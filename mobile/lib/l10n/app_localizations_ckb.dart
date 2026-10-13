@@ -523,6 +523,38 @@ class AppLocalizationsCkb extends AppLocalizations {
   }
 
   @override
+  String trialCardTitle(String days) {
+    return 'Plus بۆ ماوەی $days ڕۆژ بێبەرامبەر تاقی بکەرەوە';
+  }
+
+  @override
+  String get trialCardBody =>
+      'بەبێ پارەدان، و تەنها یەک جار بۆ هەر هەژمارێک. خۆی کۆتایی دێت و نوێ ناکرێتەوە.';
+
+  @override
+  String get trialStartButton => 'دەستپێکردنی تاقیکردنەوەی بێبەرامبەر';
+
+  @override
+  String get trialConfirmTitle => 'تاقیکردنەوەی بێبەرامبەر دەست پێ بکەیت؟';
+
+  @override
+  String trialConfirmBody(String days) {
+    return 'Plus بۆ ماوەی $days ڕۆژ کار دەکات پاشان دەگەڕێیتەوە بۆ پاکێجی بنەڕەتی. دوای بەکارهێنان ناتوانرێت دووبارە بکرێتەوە.';
+  }
+
+  @override
+  String get trialStarted => 'تاقیکردنەوەی بێبەرامبەری Plus دەستی پێکرد.';
+
+  @override
+  String trialRunningBanner(String date) {
+    return 'تاقیکردنەوەی بێبەرامبەری Plus لە $date تەواو دەبێت. پێش ئەوە ئابوونە بکە بۆ ئەوەی تایبەتمەندییەکان بمێننەوە.';
+  }
+
+  @override
+  String get trialEndedBanner =>
+      'تاقیکردنەوەی بێبەرامبەرەکەت تەواو بوو. ئابوونەی Plus بکە بۆ بەردەوامبوون لە بەکارهێنانی تایبەتمەندییەکانی.';
+
+  @override
   String get cancelAnnualPlan => 'هەڵوەشاندنەوەی ئابوونەی ساڵانە';
 
   @override
@@ -560,6 +592,9 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get subStatusPastDue => 'درەنگکەوتوو لە پارەدان';
+
+  @override
+  String get subStatusTrialEnded => 'تاقیکردنەوە تەواو بوو';
 
   @override
   String get subStatusTrialing => 'تاقیکاری';
@@ -1009,6 +1044,9 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get emergencyPhone => 'ژمارەی مۆبایل';
+
+  @override
+  String get pickFromContacts => 'هەڵبژاردن لە کۆنتاکتەکان';
 
   @override
   String get methodsSection => 'ڕێگاکانی پەیوەندیی زیادە';

@@ -27,11 +27,11 @@ class NumberSeparatorTest extends TestCase
     {
         $this->actingAs($this->admin(), 'admin');
 
-        $this->put('/admin/settings', ['otp_code_ttl_minutes' => '5', 'otp_resend_cooldown_seconds' => '60', 'qr_batch_max_quantity' => '10,000'])
+        $this->put('/admin/settings', ['otp_code_ttl_minutes' => '5', 'otp_resend_cooldown_seconds' => '60', 'qr_batch_max_quantity' => '10,000', 'plus_trial_days' => '7'])
             ->assertSessionHasNoErrors();
         $this->assertSame(10000, (int) SystemSetting::get('qr_batch_max_quantity', 0));
 
-        $this->put('/admin/settings', ['otp_code_ttl_minutes' => '5', 'otp_resend_cooldown_seconds' => '60', 'qr_batch_max_quantity' => '20,001'])
+        $this->put('/admin/settings', ['otp_code_ttl_minutes' => '5', 'otp_resend_cooldown_seconds' => '60', 'qr_batch_max_quantity' => '20,001', 'plus_trial_days' => '7'])
             ->assertSessionHasErrors('qr_batch_max_quantity');
     }
 

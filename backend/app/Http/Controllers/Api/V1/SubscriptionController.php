@@ -36,7 +36,7 @@ class SubscriptionController extends Controller
             'source' => $active ? 'subscription' : 'default',
             // Latest subscription record even if lapsed, so the app can say "your Pro expired".
             'subscription' => $latest ? [
-                // active | grace (period over, still working for a few days) | expired | canceled | ...
+                // active | trialing | grace (period over, still working for a few days) | expired | canceled | ...
                 'status' => $active && $active->id === $latest->id
                     ? ($latest->isInGrace() ? 'grace' : $latest->status)
                     : $this->lapsedStatus($latest),
@@ -45,11 +45,47 @@ class SubscriptionController extends Controller
                 // True once the customer stopped the renewal; the plan still runs to the end date.
                 'renewal_canceled' => $latest->renewalCanceled(),
                 'can_cancel_renewal' => $active !== null && $active->id === $latest->id && ! $latest->renewalCanceled()
-                    && ! $latest->plan->isFree(),
+                    && ! $latest->plan->isFree() && ! $latest->isTrial(),
             ] : null,
             'plans' => PlanResource::collection(SubscriptionPlan::where('is_active', true)->orderBy('sort_order')->get()),
             'pending_upgrade' => PlanUpgradeRequest::where('user_id', $user->id)->where('status', 'pending')->exists(),
+            'trial' => $this->trialInfo($user, $active),
         ]);
+    }
+
+    /**
+     * The one-time free trial of Plus: whether this customer can start it (and for how
+     * many days), or — while it runs — when it ends. Decided server-side only.
+     *
+     * @return array<string, mixed>
+     */
+    private function trialInfo(\App\Models\User $user, ?Subscription $active): array
+    {
+        $running = $active !== null && $active->isTrial() ? $active : null;
+
+        return [
+            'available' => $this->manager->trialBlockedReason($user) === null,
+            'days' => $this->manager->trialDays(),
+            'used' => $user->plus_trial_used_at !== null,
+            'active' => $running !== null,
+            'ends_at' => $running?->current_period_ends_at?->toIso8601String(),
+        ];
+    }
+
+    /** Starts the free Plus trial (once per account). */
+    public function startTrial(Request $request): JsonResponse
+    {
+        try {
+            $this->manager->startTrial($request->user());
+        } catch (\DomainException $e) {
+            return match ($e->getMessage()) {
+                'used' => $this->error('TRIAL_USED', 'استخدمت التجربة المجانية سابقًا، وهي متاحة مرة واحدة فقط.', 409),
+                'subscribed' => $this->error('TRIAL_NOT_NEEDED', 'أنت مشترك في باقة مدفوعة بالفعل.', 409),
+                default => $this->error('TRIAL_UNAVAILABLE', 'التجربة المجانية غير متاحة حاليًا.', 422),
+            };
+        }
+
+        return $this->show($request);
     }
 
     public function requestUpgrade(Request $request): JsonResponse
@@ -115,6 +151,10 @@ class SubscriptionController extends Controller
 
     private function lapsedStatus(Subscription $subscription): string
     {
+        if ($subscription->isTrial()) {
+            return 'trial_ended';
+        }
+
         return in_array($subscription->status, ['canceled', 'past_due'], true) ? $subscription->status : 'expired';
     }
 

@@ -51,7 +51,7 @@ class ProfileController extends Controller
             'name' => $user->name,
             'phone' => $user->phone,
             'plan' => $plan->slug,
-            'plan_name' => $plan->name_ar,
+            'plan_name' => $plan->nameIn($request->getPreferredLanguage(\App\Models\SubscriptionPlan::LANGUAGES)),
             'has_password' => (bool) $user->password,
             'has_avatar' => (bool) $user->avatar_path,
             'avatar_version' => $user->updated_at?->timestamp,

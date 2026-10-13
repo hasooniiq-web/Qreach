@@ -71,6 +71,42 @@ class PlanModel extends Equatable {
       ];
 }
 
+/// The one-time free trial of Plus. The server decides everything here; the app
+/// only shows the offer, the running trial, or nothing.
+class TrialInfo extends Equatable {
+  const TrialInfo({
+    this.available = false,
+    this.days = 0,
+    this.used = false,
+    this.active = false,
+    this.endsAt,
+  });
+
+  static const none = TrialInfo();
+
+  final bool available;
+  final int days;
+  final bool used;
+  final bool active;
+  final DateTime? endsAt;
+
+  factory TrialInfo.fromJson(Map<String, dynamic>? json) {
+    if (json == null) return none;
+    return TrialInfo(
+      available: json['available'] as bool? ?? false,
+      days: (json['days'] as num?)?.toInt() ?? 0,
+      used: json['used'] as bool? ?? false,
+      active: json['active'] as bool? ?? false,
+      endsAt: json['ends_at'] != null
+          ? DateTime.tryParse(json['ends_at'] as String)
+          : null,
+    );
+  }
+
+  @override
+  List<Object?> get props => [available, days, used, active, endsAt];
+}
+
 class SubscriptionInfo extends Equatable {
   const SubscriptionInfo({
     required this.plan,
@@ -82,6 +118,7 @@ class SubscriptionInfo extends Equatable {
     this.graceEndsAt,
     this.renewalCanceled = false,
     this.canCancelRenewal = false,
+    this.trial = TrialInfo.none,
   });
 
   /// The plan currently in force (Basic when there is no active subscription).
@@ -101,12 +138,19 @@ class SubscriptionInfo extends Equatable {
   /// The customer stopped the yearly renewal; the plan runs to [endsAt].
   final bool renewalCanceled;
   final bool canCancelRenewal;
+  final TrialInfo trial;
+
+  /// The free trial ran out (and nothing paid replaced it).
+  bool get trialEnded => isDefault && subscriptionStatus == 'trial_ended';
 
   bool get inGrace => subscriptionStatus == 'grace';
 
   /// True when a paid plan was in force but has since lapsed.
   bool get hasLapsed =>
-      isDefault && subscriptionStatus != null && subscriptionStatus != 'active';
+      isDefault &&
+      subscriptionStatus != null &&
+      subscriptionStatus != 'active' &&
+      subscriptionStatus != 'trial_ended';
 
   factory SubscriptionInfo.fromJson(Map<String, dynamic> json) {
     final sub = json['subscription'] as Map<String, dynamic>?;
@@ -126,6 +170,7 @@ class SubscriptionInfo extends Equatable {
           : null,
       renewalCanceled: sub?['renewal_canceled'] as bool? ?? false,
       canCancelRenewal: sub?['can_cancel_renewal'] as bool? ?? false,
+      trial: TrialInfo.fromJson(json['trial'] as Map<String, dynamic>?),
     );
   }
 
@@ -140,5 +185,6 @@ class SubscriptionInfo extends Equatable {
         graceEndsAt,
         renewalCanceled,
         canCancelRenewal,
+        trial,
       ];
 }
