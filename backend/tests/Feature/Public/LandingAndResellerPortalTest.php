@@ -102,6 +102,13 @@ class LandingAndResellerPortalTest extends TestCase
         $this->get('/?lang=en')->assertSee('Download on the App Store')->assertSee('https://apps.apple.com/app/id123');
     }
 
+    public function test_the_faq_says_the_basic_service_is_free_for_ten_years_in_every_language(): void
+    {
+        $this->get('/?lang=ar')->assertSee('كم مدة الخدمة المجانية؟')->assertSee('عشر سنوات');
+        $this->get('/?lang=en')->assertSee('How long is the free service?')->assertSee('free for ten years');
+        $this->get('/?lang=ckb')->assertSee('بێبەرامبەر')->assertSee('دە ساڵ');
+    }
+
     public function test_the_admin_login_still_works_at_its_own_address(): void
     {
         $this->get('/admin/login')->assertOk();

@@ -11,6 +11,39 @@
 
     <p class="mb-5 text-sm text-ink-500">ما يستطيع كل عميل فعله يتحدد بباقته. تُطبَّق هذه الصلاحيات من الخادم مباشرة: التطبيق والصفحة العامة لا يقرّران شيئًا بأنفسهما.</p>
 
+    {{-- The free trial of Plus: how long it lasts (0 = off), and how it is being used. --}}
+    <x-card padding="p-5" class="mb-8">
+        <div class="flex flex-wrap items-start justify-between gap-4">
+            <div class="max-w-xl">
+                <h2 class="text-sm font-semibold text-ink-900">التجربة المجانية لباقة Plus</h2>
+                <p class="mt-1 text-sm leading-6 text-ink-500">
+                    يحصل كل عميل على تجربة واحدة فقط لباقة Plus بلا دفع. تنتهي وحدها دون فترة سماح، ويُرسَل له إشعار قبل نهايتها بيوم.
+                    @if ($trial['days'] > 0)
+                        المدة الحالية <strong class="text-ink-900">{{ $trial['days'] }}</strong> يومًا.
+                    @else
+                        <strong class="text-status-danger">التجربة متوقفة حاليًا</strong> ولا تظهر في التطبيق ولا في الصفحة العامة.
+                    @endif
+                </p>
+                <p class="mt-2 text-xs text-ink-400">
+                    استخدمها حتى الآن {{ number_format($trial['used']) }} عميلًا — تعمل الآن {{ number_format($trial['running']) }} تجربة.
+                    التغيير يسري على من يبدأ التجربة بعد الحفظ، ولا يمسّ تجارب جارية.
+                </p>
+            </div>
+
+            @if ($canManage)
+                <form method="POST" action="{{ route('admin.plans.trial.update') }}" class="flex items-end gap-3">
+                    @csrf
+                    @method('PUT')
+                    <x-field label="المدة (أيام)" name="trial_days" hint="اكتب 0 لإيقاف التجربة">
+                        <input type="number" id="trial_days" name="trial_days" min="0" max="90" required inputmode="numeric"
+                               value="{{ old('trial_days', $trial['days']) }}" class="form-control w-32 text-start" dir="ltr">
+                    </x-field>
+                    <button type="submit" class="btn-primary mb-[1.35rem]">حفظ</button>
+                </form>
+            @endif
+        </div>
+    </x-card>
+
     {{-- Read-only comparison: the "who can do what" answer at a glance. --}}
     <x-card padding="p-0" class="mb-8 overflow-hidden">
         <div class="overflow-x-auto">

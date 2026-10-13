@@ -217,6 +217,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
                 Route::post('subscriptions/{subscription}/cancel', [SubscriptionController::class, 'cancel'])->name('subscriptions.cancel');
                 Route::post('users/{user}/subscription', [SubscriptionController::class, 'grant'])->name('users.subscription.grant');
                 Route::post('users/{user}/voucher', [AdminVoucherController::class, 'redeemForUser'])->name('users.voucher.redeem');
+                // Literal segment first, or "trial" would be taken for a plan id.
+                Route::put('plans/trial', [PlanController::class, 'updateTrial'])->name('plans.trial.update');
                 Route::put('plans/{plan}', [PlanController::class, 'update'])->name('plans.update');
             });
 

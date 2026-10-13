@@ -263,7 +263,7 @@ class VoucherController extends Controller
         }, $batch->batch_code.'.csv', ['Content-Type' => 'text/csv; charset=UTF-8']);
     }
 
-    /** Printable cards: logo, plan, duration, the serial and a QR holding the same 16 digits. */
+    /** Printable cards: logo, plan, duration, the serial and a QR holding the same serial. */
     private function printView(VoucherBatch $batch, $vouchers): View
     {
         $cards = $vouchers->map(function (Voucher $v) {

@@ -6,7 +6,7 @@ use App\Services\VoucherService;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-/** One single-use activation voucher. The 16-digit serial is encrypted at rest. */
+/** One single-use activation voucher. The serial (12 characters; older ones are 16 digits) is encrypted at rest. */
 class Voucher extends Model
 {
     public const AVAILABLE = 'available';

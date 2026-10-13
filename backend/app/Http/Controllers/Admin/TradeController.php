@@ -55,8 +55,8 @@ class TradeController extends Controller
 
         $customers = $customers->paginate(25)->withQueryString();
 
-        $batches = TagBatch::query()->latest('id')->limit(12)->get()
-            ->map(fn (TagBatch $b) => [
+        $batches = TagBatch::query()->latest('id')->paginate(10, ['*'], 'batches_page')->withQueryString()
+            ->through(fn (TagBatch $b) => [
                 'batch' => $b,
                 'delivered' => $this->ledger->deliveredFromBatch($b),
                 'remaining' => $this->ledger->remainingInBatch($b),

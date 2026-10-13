@@ -92,6 +92,8 @@ class ApiClient {
           fieldErrors: (err['fields'] as Map?)?.map(
             (k, v) => MapEntry(k as String, (v as List).cast<String>()),
           ),
+          retryAfter: (err['retry_after'] as num?)?.toInt(),
+          attemptsLeft: (err['attempts_left'] as num?)?.toInt(),
         ),
       );
     }

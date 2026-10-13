@@ -66,39 +66,82 @@ class VoucherTest extends TestCase
 
     // ---- Serials ---------------------------------------------------------------
 
-    public function test_serials_are_sixteen_digits_unique_and_carry_a_valid_check_digit(): void
+    public function test_serials_are_twelve_unambiguous_characters_unique_and_carry_a_valid_check_character(): void
     {
-        $batch = $this->batch(200);
+        $batch = $this->batch(300);
         $codes = $batch->vouchers()->get()->map(fn (Voucher $v) => $this->codeOf($v));
 
-        $this->assertCount(200, $codes);
-        $this->assertCount(200, $codes->unique());
+        $this->assertCount(300, $codes);
+        $this->assertCount(300, $codes->unique());
         foreach ($codes as $code) {
-            $this->assertMatchesRegularExpression('/^\d{16}$/', $code);
+            $this->assertMatchesRegularExpression('/^[2-9A-HJKMNP-Z]{12}$/', $code, $code);
+            // Never a character that can be mistaken for another: 0 O 1 I L.
+            $this->assertDoesNotMatchRegularExpression('/[01OIL]/', $code);
             $this->assertTrue(VoucherService::isValid($code), $code);
         }
     }
 
-    public function test_a_mistyped_serial_fails_the_check_digit(): void
+    public function test_a_mistyped_or_swapped_serial_fails_the_check_character(): void
     {
         $code = $this->codeOf($this->batch(1)->vouchers()->first());
-        $typo = substr($code, 0, 7).(((int) $code[7] + 1) % 10).substr($code, 8);
-
         $this->assertTrue(VoucherService::isValid($code));
-        $this->assertFalse(VoucherService::isValid($typo));
+
+        // Every single-character change is caught.
+        $alphabet = VoucherService::ALPHABET;
+        foreach (range(0, 11) as $i) {
+            $other = $alphabet[(strpos($alphabet, $code[$i]) + 1) % strlen($alphabet)];
+            $typo = substr_replace($code, $other, $i, 1);
+            $this->assertFalse(VoucherService::isValid($typo), "position {$i}: {$typo}");
+        }
+
+        // So is swapping two neighbouring characters (when they differ).
+        foreach (range(0, 10) as $i) {
+            // Luhn mod-N's one blind spot: the first and last symbol of the alphabet swapped.
+            $pair = $code[$i].$code[$i + 1];
+            if ($code[$i] === $code[$i + 1] || $pair === '2Z' || $pair === 'Z2') {
+                continue;
+            }
+            $swapped = substr($code, 0, $i).$code[$i + 1].$code[$i].substr($code, $i + 2);
+            $this->assertFalse(VoucherService::isValid($swapped), "swap at {$i}");
+        }
     }
 
-    public function test_input_accepts_spaces_dashes_and_arabic_indic_digits(): void
+    public function test_input_accepts_spaces_dashes_lowercase_and_a_scanned_link(): void
     {
-        $code = '4539578763621486'; // a Luhn-valid 16-digit number
-        $this->assertTrue(VoucherService::isValid($code));
-        $this->assertSame($code, VoucherService::normalize('4539 5787 6362 1486'));
-        $this->assertSame($code, VoucherService::normalize('4539-5787-6362-1486'));
-        $this->assertSame($code, VoucherService::normalize('٤٥٣٩ ٥٧٨٧ ٦٣٦٢ ١٤٨٦'));
-        $this->assertNull(VoucherService::normalize('4539 5787 6362 148'));
-        $this->assertSame('4539 5787 6362 1486', VoucherService::format($code));
+        $code = $this->codeOf($this->batch(1)->vouchers()->first());
+        $grouped = VoucherService::format($code);
+
+        $this->assertMatchesRegularExpression('/^\S{4} \S{4} \S{4}$/', $grouped);
+        $this->assertSame($code, VoucherService::normalize($grouped));
+        $this->assertSame($code, VoucherService::normalize(strtolower($grouped)));
+        $this->assertSame($code, VoucherService::normalize(str_replace(' ', '-', $grouped)));
+        $this->assertSame($code, VoucherService::normalize('https://qreach.online/v/'.$code));
+        $this->assertNull(VoucherService::normalize(substr($code, 0, 11)));
+        $this->assertNull(VoucherService::normalize(str_replace(substr($code, 0, 1), 'O', $code)));
     }
 
+    public function test_legacy_sixteen_digit_serials_still_work(): void
+    {
+        $legacy = '4539578763621486'; // Luhn-valid 16 digits, as issued before the 12-character format
+
+        $this->assertTrue(VoucherService::isValid($legacy));
+        $this->assertSame($legacy, VoucherService::normalize('4539 5787 6362 1486'));
+        $this->assertSame($legacy, VoucherService::normalize('٤٥٣٩ ٥٧٨٧ ٦٣٦٢ ١٤٨٦'));
+        $this->assertSame('4539 5787 6362 1486', VoucherService::format($legacy));
+        $this->assertFalse(VoucherService::isValid('4539578763621487'));
+
+        // A legacy voucher redeems like any other.
+        $batch = $this->batch(1);
+        $voucher = $batch->vouchers()->first();
+        \DB::table('vouchers')->where('id', $voucher->id)->update([
+            'code' => \Illuminate\Support\Facades\Crypt::encryptString($legacy),
+            'code_hash' => VoucherService::hash($legacy),
+        ]);
+        $user = User::factory()->create();
+
+        $this->redeem($user, '4539 5787 6362 1486')->assertOk();
+        $this->assertSame('redeemed', $voucher->fresh()->status);
+    }
     public function test_the_serial_is_not_stored_in_clear_text(): void
     {
         $voucher = $this->batch(1)->vouchers()->first();

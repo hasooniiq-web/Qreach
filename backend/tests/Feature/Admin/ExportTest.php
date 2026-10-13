@@ -178,7 +178,8 @@ class ExportTest extends TestCase
         $this->actingAs($admin, 'admin');
         RateLimiter::clear('export:'.$admin->id);
 
-        for ($i = 0; $i < 15; $i++) {
+        // Six exports a minute per admin.
+        for ($i = 0; $i < 6; $i++) {
             $this->get('/admin/users?export=xlsx')->assertOk();
         }
         $this->get('/admin/users?export=xlsx')->assertStatus(429);

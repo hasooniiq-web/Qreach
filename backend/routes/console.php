@@ -25,6 +25,9 @@ Schedule::command("contacts:purge")->hourly();
 // Retention: anonymize/delete stale raw data.
 Schedule::command("data:prune")->dailyAt("03:30");
 
+// Lockout rows that no longer lock anyone and have gone quiet.
+Schedule::call(fn () => app(\App\Services\LoginLockout::class)->prune())->name('auth:prune-lockouts')->dailyAt('03:45');
+
 // Expired API tokens are already rejected by Sanctum; this just removes the rows.
 Schedule::command('sanctum:prune-expired --hours=24')->daily();
 

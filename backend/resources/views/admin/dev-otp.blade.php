@@ -30,4 +30,6 @@
                            description="اطلب رمز دخول من التطبيق وسيظهر هنا خلال ثوانٍ." />
         @endforelse
     </x-data-table>
+
+    <div class="mt-4">{{ $codes->links() }}</div>
 </x-layouts.admin>

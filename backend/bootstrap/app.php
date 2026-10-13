@@ -46,6 +46,10 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $middleware->throttleApi('api');
 
+        // A flood ceiling per address over everything (web and API), checked before the session or
+        // sign-in work starts; the per-route limits under it are much stricter.
+        $middleware->prepend(\App\Http\Middleware\ThrottleByAddress::class);
+
         $middleware->alias([
             'admin' => EnsureAdminAuthenticated::class,
             'admin.permission' => EnsureAdminHasPermission::class,
@@ -63,6 +67,25 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $exceptions->render(function (TagActivationException $e) {
             return response()->json(['error' => ['code' => $e->errorCode, 'message' => $e->getMessage()]], 422);
+        });
+
+        $exceptions->render(function (\App\Exceptions\AccountLockedException $e, Request $request) {
+            if ($request->is('api/*') || $request->expectsJson()) {
+                return response()->json([
+                    'error' => [
+                        'code' => 'AUTH_LOCKED',
+                        'message' => $e->getMessage(),
+                        'retry_after' => $e->retryAfter,
+                        'locked_until' => $e->lockedUntil->toIso8601String(),
+                    ],
+                ], 429)->header('Retry-After', (string) $e->retryAfter);
+            }
+        });
+
+        $exceptions->render(function (\App\Exceptions\OtpLimitException $e) {
+            return response()->json([
+                'error' => ['code' => 'OTP_LIMIT', 'message' => $e->getMessage(), 'retry_after' => $e->retryAfter],
+            ], 429)->header('Retry-After', (string) $e->retryAfter);
         });
 
         $exceptions->render(function (OtpCooldownException $e) {

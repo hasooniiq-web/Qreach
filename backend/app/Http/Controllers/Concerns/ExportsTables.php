@@ -59,9 +59,45 @@ trait ExportsTables
 
         $admin = $request->user('admin');
         $limiterKey = 'export:'.($admin?->id ?? $request->ip());
-        abort_if(RateLimiter::tooManyAttempts($limiterKey, 15), 429, 'عدد مرات التصدير كبير. حاول بعد دقيقة.');
+        abort_if(RateLimiter::tooManyAttempts($limiterKey, 6), 429, 'عدد مرات التصدير كبير. حاول بعد دقيقة.');
         RateLimiter::hit($limiterKey, 60);
 
+        // A big export needs a lot of memory on a small server: only two at a time, whoever asks.
+        $slot = $this->takeExportSlot();
+        abort_if($slot === null, 429, 'هناك عمليات تصدير جارية الآن. حاول بعد لحظات.');
+
+        try {
+            return $this->buildExport($request, $key, $title, $headers, $query, $row, $summary, $filters, $format, $admin);
+        } finally {
+            $slot->release();
+        }
+    }
+
+    private function takeExportSlot(): ?\Illuminate\Contracts\Cache\Lock
+    {
+        foreach ([1, 2] as $n) {
+            $lock = \Illuminate\Support\Facades\Cache::lock('export-slot-'.$n, 120);
+            if ($lock->get()) {
+                return $lock;
+            }
+        }
+
+        return null;
+    }
+
+    /** @param  list<string>  $headers */
+    private function buildExport(
+        Request $request,
+        string $key,
+        string $title,
+        array $headers,
+        EloquentBuilder|Relation $query,
+        callable $row,
+        array $summary,
+        array $filters,
+        string $format,
+        mixed $admin,
+    ): Response {
         $cap = $format === 'pdf' ? self::EXPORT_PDF_CAP : self::EXPORT_XLSX_CAP;
         $models = (clone $query)->limit($cap + 1)->get();
         $truncated = $models->count() > $cap;

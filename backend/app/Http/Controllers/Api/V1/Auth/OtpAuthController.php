@@ -12,6 +12,7 @@ use App\Http\Resources\UserResource;
 use App\Models\Device;
 use App\Models\User;
 use App\Services\AuditLogger;
+use App\Services\LoginLockout;
 use App\Services\OtpService;
 use App\Services\SecurityEventLogger;
 use App\Services\SessionRegistry;
@@ -85,6 +86,11 @@ class OtpAuthController extends Controller
     public function login(LoginRequest $request): JsonResponse
     {
         $phone = $request->string('phone')->toString();
+        $lockout = app(LoginLockout::class);
+
+        // Before the password is looked at: a locked number is refused even with the right password.
+        $lockout->assertNotLocked(LoginLockout::CUSTOMER, $phone);
+
         $user = User::where('phone', $phone)->first();
 
         // Hash::check still runs against *some* hash even when the phone is
@@ -97,10 +103,26 @@ class OtpAuthController extends Controller
             SecurityEventLogger::log(SecurityEventLogger::AUTH_FAILURE, 'info', 'customer', $user?->id, [], $request);
             AuditLogger::log('customer.login_failed', 'customer', $user?->id, 'User', $user?->id, 'failure', [], $request);
 
+            // The same counting for a number that has no account, so the answer never tells.
+            $state = $lockout->recordFailure(LoginLockout::CUSTOMER, $phone);
+            if ($state['locked']) {
+                SecurityEventLogger::log(SecurityEventLogger::ACCOUNT_LOCKED, 'warning', 'customer', $user?->id, [
+                    'stage' => 'password', 'retry_after' => $state['retry_after'],
+                ], $request);
+
+                throw new \App\Exceptions\AccountLockedException($state['locked_until'], $state['retry_after']);
+            }
+
             return response()->json([
-                'error' => ['code' => 'INVALID_CREDENTIALS', 'message' => 'رقم الهاتف أو كلمة المرور غير صحيحة.'],
+                'error' => [
+                    'code' => 'INVALID_CREDENTIALS',
+                    'message' => 'رقم الهاتف أو كلمة المرور غير صحيحة.',
+                    'attempts_left' => $state['attempts_left'],
+                ],
             ], 422);
         }
+
+        $lockout->clear(LoginLockout::CUSTOMER, $phone);
 
         return $this->issueSession($user, $request, 'customer.login');
     }
@@ -118,6 +140,8 @@ class OtpAuthController extends Controller
     {
         $phone = $request->string('phone')->toString();
         $this->otp->verify($phone, $request->string('code'), 'password_reset');
+
+        app(LoginLockout::class)->clear(LoginLockout::CUSTOMER, $phone);
 
         $user = User::firstOrCreate(['phone' => $phone], ['status' => 'active']);
         $user->update([

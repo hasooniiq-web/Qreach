@@ -73,10 +73,11 @@ class PaymentController extends Controller
 
     public function show(Payment $payment): View
     {
-        $payment->load(['user', 'plan', 'subscription', 'events']);
+        $payment->load(['user', 'plan', 'subscription']);
 
         return view('admin.payments.show', [
             'payment' => $payment,
+            'events' => $payment->events()->latest('id')->paginate(15, ['*'], 'events_page'),
             'driver' => $this->gateways->driver($payment->gateway),
         ]);
     }

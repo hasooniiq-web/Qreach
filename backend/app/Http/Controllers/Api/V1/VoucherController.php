@@ -11,7 +11,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 /**
- * Redeeming an activation voucher from the app: type the 16 digits or scan the QR.
+ * Redeeming an activation voucher from the app: type the 12-character serial or scan the QR.
  * Everything that matters — single use, expiry, revocation, guessing limits — is
  * enforced in VoucherService; the app only forwards what was typed or scanned.
  */

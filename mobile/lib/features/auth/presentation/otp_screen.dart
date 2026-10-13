@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'auth_errors.dart';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -83,7 +84,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
       // Navigation happens automatically via the router's redirect once
       // AuthController's state flips to AuthAuthenticated.
     } catch (e) {
-      setState(() => _error = asApiException(e).message);
+      setState(() => _error = authErrorMessage(AppLocalizations.of(context)!, asApiException(e)));
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
@@ -99,7 +100,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
           );
       _startCooldown();
     } catch (e) {
-      setState(() => _error = asApiException(e).message);
+      setState(() => _error = authErrorMessage(AppLocalizations.of(context)!, asApiException(e)));
     }
   }
 

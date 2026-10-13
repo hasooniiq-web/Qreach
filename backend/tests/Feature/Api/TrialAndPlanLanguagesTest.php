@@ -236,4 +236,66 @@ class TrialAndPlanLanguagesTest extends TestCase
 
         $this->actingAs($admin, 'admin')->get('/admin/plans')->assertOk()->assertSee('کوردی')->assertSee('English');
     }
+
+    // ---- Trial length from the dashboard --------------------------------------------
+
+    private function superAdmin(): Admin
+    {
+        $admin = Admin::factory()->create();
+        $admin->roles()->sync([Role::where('slug', 'super_admin')->value('id')]);
+
+        return $admin;
+    }
+
+    public function test_the_trial_length_is_set_from_the_plans_page(): void
+    {
+        $admin = $this->superAdmin();
+
+        $this->actingAs($admin, 'admin')->get('/admin/plans')->assertOk()->assertSee('التجربة المجانية لباقة Plus')->assertSee('المدة الحالية');
+
+        $this->actingAs($admin, 'admin')->put('/admin/plans/trial', ['trial_days' => '14'])->assertRedirect()->assertSessionHasNoErrors();
+        Cache::flush();
+
+        $this->assertSame(14, (int) SystemSetting::get('plus_trial_days'));
+        $user = User::factory()->create();
+        $this->actingAs($user, 'sanctum')->getJson('/api/v1/subscription')->assertJsonPath('trial.days', 14)->assertJsonPath('trial.available', true);
+        $this->actingAs($user, 'sanctum')->postJson('/api/v1/subscription/trial')->assertOk();
+        $this->assertEqualsWithDelta(14, now()->diffInDays($user->subscriptions()->first()->current_period_ends_at), 0.1);
+    }
+
+    public function test_zero_switches_the_trial_off_and_nonsense_is_refused(): void
+    {
+        $admin = $this->superAdmin();
+
+        $this->actingAs($admin, 'admin')->put('/admin/plans/trial', ['trial_days' => '0'])->assertRedirect()->assertSessionHasNoErrors();
+        Cache::flush();
+        $this->actingAs($admin, 'admin')->get('/admin/plans')->assertSee('التجربة متوقفة حاليًا');
+        $this->actingAs(User::factory()->create(), 'sanctum')->getJson('/api/v1/subscription')->assertJsonPath('trial.available', false);
+
+        $this->actingAs($admin, 'admin')->put('/admin/plans/trial', ['trial_days' => '91'])->assertSessionHasErrors('trial_days');
+        $this->actingAs($admin, 'admin')->put('/admin/plans/trial', ['trial_days' => '-1'])->assertSessionHasErrors('trial_days');
+        $this->actingAs($admin, 'admin')->put('/admin/plans/trial', ['trial_days' => 'abc'])->assertSessionHasErrors('trial_days');
+        $this->assertSame(0, (int) SystemSetting::get('plus_trial_days'));
+    }
+
+    public function test_staff_without_the_manage_permission_cannot_change_the_trial(): void
+    {
+        $support = Admin::factory()->create();
+        $support->roles()->sync([Role::where('slug', 'support_admin')->value('id')]);
+
+        $this->actingAs($support, 'admin')->put('/admin/plans/trial', ['trial_days' => '30'])->assertForbidden();
+        $this->assertSame(7, (int) SystemSetting::get('plus_trial_days', 7));
+    }
+
+    public function test_a_change_does_not_touch_a_trial_already_running(): void
+    {
+        $admin = $this->superAdmin();
+        $user = User::factory()->create();
+        $this->actingAs($user, 'sanctum')->postJson('/api/v1/subscription/trial')->assertOk();
+        $endsBefore = $user->subscriptions()->first()->current_period_ends_at;
+
+        $this->actingAs($admin, 'admin')->put('/admin/plans/trial', ['trial_days' => '30'])->assertRedirect();
+
+        $this->assertTrue($endsBefore->equalTo($user->subscriptions()->first()->fresh()->current_period_ends_at));
+    }
 }

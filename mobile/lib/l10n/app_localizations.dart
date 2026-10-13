@@ -847,7 +847,7 @@ abstract class AppLocalizations {
   /// No description provided for @voucherEntryBody.
   ///
   /// In ar, this message translates to:
-  /// **'أدخل الرقم المكوّن من 16 خانة أو امسح رمز QR لتفعيل الباقة.'**
+  /// **'أدخل الرقم المكوّن من 12 خانة أو امسح رمز QR لتفعيل الباقة.'**
   String get voucherEntryBody;
 
   /// No description provided for @voucherTitle.
@@ -859,13 +859,13 @@ abstract class AppLocalizations {
   /// No description provided for @voucherIntro.
   ///
   /// In ar, this message translates to:
-  /// **'اشتريت قسيمة تفعيل من أحد الموزّعين؟ أدخل رقمها المكوّن من 16 خانة أو امسح رمز QR المطبوع عليها، فتُفعَّل باقتك فورًا.'**
+  /// **'اشتريت قسيمة تفعيل من أحد الموزّعين؟ أدخل رقمها المكوّن من 12 خانة (أحرف وأرقام) أو امسح رمز QR المطبوع عليها، فتُفعَّل باقتك فورًا.'**
   String get voucherIntro;
 
   /// No description provided for @voucherFieldLabel.
   ///
   /// In ar, this message translates to:
-  /// **'رقم القسيمة (16 خانة)'**
+  /// **'رقم القسيمة (12 خانة)'**
   String get voucherFieldLabel;
 
   /// No description provided for @voucherActivate.
@@ -919,7 +919,7 @@ abstract class AppLocalizations {
   /// No description provided for @voucherErrFormat.
   ///
   /// In ar, this message translates to:
-  /// **'الرقم غير مكتمل أو غير صحيح. تأكد أنه 16 رقمًا.'**
+  /// **'الرقم غير مكتمل أو غير صحيح. تأكد أنه 12 خانة من الأحرف والأرقام.'**
   String get voucherErrFormat;
 
   /// No description provided for @voucherErrUsed.
@@ -1204,6 +1204,54 @@ abstract class AppLocalizations {
   /// **'الدعوات غير متاحة حاليًا.'**
   String get referralErrUnavailable;
 
+  /// No description provided for @waitMinutes.
+  ///
+  /// In ar, this message translates to:
+  /// **'{n, plural, =1{دقيقة} =2{دقيقتين} few{{n} دقائق} other{{n} دقيقة}}'**
+  String waitMinutes(int n);
+
+  /// No description provided for @waitHours.
+  ///
+  /// In ar, this message translates to:
+  /// **'{n, plural, =1{ساعة} =2{ساعتين} few{{n} ساعات} other{{n} ساعة}}'**
+  String waitHours(int n);
+
+  /// No description provided for @waitDays.
+  ///
+  /// In ar, this message translates to:
+  /// **'{n, plural, =1{يوم} =2{يومين} few{{n} أيام} other{{n} يومًا}}'**
+  String waitDays(int n);
+
+  /// No description provided for @authLocked.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم إيقاف المحاولات مؤقتًا بسبب إدخال بيانات خاطئة 3 مرات. حاول مرة أخرى بعد {duration}.'**
+  String authLocked(String duration);
+
+  /// No description provided for @otpLimit.
+  ///
+  /// In ar, this message translates to:
+  /// **'وصلت إلى الحد الأقصى لطلبات رمز التحقق. حاول مرة أخرى بعد {duration}.'**
+  String otpLimit(String duration);
+
+  /// No description provided for @otpCooldown.
+  ///
+  /// In ar, this message translates to:
+  /// **'انتظر {seconds} ثانية قبل طلب رمز جديد.'**
+  String otpCooldown(int seconds);
+
+  /// No description provided for @rateLimited.
+  ///
+  /// In ar, this message translates to:
+  /// **'عدد الطلبات كبير. حاول بعد قليل.'**
+  String get rateLimited;
+
+  /// No description provided for @attemptsLeft.
+  ///
+  /// In ar, this message translates to:
+  /// **'بقي لك {left, plural, =1{محاولة واحدة} =2{محاولتان} few{{left} محاولات} other{{left} محاولة}} قبل الإيقاف المؤقت.'**
+  String attemptsLeft(int left);
+
   /// No description provided for @cancelAnnualPlan.
   ///
   /// In ar, this message translates to:
@@ -1407,6 +1455,12 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'{count} رمز مرتبط'**
   String tagsLinkedCount(int count);
+
+  /// No description provided for @activationFreeYears.
+  ///
+  /// In ar, this message translates to:
+  /// **'الخدمة الأساسية لهذا الملصق مجانية لمدة 10 سنوات من تاريخ التفعيل.'**
+  String get activationFreeYears;
 
   /// No description provided for @activationSuccessSubtitle.
   ///

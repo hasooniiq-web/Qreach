@@ -115,19 +115,22 @@ class _VoucherScreenState extends ConsumerState<VoucherScreen> {
         const SizedBox(height: AppSpacing.xl),
         TextField(
           controller: _controller,
-          keyboardType: TextInputType.number,
+          // Letters and digits: the serial is 12 characters such as K7M2 P9QX 4TRW.
+          keyboardType: TextInputType.visiblePassword,
+          textCapitalization: TextCapitalization.characters,
+          autocorrect: false,
+          enableSuggestions: false,
           textDirection: TextDirection.ltr,
           textAlign: TextAlign.center,
           autofocus: true,
           style: const TextStyle(
               fontSize: 22, fontWeight: FontWeight.w800, letterSpacing: 2),
           inputFormatters: [
-            FilteringTextInputFormatter.allow(RegExp(r'[0-9٠-٩۰-۹ ]')),
             _GroupingFormatter(),
           ],
           decoration: InputDecoration(
             labelText: l10n.voucherFieldLabel,
-            hintText: '0000 0000 0000 0000',
+            hintText: 'XXXX XXXX XXXX',
             errorText: _error,
             errorMaxLines: 3,
           ),
@@ -188,8 +191,8 @@ class _VoucherScreenState extends ConsumerState<VoucherScreen> {
   }
 }
 
-/// Keeps the field as `0000 0000 0000 0000` while typing or pasting (digits only,
-/// at most 16).
+/// Keeps the field as `XXXX XXXX XXXX` while typing or pasting: upper-case letters
+/// and digits only, at most 12 characters (16 for an older all-digit serial).
 class _GroupingFormatter extends TextInputFormatter {
   @override
   TextEditingValue formatEditUpdate(
@@ -205,15 +208,20 @@ class _GroupingFormatter extends TextInputFormatter {
         buffer.write(a);
       } else if (p >= 0) {
         buffer.write(p);
-      } else if (rune >= 0x30 && rune <= 0x39) {
+      } else if ((rune >= 0x30 && rune <= 0x39) ||
+          (rune >= 0x41 && rune <= 0x5A)) {
         buffer.write(ch);
+      } else if (rune >= 0x61 && rune <= 0x7A) {
+        buffer.write(ch.toUpperCase());
       }
     }
-    var digits = buffer.toString();
-    if (digits.length > VoucherCode.length) {
-      digits = digits.substring(0, VoucherCode.length);
+    var text = buffer.toString();
+    final allDigits = RegExp(r'^\d+$').hasMatch(text);
+    final max = allDigits ? VoucherCode.legacyLength : VoucherCode.length;
+    if (text.length > max) {
+      text = text.substring(0, max);
     }
-    final grouped = VoucherCode.group(digits);
+    final grouped = VoucherCode.group(text);
     return TextEditingValue(
       text: grouped,
       selection: TextSelection.collapsed(offset: grouped.length),

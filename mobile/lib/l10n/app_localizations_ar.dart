@@ -407,17 +407,17 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get voucherEntryBody =>
-      'أدخل الرقم المكوّن من 16 خانة أو امسح رمز QR لتفعيل الباقة.';
+      'أدخل الرقم المكوّن من 12 خانة أو امسح رمز QR لتفعيل الباقة.';
 
   @override
   String get voucherTitle => 'تفعيل بقسيمة';
 
   @override
   String get voucherIntro =>
-      'اشتريت قسيمة تفعيل من أحد الموزّعين؟ أدخل رقمها المكوّن من 16 خانة أو امسح رمز QR المطبوع عليها، فتُفعَّل باقتك فورًا.';
+      'اشتريت قسيمة تفعيل من أحد الموزّعين؟ أدخل رقمها المكوّن من 12 خانة (أحرف وأرقام) أو امسح رمز QR المطبوع عليها، فتُفعَّل باقتك فورًا.';
 
   @override
-  String get voucherFieldLabel => 'رقم القسيمة (16 خانة)';
+  String get voucherFieldLabel => 'رقم القسيمة (12 خانة)';
 
   @override
   String get voucherActivate => 'تفعيل';
@@ -453,7 +453,7 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get voucherErrFormat =>
-      'الرقم غير مكتمل أو غير صحيح. تأكد أنه 16 رقمًا.';
+      'الرقم غير مكتمل أو غير صحيح. تأكد أنه 12 خانة من الأحرف والأرقام.';
 
   @override
   String get voucherErrUsed => 'هذه القسيمة مستخدمة من قبل.';
@@ -622,6 +622,76 @@ class AppLocalizationsAr extends AppLocalizations {
   String get referralErrUnavailable => 'الدعوات غير متاحة حاليًا.';
 
   @override
+  String waitMinutes(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n دقيقة',
+      few: '$n دقائق',
+      two: 'دقيقتين',
+      one: 'دقيقة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String waitHours(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n ساعة',
+      few: '$n ساعات',
+      two: 'ساعتين',
+      one: 'ساعة',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String waitDays(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n يومًا',
+      few: '$n أيام',
+      two: 'يومين',
+      one: 'يوم',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String authLocked(String duration) {
+    return 'تم إيقاف المحاولات مؤقتًا بسبب إدخال بيانات خاطئة 3 مرات. حاول مرة أخرى بعد $duration.';
+  }
+
+  @override
+  String otpLimit(String duration) {
+    return 'وصلت إلى الحد الأقصى لطلبات رمز التحقق. حاول مرة أخرى بعد $duration.';
+  }
+
+  @override
+  String otpCooldown(int seconds) {
+    return 'انتظر $seconds ثانية قبل طلب رمز جديد.';
+  }
+
+  @override
+  String get rateLimited => 'عدد الطلبات كبير. حاول بعد قليل.';
+
+  @override
+  String attemptsLeft(int left) {
+    String _temp0 = intl.Intl.pluralLogic(
+      left,
+      locale: localeName,
+      other: '$left محاولة',
+      few: '$left محاولات',
+      two: 'محاولتان',
+      one: 'محاولة واحدة',
+    );
+    return 'بقي لك $_temp0 قبل الإيقاف المؤقت.';
+  }
+
+  @override
   String get cancelAnnualPlan => 'إلغاء الاشتراك السنوي';
 
   @override
@@ -730,6 +800,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String tagsLinkedCount(int count) {
     return '$count رمز مرتبط';
   }
+
+  @override
+  String get activationFreeYears =>
+      'الخدمة الأساسية لهذا الملصق مجانية لمدة 10 سنوات من تاريخ التفعيل.';
 
   @override
   String get activationSuccessSubtitle =>

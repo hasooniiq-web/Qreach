@@ -412,17 +412,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get voucherEntryBody =>
-      'Enter the 16-digit number or scan the QR code to activate your plan.';
+      'Enter the 12-character serial or scan the QR code to activate your plan.';
 
   @override
   String get voucherTitle => 'Activate with a voucher';
 
   @override
   String get voucherIntro =>
-      'Bought an activation voucher from a reseller? Enter its 16-digit number or scan the QR printed on it and your plan switches on right away.';
+      'Bought an activation voucher from a reseller? Enter its 12-character serial (letters and digits) or scan the QR printed on it and your plan switches on right away.';
 
   @override
-  String get voucherFieldLabel => 'Voucher number (16 digits)';
+  String get voucherFieldLabel => 'Voucher number (12 characters)';
 
   @override
   String get voucherActivate => 'Activate';
@@ -459,7 +459,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get voucherErrFormat =>
-      'The number is incomplete or wrong. Make sure it has 16 digits.';
+      'The number is incomplete or wrong. Make sure it has 12 letters and digits.';
 
   @override
   String get voucherErrUsed => 'This voucher has already been used.';
@@ -630,6 +630,68 @@ class AppLocalizationsEn extends AppLocalizations {
       'Invitations are not available right now.';
 
   @override
+  String waitMinutes(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n minutes',
+      one: 'a minute',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String waitHours(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n hours',
+      one: 'an hour',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String waitDays(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n days',
+      one: 'a day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String authLocked(String duration) {
+    return 'Sign-in is paused after 3 wrong attempts. Try again in $duration.';
+  }
+
+  @override
+  String otpLimit(String duration) {
+    return 'You reached the limit of verification codes. Try again in $duration.';
+  }
+
+  @override
+  String otpCooldown(int seconds) {
+    return 'Wait $seconds seconds before asking for a new code.';
+  }
+
+  @override
+  String get rateLimited => 'Too many requests. Try again in a moment.';
+
+  @override
+  String attemptsLeft(int left) {
+    String _temp0 = intl.Intl.pluralLogic(
+      left,
+      locale: localeName,
+      other: '$left attempts',
+      one: '1 attempt',
+    );
+    return '$_temp0 left before a temporary lock.';
+  }
+
+  @override
   String get cancelAnnualPlan => 'Cancel annual subscription';
 
   @override
@@ -738,6 +800,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String tagsLinkedCount(int count) {
     return '$count tags linked';
   }
+
+  @override
+  String get activationFreeYears =>
+      'The basic service of this tag is free for 10 years from the activation date.';
 
   @override
   String get activationSuccessSubtitle =>

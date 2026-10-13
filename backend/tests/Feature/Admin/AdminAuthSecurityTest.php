@@ -10,13 +10,13 @@ use Tests\TestCase;
  * Regression coverage for a real bug found during manual testing: Admin
  * was missing `locked_until` from $fillable, so the brute-force lockout
  * write in AuthController::login() was silently dropped — meaning the
- * 15-minute lockout after 5 failed attempts never actually took effect.
+ * escalating lockout after 3 failed attempts never actually took effect.
  */
 class AdminAuthSecurityTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_account_locks_after_five_failed_login_attempts(): void
+    public function test_account_locks_after_three_failed_login_attempts(): void
     {
         $admin = Admin::create([
             'name' => 'Test Admin',
@@ -26,7 +26,7 @@ class AdminAuthSecurityTest extends TestCase
             'must_change_password' => false,
         ]);
 
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < 3; $i++) {
             $this->post('/admin/login', ['email' => $admin->email, 'password' => 'wrong-password']);
         }
 

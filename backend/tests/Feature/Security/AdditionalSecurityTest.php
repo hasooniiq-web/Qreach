@@ -44,15 +44,18 @@ class AdditionalSecurityTest extends TestCase
             'expires_at' => now()->addMinutes(5),
         ]);
 
-        for ($i = 0; $i < 5; $i++) {
+        // Two wrong guesses are answered as wrong; the third locks code entry (1 hour, then longer).
+        foreach ([1, 2] as $i) {
             $this->postJson('/api/v1/auth/password/set', ['phone' => $phone, 'code' => '000000', 'password' => 'correct-horse'])
                 ->assertStatus(422);
         }
+        $this->postJson('/api/v1/auth/password/set', ['phone' => $phone, 'code' => '000000', 'password' => 'correct-horse'])
+            ->assertStatus(429)->assertJsonPath('error.code', 'AUTH_LOCKED');
 
-        // The correct code, on the 6th attempt, must still be rejected.
+        // The correct code, once locked, must still be rejected.
         $this->postJson('/api/v1/auth/password/set', ['phone' => $phone, 'code' => $code, 'password' => 'correct-horse'])
-            ->assertStatus(422)
-            ->assertJsonPath('error.message', 'تم تجاوز عدد المحاولات المسموح به. اطلب رمزًا جديدًا.');
+            ->assertStatus(429)
+            ->assertJsonPath('error.code', 'AUTH_LOCKED');
     }
 
     /**

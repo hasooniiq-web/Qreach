@@ -229,6 +229,20 @@ document.addEventListener('click', (event) => {
     boxes.forEach((box) => { box.checked = !allChecked; });
 });
 
+// ---- Tables as cards on a phone: each cell learns its column name ---------
+document.querySelectorAll('table.data-table').forEach((table) => {
+    const names = [...table.querySelectorAll('thead th')].map((th) => (th.querySelector('.sr-only') ? '' : th.textContent.trim()));
+
+    table.querySelectorAll('tbody tr').forEach((row) => {
+        const cells = [...row.children];
+        // A "nothing here" row is one cell spanning every column: no name for it.
+        if (cells.length !== names.length) return;
+        cells.forEach((cell, i) => {
+            if (names[i]) cell.setAttribute('data-label', names[i]);
+        });
+    });
+});
+
 // ---- Appearance menu (system / light / dark) ------------------------------
 function showThemeState() {
     const mode = document.documentElement.dataset.themeMode || 'system';

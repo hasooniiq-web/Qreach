@@ -4,8 +4,9 @@
     {
       "name": "qreach-backend",
       "runtimeExecutable": "cmd",
-      "runtimeArgs": ["/c", "cd /d D:\\Qreach\\backend && php artisan serve --host=127.0.0.1 --port=8000"],
-      "port": 8000
+      "runtimeArgs": ["/c", "cd /d D:\\Qreach\\backend && php -S 127.0.0.1:%PORT% vendor/laravel/framework/src/Illuminate/Foundation/resources/server.php"],
+      "port": 8000,
+      "autoPort": true
     },
     {
       "name": "qreach-mobile-web",

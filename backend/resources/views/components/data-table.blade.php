@@ -5,7 +5,7 @@
 --}}
 @props(['headers'])
 
-<x-card padding="p-0" class="overflow-hidden">
+<x-card padding="p-0" class="data-table-shell overflow-hidden">
     <div class="overflow-x-auto">
         <table class="data-table w-full text-sm">
             <thead class="bg-ink-50/70">

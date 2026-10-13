@@ -54,7 +54,7 @@
 
     <h3 class="mb-3 mt-8 text-sm font-semibold text-ink-900">سجل الأحداث</h3>
     <x-data-table :headers="['الوقت', 'النوع', 'النتيجة', 'التوقيع']">
-        @forelse ($payment->events as $event)
+        @forelse ($events as $event)
             <tr>
                 <td class="px-4 py-3 text-ink-500">{{ $event->created_at->copy()->timezone(config('app.display_timezone'))->format('Y-m-d H:i:s') }}</td>
                 <td class="px-4 py-3 text-ink-900">{{ ['callback' => 'إشعار من البوابة', 'status_check' => 'استعلام عن الحالة', 'refund' => 'استرداد'][$event->type] ?? $event->type }}</td>
@@ -65,4 +65,6 @@
             <x-table-empty :cols="4" icon="audit" title="لا أحداث بعد" description="تظهر هنا إشعارات البوابة وعمليات الاسترداد." />
         @endforelse
     </x-data-table>
+
+    <div class="mt-4">{{ $events->links() }}</div>
 </x-layouts.admin>

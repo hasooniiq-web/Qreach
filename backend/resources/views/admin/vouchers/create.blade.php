@@ -1,5 +1,5 @@
 <x-layouts.admin title="دفعة قسائم جديدة">
-    <x-page-header title="دفعة قسائم جديدة" subtitle="يُولِّد النظام أرقامًا عشوائية فريدة من 16 خانة. لا يمكن تعديل الرقم بعد إنشائه."
+    <x-page-header title="دفعة قسائم جديدة" subtitle="يُولِّد النظام أرقامًا عشوائية فريدة من 12 خانة (أحرف وأرقام بلا حروف مُربِكة مثل O و I و L). لا يمكن تعديل الرقم بعد إنشائه."
                    :back="route('admin.vouchers.index')" backLabel="قسائم التفعيل" />
 
     <form method="POST" action="{{ route('admin.vouchers.store') }}" class="max-w-xl space-y-4">

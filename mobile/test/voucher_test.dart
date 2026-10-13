@@ -39,29 +39,48 @@ Widget _app(VoucherRepository repo) => ProviderScope(
       ),
     );
 
-// A Luhn-valid 16-digit number.
-const _valid = '4539578763621486';
+// A serial in the current format: 12 characters, the last one a check character.
+const _valid = 'K7M2P9QX4TRC';
+
+// A serial from before that format: 16 digits with a Luhn check digit.
+const _legacy = '4539578763621486';
 
 void main() {
   group('VoucherCode', () {
-    test('parses digits typed with spaces, dashes, Arabic-Indic digits or a link', () {
-      expect(VoucherCode.parse('4539 5787 6362 1486'), _valid);
-      expect(VoucherCode.parse('4539-5787-6362-1486'), _valid);
-      expect(VoucherCode.parse('٤٥٣٩ ٥٧٨٧ ٦٣٦٢ ١٤٨٦'), _valid);
+    test('parses a serial typed with spaces, dashes, lower case or a link', () {
+      expect(VoucherCode.parse('K7M2 P9QX 4TRC'), _valid);
+      expect(VoucherCode.parse('k7m2-p9qx-4trc'), _valid);
       expect(VoucherCode.parse('https://qreach.online/v/$_valid'), _valid);
-      expect(VoucherCode.parse('4539 5787 6362 148'), isNull);
+      expect(VoucherCode.parse('K7M2 P9QX 4TR'), isNull);
+      // 0, 1, I, L and O are not in the alphabet: such a serial cannot be real.
+      expect(VoucherCode.parse('K7M2 P9QX 4TRO'), isNull);
+      expect(VoucherCode.parse('K7M2 P9QX 4TR1'), isNull);
       expect(VoucherCode.parse(''), isNull);
     });
 
-    test('the check digit catches a mistyped digit', () {
+    test('the check character catches a mistyped or swapped character', () {
       expect(VoucherCode.isValid(_valid), isTrue);
+      expect(VoucherCode.isValid('K7M2P9QX4TRD'), isFalse);
+      expect(VoucherCode.isValid('K7M2P9QX4TCR'), isFalse); // last two swapped
+      expect(VoucherCode.isValid('K7M2'), isFalse);
+    });
+
+    test('agrees with the server on a second serial', () {
+      expect(VoucherCode.isValid('ABCDEFGHJKMU'), isTrue);
+      expect(VoucherCode.isValid('3TD4RRRTXY8V'), isTrue);
+    });
+
+    test('older 16-digit serials are still understood', () {
+      expect(VoucherCode.parse('4539 5787 6362 1486'), _legacy);
+      expect(VoucherCode.parse('٤٥٣٩ ٥٧٨٧ ٦٣٦٢ ١٤٨٦'), _legacy);
+      expect(VoucherCode.isValid(_legacy), isTrue);
       expect(VoucherCode.isValid('4539578763621487'), isFalse);
-      expect(VoucherCode.isValid('1234'), isFalse);
     });
 
     test('groups in fours', () {
-      expect(VoucherCode.group(_valid), '4539 5787 6362 1486');
-      expect(VoucherCode.group('45395'), '4539 5');
+      expect(VoucherCode.group(_valid), 'K7M2 P9QX 4TRC');
+      expect(VoucherCode.group(_legacy), '4539 5787 6362 1486');
+      expect(VoucherCode.group('K7M2P'), 'K7M2 P');
     });
   });
 
@@ -72,10 +91,10 @@ void main() {
       await tester.pumpWidget(_app(repo));
       await tester.pumpAndSettle();
 
-      await tester.enterText(find.byType(TextField), _valid);
+      await tester.enterText(find.byType(TextField), 'k7m2p9qx4trc');
       await tester.pump();
-      // Grouped while typing.
-      expect(find.text('4539 5787 6362 1486'), findsOneWidget);
+      // Upper-cased and grouped while typing.
+      expect(find.text('K7M2 P9QX 4TRC'), findsOneWidget);
 
       await tester.tap(find.text('تفعيل'));
       await tester.pumpAndSettle();
@@ -91,12 +110,12 @@ void main() {
       await tester.pumpWidget(_app(repo));
       await tester.pumpAndSettle();
 
-      await tester.enterText(find.byType(TextField), '4539578763621487');
+      await tester.enterText(find.byType(TextField), 'K7M2P9QX4TRD');
       await tester.tap(find.text('تفعيل'));
       await tester.pumpAndSettle();
 
       expect(repo.sent, isEmpty);
-      expect(find.textContaining('16 رقمًا'), findsOneWidget);
+      expect(find.textContaining('12 خانة'), findsWidgets);
     });
 
     testWidgets('a used voucher shows its own message', (tester) async {

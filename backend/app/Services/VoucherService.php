@@ -17,9 +17,13 @@ use Illuminate\Support\Str;
 /**
  * Activation vouchers: generation, redemption and revocation.
  *
- * A serial is 16 digits: 15 random digits (from the OS CSPRNG) and a Luhn check
- * digit, so a mistyped serial is rejected before any lookup. It is stored
- * encrypted with a keyed hash beside it; the hash is what redemption looks up.
+ * A serial is 12 characters: 11 random ones (OS CSPRNG) and a check character, so a
+ * mistyped serial is rejected before any lookup. The alphabet is the digits 2-9 and
+ * the letters A-Z without I, L and O — nothing that can be mistaken for 1, 0 or
+ * another letter — 31 symbols, about 59 bits of randomness. It is stored encrypted
+ * with a keyed hash beside it; the hash is what redemption looks up.
+ *
+ * Serials made before this format (16 digits, Luhn check) are still redeemable.
  *
  * Redemption is guarded three ways: a per-account attempt limit, a lockout after
  * repeated unknown serials (guessing), and an atomic single-use update under a row
@@ -42,13 +46,52 @@ class VoucherService
 
     // ---- Serial format -----------------------------------------------------
 
-    /** Digits only (Arabic-Indic digits, spaces and dashes accepted); null unless exactly 16. */
+    /** The symbols a serial is made of: no 0/1, no I, L or O. */
+    public const ALPHABET = '23456789ABCDEFGHJKMNPQRSTUVWXYZ';
+
+    public const LENGTH = 12;
+
+    /**
+     * The canonical serial for what a person typed, scanned or pasted: spaces, dashes and a
+     * link prefix removed, upper-cased, Arabic-Indic digits converted. A new 12-character
+     * serial, or a legacy 16-digit one; null when it is neither.
+     */
     public static function normalize(string $input): ?string
     {
-        $clean = (string) NumberInput::clean($input);
-        $digits = preg_replace('/\D+/', '', $clean) ?? '';
+        $clean = strtoupper((string) NumberInput::clean(trim($input)));
 
-        return strlen($digits) === 16 ? $digits : null;
+        // A scanned QR holds a link ending in the serial.
+        if (str_contains($clean, '/')) {
+            $clean = substr($clean, (int) strrpos($clean, '/') + 1);
+        }
+
+        $clean = preg_replace('/[^A-Z0-9]+/', '', $clean) ?? '';
+
+        if (preg_match('/^\d{16}$/', $clean) === 1) {
+            return $clean; // legacy
+        }
+
+        if (strlen($clean) === self::LENGTH && strspn($clean, self::ALPHABET) === self::LENGTH) {
+            return $clean;
+        }
+
+        return null;
+    }
+
+    /** Luhn mod-N check character for an 11-character payload. */
+    public static function checkChar(string $payload): string
+    {
+        $n = strlen(self::ALPHABET);
+        $factor = 2;
+        $sum = 0;
+
+        for ($i = strlen($payload) - 1; $i >= 0; $i--) {
+            $addend = $factor * strpos(self::ALPHABET, $payload[$i]);
+            $factor = $factor === 2 ? 1 : 2;
+            $sum += intdiv($addend, $n) + ($addend % $n);
+        }
+
+        return self::ALPHABET[($n - ($sum % $n)) % $n];
     }
 
     public static function checkDigit(string $fifteenDigits): int
@@ -70,30 +113,38 @@ class VoucherService
         return (10 - ($sum % 10)) % 10;
     }
 
-    public static function isValid(string $sixteenDigits): bool
+    /** True for a well-formed serial with a correct check character (new or legacy format). */
+    public static function isValid(string $serial): bool
     {
-        return preg_match('/^\d{16}$/', $sixteenDigits) === 1
-            && self::checkDigit(substr($sixteenDigits, 0, 15)) === (int) $sixteenDigits[15];
+        if (preg_match('/^\d{16}$/', $serial) === 1) {
+            return self::checkDigit(substr($serial, 0, 15)) === (int) $serial[15];
+        }
+
+        return strlen($serial) === self::LENGTH
+            && strspn($serial, self::ALPHABET) === self::LENGTH
+            && self::checkChar(substr($serial, 0, self::LENGTH - 1)) === $serial[self::LENGTH - 1];
     }
 
-    public static function format(string $sixteenDigits): string
+    /** Grouped in fours for reading and typing: `K7M2 P9QX 4TRW`. */
+    public static function format(string $serial): string
     {
-        return trim(chunk_split($sixteenDigits, 4, ' '));
+        return trim(chunk_split($serial, 4, ' '));
     }
 
-    public static function hash(string $sixteenDigits): string
+    public static function hash(string $serial): string
     {
-        return hash_hmac('sha256', $sixteenDigits, (string) config('app.key'));
+        return hash_hmac('sha256', $serial, (string) config('app.key'));
     }
 
     private function randomSerial(): string
     {
+        $max = strlen(self::ALPHABET) - 1;
         $payload = '';
-        for ($i = 0; $i < 15; $i++) {
-            $payload .= (string) random_int(0, 9);
+        for ($i = 0; $i < self::LENGTH - 1; $i++) {
+            $payload .= self::ALPHABET[random_int(0, $max)];
         }
 
-        return $payload.self::checkDigit($payload);
+        return $payload.self::checkChar($payload);
     }
 
     // ---- Generation --------------------------------------------------------
@@ -207,7 +258,7 @@ class VoucherService
         $code = self::normalize($input);
         if ($code === null || ! self::isValid($code)) {
             // A typo: nothing was looked up, so it does not count as a guess.
-            throw new VoucherException('رقم القسيمة غير صحيح. تأكد أنه 16 رقمًا وأعد المحاولة.', 'VOUCHER_INVALID_FORMAT');
+            throw new VoucherException('رقم القسيمة غير صحيح. تأكد أنه 12 حرفًا ورقمًا وأعد المحاولة.', 'VOUCHER_INVALID_FORMAT');
         }
 
         $voucher = Voucher::with('batch.plan')->where('code_hash', self::hash($code))->first();

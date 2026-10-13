@@ -64,4 +64,5 @@
             <x-table-empty :cols="4" icon="batch" title="لا توجد دفعات بعد" />
         @endforelse
     </x-data-table>
+    <div class="mt-4">{{ $batches->links() }}</div>
 </x-layouts.admin>

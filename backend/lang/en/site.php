@@ -88,6 +88,7 @@ return [
             ['q' => 'Can people see my phone number?', 'a' => 'No — only if you choose to show it in the "What visitors see" settings. By default a visitor can only send a message.'],
             ['q' => 'Does the person scanning need an app?', 'a' => 'No. The phone camera or NFC is enough; the message page opens right in the browser.'],
             ['q' => 'What if I sell the vehicle or the tag is damaged?', 'a' => 'Unlink the tag from the vehicle in the app and link a new one any time.'],
+            ['q' => 'How long is the free service?', 'a' => 'The basic service of a tag is free for ten years from the day it is activated.'],
             ['q' => 'Is the Basic plan really free?', 'a' => 'Yes. You receive messages and can show your name, number and emergency contact at no cost.'],
             ['q' => 'What happens when Plus ends?', 'a' => 'Features keep working for an extra week so you can renew without losing anything, then you return to Basic and your data stays saved.'],
         ],

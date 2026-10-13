@@ -7,12 +7,20 @@ class ApiException implements Exception {
     required this.message,
     this.statusCode,
     this.fieldErrors,
+    this.retryAfter,
+    this.attemptsLeft,
   });
 
   final String code;
   final String message;
   final int? statusCode;
   final Map<String, List<String>>? fieldErrors;
+
+  /// Seconds until the next try is allowed (AUTH_LOCKED, OTP_LIMIT, OTP_COOLDOWN).
+  final int? retryAfter;
+
+  /// Wrong tries left before the account is locked (INVALID_CREDENTIALS).
+  final int? attemptsLeft;
 
   /// [host] is shown so a failed connection says *where* it tried to go —
   /// the usual cause on a phone is a wrong or unreachable server address.

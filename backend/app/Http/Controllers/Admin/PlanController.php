@@ -5,7 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Subscription;
 use App\Models\SubscriptionPlan;
+use App\Models\SystemSetting;
+use App\Models\User;
 use App\Services\AuditLogger;
+use App\Services\SubscriptionManager;
+use App\Support\NumberInput;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -29,9 +33,37 @@ class PlanController extends Controller
             ->groupBy('plan_id')
             ->pluck('total', 'plan_id');
 
-        return view('admin.subscriptions.plans', compact('plans', 'subscriberCounts'));
+        $trial = [
+            'days' => app(SubscriptionManager::class)->trialDays(),
+            'used' => User::whereNotNull('plus_trial_used_at')->count(),
+            'running' => Subscription::where('status', 'trialing')->where('current_period_ends_at', '>', now())->count(),
+        ];
+
+        return view('admin.subscriptions.plans', compact('plans', 'subscriberCounts', 'trial'));
     }
 
+    /** The length of the one-time free trial of Plus, in days (0 switches the trial off). */
+    public function updateTrial(Request $request): RedirectResponse
+    {
+        $request->merge(['trial_days' => NumberInput::clean($request->input('trial_days'))]);
+
+        $data = $request->validate([
+            'trial_days' => ['required', 'integer', 'min:0', 'max:90'],
+        ], [], ['trial_days' => 'مدة التجربة المجانية']);
+
+        $before = (int) SystemSetting::get('plus_trial_days', 7);
+        $days = (int) $data['trial_days'];
+
+        SystemSetting::set('plus_trial_days', $days, $request->user('admin')->id);
+
+        AuditLogger::log('admin.trial_days_updated', 'admin', $request->user('admin')->id, 'SystemSetting', null, 'success', [
+            'before' => $before, 'after' => $days,
+        ], $request);
+
+        return back()->with('status', $days === 0
+            ? 'أُوقفت التجربة المجانية. لن تظهر لأي عميل جديد.'
+            : "صارت التجربة المجانية لباقة Plus {$days} يومًا. تسري على من يبدأها من الآن.");
+    }
     public function update(Request $request, SubscriptionPlan $plan): RedirectResponse
     {
         $data = $request->validate([

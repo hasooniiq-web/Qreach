@@ -23,7 +23,7 @@ class DevOtpController extends Controller
         abort_unless(self::enabled(), 404);
 
         return view('admin.dev-otp', [
-            'codes' => DB::table('dev_otp_inbox')->orderByDesc('sent_at')->limit(100)->get(),
+            'codes' => DB::table('dev_otp_inbox')->orderByDesc('sent_at')->paginate(25),
         ]);
     }
 }

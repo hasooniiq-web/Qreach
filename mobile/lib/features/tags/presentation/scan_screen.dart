@@ -445,6 +445,25 @@ class _ActivationSuccessDialog extends StatelessWidget {
           Text(l10n.activationSuccessSubtitle,
               style: TextStyle(color: AppColors.ink500),
               textAlign: TextAlign.center),
+          const SizedBox(height: 14),
+          // The service promise made at activation: free for ten years.
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(
+              color: AppColors.brandYellow.withValues(alpha: 0.18),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: [
+                const Icon(Icons.verified_outlined, size: 20),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(l10n.activationFreeYears,
+                      style: const TextStyle(fontSize: 13, height: 1.5)),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
       actionsAlignment: MainAxisAlignment.center,

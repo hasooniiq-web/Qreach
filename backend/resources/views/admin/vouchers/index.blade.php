@@ -1,7 +1,7 @@
 @php $can = fn ($k) => auth('admin')->user()->hasPermission($k); @endphp
 
 <x-layouts.admin title="قسائم التفعيل">
-    <x-page-header title="قسائم التفعيل" subtitle="أرقام من 16 خانة، كل رقم يُفعّل الباقة مرة واحدة عند إدخاله في التطبيق. تُباع عبر شركات البطاقات الرقمية.">
+    <x-page-header title="قسائم التفعيل" subtitle="أرقام من 12 خانة (أحرف وأرقام)، كل رقم يُفعّل الباقة مرة واحدة عند إدخاله في التطبيق. تُباع عبر شركات البطاقات الرقمية.">
         @if ($can('vouchers.create'))
             <x-slot:actions>
                 <a href="{{ route('admin.vouchers.create') }}" class="btn-accent">+ دفعة قسائم جديدة</a>

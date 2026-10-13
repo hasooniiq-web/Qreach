@@ -413,17 +413,17 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get voucherEntryBody =>
-      'ژمارە 16 ڕەقەمییەکە بنووسە یان کۆدی QR سکان بکە بۆ چالاککردنی پاکێجەکە.';
+      'ژمارە 12 پیت و ڕەقەمییەکە بنووسە یان کۆدی QR سکان بکە بۆ چالاککردنی پاکێجەکە.';
 
   @override
   String get voucherTitle => 'چالاککردن بە کارت';
 
   @override
   String get voucherIntro =>
-      'کارتی چالاککردنت لە دابەشکەرێک کڕیوە؟ ژمارە 16 ڕەقەمییەکەی بنووسە یان کۆدی QR ی سەر کارتەکە سکان بکە، پاکێجەکەت دەستبەجێ چالاک دەبێت.';
+      'کارتی چالاککردنت لە دابەشکەرێک کڕیوە؟ ژمارە 12 پیت و ڕەقەمییەکەی بنووسە یان کۆدی QR ی سەر کارتەکە سکان بکە، پاکێجەکەت دەستبەجێ چالاک دەبێت.';
 
   @override
-  String get voucherFieldLabel => 'ژمارەی کارت (16 ڕەقەم)';
+  String get voucherFieldLabel => 'ژمارەی کارت (12 پیت و ژمارە)';
 
   @override
   String get voucherActivate => 'چالاککردن';
@@ -459,7 +459,7 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get voucherErrFormat =>
-      'ژمارەکە تەواو نییە یان هەڵەیە. دڵنیابە لە 16 ڕەقەم.';
+      'ژمارەکە تەواو نییە یان هەڵەیە. دڵنیابە لە 12 پیت و ژمارە.';
 
   @override
   String get voucherErrUsed => 'ئەم کارتە پێشتر بەکارهاتووە.';
@@ -631,6 +631,68 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get referralErrUnavailable => 'بانگهێشتکردن ئێستا بەردەست نییە.';
 
   @override
+  String waitMinutes(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n خولەک',
+      one: 'یەک خولەک',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String waitHours(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n کاتژمێر',
+      one: 'یەک کاتژمێر',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String waitDays(int n) {
+    String _temp0 = intl.Intl.pluralLogic(
+      n,
+      locale: localeName,
+      other: '$n ڕۆژ',
+      one: 'یەک ڕۆژ',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String authLocked(String duration) {
+    return 'دوای ٣ جار زانیاری هەڵە، هەوڵدانەکان بە کاتی ڕاگیران. دوای $duration دووبارە هەوڵ بدەرەوە.';
+  }
+
+  @override
+  String otpLimit(String duration) {
+    return 'گەیشتیتە زۆرترین ژمارەی داواکردنی کۆدی پشتڕاستکردنەوە. دوای $duration دووبارە هەوڵ بدەرەوە.';
+  }
+
+  @override
+  String otpCooldown(int seconds) {
+    return '$seconds چرکە چاوەڕێ بکە پێش داواکردنی کۆدێکی نوێ.';
+  }
+
+  @override
+  String get rateLimited => 'ژمارەی داواکاری زۆرە. کەمێکی تر هەوڵ بدەرەوە.';
+
+  @override
+  String attemptsLeft(int left) {
+    String _temp0 = intl.Intl.pluralLogic(
+      left,
+      locale: localeName,
+      other: '$left هەوڵ',
+      one: '١ هەوڵ',
+    );
+    return '$_temp0 ماوە پێش ڕاگرتنی کاتی.';
+  }
+
+  @override
   String get cancelAnnualPlan => 'هەڵوەشاندنەوەی ئابوونەی ساڵانە';
 
   @override
@@ -739,6 +801,10 @@ class AppLocalizationsCkb extends AppLocalizations {
   String tagsLinkedCount(int count) {
     return '$count کۆد بەستراوەتەوە';
   }
+
+  @override
+  String get activationFreeYears =>
+      'خزمەتگوزاریی بنەڕەتیی ئەم ستیکەرە بۆ ماوەی ١٠ ساڵ لە بەرواری چالاککردنەوە بێبەرامبەرە.';
 
   @override
   String get activationSuccessSubtitle =>

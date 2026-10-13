@@ -4,7 +4,9 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
+use App\Exceptions\AccountLockedException;
 use App\Services\AuditLogger;
+use App\Services\LoginLockout;
 use App\Services\Recaptcha;
 use App\Services\SecurityEventLogger;
 use Illuminate\Http\RedirectResponse;
@@ -40,33 +42,59 @@ class AuthController extends Controller
             throw ValidationException::withMessages(['email' => 'أكّد أنك لست روبوتًا (reCAPTCHA) ثم حاول مرة أخرى.']);
         }
 
-        $admin = Admin::where('email', $request->string('email'))->first();
+        $email = mb_strtolower(trim((string) $request->input('email')));
+        $lockout = app(LoginLockout::class);
 
-        if (! $admin || $admin->isLocked() || ! Auth::guard('admin')->attempt(
+        // Before the password is tried: a locked account is refused even with the right password.
+        try {
+            $lockout->assertNotLocked(LoginLockout::ADMIN, $email);
+        } catch (AccountLockedException $e) {
+            SecurityEventLogger::log(
+                SecurityEventLogger::AUTH_FAILURE, 'info', 'admin', null, ['email' => $email, 'stage' => 'locked'], $request
+            );
+
+            throw ValidationException::withMessages(['email' => $e->getMessage()]);
+        }
+
+        $admin = Admin::where('email', $email)->first();
+
+        if (! $admin || ! Auth::guard('admin')->attempt(
             // Never "remembered": closing the browser ends the session and asks for a login again.
-            $request->only('email', 'password'), false
+            ['email' => $admin->email, 'password' => $request->input('password')], false
         )) {
+            // Counted the same way for an email that has no account.
+            $state = $lockout->recordFailure(LoginLockout::ADMIN, $email);
+
             if ($admin) {
                 $admin->increment('failed_login_attempts');
-                if ($admin->failed_login_attempts >= 5) {
-                    $admin->update(['locked_until' => now()->addMinutes(15)]);
-                    SecurityEventLogger::log(
-                        SecurityEventLogger::ACCOUNT_LOCKED, 'warning', 'admin', $admin->id,
-                        ['email' => $admin->email], $request
-                    );
-                }
             }
 
             SecurityEventLogger::log(
                 SecurityEventLogger::AUTH_FAILURE, 'info', 'admin', $admin?->id,
-                ['email' => $request->input('email')], $request
+                ['email' => $email], $request
             );
             AuditLogger::log('admin.login_failed', 'admin', $admin?->id, 'Admin', $admin?->id, 'failure', [], $request);
+
+            if ($state['locked']) {
+                if ($admin) {
+                    $admin->update(['locked_until' => $state['locked_until']]);
+                }
+                SecurityEventLogger::log(
+                    SecurityEventLogger::ACCOUNT_LOCKED, 'warning', 'admin', $admin?->id,
+                    ['email' => $email, 'retry_after' => $state['retry_after']], $request
+                );
+
+                throw ValidationException::withMessages([
+                    'email' => (new AccountLockedException($state['locked_until'], $state['retry_after']))->getMessage(),
+                ]);
+            }
 
             throw ValidationException::withMessages([
                 'email' => 'بيانات الدخول غير صحيحة.',
             ]);
         }
+
+        $lockout->clear(LoginLockout::ADMIN, $email);
 
         $request->session()->regenerate();
         // The authenticator code is asked on every sign-in, never carried over from an earlier one.
@@ -104,14 +132,35 @@ class AuthController extends Controller
         $request->validate(['code' => ['required', 'string']]);
 
         $admin = auth('admin')->user();
+        $lockout = app(LoginLockout::class);
+
+        try {
+            $lockout->assertNotLocked(LoginLockout::ADMIN_TOTP, (string) $admin->id);
+        } catch (AccountLockedException $e) {
+            throw ValidationException::withMessages(['code' => $e->getMessage()]);
+        }
 
         if (! Google2FA::verifyKey($admin->totp_secret, preg_replace('/\s+/', '', (string) $request->input('code')))) {
             SecurityEventLogger::log(SecurityEventLogger::AUTH_FAILURE, 'warning', 'admin', $admin->id, ['stage' => 'totp'], $request);
 
+            $state = $lockout->recordFailure(LoginLockout::ADMIN_TOTP, (string) $admin->id);
+            if ($state['locked']) {
+                SecurityEventLogger::log(
+                    SecurityEventLogger::ACCOUNT_LOCKED, 'warning', 'admin', $admin->id,
+                    ['stage' => 'totp', 'retry_after' => $state['retry_after']], $request
+                );
+
+                throw ValidationException::withMessages([
+                    'code' => (new AccountLockedException($state['locked_until'], $state['retry_after']))->getMessage(),
+                ]);
+            }
+
             throw ValidationException::withMessages([
-                'code' => 'رمز التحقق غير صحيح.',
+                'code' => 'رمز التحقق غير صحيح. بقيت لك '.$state['attempts_left'].' محاولة قبل الإيقاف المؤقت.',
             ]);
         }
+
+        $lockout->clear(LoginLockout::ADMIN_TOTP, (string) $admin->id);
 
         $request->session()->put('admin_totp_verified_at', now()->toIso8601String());
 

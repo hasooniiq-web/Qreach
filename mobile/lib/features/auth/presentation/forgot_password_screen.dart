@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'auth_errors.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../core/network/api_client.dart';
@@ -57,7 +58,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
           .requestPasswordOtp(_fullPhone);
       if (mounted) setState(() => _otpSent = true);
     } catch (e) {
-      setState(() => _error = asApiException(e).message);
+      setState(() => _error = authErrorMessage(AppLocalizations.of(context)!, asApiException(e)));
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
@@ -80,7 +81,7 @@ class _ForgotPasswordScreenState extends ConsumerState<ForgotPasswordScreen> {
       // Navigation happens automatically via the router's redirect once
       // AuthController's state flips to AuthAuthenticated.
     } catch (e) {
-      setState(() => _error = asApiException(e).message);
+      setState(() => _error = authErrorMessage(AppLocalizations.of(context)!, asApiException(e)));
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
