@@ -74,6 +74,8 @@ class ScanTest extends TestCase
 
         // The six reasons are low rows (icon beside the words), not tall tiles.
         $this->assertStringNotContainsString('min-h-24', $html);
+        // ... and all six are exactly the same size (a fixed height, never content-driven).
+        $this->assertSame(6, substr_count($html, 'flex h-14 items-center gap-2.5 rounded-xl border-2'));
         $this->assertSame(6, substr_count($html, 'name="reason"'));
     }
     public function test_scanning_an_unknown_token_shows_a_generic_invalid_page_not_a_500(): void

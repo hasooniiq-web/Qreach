@@ -157,9 +157,9 @@
                         <input type="radio" name="reason" value="{{ $value }}" class="peer sr-only" @checked(old('reason') === $value) required>
                         {{-- The chosen reason turns solid yellow with a check mark: unmistakable on the dark page
                              (the old black-on-black selection looked like nothing had happened). --}}
-                        <span class="flex h-full min-h-12 items-center gap-2.5 rounded-xl border-2 border-ink-200 bg-surface px-3 py-2 text-[13px] font-semibold leading-snug text-ink-900 transition peer-checked:border-brand-yellow peer-checked:bg-brand-yellow peer-checked:text-brand-black peer-checked:shadow-lg peer-checked:ring-4 peer-checked:ring-brand-yellow/40 peer-focus-visible:ring-2 peer-focus-visible:ring-brand-yellow">
+                        <span class="flex h-14 items-center gap-2.5 rounded-xl border-2 border-ink-200 bg-surface px-3 text-[13px] font-semibold leading-tight text-ink-900 transition peer-checked:border-brand-yellow peer-checked:bg-brand-yellow peer-checked:text-brand-black peer-checked:shadow-lg peer-checked:ring-4 peer-checked:ring-brand-yellow/40 peer-focus-visible:ring-2 peer-focus-visible:ring-brand-yellow">
                             <x-icon :name="$icon" class="size-5 shrink-0" />
-                            {{ $label }}
+                            <span class="line-clamp-2">{{ $label }}</span>
                         </span>
                         <span class="pointer-events-none absolute end-2 top-1/2 hidden size-5 -translate-y-1/2 items-center justify-center rounded-full bg-brand-black text-brand-yellow peer-checked:flex" aria-hidden="true">
                             <svg viewBox="0 0 20 20" class="size-3.5" fill="currentColor"><path d="M16.7 5.3a1 1 0 0 1 0 1.4l-7.5 7.5a1 1 0 0 1-1.4 0L3.3 9.7a1 1 0 1 1 1.4-1.4l3.8 3.8 6.8-6.8a1 1 0 0 1 1.4 0Z"/></svg>
