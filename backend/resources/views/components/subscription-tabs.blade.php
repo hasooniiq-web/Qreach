@@ -6,6 +6,7 @@
         'subscriptions' => ['المشتركون', route('admin.subscriptions.index')],
         'requests' => ['طلبات الترقية', route('admin.subscriptions.requests')],
         'plans' => ['الباقات والصلاحيات', route('admin.plans.index')],
+        'referrals' => ['الدعوات', route('admin.referrals.index')],
     ];
 @endphp
 

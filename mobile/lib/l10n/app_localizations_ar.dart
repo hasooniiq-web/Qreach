@@ -548,6 +548,80 @@ class AppLocalizationsAr extends AppLocalizations {
       'انتهت تجربتك المجانية. اشترك في بلس لتستمر في استخدام ميزاته.';
 
   @override
+  String get referralTitle => 'ادعُ صديقًا';
+
+  @override
+  String referralHeadline(String days) {
+    return 'ادعُ صديقًا واحصل على $days يومًا مجانية';
+  }
+
+  @override
+  String referralBody(String days) {
+    return 'شارك رمزك. عندما يشترك صديقك لأول مرة تُضاف $days يومًا من Plus إلى باقتك.';
+  }
+
+  @override
+  String get referralTileBody => 'ادعُ صديقًا واحصل على أيام مجانية من Plus';
+
+  @override
+  String get referralYourCode => 'رمز دعوتك';
+
+  @override
+  String get referralCopy => 'نسخ الرمز';
+
+  @override
+  String get referralCopied => 'تم نسخ الرمز';
+
+  @override
+  String get referralShareButton => 'مشاركة الدعوة';
+
+  @override
+  String referralShareText(String code, String link) {
+    return 'جرّب Qreach SmartTag: ملصق ذكي على مركبتك يوصل الرسائل دون كشف رقمك. بعد تثبيت التطبيق أدخل رمز دعوتي $code\n$link';
+  }
+
+  @override
+  String get referralStatInvited => 'المدعوون';
+
+  @override
+  String get referralStatSubscribed => 'اشتركوا';
+
+  @override
+  String get referralStatDays => 'أيام مجانية';
+
+  @override
+  String get referralHaveCode => 'لديّ رمز دعوة من صديق';
+
+  @override
+  String get referralCodeField => 'رمز الدعوة';
+
+  @override
+  String get referralApply => 'تأكيد الرمز';
+
+  @override
+  String get referralApplied =>
+      'تم حفظ رمز الدعوة. عندما تشترك سيحصل صديقك على مكافأته.';
+
+  @override
+  String get referralDisabledNote => 'الدعوات متوقفة حاليًا.';
+
+  @override
+  String get referralErrInvalid =>
+      'رمز الدعوة غير صحيح. تأكد منه وأعد المحاولة.';
+
+  @override
+  String get referralErrSelf => 'لا يمكنك استخدام رمز دعوتك أنت.';
+
+  @override
+  String get referralErrAlready => 'أدخلت رمز دعوة من قبل.';
+
+  @override
+  String get referralErrNotNew => 'رمز الدعوة للمستخدمين الذين لم يشتركوا بعد.';
+
+  @override
+  String get referralErrUnavailable => 'الدعوات غير متاحة حاليًا.';
+
+  @override
   String get cancelAnnualPlan => 'إلغاء الاشتراك السنوي';
 
   @override

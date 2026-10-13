@@ -52,6 +52,9 @@ class SubscriptionManager
                 'user_id' => $payment->user_id, 'plan' => $plan->slug, 'days' => $days, 'payment_id' => $payment->id,
             ]);
 
+            // A friend's first paid activation pays the customer who invited them.
+            app(ReferralService::class)->rewardInviter($payment->user, $this);
+
             return $subscription;
         });
     }
@@ -103,6 +106,8 @@ class SubscriptionManager
                 'user_id' => $user->id, 'plan' => $plan->slug, 'days' => $days, 'voucher_id' => $voucher->id,
             ]);
 
+            app(ReferralService::class)->rewardInviter($user, $this);
+
             return $subscription;
         });
     }
@@ -150,6 +155,25 @@ class SubscriptionManager
         ]);
 
         return [$subscription, 'admin.subscription_granted'];
+    }
+
+    /**
+     * Free days of Plus given as an invite reward. Adds to a Plus plan the customer has,
+     * or starts one; it is not a sale, so it is not recorded as an upgrade.
+     */
+    public function grantReward(User $user, int $days): Subscription
+    {
+        $plan = SubscriptionPlan::where('slug', SubscriptionPlan::PLUS)->firstOrFail();
+
+        return DB::transaction(function () use ($user, $plan, $days) {
+            [$subscription, $action] = $this->applyGrant($user, $plan, $days);
+
+            AuditLogger::log('subscription.referral_reward', 'system', null, 'Subscription', $subscription->id, 'success', [
+                'user_id' => $user->id, 'plan' => $plan->slug, 'days' => $days, 'applied' => $action,
+            ]);
+
+            return $subscription;
+        });
     }
 
     /** Days of the free Plus trial; 0 means the trial is switched off. */

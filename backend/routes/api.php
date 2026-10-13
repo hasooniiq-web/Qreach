@@ -69,6 +69,9 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::get('subscription', [SubscriptionController::class, 'show'])->name('subscription.show');
         Route::post('subscription/redeem', [\App\Http\Controllers\Api\V1\VoucherController::class, 'redeem'])
             ->middleware('throttle:20,1')->name('subscription.redeem');
+        Route::get('referral', [\App\Http\Controllers\Api\V1\ReferralController::class, 'show'])->name('referral.show');
+        Route::post('referral/apply', [\App\Http\Controllers\Api\V1\ReferralController::class, 'apply'])
+            ->middleware('throttle:10,1')->name('referral.apply');
         Route::post('subscription/trial', [SubscriptionController::class, 'startTrial'])
             ->middleware('throttle:5,1')->name('subscription.trial');
         Route::post('subscription/cancel-renewal', [SubscriptionController::class, 'cancelRenewal'])

@@ -11,6 +11,7 @@ import '../features/contacts/data/contact_request_repository.dart';
 import '../features/home/data/home_repository.dart';
 import '../features/notifications/data/notification_repository.dart';
 import '../features/profile/data/profile_repository.dart';
+import '../features/referral/data/referral_repository.dart';
 import '../features/subscription/data/payment_repository.dart';
 import '../features/subscription/data/subscription_repository.dart';
 import '../features/subscription/data/voucher_repository.dart';
@@ -56,6 +57,10 @@ final pushNotificationServiceProvider =
 
 final paymentRepositoryProvider = Provider<PaymentRepository>((ref) {
   return PaymentRepository(ref.watch(apiClientProvider));
+});
+
+final referralRepositoryProvider = Provider<ReferralRepository>((ref) {
+  return ReferralRepository(ref.watch(apiClientProvider));
 });
 
 final voucherRepositoryProvider = Provider<VoucherRepository>((ref) {

@@ -1072,6 +1072,138 @@ abstract class AppLocalizations {
   /// **'انتهت تجربتك المجانية. اشترك في بلس لتستمر في استخدام ميزاته.'**
   String get trialEndedBanner;
 
+  /// No description provided for @referralTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'ادعُ صديقًا'**
+  String get referralTitle;
+
+  /// No description provided for @referralHeadline.
+  ///
+  /// In ar, this message translates to:
+  /// **'ادعُ صديقًا واحصل على {days} يومًا مجانية'**
+  String referralHeadline(String days);
+
+  /// No description provided for @referralBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'شارك رمزك. عندما يشترك صديقك لأول مرة تُضاف {days} يومًا من Plus إلى باقتك.'**
+  String referralBody(String days);
+
+  /// No description provided for @referralTileBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'ادعُ صديقًا واحصل على أيام مجانية من Plus'**
+  String get referralTileBody;
+
+  /// No description provided for @referralYourCode.
+  ///
+  /// In ar, this message translates to:
+  /// **'رمز دعوتك'**
+  String get referralYourCode;
+
+  /// No description provided for @referralCopy.
+  ///
+  /// In ar, this message translates to:
+  /// **'نسخ الرمز'**
+  String get referralCopy;
+
+  /// No description provided for @referralCopied.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم نسخ الرمز'**
+  String get referralCopied;
+
+  /// No description provided for @referralShareButton.
+  ///
+  /// In ar, this message translates to:
+  /// **'مشاركة الدعوة'**
+  String get referralShareButton;
+
+  /// No description provided for @referralShareText.
+  ///
+  /// In ar, this message translates to:
+  /// **'جرّب Qreach SmartTag: ملصق ذكي على مركبتك يوصل الرسائل دون كشف رقمك. بعد تثبيت التطبيق أدخل رمز دعوتي {code}\n{link}'**
+  String referralShareText(String code, String link);
+
+  /// No description provided for @referralStatInvited.
+  ///
+  /// In ar, this message translates to:
+  /// **'المدعوون'**
+  String get referralStatInvited;
+
+  /// No description provided for @referralStatSubscribed.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشتركوا'**
+  String get referralStatSubscribed;
+
+  /// No description provided for @referralStatDays.
+  ///
+  /// In ar, this message translates to:
+  /// **'أيام مجانية'**
+  String get referralStatDays;
+
+  /// No description provided for @referralHaveCode.
+  ///
+  /// In ar, this message translates to:
+  /// **'لديّ رمز دعوة من صديق'**
+  String get referralHaveCode;
+
+  /// No description provided for @referralCodeField.
+  ///
+  /// In ar, this message translates to:
+  /// **'رمز الدعوة'**
+  String get referralCodeField;
+
+  /// No description provided for @referralApply.
+  ///
+  /// In ar, this message translates to:
+  /// **'تأكيد الرمز'**
+  String get referralApply;
+
+  /// No description provided for @referralApplied.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم حفظ رمز الدعوة. عندما تشترك سيحصل صديقك على مكافأته.'**
+  String get referralApplied;
+
+  /// No description provided for @referralDisabledNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'الدعوات متوقفة حاليًا.'**
+  String get referralDisabledNote;
+
+  /// No description provided for @referralErrInvalid.
+  ///
+  /// In ar, this message translates to:
+  /// **'رمز الدعوة غير صحيح. تأكد منه وأعد المحاولة.'**
+  String get referralErrInvalid;
+
+  /// No description provided for @referralErrSelf.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا يمكنك استخدام رمز دعوتك أنت.'**
+  String get referralErrSelf;
+
+  /// No description provided for @referralErrAlready.
+  ///
+  /// In ar, this message translates to:
+  /// **'أدخلت رمز دعوة من قبل.'**
+  String get referralErrAlready;
+
+  /// No description provided for @referralErrNotNew.
+  ///
+  /// In ar, this message translates to:
+  /// **'رمز الدعوة للمستخدمين الذين لم يشتركوا بعد.'**
+  String get referralErrNotNew;
+
+  /// No description provided for @referralErrUnavailable.
+  ///
+  /// In ar, this message translates to:
+  /// **'الدعوات غير متاحة حاليًا.'**
+  String get referralErrUnavailable;
+
   /// No description provided for @cancelAnnualPlan.
   ///
   /// In ar, this message translates to:

@@ -116,6 +116,14 @@ class AppServiceProvider extends ServiceProvider
             return Limit::perMinute(20)->by('thread-reply:'.$request->ip().':'.$request->route('uuid'));
         });
 
+        // The public "Contact us" form: a few messages a minute and a modest hourly cap per address.
+        RateLimiter::for('contact-form', function (Request $request) {
+            return [
+                Limit::perMinute(3)->by('contact-form-min:'.$request->ip()),
+                Limit::perHour(10)->by('contact-form-hour:'.$request->ip()),
+            ];
+        });
+
         RateLimiter::for('report-export', function (Request $request) {
             return Limit::perHour(20)->by($request->user()?->id ?: $request->ip());
         });

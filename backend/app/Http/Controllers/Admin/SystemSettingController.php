@@ -32,6 +32,16 @@ class SystemSettingController extends Controller
             'hint' => 'تُمنح مرة واحدة فقط لكل حساب. اكتب 0 لإيقاف التجربة المجانية.',
             'default' => 7, 'min' => 0, 'max' => 90,
         ],
+        'referral_reward_days' => [
+            'label' => 'أيام بلس المجانية لمن يدعو صديقًا',
+            'hint' => 'تُمنح للداعي عندما يُتمّ صديقه أول اشتراك مدفوع. اكتب 0 لإيقاف الدعوات.',
+            'default' => 30, 'min' => 0, 'max' => 365,
+        ],
+        'referral_max_rewards' => [
+            'label' => 'أقصى عدد مكافآت دعوة لكل مستخدم',
+            'hint' => 'بعد هذا العدد لا يحصل الداعي على أيام جديدة (يمنع الاستغلال).',
+            'default' => 12, 'min' => 0, 'max' => 120,
+        ],
         'qr_batch_max_quantity' => [
             'label' => 'الحد الأقصى لعدد الرموز في الدفعة الواحدة',
             'hint' => 'يطبَّق عند إنشاء دفعة QR أو NFC جديدة.',
@@ -51,13 +61,14 @@ class SystemSettingController extends Controller
     public function update(Request $request): RedirectResponse
     {
         // The form shows numbers with thousands separators (1,000); store plain integers.
-        $request->merge(collect(self::DEFINITIONS)->keys()->mapWithKeys(
+        $request->merge(collect(self::DEFINITIONS)->keys()->filter(fn ($key) => $request->has($key))->mapWithKeys(
             fn ($key) => [$key => \App\Support\NumberInput::clean($request->input($key))]
         )->all());
 
         $rules = [];
         foreach (self::DEFINITIONS as $key => $definition) {
-            $rules[$key] = ['required', 'integer', "min:{$definition['min']}", "max:{$definition['max']}"];
+            // A key that was not sent keeps its stored value (an older form must not fail).
+            $rules[$key] = ['sometimes', 'required', 'integer', "min:{$definition['min']}", "max:{$definition['max']}"];
         }
 
         $validated = $request->validate($rules, [], collect(self::DEFINITIONS)->map(fn ($d) => $d['label'])->all());

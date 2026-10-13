@@ -10,8 +10,41 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class VoucherBatch extends Model
 {
     protected $fillable = [
-        'batch_code', 'plan_id', 'duration_days', 'unit_price', 'customer_id', 'quantity', 'recipient', 'notes', 'expires_at', 'created_by',
+        'batch_code', 'plan_id', 'duration_days', 'unit_price', 'customer_id', 'quantity', 'recipient', 'notes', 'expires_at', 'created_by', 'portal_code',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (self $batch) {
+            $batch->portal_code ??= self::newPortalCode();
+        });
+    }
+
+    /** The secret a reseller types, with the batch number, on the public look-up page. */
+    public static function newPortalCode(): string
+    {
+        $alphabet = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
+        $code = '';
+        for ($i = 0; $i < 8; $i++) {
+            $code .= $alphabet[random_int(0, 31)];
+        }
+
+        return $code;
+    }
+
+    public static function normalizePortalCode(string $input): string
+    {
+        $code = strtoupper((string) preg_replace('/[\s\-]+/', '', $input));
+
+        return strtr($code, ['O' => '0', 'I' => '1', 'L' => '1']);
+    }
+
+    public function portalCodeFormatted(): string
+    {
+        $code = (string) $this->portal_code;
+
+        return substr($code, 0, 4).'-'.substr($code, 4);
+    }
 
     protected function casts(): array
     {

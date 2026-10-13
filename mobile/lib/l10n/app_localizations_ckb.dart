@@ -555,6 +555,82 @@ class AppLocalizationsCkb extends AppLocalizations {
       'تاقیکردنەوەی بێبەرامبەرەکەت تەواو بوو. ئابوونەی Plus بکە بۆ بەردەوامبوون لە بەکارهێنانی تایبەتمەندییەکانی.';
 
   @override
+  String get referralTitle => 'هاوڕێیەک بانگهێشت بکە';
+
+  @override
+  String referralHeadline(String days) {
+    return 'هاوڕێیەک بانگهێشت بکە و $days ڕۆژی بێبەرامبەر وەربگرە';
+  }
+
+  @override
+  String referralBody(String days) {
+    return 'کۆدەکەت بڵاو بکەرەوە. کاتێک هاوڕێکەت بۆ یەکەمجار ئابوونە دەبێت، $days ڕۆژی Plus زیاد دەکرێت بۆ پاکێجەکەت.';
+  }
+
+  @override
+  String get referralTileBody =>
+      'هاوڕێیەک بانگهێشت بکە و ڕۆژی بێبەرامبەری Plus وەربگرە';
+
+  @override
+  String get referralYourCode => 'کۆدی بانگهێشتەکەت';
+
+  @override
+  String get referralCopy => 'کۆپیکردنی کۆد';
+
+  @override
+  String get referralCopied => 'کۆدەکە کۆپی کرا';
+
+  @override
+  String get referralShareButton => 'بڵاوکردنەوەی بانگهێشت';
+
+  @override
+  String referralShareText(String code, String link) {
+    return 'Qreach SmartTag تاقی بکەرەوە: ستیکەرێکی زیرەک لەسەر ئۆتۆمبێلەکەت کە پەیام دەگەیەنێت بەبێ ئاشکراکردنی ژمارەکەت. دوای دامەزراندنی ئەپەکە کۆدی بانگهێشتی من بنووسە $code\n$link';
+  }
+
+  @override
+  String get referralStatInvited => 'بانگهێشتکراوان';
+
+  @override
+  String get referralStatSubscribed => 'ئابوونەبوون';
+
+  @override
+  String get referralStatDays => 'ڕۆژی بێبەرامبەر';
+
+  @override
+  String get referralHaveCode => 'کۆدی بانگهێشتی هاوڕێیەکم هەیە';
+
+  @override
+  String get referralCodeField => 'کۆدی بانگهێشت';
+
+  @override
+  String get referralApply => 'پشتڕاستکردنەوەی کۆد';
+
+  @override
+  String get referralApplied =>
+      'کۆدی بانگهێشت پاشەکەوت کرا. کاتێک ئابوونە دەبیت هاوڕێکەت پاداشتەکەی وەردەگرێت.';
+
+  @override
+  String get referralDisabledNote => 'بانگهێشتکردن ئێستا ڕاگیراوە.';
+
+  @override
+  String get referralErrInvalid =>
+      'کۆدی بانگهێشت دروست نییە. پشتڕاستی بکەرەوە و دووبارە هەوڵ بدەرەوە.';
+
+  @override
+  String get referralErrSelf => 'ناتوانیت کۆدی بانگهێشتی خۆت بەکاربهێنیت.';
+
+  @override
+  String get referralErrAlready => 'پێشتر کۆدی بانگهێشتت داخڵ کردووە.';
+
+  @override
+  String get referralErrNotNew =>
+      'کۆدی بانگهێشت بۆ ئەو کەسانەیە کە هێشتا ئابوونە نەبوون.';
+
+  @override
+  String get referralErrUnavailable => 'بانگهێشتکردن ئێستا بەردەست نییە.';
+
+  @override
   String get cancelAnnualPlan => 'هەڵوەشاندنەوەی ئابوونەی ساڵانە';
 
   @override

@@ -554,6 +554,82 @@ class AppLocalizationsEn extends AppLocalizations {
       'Your free trial has ended. Subscribe to Plus to keep using its features.';
 
   @override
+  String get referralTitle => 'Invite a friend';
+
+  @override
+  String referralHeadline(String days) {
+    return 'Invite a friend and get $days free days';
+  }
+
+  @override
+  String referralBody(String days) {
+    return 'Share your code. When your friend subscribes for the first time, $days days of Plus are added to your plan.';
+  }
+
+  @override
+  String get referralTileBody => 'Invite a friend and earn free days of Plus';
+
+  @override
+  String get referralYourCode => 'Your invite code';
+
+  @override
+  String get referralCopy => 'Copy code';
+
+  @override
+  String get referralCopied => 'Code copied';
+
+  @override
+  String get referralShareButton => 'Share invitation';
+
+  @override
+  String referralShareText(String code, String link) {
+    return 'Try Qreach SmartTag: a smart tag on your vehicle that delivers messages without revealing your number. After installing the app, enter my invite code $code\n$link';
+  }
+
+  @override
+  String get referralStatInvited => 'Invited';
+
+  @override
+  String get referralStatSubscribed => 'Subscribed';
+
+  @override
+  String get referralStatDays => 'Free days';
+
+  @override
+  String get referralHaveCode => 'I have an invite code from a friend';
+
+  @override
+  String get referralCodeField => 'Invite code';
+
+  @override
+  String get referralApply => 'Confirm code';
+
+  @override
+  String get referralApplied =>
+      'Invite code saved. When you subscribe, your friend gets their reward.';
+
+  @override
+  String get referralDisabledNote => 'Invitations are paused right now.';
+
+  @override
+  String get referralErrInvalid =>
+      'The invite code is not correct. Check it and try again.';
+
+  @override
+  String get referralErrSelf => 'You cannot use your own invite code.';
+
+  @override
+  String get referralErrAlready => 'You already entered an invite code.';
+
+  @override
+  String get referralErrNotNew =>
+      'Invite codes are for people who have not subscribed yet.';
+
+  @override
+  String get referralErrUnavailable =>
+      'Invitations are not available right now.';
+
+  @override
   String get cancelAnnualPlan => 'Cancel annual subscription';
 
   @override

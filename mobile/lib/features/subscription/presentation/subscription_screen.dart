@@ -81,6 +81,8 @@ class SubscriptionScreen extends ConsumerWidget {
               ],
               const SizedBox(height: AppSpacing.md),
               FadeSlideIn(index: 1, child: const _VoucherEntry()),
+              const SizedBox(height: AppSpacing.md),
+              FadeSlideIn(index: 1, child: const _ReferralEntry()),
               const SizedBox(height: AppSpacing.xl),
               FadeSlideIn(
                 index: 1,
@@ -558,6 +560,47 @@ class _TrialCardState extends ConsumerState<_TrialCard> {
             loading: _busy,
             onPressed: _busy ? null : _start,
           ),
+        ],
+      ),
+    );
+  }
+}
+
+/// The way in to "invite a friend": a tile under the voucher entry.
+class _ReferralEntry extends StatelessWidget {
+  const _ReferralEntry();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return AppCard(
+      onTap: () => context.push('/referral'),
+      child: Row(
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: AppColors.brandYellow.withValues(alpha: 0.25),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Icon(Icons.card_giftcard_rounded, color: AppColors.ink900),
+          ),
+          const SizedBox(width: AppSpacing.md),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(l10n.referralTitle,
+                    style: const TextStyle(fontWeight: FontWeight.w700)),
+                const SizedBox(height: 2),
+                Text(l10n.referralTileBody,
+                    style: TextStyle(color: AppColors.ink500, fontSize: 12.5)),
+              ],
+            ),
+          ),
+          Icon(Icons.chevron_right_rounded, color: AppColors.ink300),
         ],
       ),
     );

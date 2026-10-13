@@ -146,15 +146,23 @@ class TrialAndPlanLanguagesTest extends TestCase
         $this->assertTrue($subscription->isInGrace() === false);
     }
 
-    public function test_trials_get_no_renewal_reminders(): void
+    public function test_a_trial_gets_one_ending_tomorrow_reminder_and_no_renewal_reminders(): void
     {
         $user = User::factory()->create();
         $this->actingAs($user, 'sanctum')->postJson('/api/v1/subscription/trial')->assertOk();
-        $this->travel(6)->days(); // one day left
 
-        $sent = app(SubscriptionReminders::class)->run();
+        // Day 3 of 7: nothing yet.
+        $this->travel(3)->days();
+        $this->assertSame([], app(SubscriptionReminders::class)->run());
 
-        $this->assertSame([], $sent);
+        // Less than a day left: exactly one "ends tomorrow" notice, then never again.
+        $this->travelTo(now()->addDays(3)->addHours(2));
+        $this->assertSame(['trial_ending' => 1], app(SubscriptionReminders::class)->run());
+        $this->assertSame([], app(SubscriptionReminders::class)->run());
+
+        $note = $user->notifications()->latest()->first();
+        $this->assertSame('trial_ending', $note->data['action_type']);
+        $this->assertStringContainsString('غدًا', $note->data['title']);
     }
 
     public function test_starting_the_trial_twice_in_a_row_is_refused(): void

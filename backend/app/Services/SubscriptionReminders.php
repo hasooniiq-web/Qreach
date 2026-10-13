@@ -53,7 +53,43 @@ class SubscriptionReminders
                 }
             });
 
+        $this->remindTrials($sent);
+
         return $sent;
+    }
+
+    /**
+     * A free trial ending within a day: one "your trial ends tomorrow" push, with the
+     * way to subscribe. Trials get no other reminders and no grace week.
+     *
+     * @param  array<string, int>  $sent
+     */
+    private function remindTrials(array &$sent): void
+    {
+        Subscription::query()
+            ->with(['user', 'plan'])
+            ->where('status', 'trialing')
+            ->whereNotNull('current_period_ends_at')
+            ->where('current_period_ends_at', '>', now())
+            ->where('current_period_ends_at', '<=', now()->addDay())
+            ->orderBy('id')
+            ->chunkById(200, function ($subscriptions) use (&$sent) {
+                foreach ($subscriptions as $subscription) {
+                    if (! $subscription->user || ! $subscription->plan) {
+                        continue;
+                    }
+
+                    // A trial of a day or less is already "ending tomorrow" the moment it starts.
+                    $started = $subscription->current_period_starts_at;
+                    if ($started && $started->diffInDays($subscription->current_period_ends_at) < 2) {
+                        continue;
+                    }
+
+                    if ($this->send($subscription, 'trial_ending')) {
+                        $sent['trial_ending'] = ($sent['trial_ending'] ?? 0) + 1;
+                    }
+                }
+            });
     }
 
     /** The one reminder that should go out for this subscription now, if any. */

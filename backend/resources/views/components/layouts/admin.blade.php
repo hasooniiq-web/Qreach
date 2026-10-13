@@ -33,6 +33,7 @@
             ],
             'التفاعل' => [
                 ['icon' => 'contact', 'label' => 'طلبات التواصل', 'route' => 'admin.contact-requests.index', 'badge' => 'contact_requests', 'permission' => 'contact_requests.view'],
+                ['icon' => 'contact', 'label' => 'رسائل الموقع', 'route' => 'admin.site-messages.index', 'badge' => 'site_messages', 'permission' => 'contact_requests.view'],
                 ['icon' => 'warning', 'label' => 'التنبيهات الطارئة', 'route' => 'admin.emergencies.index', 'permission' => 'emergency.view'],
             ],
             'التحليلات' => [
@@ -76,6 +77,7 @@
             'admin.tags' => ['رموز QR و NFC', 'admin.tags.index'],
             'admin.tag-batches' => ['دفعات الرموز', 'admin.tag-batches.index'],
             'admin.contact-requests' => ['طلبات التواصل', 'admin.contact-requests.index'],
+            'admin.site-messages' => ['رسائل الموقع', 'admin.site-messages.index'],
             'admin.emergencies' => ['التنبيهات الطارئة', 'admin.emergencies.index'],
             'admin.analytics' => ['التحليلات', 'admin.analytics.index'],
             'admin.reports' => ['التقارير', 'admin.reports.index'],
@@ -112,6 +114,7 @@
         // What needs attention, for the bell.
         $alerts = [
             'contact_requests' => \App\Models\ContactRequest::where('status', 'new')->count(),
+            'site_messages' => \App\Models\SiteMessage::where('status', 'new')->count(),
             'upgrade_requests' => \App\Models\PlanUpgradeRequest::where('status', 'pending')->count(),
             'security' => \App\Models\SecurityEvent::where('resolved', false)->whereIn('severity', ['warning', 'critical'])->count(),
         ];
@@ -207,6 +210,7 @@
                             @php
                                 $items = [
                                     ['contact_requests', 'طلبات تواصل جديدة', 'contact', route('admin.contact-requests.index', ['status' => 'new'])],
+                                    ['site_messages', 'رسائل جديدة من الموقع', 'contact', route('admin.site-messages.index', ['status' => 'new'])],
                                     ['upgrade_requests', 'طلبات ترقية بانتظار المراجعة', 'star', route('admin.subscriptions.requests')],
                                     ['security', 'أحداث أمنية غير محلولة', 'shield', route('admin.security.index')],
                                 ];

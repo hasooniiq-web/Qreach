@@ -494,6 +494,11 @@ class ProfileScreen extends ConsumerWidget {
                   onTap: () => context.push('/subscription'),
                 ),
                 SettingsRow(
+                  icon: Icons.card_giftcard_rounded,
+                  label: l10n.referralTitle,
+                  onTap: () => context.push('/referral'),
+                ),
+                SettingsRow(
                   icon: Icons.language,
                   label: l10n.language,
                   value: l10n.languageName,

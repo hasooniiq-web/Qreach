@@ -1,7 +1,7 @@
 name: qreach_smarttag
 description: "Qreach SmartTag — customer mobile app"
 publish_to: 'none'
-version: 0.1.0+24
+version: 0.1.0+25
 
 environment:
   sdk: ^3.5.0
@@ -53,6 +53,7 @@ dependencies:
   # password on each app open.
   local_auth: ^2.3.0
   flutter_native_contact_picker: ^0.0.12
+  share_plus: ^12.0.2
 
 dev_dependencies:
   flutter_test:

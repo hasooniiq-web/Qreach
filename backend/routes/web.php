@@ -30,8 +30,19 @@ use App\Http\Controllers\Admin\PaymentGatewayController as AdminPaymentGatewayCo
 use App\Http\Controllers\Public\ScanController;
 use Illuminate\Support\Facades\Route;
 
-Route::redirect('/', '/admin/login');
+// Public site: the landing page and the reseller's batch look-up (ar / en / ckb).
+Route::middleware([\App\Http\Middleware\SetPublicLocale::class])->group(function () {
+    Route::get('/', \App\Http\Controllers\Public\LandingController::class)
+        ->middleware('throttle:public-scan')->name('landing');
 
+    Route::post('contact', [\App\Http\Controllers\Public\SiteMessageController::class, 'store'])
+        ->middleware('throttle:contact-form')->name('site.contact');
+
+    Route::get('reseller', [\App\Http\Controllers\Public\ResellerPortalController::class, 'form'])
+        ->middleware('throttle:public-scan')->name('reseller.form');
+    Route::post('reseller', [\App\Http\Controllers\Public\ResellerPortalController::class, 'lookup'])
+        ->middleware('throttle:6,1')->name('reseller.lookup');
+});
 // Pages a payment provider (or the customer's browser returning from it) lands on.
 // Display only: a payment's outcome is only ever set from a verified notification.
 Route::prefix('pay')->name('payments.')->group(function () {
@@ -149,6 +160,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
                     Route::post('/', [AdminVoucherController::class, 'store'])->name('store');
                     Route::put('batches/{voucherBatch}/recipient', [AdminVoucherController::class, 'updateRecipient'])->name('recipient');
                     Route::post('batches/{voucherBatch}/bill', [AdminVoucherController::class, 'bill'])->name('bill');
+                    Route::post('batches/{voucherBatch}/portal-code', [AdminVoucherController::class, 'rotatePortalCode'])->name('portal-code');
                 });
                 Route::middleware('admin.permission:vouchers.view')->group(function () {
                     Route::get('/', [AdminVoucherController::class, 'index'])->name('index');
@@ -197,6 +209,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
                 Route::get('subscriptions', [SubscriptionController::class, 'index'])->name('subscriptions.index');
                 Route::get('subscriptions/requests', [SubscriptionController::class, 'requests'])->name('subscriptions.requests');
                 Route::get('plans', [PlanController::class, 'index'])->name('plans.index');
+                Route::get('referrals', [\App\Http\Controllers\Admin\ReferralController::class, 'index'])->name('referrals.index');
             });
             Route::middleware('admin.permission:subscriptions.manage')->group(function () {
                 Route::post('subscriptions/requests/{upgradeRequest}/approve', [SubscriptionController::class, 'approve'])->name('subscriptions.requests.approve');
@@ -250,6 +263,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
                 Route::get('contact-requests/{contactRequest}', [ContactRequestController::class, 'show'])->name('contact-requests.show');
                 Route::get('contact-requests/{contactRequest}/messages/{message}/image', [ContactRequestController::class, 'messageImage'])->name('contact-requests.message-image');
             });
+            Route::middleware('admin.permission:contact_requests.view')->group(function () {
+                Route::get('site-messages', [\App\Http\Controllers\Admin\SiteMessageController::class, 'index'])->name('site-messages.index');
+            });
+            Route::post('site-messages/{siteMessage}/read', [\App\Http\Controllers\Admin\SiteMessageController::class, 'markRead'])
+                ->middleware('admin.permission:contact_requests.respond')->name('site-messages.read');
             Route::post('contact-requests/{contactRequest}/close', [ContactRequestController::class, 'close'])
                 ->middleware('admin.permission:contact_requests.respond')->name('contact-requests.close');
 

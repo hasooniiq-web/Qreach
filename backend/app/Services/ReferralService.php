@@ -1,0 +1,206 @@
+<?php
+
+namespace App\Services;
+
+use App\Exceptions\ReferralException;
+use App\Models\Referral;
+use App\Models\Subscription;
+use App\Models\SystemSetting;
+use App\Models\User;
+use App\Notifications\ReferralRewardNotification;
+use Illuminate\Database\UniqueConstraintViolationException;
+use Illuminate\Support\Facades\DB;
+
+/**
+ * Invite a friend. Every customer has a personal code. A friend who is new to paid
+ * plans enters it once; when that friend makes a first paid activation (an electronic
+ * payment or a voucher — a free trial does not count), the inviter is given free days
+ * of Plus. One reward per invited friend, and a cap per inviter.
+ */
+class ReferralService
+{
+    /** Crockford base-32: no I, L, O, U, so a code read aloud or from a screenshot survives. */
+    private const ALPHABET = '0123456789ABCDEFGHJKMNPQRSTVWXYZ';
+
+    private const CODE_LENGTH = 8;
+
+    /** Days given to the inviter per friend; 0 switches the programme off. */
+    public function rewardDays(): int
+    {
+        return max(0, (int) SystemSetting::get('referral_reward_days', 30));
+    }
+
+    /** How many friends can earn one inviter a reward. */
+    public function maxRewards(): int
+    {
+        return max(0, (int) SystemSetting::get('referral_max_rewards', 12));
+    }
+
+    /** The customer's own code, made on first use. */
+    public function codeFor(User $user): string
+    {
+        if ($user->referral_code) {
+            return $user->referral_code;
+        }
+
+        for ($attempt = 0; $attempt < 8; $attempt++) {
+            $code = $this->randomCode();
+
+            try {
+                $updated = User::whereKey($user->id)->whereNull('referral_code')->update(['referral_code' => $code]);
+            } catch (UniqueConstraintViolationException) {
+                continue; // another customer got this code first
+            }
+
+            $user->referral_code = $updated ? $code : (string) User::whereKey($user->id)->value('referral_code');
+
+            return $user->referral_code;
+        }
+
+        throw new \RuntimeException('Could not allocate a referral code.');
+    }
+
+    /** "ab12-cd34" / "ab12 cd34" / lowercase / O-for-zero → the stored form, or null when it cannot be a code. */
+    public static function normalize(string $input): ?string
+    {
+        $code = strtoupper((string) preg_replace('/[\s\-]+/', '', $input));
+        $code = strtr($code, ['O' => '0', 'I' => '1', 'L' => '1']);
+
+        return preg_match('/^['.self::ALPHABET.']{'.self::CODE_LENGTH.'}$/', $code) === 1 ? $code : null;
+    }
+
+    public static function format(string $code): string
+    {
+        return substr($code, 0, 4).'-'.substr($code, 4);
+    }
+
+    /** Why this customer cannot enter an invite code right now, or null when they can. */
+    public function blockedReason(User $user): ?string
+    {
+        if ($this->rewardDays() === 0) {
+            return 'disabled';
+        }
+
+        if (Referral::where('referred_id', $user->id)->exists()) {
+            return 'already';
+        }
+
+        // The programme brings in new payers: someone who already paid cannot be "invited".
+        $paid = Subscription::where('user_id', $user->id)
+            ->where('status', '!=', 'trialing')
+            ->whereHas('plan', fn ($q) => $q->where('price_cents', '>', 0))
+            ->exists();
+
+        return $paid ? 'not_new' : null;
+    }
+
+    /**
+     * @throws ReferralException
+     */
+    public function apply(User $user, string $input): Referral
+    {
+        if ($reason = $this->blockedReason($user)) {
+            throw match ($reason) {
+                'already' => new ReferralException('أدخلت رمز دعوة من قبل، ولا يمكن إدخال رمز ثانٍ.', 'REFERRAL_ALREADY', 409),
+                'not_new' => new ReferralException('رمز الدعوة للمستخدمين الذين لم يشتركوا بعد.', 'REFERRAL_NOT_NEW', 409),
+                default => new ReferralException('الدعوات غير متاحة حاليًا.', 'REFERRAL_UNAVAILABLE', 422),
+            };
+        }
+
+        $code = self::normalize($input);
+        $inviter = $code ? User::where('referral_code', $code)->where('status', 'active')->first() : null;
+
+        if (! $inviter) {
+            throw new ReferralException('رمز الدعوة غير صحيح. تأكد من الرمز وأعد المحاولة.', 'REFERRAL_INVALID', 422);
+        }
+
+        if ($inviter->id === $user->id) {
+            throw new ReferralException('لا يمكنك استخدام رمز دعوتك أنت.', 'REFERRAL_SELF', 422);
+        }
+
+        // A invited B, so B's code cannot be used by A.
+        if (Referral::where('referrer_id', $user->id)->where('referred_id', $inviter->id)->exists()) {
+            throw new ReferralException('رمز الدعوة غير صحيح. تأكد من الرمز وأعد المحاولة.', 'REFERRAL_INVALID', 422);
+        }
+
+        try {
+            $referral = Referral::create(['referrer_id' => $inviter->id, 'referred_id' => $user->id]);
+        } catch (UniqueConstraintViolationException) {
+            throw new ReferralException('أدخلت رمز دعوة من قبل، ولا يمكن إدخال رمز ثانٍ.', 'REFERRAL_ALREADY', 409);
+        }
+
+        AuditLogger::log('referral.applied', 'customer', $user->id, 'Referral', $referral->id, 'success', [
+            'referrer_id' => $inviter->id,
+        ]);
+
+        return $referral;
+    }
+
+    /**
+     * Called right after a customer's paid activation. Pays the inviter once for this
+     * friend; later renewals pay nothing. Safe to call for anyone — most are not invited.
+     */
+    public function rewardInviter(User $referred, SubscriptionManager $subscriptions): ?Referral
+    {
+        $days = $this->rewardDays();
+        if ($days === 0) {
+            return null;
+        }
+
+        return DB::transaction(function () use ($referred, $subscriptions, $days) {
+            $referral = Referral::where('referred_id', $referred->id)
+                ->where('status', 'pending')
+                ->lockForUpdate()
+                ->first();
+
+            if (! $referral) {
+                return null;
+            }
+
+            $rewarded = Referral::where('referrer_id', $referral->referrer_id)->where('status', 'rewarded')->count();
+            if ($rewarded >= $this->maxRewards()) {
+                $referral->update(['status' => 'capped']);
+
+                return $referral;
+            }
+
+            $inviter = User::find($referral->referrer_id);
+            if (! $inviter || $inviter->status !== 'active') {
+                return null;
+            }
+
+            $subscriptions->grantReward($inviter, $days);
+            $referral->update(['status' => 'rewarded', 'reward_days' => $days, 'rewarded_at' => now()]);
+
+            AuditLogger::log('referral.rewarded', 'system', null, 'Referral', $referral->id, 'success', [
+                'referrer_id' => $inviter->id, 'referred_id' => $referred->id, 'days' => $days,
+            ]);
+
+            $inviter->notify(new ReferralRewardNotification($days));
+
+            return $referral;
+        });
+    }
+
+    /** @return array{invited: int, rewarded: int, earned_days: int} */
+    public function stats(User $user): array
+    {
+        $rows = Referral::where('referrer_id', $user->id)->get(['status', 'reward_days']);
+
+        return [
+            'invited' => $rows->count(),
+            'rewarded' => $rows->where('status', 'rewarded')->count(),
+            'earned_days' => (int) $rows->where('status', 'rewarded')->sum('reward_days'),
+        ];
+    }
+
+    private function randomCode(): string
+    {
+        $out = '';
+        for ($i = 0; $i < self::CODE_LENGTH; $i++) {
+            $out .= self::ALPHABET[random_int(0, 31)];
+        }
+
+        return $out;
+    }
+}

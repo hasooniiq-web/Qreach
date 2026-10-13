@@ -33,6 +33,35 @@
         <x-kpi label="ملغاة" :value="$counts['revoked']" icon="warning" />
     </div>
 
+    {{-- What the reseller needs to follow this batch themselves (counts only, no serials). --}}
+    <x-card padding="p-5" class="mb-6">
+        <h3 class="mb-1 text-sm font-semibold text-ink-900">بوابة الموزّع</h3>
+        <p class="mb-3 text-sm text-ink-500">يدخل الموزّع الرابط أدناه ويكتب رقم الدفعة ورمز الاطلاع ليرى كم قسيمة فُعّلت وكم بقي — دون أرقام القسائم ودون بيانات المستخدمين.</p>
+        <dl class="grid gap-3 text-sm sm:grid-cols-3">
+            <div>
+                <dt class="text-xs text-ink-400">الرابط</dt>
+                <dd class="select-all break-all font-medium text-ink-900" dir="ltr" style="text-align: start">{{ url('/reseller') }}</dd>
+            </div>
+            <div>
+                <dt class="text-xs text-ink-400">رقم الدفعة</dt>
+                <dd class="select-all font-medium tabular-nums text-ink-900" dir="ltr" style="text-align: start">{{ $batch->batch_code }}</dd>
+            </div>
+            <div>
+                <dt class="text-xs text-ink-400">رمز الاطلاع</dt>
+                <dd class="select-all font-semibold tabular-nums tracking-widest text-ink-900" dir="ltr" style="text-align: start">{{ $batch->portalCodeFormatted() }}</dd>
+            </div>
+        </dl>
+        @if ($canEdit)
+            <form method="POST" action="{{ route('admin.vouchers.portal-code', $batch) }}" class="mt-4"
+                  data-confirm-title="إنشاء رمز اطلاع جديد؟"
+                  data-confirm="سيتوقف الرمز الحالي عن العمل فورًا، وعليك إرسال الرمز الجديد للموزّع."
+                  data-confirm-label="إنشاء رمز جديد">
+                @csrf
+                <button class="text-sm text-ink-500 hover:text-ink-900 hover:underline">إنشاء رمز اطلاع جديد</button>
+            </form>
+        @endif
+    </x-card>
+
     <x-card padding="p-5" class="mb-6">
         <h3 class="mb-3 text-sm font-semibold text-ink-900">البيع والمستحقات</h3>
         @if ($sale)

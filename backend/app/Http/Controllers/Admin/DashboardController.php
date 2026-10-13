@@ -26,6 +26,7 @@ class DashboardController extends Controller
     {
         return response()->json([
             'contact_requests' => ContactRequest::where('status', 'new')->count(),
+            'site_messages' => \App\Models\SiteMessage::where('status', 'new')->count(),
             'upgrade_requests' => PlanUpgradeRequest::where('status', 'pending')->count(),
             'security' => SecurityEvent::where('resolved', false)->whereIn('severity', ['warning', 'critical'])->count(),
         ])->header('Cache-Control', 'no-store');

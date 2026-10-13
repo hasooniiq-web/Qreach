@@ -318,6 +318,16 @@ class VoucherController extends Controller
         return back()->with('status', 'سُجّل على حساب «'.$customer->name.'» مبلغ '.number_format($entry->amount).' د.ع.');
     }
 
+    /** A new access code for the reseller look-up page (the old one stops working at once). */
+    public function rotatePortalCode(Request $request, VoucherBatch $voucherBatch): RedirectResponse
+    {
+        $voucherBatch->update(['portal_code' => VoucherBatch::newPortalCode()]);
+
+        AuditLogger::log('voucher.portal_code_rotated', 'admin', $request->user('admin')->id, 'VoucherBatch', $voucherBatch->id, 'success', [], $request);
+
+        return back()->with('status', 'أُنشئ رمز اطلاع جديد للدفعة. الرمز القديم لم يعد يعمل.');
+    }
+
     public function updateRecipient(Request $request, VoucherBatch $voucherBatch): RedirectResponse
     {
         $data = $request->validate(['recipient' => ['nullable', 'string', 'max:160']], [], ['recipient' => 'الجهة']);

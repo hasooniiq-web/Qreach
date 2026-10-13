@@ -21,6 +21,7 @@ import '../../features/shell/app_shell.dart';
 import '../../features/subscription/presentation/checkout_screen.dart';
 import '../../features/subscription/presentation/payment_status_screen.dart';
 import '../../features/subscription/presentation/subscription_screen.dart';
+import '../../features/referral/presentation/referral_screen.dart';
 import '../../features/subscription/presentation/voucher_screen.dart';
 import '../../features/tags/presentation/scan_screen.dart';
 import '../../features/vehicles/presentation/vehicle_detail_screen.dart';
@@ -169,6 +170,10 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/subscription/payment/:id',
         pageBuilder: animatedPage((context, state) =>
             PaymentStatusScreen(paymentId: state.pathParameters['id']!)),
+      ),
+      GoRoute(
+        path: '/referral',
+        pageBuilder: animatedPage((context, state) => const ReferralScreen()),
       ),
       GoRoute(
         path: '/subscription/voucher',

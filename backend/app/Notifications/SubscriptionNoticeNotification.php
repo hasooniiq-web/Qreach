@@ -13,7 +13,7 @@ use Illuminate\Notifications\Notification;
 class SubscriptionNoticeNotification extends Notification
 {
     /**
-     * @param  string  $kind  before_30 | before_10 | before_1 | expired | downgraded
+     * @param  string  $kind  before_30 | before_10 | before_1 | expired | downgraded | trial_ending
      */
     public function __construct(
         private readonly string $kind,
@@ -36,6 +36,10 @@ class SubscriptionNoticeNotification extends Notification
         $until = $this->endsOn;
 
         return match ($this->kind) {
+            'trial_ending' => [
+                'title' => "تنتهي تجربتك المجانية لباقة {$plan} غدًا",
+                'body' => "تنتهي في {$until}. اشترك الآن لتبقى مزاياك تعمل دون انقطاع، أو ستعود إلى الباقة الأساسية.",
+            ],
             'expired' => [
                 'title' => "انتهى اشتراك {$plan}",
                 'body' => "لديك {$this->graceDays} أيام إضافية تبقى فيها المزايا تعمل. جدّد الآن وستبقى بياناتك كما هي.",
