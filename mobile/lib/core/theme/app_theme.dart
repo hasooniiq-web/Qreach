@@ -118,6 +118,11 @@ abstract final class AppTheme {
         shape: RoundedRectangleBorder(borderRadius: AppRadius.rLg),
         backgroundColor: AppColors.surface,
         surfaceTintColor: Colors.transparent,
+        // Every pop-up has the same 16 side margin as the cards on the page, and spans the
+        // whole width left between them: Material would otherwise size a dialog to its
+        // content, leaving wide, uneven margins.
+        insetPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
+        constraints: const BoxConstraints(minWidth: double.infinity),
       ),
       bottomSheetTheme: BottomSheetThemeData(
         backgroundColor: AppColors.surface,
