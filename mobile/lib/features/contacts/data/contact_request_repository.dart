@@ -37,6 +37,22 @@ class ContactRequestRepository {
     return ContactRequestModel.fromJson(response.data!);
   }
 
+  /// Either side reports the other; it goes to the Qreach team, never to them.
+  Future<void> report(String id, String reason, {String? details}) async {
+    await _client.dio.post('/contact-requests/$id/report', data: {
+      'reason': reason,
+      if (details != null && details.isNotEmpty) 'details': details,
+    });
+  }
+
+  /// The person who started it from the app shows or hides their name.
+  Future<ContactRequestModel> setIdentityVisible(String id, bool visible) async {
+    final response = await _client.dio.put<Map<String, dynamic>>(
+        '/contact-requests/$id/identity',
+        data: {'visible': visible});
+    return ContactRequestModel.fromJson(response.data!);
+  }
+
   Future<void> markRead(String id) async {
     await _client.dio.put('/contact-requests/$id/read');
   }

@@ -1600,4 +1600,128 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get contactWithOwnerSubtitle =>
       'A conversation you started by scanning the vehicle code';
+
+  @override
+  String get threadMenuShowIdentity => 'Show my identity to the owner';
+
+  @override
+  String get threadMenuHideIdentity => 'Hide my identity';
+
+  @override
+  String get threadMenuReport => 'Report a problem';
+
+  @override
+  String get identityShownSnack => 'Your name is now visible to the owner.';
+
+  @override
+  String get identityHiddenSnack =>
+      'Your name is hidden. The owner only sees that you are a verified account.';
+
+  @override
+  String get badgeTrusted => 'Trusted user';
+
+  @override
+  String get badgeVerified => 'Phone-verified account';
+
+  @override
+  String get senderFromApp => 'From the Qreach app';
+
+  @override
+  String get reportTitle => 'Report a problem';
+
+  @override
+  String get reportSubtitle =>
+      'The report goes to the Qreach team; the other side is not told.';
+
+  @override
+  String get reportReasonHarassment => 'Harassment';
+
+  @override
+  String get reportReasonSpam => 'Repeated spam';
+
+  @override
+  String get reportReasonAbuse => 'Abuse or offensive language';
+
+  @override
+  String get reportReasonScam => 'Scam';
+
+  @override
+  String get reportReasonOther => 'Other';
+
+  @override
+  String get reportDetailsHint => 'Details (optional)';
+
+  @override
+  String get reportSent => 'Your report reached the Qreach team.';
+
+  @override
+  String get supportTitle => 'Technical support';
+
+  @override
+  String get supportRowValue => 'WhatsApp and tickets';
+
+  @override
+  String get supportWhatsappTitle => 'Chat on WhatsApp';
+
+  @override
+  String get supportNoNumbers =>
+      'No WhatsApp numbers right now. Open a ticket and we will answer.';
+
+  @override
+  String get supportOpenTicket => 'Open a new ticket';
+
+  @override
+  String get supportMyTickets => 'My tickets';
+
+  @override
+  String get supportNoTickets => 'No tickets yet.';
+
+  @override
+  String get supportNewTitle => 'New ticket';
+
+  @override
+  String get supportCategory => 'Type of problem';
+
+  @override
+  String get supportCatGeneral => 'General question';
+
+  @override
+  String get supportCatAccount => 'Account';
+
+  @override
+  String get supportCatVehicle => 'Vehicle and code';
+
+  @override
+  String get supportCatPayment => 'Payment and subscription';
+
+  @override
+  String get supportCatBug => 'A problem in the app';
+
+  @override
+  String get supportCatOther => 'Other';
+
+  @override
+  String get supportSubject => 'Subject';
+
+  @override
+  String get supportBody => 'Describe the problem';
+
+  @override
+  String get supportSend => 'Send ticket';
+
+  @override
+  String get supportStatusOpen => 'Waiting for support';
+
+  @override
+  String get supportStatusAnswered => 'Answered';
+
+  @override
+  String get supportStatusClosed => 'Closed';
+
+  @override
+  String get supportClosedNote =>
+      'This ticket is closed. Open a new one if you need help.';
+
+  @override
+  String get supportStaff => 'Support';
 }

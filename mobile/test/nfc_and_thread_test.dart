@@ -57,6 +57,11 @@ class FakeContactRepository implements ContactRequestRepository {
       ContactRequestFeed(items: [model], unreadCount: 0);
 
   @override
+  Future<void> report(String id, String reason, {String? details}) async {}
+  @override
+  Future<ContactRequestModel> setIdentityVisible(String id, bool visible) async =>
+      fetchOne(id);
+  @override
   Future<void> markRead(String id) async {}
 
   @override

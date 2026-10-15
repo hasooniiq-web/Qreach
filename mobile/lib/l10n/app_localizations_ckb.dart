@@ -1604,4 +1604,128 @@ class AppLocalizationsCkb extends AppLocalizations {
   @override
   String get contactWithOwnerSubtitle =>
       'گفتوگۆیەک کە دوای سکانی کۆدی ئۆتۆمبێلەکە دەستت پێکرد';
+
+  @override
+  String get threadMenuShowIdentity => 'ناسنامەکەم نیشانی خاوەنەکە بدە';
+
+  @override
+  String get threadMenuHideIdentity => 'ناسنامەکەم بشارەوە';
+
+  @override
+  String get threadMenuReport => 'ڕاپۆرتی کێشە';
+
+  @override
+  String get identityShownSnack => 'ناوەکەت بۆ خاوەنەکە دیارە.';
+
+  @override
+  String get identityHiddenSnack =>
+      'ناوەکەت شاردرایەوە. خاوەنەکە تەنها دەبینێت هەژمارێکی پشتڕاستکراویت.';
+
+  @override
+  String get badgeTrusted => 'بەکارهێنەری متمانەپێکراو';
+
+  @override
+  String get badgeVerified => 'هەژمارێکی پشتڕاستکراو بە ژمارەی مۆبایل';
+
+  @override
+  String get senderFromApp => 'لە ئەپی Qreach';
+
+  @override
+  String get reportTitle => 'ڕاپۆرتی کێشە';
+
+  @override
+  String get reportSubtitle =>
+      'ڕاپۆرتەکە دەگاتە تیمی Qreach و لایەنەکەی تر نازانێت.';
+
+  @override
+  String get reportReasonHarassment => 'ئازاردان';
+
+  @override
+  String get reportReasonSpam => 'تەنگپێهەڵچنین';
+
+  @override
+  String get reportReasonAbuse => 'جنێودان یان وشەی ناشیرین';
+
+  @override
+  String get reportReasonScam => 'فێڵ';
+
+  @override
+  String get reportReasonOther => 'هۆکارێکی تر';
+
+  @override
+  String get reportDetailsHint => 'وردەکاری (ئارەزوومەندانە)';
+
+  @override
+  String get reportSent => 'ڕاپۆرتەکەت گەیشتە تیمی Qreach.';
+
+  @override
+  String get supportTitle => 'پشتگیری تەکنیکی';
+
+  @override
+  String get supportRowValue => 'واتسئاپ و تکێت';
+
+  @override
+  String get supportWhatsappTitle => 'پەیوەندی لە ڕێگەی واتسئاپ';
+
+  @override
+  String get supportNoNumbers =>
+      'ئێستا هیچ ژمارەیەکی واتسئاپ نییە. تکێتێک بکەرەوە و وەڵامت دەدەینەوە.';
+
+  @override
+  String get supportOpenTicket => 'کردنەوەی تکێتی نوێ';
+
+  @override
+  String get supportMyTickets => 'تکێتەکانم';
+
+  @override
+  String get supportNoTickets => 'هێشتا هیچ تکێتێک نییە.';
+
+  @override
+  String get supportNewTitle => 'تکێتی نوێ';
+
+  @override
+  String get supportCategory => 'جۆری کێشە';
+
+  @override
+  String get supportCatGeneral => 'پرسیاری گشتی';
+
+  @override
+  String get supportCatAccount => 'هەژمار';
+
+  @override
+  String get supportCatVehicle => 'ئۆتۆمبێل و کۆد';
+
+  @override
+  String get supportCatPayment => 'پارەدان و ئابوونە';
+
+  @override
+  String get supportCatBug => 'کێشە لە ئەپەکە';
+
+  @override
+  String get supportCatOther => 'هی تر';
+
+  @override
+  String get supportSubject => 'ناونیشان';
+
+  @override
+  String get supportBody => 'کێشەکە شی بکەرەوە';
+
+  @override
+  String get supportSend => 'ناردنی تکێت';
+
+  @override
+  String get supportStatusOpen => 'چاوەڕێی پشتگیری';
+
+  @override
+  String get supportStatusAnswered => 'وەڵام درایەوە';
+
+  @override
+  String get supportStatusClosed => 'داخراوە';
+
+  @override
+  String get supportClosedNote =>
+      'ئەم تکێتە داخراوە. ئەگەر یارمەتیت دەوێت تکێتێکی نوێ بکەرەوە.';
+
+  @override
+  String get supportStaff => 'پشتگیری';
 }

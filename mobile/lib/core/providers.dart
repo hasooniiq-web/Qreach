@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../features/support/data/support_repository.dart';
 import '../features/scan_contact/data/scan_contact_repository.dart';
 
 import '../features/auth/presentation/auth_controller.dart';
@@ -74,6 +75,10 @@ final subscriptionRepositoryProvider = Provider<SubscriptionRepository>((ref) {
 
 final notificationRepositoryProvider = Provider<NotificationRepository>((ref) {
   return NotificationRepository(ref.watch(apiClientProvider));
+});
+
+final supportRepositoryProvider = Provider<SupportRepository>((ref) {
+  return SupportRepository(ref.watch(apiClientProvider));
 });
 
 final scanContactRepositoryProvider = Provider<ScanContactRepository>((ref) {

@@ -2937,6 +2937,246 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'محادثة بدأتَها بعد مسح رمز المركبة'**
   String get contactWithOwnerSubtitle;
+
+  /// No description provided for @threadMenuShowIdentity.
+  ///
+  /// In ar, this message translates to:
+  /// **'إظهار هويتي للمالك'**
+  String get threadMenuShowIdentity;
+
+  /// No description provided for @threadMenuHideIdentity.
+  ///
+  /// In ar, this message translates to:
+  /// **'إخفاء هويتي'**
+  String get threadMenuHideIdentity;
+
+  /// No description provided for @threadMenuReport.
+  ///
+  /// In ar, this message translates to:
+  /// **'إبلاغ عن مشكلة'**
+  String get threadMenuReport;
+
+  /// No description provided for @identityShownSnack.
+  ///
+  /// In ar, this message translates to:
+  /// **'صار اسمك ظاهرًا للمالك.'**
+  String get identityShownSnack;
+
+  /// No description provided for @identityHiddenSnack.
+  ///
+  /// In ar, this message translates to:
+  /// **'أُخفي اسمك. يرى المالك أنك حساب موثّق فقط.'**
+  String get identityHiddenSnack;
+
+  /// No description provided for @badgeTrusted.
+  ///
+  /// In ar, this message translates to:
+  /// **'مستخدم موثوق'**
+  String get badgeTrusted;
+
+  /// No description provided for @badgeVerified.
+  ///
+  /// In ar, this message translates to:
+  /// **'حساب موثّق برقم هاتف'**
+  String get badgeVerified;
+
+  /// No description provided for @senderFromApp.
+  ///
+  /// In ar, this message translates to:
+  /// **'من تطبيق Qreach'**
+  String get senderFromApp;
+
+  /// No description provided for @reportTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الإبلاغ عن مشكلة'**
+  String get reportTitle;
+
+  /// No description provided for @reportSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'يصل البلاغ إلى فريق Qreach، ولا يعرف الطرف الآخر أنك أبلغت.'**
+  String get reportSubtitle;
+
+  /// No description provided for @reportReasonHarassment.
+  ///
+  /// In ar, this message translates to:
+  /// **'مضايقة'**
+  String get reportReasonHarassment;
+
+  /// No description provided for @reportReasonSpam.
+  ///
+  /// In ar, this message translates to:
+  /// **'إزعاج متكرر'**
+  String get reportReasonSpam;
+
+  /// No description provided for @reportReasonAbuse.
+  ///
+  /// In ar, this message translates to:
+  /// **'إساءة أو ألفاظ نابية'**
+  String get reportReasonAbuse;
+
+  /// No description provided for @reportReasonScam.
+  ///
+  /// In ar, this message translates to:
+  /// **'احتيال'**
+  String get reportReasonScam;
+
+  /// No description provided for @reportReasonOther.
+  ///
+  /// In ar, this message translates to:
+  /// **'سبب آخر'**
+  String get reportReasonOther;
+
+  /// No description provided for @reportDetailsHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'تفاصيل (اختياري)'**
+  String get reportDetailsHint;
+
+  /// No description provided for @reportSent.
+  ///
+  /// In ar, this message translates to:
+  /// **'وصل بلاغك إلى فريق Qreach.'**
+  String get reportSent;
+
+  /// No description provided for @supportTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'الدعم الفني'**
+  String get supportTitle;
+
+  /// No description provided for @supportRowValue.
+  ///
+  /// In ar, this message translates to:
+  /// **'واتساب وتذاكر'**
+  String get supportRowValue;
+
+  /// No description provided for @supportWhatsappTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تواصل عبر واتساب'**
+  String get supportWhatsappTitle;
+
+  /// No description provided for @supportNoNumbers.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد أرقام واتساب حاليًا. افتح تذكرة وسنرد عليك.'**
+  String get supportNoNumbers;
+
+  /// No description provided for @supportOpenTicket.
+  ///
+  /// In ar, this message translates to:
+  /// **'فتح تذكرة جديدة'**
+  String get supportOpenTicket;
+
+  /// No description provided for @supportMyTickets.
+  ///
+  /// In ar, this message translates to:
+  /// **'تذاكري'**
+  String get supportMyTickets;
+
+  /// No description provided for @supportNoTickets.
+  ///
+  /// In ar, this message translates to:
+  /// **'لا توجد تذاكر بعد.'**
+  String get supportNoTickets;
+
+  /// No description provided for @supportNewTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تذكرة جديدة'**
+  String get supportNewTitle;
+
+  /// No description provided for @supportCategory.
+  ///
+  /// In ar, this message translates to:
+  /// **'نوع المشكلة'**
+  String get supportCategory;
+
+  /// No description provided for @supportCatGeneral.
+  ///
+  /// In ar, this message translates to:
+  /// **'استفسار عام'**
+  String get supportCatGeneral;
+
+  /// No description provided for @supportCatAccount.
+  ///
+  /// In ar, this message translates to:
+  /// **'الحساب'**
+  String get supportCatAccount;
+
+  /// No description provided for @supportCatVehicle.
+  ///
+  /// In ar, this message translates to:
+  /// **'المركبة والرمز'**
+  String get supportCatVehicle;
+
+  /// No description provided for @supportCatPayment.
+  ///
+  /// In ar, this message translates to:
+  /// **'الدفع والاشتراك'**
+  String get supportCatPayment;
+
+  /// No description provided for @supportCatBug.
+  ///
+  /// In ar, this message translates to:
+  /// **'مشكلة في التطبيق'**
+  String get supportCatBug;
+
+  /// No description provided for @supportCatOther.
+  ///
+  /// In ar, this message translates to:
+  /// **'أخرى'**
+  String get supportCatOther;
+
+  /// No description provided for @supportSubject.
+  ///
+  /// In ar, this message translates to:
+  /// **'العنوان'**
+  String get supportSubject;
+
+  /// No description provided for @supportBody.
+  ///
+  /// In ar, this message translates to:
+  /// **'اشرح المشكلة'**
+  String get supportBody;
+
+  /// No description provided for @supportSend.
+  ///
+  /// In ar, this message translates to:
+  /// **'إرسال التذكرة'**
+  String get supportSend;
+
+  /// No description provided for @supportStatusOpen.
+  ///
+  /// In ar, this message translates to:
+  /// **'بانتظار الدعم'**
+  String get supportStatusOpen;
+
+  /// No description provided for @supportStatusAnswered.
+  ///
+  /// In ar, this message translates to:
+  /// **'تم الرد'**
+  String get supportStatusAnswered;
+
+  /// No description provided for @supportStatusClosed.
+  ///
+  /// In ar, this message translates to:
+  /// **'مغلقة'**
+  String get supportStatusClosed;
+
+  /// No description provided for @supportClosedNote.
+  ///
+  /// In ar, this message translates to:
+  /// **'أُغلقت هذه التذكرة. افتح تذكرة جديدة إن احتجت مساعدة.'**
+  String get supportClosedNote;
+
+  /// No description provided for @supportStaff.
+  ///
+  /// In ar, this message translates to:
+  /// **'الدعم الفني'**
+  String get supportStaff;
 }
 
 class _AppLocalizationsDelegate

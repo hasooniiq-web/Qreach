@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../features/support/presentation/support_screens.dart';
 import '../../features/scan_contact/presentation/scan_contact_screen.dart';
 import 'package:go_router/go_router.dart';
 
@@ -131,6 +132,19 @@ final routerProvider = Provider<GoRouter>((ref) {
                 builder: (context, state) => const ProfileScreen()),
           ]),
         ],
+      ),
+      GoRoute(
+        path: '/support',
+        pageBuilder: animatedPage((context, state) => const SupportScreen()),
+      ),
+      GoRoute(
+        path: '/support/new',
+        pageBuilder: animatedPage((context, state) => const NewTicketScreen()),
+      ),
+      GoRoute(
+        path: '/support/:id',
+        pageBuilder: animatedPage((context, state) =>
+            SupportThreadScreen(ticketId: state.pathParameters['id']!)),
       ),
       GoRoute(
         path: '/scan',

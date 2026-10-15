@@ -23,8 +23,8 @@ import 'contact_controller.dart';
 
 /// A photo a visitor attached, fetched through the authenticated repository
 /// (never a bare network image) and shown full-screen on tap.
-class _MessageImage extends ConsumerWidget {
-  const _MessageImage({required this.path});
+class MessageImage extends ConsumerWidget {
+  const MessageImage({required this.path});
 
   final String path;
 
@@ -145,6 +145,42 @@ class _ContactThreadScreenState extends ConsumerState<ContactThreadScreen> {
     }
   }
 
+  /// Show / hide my identity (the one who scanned) and report the other side.
+  Future<void> _onMenu(String action, ContactRequestModel thread) async {
+    final l10n = AppLocalizations.of(context)!;
+    final messenger = ScaffoldMessenger.of(context);
+    final repo = ref.read(contactRequestRepositoryProvider);
+
+    if (action == 'identity') {
+      final show = !thread.identityVisible;
+      try {
+        await repo.setIdentityVisible(widget.requestId, show);
+        ref.invalidate(contactThreadProvider(widget.requestId));
+        messenger.showSnackBar(SnackBar(
+            content: Text(show ? l10n.identityShownSnack : l10n.identityHiddenSnack)));
+      } catch (e) {
+        messenger
+            .showSnackBar(SnackBar(content: Text(asApiException(e).message)));
+      }
+      return;
+    }
+
+    if (action == 'report') {
+      final result = await showDialog<(String, String)>(
+        context: context,
+        builder: (_) => const _ReportDialog(),
+      );
+      if (result == null) return;
+      try {
+        await repo.report(widget.requestId, result.$1, details: result.$2);
+        messenger.showSnackBar(SnackBar(content: Text(l10n.reportSent)));
+      } catch (e) {
+        messenger
+            .showSnackBar(SnackBar(content: Text(asApiException(e).message)));
+      }
+    }
+  }
+
   static const _maxImageBytes = 8 * 1024 * 1024;
   static const _allowedExtensions = {'jpg', 'jpeg', 'png', 'webp'};
 
@@ -214,7 +250,16 @@ class _ContactThreadScreenState extends ConsumerState<ContactThreadScreen> {
     final async = ref.watch(contactThreadProvider(widget.requestId));
     final thread = async.valueOrNull;
     final reporter = thread?.isReporter ?? false;
-    final named = !reporter && thread?.visitorName?.isNotEmpty == true;
+    final fromApp = !reporter && (thread?.fromApp ?? false);
+    final named = !reporter && !fromApp && thread?.visitorName?.isNotEmpty == true;
+    // A customer from the app: their name if they chose to show it, else just how far to trust them.
+    final appTitle = fromApp
+        ? (thread!.senderName?.isNotEmpty == true
+            ? thread.senderName!
+            : thread.senderBadge == 'trusted'
+                ? l10n.badgeTrusted
+                : l10n.badgeVerified)
+        : null;
 
     return Scaffold(
       appBar: AppBar(
@@ -236,7 +281,11 @@ class _ContactThreadScreenState extends ConsumerState<ContactThreadScreen> {
                   : Icon(
                       reporter
                           ? Icons.directions_car_outlined
-                          : Icons.person_outline_rounded,
+                          : fromApp
+                              ? (thread!.senderBadge == 'trusted'
+                                  ? Icons.verified_rounded
+                                  : Icons.verified_user_outlined)
+                              : Icons.person_outline_rounded,
                       color: AppColors.brandBlack,
                       size: 22),
             ),
@@ -249,7 +298,8 @@ class _ContactThreadScreenState extends ConsumerState<ContactThreadScreen> {
                   Text(
                       reporter
                           ? (thread!.vehicle ?? l10n.contactWithOwner)
-                          : (named ? thread!.visitorName! : l10n.visitorAnonymous),
+                          : (appTitle ??
+                              (named ? thread!.visitorName! : l10n.visitorAnonymous)),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
@@ -276,6 +326,44 @@ class _ContactThreadScreenState extends ConsumerState<ContactThreadScreen> {
           ],
         ),
         actions: [
+          if (thread != null)
+            PopupMenuButton<String>(
+              tooltip: l10n.threadMenuReport,
+              onSelected: (v) => _onMenu(v, thread),
+              itemBuilder: (context) => [
+                if (reporter)
+                  PopupMenuItem(
+                    value: 'identity',
+                    child: Row(children: [
+                      Icon(
+                          thread.identityVisible
+                              ? Icons.visibility_off_outlined
+                              : Icons.visibility_outlined,
+                          size: 20),
+                      const SizedBox(width: 10),
+                      Flexible(
+                        child: Text(
+                            thread.identityVisible
+                                ? l10n.threadMenuHideIdentity
+                                : l10n.threadMenuShowIdentity,
+                            overflow: TextOverflow.ellipsis),
+                      ),
+                    ]),
+                  ),
+                PopupMenuItem(
+                  value: 'report',
+                  child: Row(children: [
+                    Icon(Icons.flag_outlined,
+                        size: 20, color: AppColors.statusDanger),
+                    const SizedBox(width: 10),
+                    Flexible(
+                      child: Text(l10n.threadMenuReport,
+                          overflow: TextOverflow.ellipsis),
+                    ),
+                  ]),
+                ),
+              ],
+            ),
           if (thread?.visitorPhone?.isNotEmpty == true)
             IconButton(
               tooltip: l10n.callVisitor,
@@ -313,7 +401,7 @@ class _ContactThreadScreenState extends ConsumerState<ContactThreadScreen> {
               key: const ValueKey('data'),
               children: [
                 Expanded(child: _Messages(thread: t, controller: _scroll)),
-                _Composer(
+                MessageComposer(
                   controller: _input,
                   sending: _sending,
                   photo: _picked,
@@ -334,8 +422,8 @@ class _ContactThreadScreenState extends ConsumerState<ContactThreadScreen> {
   }
 }
 
-class _Composer extends StatelessWidget {
-  const _Composer({
+class MessageComposer extends StatelessWidget {
+  const MessageComposer({
     required this.controller,
     required this.sending,
     required this.photo,
@@ -618,7 +706,7 @@ class _Bubble extends ConsumerWidget {
             if (message.imageUrl != null) ...[
               ClipRRect(
                 borderRadius: BorderRadius.circular(14),
-                child: _MessageImage(path: message.imageUrl!),
+                child: MessageImage(path: message.imageUrl!),
               ),
               if (message.body.isNotEmpty) const SizedBox(height: 6),
             ],
@@ -640,6 +728,88 @@ class _Bubble extends ConsumerWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Pick why, add a few words if you like, and send: the report goes to the Qreach team.
+class _ReportDialog extends StatefulWidget {
+  const _ReportDialog();
+
+  @override
+  State<_ReportDialog> createState() => _ReportDialogState();
+}
+
+class _ReportDialogState extends State<_ReportDialog> {
+  String? _reason;
+  final _details = TextEditingController();
+
+  @override
+  void dispose() {
+    _details.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final reasons = {
+      'harassment': l10n.reportReasonHarassment,
+      'spam': l10n.reportReasonSpam,
+      'abuse': l10n.reportReasonAbuse,
+      'scam': l10n.reportReasonScam,
+      'other': l10n.reportReasonOther,
+    };
+
+    return AlertDialog(
+      insetPadding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.lg, vertical: AppSpacing.xl),
+      title: Text(l10n.reportTitle),
+      content: SingleChildScrollView(
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l10n.reportSubtitle,
+                style: TextStyle(color: AppColors.ink500, fontSize: 13)),
+            const SizedBox(height: AppSpacing.sm),
+            RadioGroup<String>(
+              groupValue: _reason,
+              onChanged: (v) => setState(() => _reason = v),
+              child: Column(
+                children: [
+                  for (final e in reasons.entries)
+                    RadioListTile<String>(
+                      dense: true,
+                      contentPadding: EdgeInsets.zero,
+                      value: e.key,
+                      title: Text(e.value),
+                    ),
+                ],
+              ),
+            ),
+            TextField(
+              controller: _details,
+              maxLength: 300,
+              minLines: 1,
+              maxLines: 3,
+              decoration: InputDecoration(hintText: l10n.reportDetailsHint),
+            ),
+          ],
+        ),
+      ),
+      actions: [
+        TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(l10n.cancel)),
+        FilledButton(
+          onPressed: _reason == null
+              ? null
+              : () => Navigator.of(context)
+                  .pop((_reason!, _details.text.trim())),
+          child: Text(l10n.scanReportSend),
+        ),
+      ],
     );
   }
 }

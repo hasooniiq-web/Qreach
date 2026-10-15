@@ -41,6 +41,11 @@ class ContactRequestModel extends Equatable {
     this.messages = const [],
     this.role = 'owner',
     this.reason,
+    this.senderKind = 'web',
+    this.senderIdentityVisible = false,
+    this.senderName,
+    this.senderBadge,
+    this.identityVisible = false,
   });
 
   final String id;
@@ -70,6 +75,19 @@ class ContactRequestModel extends Equatable {
 
   bool get isReporter => role == 'reporter';
 
+  /// For the owner: who is writing — "web" (a visitor on the page) or "app" (a customer who
+  /// scanned with the app). A customer's name is only there if they chose to show it; otherwise
+  /// [senderBadge] ("trusted" | "verified") is all the owner learns.
+  final String senderKind;
+  final bool senderIdentityVisible;
+  final String? senderName;
+  final String? senderBadge;
+
+  /// For the one who started it from the app: is my name shown to the owner.
+  final bool identityVisible;
+
+  bool get fromApp => senderKind == 'app';
+
   /// "New" is about the owner not having read it; it means nothing to the one who started it.
   bool get isNew => status == 'new' && !isReporter;
   bool get isHandled => status == 'responded' || status == 'closed';
@@ -86,6 +104,11 @@ class ContactRequestModel extends Equatable {
         messages: messages,
         role: role,
         reason: reason,
+        senderKind: senderKind,
+        senderIdentityVisible: senderIdentityVisible,
+        senderName: senderName,
+        senderBadge: senderBadge,
+        identityVisible: identityVisible,
       );
 
   factory ContactRequestModel.fromJson(Map<String, dynamic> json) =>
@@ -105,6 +128,16 @@ class ContactRequestModel extends Equatable {
             .toList(),
         role: json['role'] as String? ?? 'owner',
         reason: json['reason'] as String?,
+        senderKind:
+            (json['sender'] as Map<String, dynamic>?)?['kind'] as String? ?? 'web',
+        senderIdentityVisible: (json['sender']
+                as Map<String, dynamic>?)?['identity_visible'] as bool? ??
+            false,
+        senderName:
+            (json['sender'] as Map<String, dynamic>?)?['name'] as String?,
+        senderBadge:
+            (json['sender'] as Map<String, dynamic>?)?['badge'] as String?,
+        identityVisible: json['identity_visible'] as bool? ?? false,
       );
 
   @override
@@ -119,7 +152,12 @@ class ContactRequestModel extends Equatable {
         expiresAt,
         messages,
         role,
-        reason
+        reason,
+        senderKind,
+        senderIdentityVisible,
+        senderName,
+        senderBadge,
+        identityVisible
       ];
 }
 

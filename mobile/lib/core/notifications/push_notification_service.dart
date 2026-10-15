@@ -14,6 +14,9 @@ String? routeForPush(Map<String, dynamic> data) {
       return id is String && id.isNotEmpty ? '/contacts/$id' : '/contacts';
     case 'tag_action':
       return '/notifications';
+    case 'support_ticket':
+      final id = data['support_ticket_id'];
+      return id is String && id.isNotEmpty ? '/support/$id' : '/support';
   }
   return null;
 }

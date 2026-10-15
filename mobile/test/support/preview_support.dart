@@ -228,6 +228,11 @@ class FakeContacts implements ContactRequestRepository {
           {String? imagePath}) async =>
       fetchOne(id);
   @override
+  Future<void> report(String id, String reason, {String? details}) async {}
+  @override
+  Future<ContactRequestModel> setIdentityVisible(String id, bool visible) async =>
+      fetchOne(id);
+  @override
   Future<void> markRead(String id) async {}
   @override
   Future<void> markResponded(String id) async {}

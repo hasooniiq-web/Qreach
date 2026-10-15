@@ -1592,4 +1592,128 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get contactWithOwnerSubtitle => 'محادثة بدأتَها بعد مسح رمز المركبة';
+
+  @override
+  String get threadMenuShowIdentity => 'إظهار هويتي للمالك';
+
+  @override
+  String get threadMenuHideIdentity => 'إخفاء هويتي';
+
+  @override
+  String get threadMenuReport => 'إبلاغ عن مشكلة';
+
+  @override
+  String get identityShownSnack => 'صار اسمك ظاهرًا للمالك.';
+
+  @override
+  String get identityHiddenSnack =>
+      'أُخفي اسمك. يرى المالك أنك حساب موثّق فقط.';
+
+  @override
+  String get badgeTrusted => 'مستخدم موثوق';
+
+  @override
+  String get badgeVerified => 'حساب موثّق برقم هاتف';
+
+  @override
+  String get senderFromApp => 'من تطبيق Qreach';
+
+  @override
+  String get reportTitle => 'الإبلاغ عن مشكلة';
+
+  @override
+  String get reportSubtitle =>
+      'يصل البلاغ إلى فريق Qreach، ولا يعرف الطرف الآخر أنك أبلغت.';
+
+  @override
+  String get reportReasonHarassment => 'مضايقة';
+
+  @override
+  String get reportReasonSpam => 'إزعاج متكرر';
+
+  @override
+  String get reportReasonAbuse => 'إساءة أو ألفاظ نابية';
+
+  @override
+  String get reportReasonScam => 'احتيال';
+
+  @override
+  String get reportReasonOther => 'سبب آخر';
+
+  @override
+  String get reportDetailsHint => 'تفاصيل (اختياري)';
+
+  @override
+  String get reportSent => 'وصل بلاغك إلى فريق Qreach.';
+
+  @override
+  String get supportTitle => 'الدعم الفني';
+
+  @override
+  String get supportRowValue => 'واتساب وتذاكر';
+
+  @override
+  String get supportWhatsappTitle => 'تواصل عبر واتساب';
+
+  @override
+  String get supportNoNumbers =>
+      'لا توجد أرقام واتساب حاليًا. افتح تذكرة وسنرد عليك.';
+
+  @override
+  String get supportOpenTicket => 'فتح تذكرة جديدة';
+
+  @override
+  String get supportMyTickets => 'تذاكري';
+
+  @override
+  String get supportNoTickets => 'لا توجد تذاكر بعد.';
+
+  @override
+  String get supportNewTitle => 'تذكرة جديدة';
+
+  @override
+  String get supportCategory => 'نوع المشكلة';
+
+  @override
+  String get supportCatGeneral => 'استفسار عام';
+
+  @override
+  String get supportCatAccount => 'الحساب';
+
+  @override
+  String get supportCatVehicle => 'المركبة والرمز';
+
+  @override
+  String get supportCatPayment => 'الدفع والاشتراك';
+
+  @override
+  String get supportCatBug => 'مشكلة في التطبيق';
+
+  @override
+  String get supportCatOther => 'أخرى';
+
+  @override
+  String get supportSubject => 'العنوان';
+
+  @override
+  String get supportBody => 'اشرح المشكلة';
+
+  @override
+  String get supportSend => 'إرسال التذكرة';
+
+  @override
+  String get supportStatusOpen => 'بانتظار الدعم';
+
+  @override
+  String get supportStatusAnswered => 'تم الرد';
+
+  @override
+  String get supportStatusClosed => 'مغلقة';
+
+  @override
+  String get supportClosedNote =>
+      'أُغلقت هذه التذكرة. افتح تذكرة جديدة إن احتجت مساعدة.';
+
+  @override
+  String get supportStaff => 'الدعم الفني';
 }
