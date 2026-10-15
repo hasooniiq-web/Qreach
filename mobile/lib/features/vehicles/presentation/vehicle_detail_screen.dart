@@ -720,21 +720,23 @@ class _VehicleActionsState extends ConsumerState<_VehicleActions> {
               : () => context.push('/vehicles/${widget.vehicleId}/edit',
                   extra: widget.vehicle),
         ),
-        if (!widget.editOnly) ...[
         const SizedBox(height: AppSpacing.md),
         Row(
           children: [
-            Expanded(
-              child: AppButton(
-                label: _disabled ? l10n.enableVehicle : l10n.disableVehicle,
-                icon: _disabled
-                    ? Icons.play_circle_outline_rounded
-                    : Icons.pause_circle_outline_rounded,
-                style: AppButtonStyle.secondary,
-                onPressed: _busy ? null : _toggle,
+            // Pausing only means something once a code is linked.
+            if (!widget.editOnly) ...[
+              Expanded(
+                child: AppButton(
+                  label: _disabled ? l10n.enableVehicle : l10n.disableVehicle,
+                  icon: _disabled
+                      ? Icons.play_circle_outline_rounded
+                      : Icons.pause_circle_outline_rounded,
+                  style: AppButtonStyle.secondary,
+                  onPressed: _busy ? null : _toggle,
+                ),
               ),
-            ),
-            const SizedBox(width: AppSpacing.md),
+              const SizedBox(width: AppSpacing.md),
+            ],
             Expanded(
               child: AppButton(
                 label: l10n.delete,
@@ -745,7 +747,6 @@ class _VehicleActionsState extends ConsumerState<_VehicleActions> {
             ),
           ],
         ),
-        ],
       ],
     );
   }
