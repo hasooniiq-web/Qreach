@@ -88,6 +88,11 @@ class _AppShellState extends ConsumerState<AppShell>
       ),
       bottomNavigationBar: _AppNavBar(
         items: items,
+        scanLabel: l10n.navScanQr,
+        onScan: () {
+          HapticFeedback.mediumImpact();
+          context.push('/scan');
+        },
         selected: navigationShell.currentIndex,
         onSelected: (index) => navigationShell.goBranch(
           index,
@@ -157,49 +162,123 @@ class _AppNavBar extends StatelessWidget {
     required this.items,
     required this.selected,
     required this.onSelected,
+    required this.scanLabel,
+    required this.onScan,
   });
 
   final List<_NavItem> items;
   final int selected;
   final ValueChanged<int> onSelected;
+  final String scanLabel;
+  final VoidCallback onScan;
 
   @override
   Widget build(BuildContext context) {
     final bottom = MediaQuery.of(context).padding.bottom;
+    const barHeight = 68.0;
+    const lift = 28.0; // how far the round scan button rises above the bar
+    final half = items.length ~/ 2;
+
+    Widget tab(int i) => Expanded(
+          flex: i == selected ? 5 : 3,
+          child: _NavButton(
+            item: items[i],
+            selected: i == selected,
+            onTap: () {
+              if (i != selected) HapticFeedback.selectionClick();
+              onSelected(i);
+            },
+          ),
+        );
 
     return Padding(
       padding:
           EdgeInsets.fromLTRB(16, 0, 16, 12 + (bottom > 0 ? bottom - 8 : 0)),
-      child: Container(
-        height: 68,
-        padding: const EdgeInsets.symmetric(horizontal: 8),
-        decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(34),
-          boxShadow: AppColors.dark
-              ? const []
-              : const [
-                  BoxShadow(
-                      color: Color(0x22000000),
-                      blurRadius: 30,
-                      offset: Offset(0, 10)),
-                ],
-          border: AppShadows.hairline,
-        ),
-        child: Row(
+      child: SizedBox(
+        height: barHeight + lift,
+        child: Stack(
+          clipBehavior: Clip.none,
           children: [
-            for (var i = 0; i < items.length; i++)
-              Expanded(
-                flex: i == selected ? 5 : 3,
-                child: _NavButton(
-                  item: items[i],
-                  selected: i == selected,
-                  onTap: () {
-                    if (i != selected) HapticFeedback.selectionClick();
-                    onSelected(i);
-                  },
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              height: barHeight,
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(34),
+                  boxShadow: AppColors.dark
+                      ? const []
+                      : const [
+                          BoxShadow(
+                              color: Color(0x22000000),
+                              blurRadius: 30,
+                              offset: Offset(0, 10)),
+                        ],
+                  border: AppShadows.hairline,
+                ),
+                child: Row(
+                  children: [
+                    for (var i = 0; i < half; i++) tab(i),
+                    // The middle is the floating scan button's place.
+                    const SizedBox(width: 78),
+                    for (var i = half; i < items.length; i++) tab(i),
+                  ],
                 ),
               ),
+            ),
+            // The floating "scan a vehicle code" button, centred on the bar.
+            Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: Center(
+                child: Semantics(
+                  button: true,
+                  label: scanLabel,
+                  child: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: onScan,
+                    child: Container(
+                      width: 64,
+                      height: 64,
+                      decoration: BoxDecoration(
+                        color: AppColors.brandYellow,
+                        shape: BoxShape.circle,
+                        border:
+                            Border.all(color: AppColors.surface, width: 4),
+                        boxShadow: const [
+                          BoxShadow(
+                              color: Color(0x33000000),
+                              blurRadius: 16,
+                              offset: Offset(0, 6)),
+                        ],
+                      ),
+                      child: const Icon(Icons.qr_code_scanner_rounded,
+                          size: 30, color: AppColors.brandBlack),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Positioned(
+              bottom: 8,
+              left: 0,
+              right: 0,
+              child: IgnorePointer(
+                child: Text(
+                  scanLabel,
+                  textAlign: TextAlign.center,
+                  maxLines: 1,
+                  style: TextStyle(
+                      color: AppColors.ink700,
+                      fontSize: 11.5,
+                      fontWeight: FontWeight.w800),
+                ),
+              ),
+            ),
           ],
         ),
       ),

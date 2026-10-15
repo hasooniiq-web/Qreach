@@ -464,28 +464,32 @@ class _VehicleHero extends StatelessWidget {
                     fontWeight: FontWeight.w800)),
             const SizedBox(height: AppSpacing.md),
           ],
+          // The same order as on the home card: the picture first, the plate after it.
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Hero(
-                tag: 'plate-${vehicle.id}',
-                child: IraqiPlate(
-                  number: vehicle.plateNumber,
-                  letter: vehicle.plateLetter,
-                  governorate: vehicle.plateGovernorate,
-                  type: PlateType.fromCode(vehicle.plateType),
-                  style: PlateStyle.fromCode(vehicle.plateStyle),
-                  width: 168,
-                ),
-              ),
-              const Spacer(),
               VehicleThumb(
-                kind: thumbKindFor(
-                    vehicleType: vehicle.vehicleType,
-                    plateType: vehicle.plateType),
+                kind: thumbKindFor(vehicleType: vehicle.vehicleType),
                 color: Colors.white.withValues(alpha: 0.85),
                 cutout: AppColors.brandBlack,
                 width: 64,
+              ),
+              const SizedBox(width: AppSpacing.md),
+              Expanded(
+                child: Hero(
+                  tag: 'plate-${vehicle.id}',
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: IraqiPlate(
+                      number: vehicle.plateNumber,
+                      letter: vehicle.plateLetter,
+                      governorate: vehicle.plateGovernorate,
+                      type: PlateType.fromCode(vehicle.plateType),
+                      style: PlateStyle.fromCode(vehicle.plateStyle),
+                      width: 168,
+                    ),
+                  ),
+                ),
               ),
             ],
           ),

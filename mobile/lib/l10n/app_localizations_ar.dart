@@ -1537,4 +1537,59 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get scanErrorClose => 'حسنًا';
+
+  @override
+  String get navScanQr => 'مسح الرمز';
+
+  @override
+  String get scanVehicleHint => 'وجّه الكاميرا إلى رمز QR على المركبة';
+
+  @override
+  String get scanReportTitle => 'أبلغ مالك المركبة';
+
+  @override
+  String get scanReportSubtitle =>
+      'اختر السبب ثم أرسل. تُحذف المحادثة تلقائيًا بعد 7 أيام.';
+
+  @override
+  String get scanReportSend => 'إرسال البلاغ';
+
+  @override
+  String get scanReportExisting =>
+      'لديك محادثة مفتوحة مع هذه المركبة، وسيُضاف البلاغ إليها.';
+
+  @override
+  String scanOwnerLine(String name) {
+    return 'المالك: $name';
+  }
+
+  @override
+  String get scanContactsTitle => 'تواصل مباشر';
+
+  @override
+  String get reasonBlocking => 'سيارتك تعيق الطريق';
+
+  @override
+  String get reasonDamage => 'ضرر في المركبة';
+
+  @override
+  String get reasonMalfunction => 'يوجد عطل';
+
+  @override
+  String get reasonSafety => 'مشكلة سلامة';
+
+  @override
+  String get reasonAssistance => 'أحتاج مساعدة';
+
+  @override
+  String get reasonLights => 'الأضواء مشتعلة';
+
+  @override
+  String get contactStartedByYou => 'بدأتَها أنت';
+
+  @override
+  String get contactWithOwner => 'مالك المركبة';
+
+  @override
+  String get contactWithOwnerSubtitle => 'محادثة بدأتَها بعد مسح رمز المركبة';
 }

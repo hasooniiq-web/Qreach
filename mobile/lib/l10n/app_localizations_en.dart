@@ -1543,4 +1543,61 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get scanErrorClose => 'OK';
+
+  @override
+  String get navScanQr => 'Scan QR';
+
+  @override
+  String get scanVehicleHint =>
+      'Point the camera at the QR code on the vehicle';
+
+  @override
+  String get scanReportTitle => 'Report to the owner';
+
+  @override
+  String get scanReportSubtitle =>
+      'Pick a reason, then send. The conversation is deleted automatically after 7 days.';
+
+  @override
+  String get scanReportSend => 'Send report';
+
+  @override
+  String get scanReportExisting =>
+      'You already have a conversation about this vehicle; the report is added to it.';
+
+  @override
+  String scanOwnerLine(String name) {
+    return 'Owner: $name';
+  }
+
+  @override
+  String get scanContactsTitle => 'Direct contact';
+
+  @override
+  String get reasonBlocking => 'Your car is blocking the road';
+
+  @override
+  String get reasonDamage => 'Damage to the vehicle';
+
+  @override
+  String get reasonMalfunction => 'Something is broken';
+
+  @override
+  String get reasonSafety => 'A safety problem';
+
+  @override
+  String get reasonAssistance => 'I need help';
+
+  @override
+  String get reasonLights => 'The lights are on';
+
+  @override
+  String get contactStartedByYou => 'Started by you';
+
+  @override
+  String get contactWithOwner => 'Vehicle owner';
+
+  @override
+  String get contactWithOwnerSubtitle =>
+      'A conversation you started by scanning the vehicle code';
 }

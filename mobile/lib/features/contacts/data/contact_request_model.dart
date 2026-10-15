@@ -39,6 +39,8 @@ class ContactRequestModel extends Equatable {
     required this.createdAt,
     this.expiresAt,
     this.messages = const [],
+    this.role = 'owner',
+    this.reason,
   });
 
   final String id;
@@ -61,7 +63,15 @@ class ContactRequestModel extends Equatable {
   /// conversation is opened.
   final List<ThreadMessage> messages;
 
-  bool get isNew => status == 'new';
+  /// "owner": about one of my vehicles · "reporter": I started it by scanning
+  /// someone else's code in the app.
+  final String role;
+  final String? reason;
+
+  bool get isReporter => role == 'reporter';
+
+  /// "New" is about the owner not having read it; it means nothing to the one who started it.
+  bool get isNew => status == 'new' && !isReporter;
   bool get isHandled => status == 'responded' || status == 'closed';
 
   ContactRequestModel copyWith({String? status}) => ContactRequestModel(
@@ -74,6 +84,8 @@ class ContactRequestModel extends Equatable {
         createdAt: createdAt,
         expiresAt: expiresAt,
         messages: messages,
+        role: role,
+        reason: reason,
       );
 
   factory ContactRequestModel.fromJson(Map<String, dynamic> json) =>
@@ -91,6 +103,8 @@ class ContactRequestModel extends Equatable {
         messages: (json['messages'] as List<dynamic>? ?? const [])
             .map((e) => ThreadMessage.fromJson(e as Map<String, dynamic>))
             .toList(),
+        role: json['role'] as String? ?? 'owner',
+        reason: json['reason'] as String?,
       );
 
   @override
@@ -103,7 +117,9 @@ class ContactRequestModel extends Equatable {
         vehicle,
         createdAt,
         expiresAt,
-        messages
+        messages,
+        role,
+        reason
       ];
 }
 

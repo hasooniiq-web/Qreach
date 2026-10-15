@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../features/scan_contact/presentation/scan_contact_screen.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../features/auth/presentation/auth_choice_screen.dart';
@@ -130,6 +131,11 @@ final routerProvider = Provider<GoRouter>((ref) {
                 builder: (context, state) => const ProfileScreen()),
           ]),
         ],
+      ),
+      GoRoute(
+        path: '/scan',
+        pageBuilder:
+            animatedPage((context, state) => const ScanContactScreen()),
       ),
       GoRoute(
         path: '/contacts/:id',

@@ -2835,6 +2835,108 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'حسنًا'**
   String get scanErrorClose;
+
+  /// No description provided for @navScanQr.
+  ///
+  /// In ar, this message translates to:
+  /// **'مسح الرمز'**
+  String get navScanQr;
+
+  /// No description provided for @scanVehicleHint.
+  ///
+  /// In ar, this message translates to:
+  /// **'وجّه الكاميرا إلى رمز QR على المركبة'**
+  String get scanVehicleHint;
+
+  /// No description provided for @scanReportTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'أبلغ مالك المركبة'**
+  String get scanReportTitle;
+
+  /// No description provided for @scanReportSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'اختر السبب ثم أرسل. تُحذف المحادثة تلقائيًا بعد 7 أيام.'**
+  String get scanReportSubtitle;
+
+  /// No description provided for @scanReportSend.
+  ///
+  /// In ar, this message translates to:
+  /// **'إرسال البلاغ'**
+  String get scanReportSend;
+
+  /// No description provided for @scanReportExisting.
+  ///
+  /// In ar, this message translates to:
+  /// **'لديك محادثة مفتوحة مع هذه المركبة، وسيُضاف البلاغ إليها.'**
+  String get scanReportExisting;
+
+  /// No description provided for @scanOwnerLine.
+  ///
+  /// In ar, this message translates to:
+  /// **'المالك: {name}'**
+  String scanOwnerLine(String name);
+
+  /// No description provided for @scanContactsTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تواصل مباشر'**
+  String get scanContactsTitle;
+
+  /// No description provided for @reasonBlocking.
+  ///
+  /// In ar, this message translates to:
+  /// **'سيارتك تعيق الطريق'**
+  String get reasonBlocking;
+
+  /// No description provided for @reasonDamage.
+  ///
+  /// In ar, this message translates to:
+  /// **'ضرر في المركبة'**
+  String get reasonDamage;
+
+  /// No description provided for @reasonMalfunction.
+  ///
+  /// In ar, this message translates to:
+  /// **'يوجد عطل'**
+  String get reasonMalfunction;
+
+  /// No description provided for @reasonSafety.
+  ///
+  /// In ar, this message translates to:
+  /// **'مشكلة سلامة'**
+  String get reasonSafety;
+
+  /// No description provided for @reasonAssistance.
+  ///
+  /// In ar, this message translates to:
+  /// **'أحتاج مساعدة'**
+  String get reasonAssistance;
+
+  /// No description provided for @reasonLights.
+  ///
+  /// In ar, this message translates to:
+  /// **'الأضواء مشتعلة'**
+  String get reasonLights;
+
+  /// No description provided for @contactStartedByYou.
+  ///
+  /// In ar, this message translates to:
+  /// **'بدأتَها أنت'**
+  String get contactStartedByYou;
+
+  /// No description provided for @contactWithOwner.
+  ///
+  /// In ar, this message translates to:
+  /// **'مالك المركبة'**
+  String get contactWithOwner;
+
+  /// No description provided for @contactWithOwnerSubtitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'محادثة بدأتَها بعد مسح رمز المركبة'**
+  String get contactWithOwnerSubtitle;
 }
 
 class _AppLocalizationsDelegate

@@ -5,7 +5,7 @@ import 'package:qreach_smarttag/shared/widgets/vehicle_thumb.dart';
 
 void main() {
   test(
-      'the thumbnail follows the vehicle type, and taxi/agricultural plates win',
+      'the thumbnail follows the vehicle type only; the plate type never changes it',
       () {
     expect(thumbKindFor(vehicleType: 'sedan'), ThumbKind.sedan);
     expect(thumbKindFor(vehicleType: 'suv'), ThumbKind.suv);
@@ -16,9 +16,9 @@ void main() {
     expect(thumbKindFor(vehicleType: 'van'), ThumbKind.van);
     expect(thumbKindFor(vehicleType: 'other'), ThumbKind.other);
     expect(
-        thumbKindFor(vehicleType: 'sedan', plateType: 'taxi'), ThumbKind.taxi);
+        thumbKindFor(vehicleType: 'sedan', plateType: 'taxi'), ThumbKind.sedan);
     expect(thumbKindFor(vehicleType: 'truck', plateType: 'agricultural'),
-        ThumbKind.tractor);
+        ThumbKind.truck);
   });
 
   testWidgets('every kind paints without error', (tester) async {

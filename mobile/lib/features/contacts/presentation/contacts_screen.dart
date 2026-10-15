@@ -156,7 +156,7 @@ class _ContactRow extends ConsumerWidget {
     return Pressable(
       scale: 0.985,
       onTap: () {
-        ref.read(contactsProvider.notifier).markRead(r);
+        if (!r.isReporter) ref.read(contactsProvider.notifier).markRead(r);
         context.push('/contacts/${r.id}');
       },
       child: Container(
@@ -189,7 +189,10 @@ class _ContactRow extends ConsumerWidget {
                               r.isNew ? AppColors.brandBlack : AppColors.ink700,
                           fontSize: 19,
                           fontWeight: FontWeight.w800))
-                  : Icon(Icons.person_outline_rounded,
+                  : Icon(
+                      r.isReporter
+                          ? Icons.directions_car_outlined
+                          : Icons.person_outline_rounded,
                       color: r.isNew ? AppColors.brandBlack : AppColors.ink500),
             ),
             const SizedBox(width: AppSpacing.md),
@@ -201,7 +204,9 @@ class _ContactRow extends ConsumerWidget {
                     children: [
                       Expanded(
                         child: Text(
-                          named ? r.visitorName! : l10n.visitorAnonymous,
+                          r.isReporter
+                              ? (r.vehicle ?? l10n.contactWithOwner)
+                              : (named ? r.visitorName! : l10n.visitorAnonymous),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: TextStyle(
@@ -218,7 +223,7 @@ class _ContactRow extends ConsumerWidget {
                               fontWeight: FontWeight.w600)),
                     ],
                   ),
-                  if (r.vehicle != null)
+                  if (r.vehicle != null && !r.isReporter)
                     Padding(
                       padding: const EdgeInsets.only(top: 1),
                       child: Row(
@@ -246,12 +251,16 @@ class _ContactRow extends ConsumerWidget {
                           height: 1.45)),
                   const SizedBox(height: AppSpacing.sm),
                   StatusBadge(
-                    label: contactStatusLabel(l10n, r.status),
-                    tone: r.isNew
-                        ? StatusTone.warning
-                        : r.isHandled
-                            ? StatusTone.success
-                            : StatusTone.neutral,
+                    label: r.isReporter
+                        ? l10n.contactStartedByYou
+                        : contactStatusLabel(l10n, r.status),
+                    tone: r.isReporter
+                        ? StatusTone.neutral
+                        : r.isNew
+                            ? StatusTone.warning
+                            : r.isHandled
+                                ? StatusTone.success
+                                : StatusTone.neutral,
                   ),
                 ],
               ),

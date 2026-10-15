@@ -198,9 +198,7 @@ class _VehicleRow extends StatelessWidget {
                   ),
                 ),
                 VehicleThumb(
-                  kind: thumbKindFor(
-                      vehicleType: vehicle.vehicleType,
-                      plateType: vehicle.plateType),
+                  kind: thumbKindFor(vehicleType: vehicle.vehicleType),
                   color: AppColors.ink700,
                   cutout: AppColors.surface,
                   width: 92,

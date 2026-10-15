@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'iraqi_plate.dart';
 
 /// Which silhouette a vehicle gets. A taxi or agricultural plate overrides
 /// the vehicle type (a taxi is drawn as a taxi, a farm plate as a tractor),
@@ -32,10 +31,9 @@ const _assetFor = {
   ThumbKind.other: 'other',
 };
 
+/// The picture follows the vehicle type the owner chose — choosing a taxi or
+/// agricultural plate no longer swaps it ([plateType] is accepted but ignored).
 ThumbKind thumbKindFor({String? vehicleType, String? plateType}) {
-  if (plateType == PlateType.taxi.code) return ThumbKind.taxi;
-  if (plateType == PlateType.agricultural.code) return ThumbKind.tractor;
-
   return switch (vehicleType) {
     'sedan' => ThumbKind.sedan,
     'suv' => ThumbKind.suv,

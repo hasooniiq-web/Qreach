@@ -464,9 +464,7 @@ class _VehicleCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       VehicleThumb(
-                        kind: thumbKindFor(
-                            vehicleType: vehicle.vehicleType,
-                            plateType: vehicle.plateType),
+                        kind: thumbKindFor(vehicleType: vehicle.vehicleType),
                         color: Colors.white.withValues(alpha: 0.9),
                         cutout: AppColors.brandBlack,
                         width: 84,

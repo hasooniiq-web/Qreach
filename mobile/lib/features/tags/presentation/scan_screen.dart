@@ -192,7 +192,7 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
               ),
             ),
           ),
-          const _ScanOverlay(),
+          const ScanOverlay(),
           Positioned(
             left: 24,
             right: 24,
@@ -236,16 +236,16 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
 
 /// Dims everything outside a square viewfinder and draws yellow corner
 /// brackets — clearer than a plain outlined box about where to aim.
-class _ScanOverlay extends StatefulWidget {
-  const _ScanOverlay();
+class ScanOverlay extends StatefulWidget {
+  const ScanOverlay();
 
   static const double _size = 250;
 
   @override
-  State<_ScanOverlay> createState() => _ScanOverlayState();
+  State<ScanOverlay> createState() => ScanOverlayState();
 }
 
-class _ScanOverlayState extends State<_ScanOverlay>
+class ScanOverlayState extends State<ScanOverlay>
     with SingleTickerProviderStateMixin {
   // A slow scan line travels down the frame and back, so the screen visibly
   // "looks" for a code instead of sitting still.
@@ -286,7 +286,7 @@ class _ViewfinderPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    const side = _ScanOverlay._size;
+    const side = ScanOverlay._size;
     final rect = Rect.fromCenter(
         center: size.center(Offset.zero), width: side, height: side);
     final rrect = RRect.fromRectAndRadius(rect, const Radius.circular(26));

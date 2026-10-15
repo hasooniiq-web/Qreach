@@ -213,7 +213,8 @@ class _ContactThreadScreenState extends ConsumerState<ContactThreadScreen> {
     final l10n = AppLocalizations.of(context)!;
     final async = ref.watch(contactThreadProvider(widget.requestId));
     final thread = async.valueOrNull;
-    final named = thread?.visitorName?.isNotEmpty == true;
+    final reporter = thread?.isReporter ?? false;
+    final named = !reporter && thread?.visitorName?.isNotEmpty == true;
 
     return Scaffold(
       appBar: AppBar(
@@ -232,8 +233,12 @@ class _ContactThreadScreenState extends ConsumerState<ContactThreadScreen> {
                           color: AppColors.brandBlack,
                           fontWeight: FontWeight.w800,
                           fontSize: 16))
-                  : const Icon(Icons.person_outline_rounded,
-                      color: AppColors.brandBlack, size: 22),
+                  : Icon(
+                      reporter
+                          ? Icons.directions_car_outlined
+                          : Icons.person_outline_rounded,
+                      color: AppColors.brandBlack,
+                      size: 22),
             ),
             const SizedBox(width: AppSpacing.md),
             Expanded(
@@ -241,12 +246,23 @@ class _ContactThreadScreenState extends ConsumerState<ContactThreadScreen> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Text(named ? thread!.visitorName! : l10n.visitorAnonymous,
+                  Text(
+                      reporter
+                          ? (thread!.vehicle ?? l10n.contactWithOwner)
+                          : (named ? thread!.visitorName! : l10n.visitorAnonymous),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
                           fontWeight: FontWeight.w800, fontSize: 16)),
-                  if (thread?.vehicle != null)
+                  if (reporter)
+                    Text(l10n.contactWithOwnerSubtitle,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                            color: AppColors.ink500,
+                            fontSize: 12,
+                            fontWeight: FontWeight.w500))
+                  else if (thread?.vehicle != null)
                     Text(l10n.contactAboutVehicle(thread!.vehicle!),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
@@ -552,7 +568,11 @@ class _Messages extends StatelessWidget {
           FadeSlideIn(
             index: i > 5 ? 0 : i,
             offset: 12,
-            child: _Bubble(message: all[i]),
+            // Mine is always on the right: the owner's own replies when it is their
+            // inbox, the scanner's messages when they started the conversation.
+            child: _Bubble(
+                message: all[i],
+                mine: thread.isReporter ? !all[i].fromOwner : all[i].fromOwner),
           ),
       ],
     );
@@ -560,14 +580,14 @@ class _Messages extends StatelessWidget {
 }
 
 class _Bubble extends ConsumerWidget {
-  const _Bubble({required this.message});
+  const _Bubble({required this.message, required this.mine});
 
   final ThreadMessage message;
+  final bool mine;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final mine = message.fromOwner;
-    // The owner is always on the right and the visitor on the left, in every language
+    // My messages are always on the right and the other side's on the left, in every language
     // (physical sides, not start/end). The corner nearest the sender is squared off, like a
     // speech tail.
     const big = Radius.circular(20);

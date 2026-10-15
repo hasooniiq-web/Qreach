@@ -1548,4 +1548,60 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get scanErrorClose => 'باشە';
+
+  @override
+  String get navScanQr => 'سکانی QR';
+
+  @override
+  String get scanVehicleHint => 'کامێراکە ڕووبکە لە کۆدی QR ی سەر ئۆتۆمبێلەکە';
+
+  @override
+  String get scanReportTitle => 'ئاگاداری خاوەنی ئۆتۆمبێل بکە';
+
+  @override
+  String get scanReportSubtitle =>
+      'هۆکارێک هەڵبژێرە و بینێرە. گفتوگۆکە دوای ٧ ڕۆژ خۆکارانە دەسڕدرێتەوە.';
+
+  @override
+  String get scanReportSend => 'ناردنی ڕاپۆرت';
+
+  @override
+  String get scanReportExisting =>
+      'گفتوگۆیەکی کراوەت هەیە لەگەڵ ئەم ئۆتۆمبێلە و ڕاپۆرتەکە دەخرێتە ناو ئەوە.';
+
+  @override
+  String scanOwnerLine(String name) {
+    return 'خاوەن: $name';
+  }
+
+  @override
+  String get scanContactsTitle => 'پەیوەندی ڕاستەوخۆ';
+
+  @override
+  String get reasonBlocking => 'ئۆتۆمبێلەکەت ڕێگا دەگرێت';
+
+  @override
+  String get reasonDamage => 'زیان لە ئۆتۆمبێلەکە';
+
+  @override
+  String get reasonMalfunction => 'خرابییەک هەیە';
+
+  @override
+  String get reasonSafety => 'کێشەی سەلامەتی';
+
+  @override
+  String get reasonAssistance => 'پێویستم بە یارمەتییە';
+
+  @override
+  String get reasonLights => 'چراکان داگیرساون';
+
+  @override
+  String get contactStartedByYou => 'تۆ دەستت پێکرد';
+
+  @override
+  String get contactWithOwner => 'خاوەنی ئۆتۆمبێل';
+
+  @override
+  String get contactWithOwnerSubtitle =>
+      'گفتوگۆیەک کە دوای سکانی کۆدی ئۆتۆمبێلەکە دەستت پێکرد';
 }
