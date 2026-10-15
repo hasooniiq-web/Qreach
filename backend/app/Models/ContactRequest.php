@@ -12,7 +12,7 @@ class ContactRequest extends Model
 {
     protected $fillable = [
         'vehicle_id', 'tag_id', 'reporter_user_id', 'visitor_name', 'visitor_phone', 'message', 'status',
-        'request_ip', 'user_agent', 'read_at', 'responded_at', 'last_activity_at', 'reason',
+        'request_ip', 'user_agent', 'read_at', 'responded_at', 'last_activity_at', 'reason', 'reporter_identity_visible',
     ];
 
     /** Conversations are deleted this many days after they were started (their first message). */
@@ -27,6 +27,7 @@ class ContactRequest extends Model
             'read_at' => 'datetime',
             'responded_at' => 'datetime',
             'last_activity_at' => 'datetime',
+            'reporter_identity_visible' => 'boolean',
         ];
     }
 

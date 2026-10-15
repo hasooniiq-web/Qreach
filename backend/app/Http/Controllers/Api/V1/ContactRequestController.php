@@ -23,7 +23,7 @@ class ContactRequestController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $page = $this->involved($request)->with('vehicle:id,user_id,nickname,make,model,plate_number')
+        $page = $this->involved($request)->with(['vehicle:id,user_id,nickname,make,model,plate_number', 'reporter'])
             ->orderByDesc('last_activity_at')->orderByDesc('id')->paginate(20);
 
         return response()->json([
@@ -95,6 +95,47 @@ class ContactRequestController extends Controller
         return response()->json($this->present($contact->fresh(['vehicle', 'messages']), $request, withMessages: true), 201);
     }
 
+    /**
+     * Either side reports the other (harassment, spam, abuse...). Every report lands in the
+     * dashboard. The reported person is never told who reported them.
+     */
+    public function report(Request $request, string $uuid): JsonResponse
+    {
+        $contact = $this->find($request, $uuid);
+        $data = $request->validate([
+            'reason' => ['required', 'in:'.implode(',', \App\Models\ConversationReport::REASONS)],
+            'details' => ['nullable', 'string', 'max:300', new PlainTextOnly],
+        ], [
+            'reason.required' => 'اختر سبب البلاغ.',
+        ]);
+
+        $owner = $this->isOwner($request, $contact);
+
+        \App\Models\ConversationReport::create([
+            'contact_request_id' => $contact->id,
+            'reported_by_user_id' => $request->user()->id,
+            'reported_by_role' => $owner ? 'owner' : 'reporter',
+            // The account on the other side (null when the owner reports a visitor from the web page).
+            'reported_user_id' => $owner ? $contact->reporter_user_id : $contact->vehicle?->user_id,
+            'reason' => $data['reason'],
+            'details' => isset($data['details']) ? trim($data['details']) : null,
+        ]);
+
+        return response()->json(['ok' => true], 201);
+    }
+
+    /** The person who started the conversation from the app shows or hides their name for the owner. */
+    public function identity(Request $request, string $uuid): JsonResponse
+    {
+        $contact = $this->find($request, $uuid);
+        abort_if($this->isOwner($request, $contact) || $contact->reporter_user_id !== $request->user()->id, 404);
+
+        $data = $request->validate(['visible' => ['required', 'boolean']]);
+        $contact->update(['reporter_identity_visible' => (bool) $data['visible']]);
+
+        return response()->json($this->present($contact->fresh(['vehicle', 'reporter']), $request));
+    }
+
     public function markRead(Request $request, string $uuid): JsonResponse
     {
         $contact = $this->findOwned($request, $uuid);
@@ -139,7 +180,7 @@ class ContactRequestController extends Controller
 
     private function find(Request $request, string $uuid): ContactRequest
     {
-        return $this->involved($request)->with('vehicle:id,user_id,nickname,make,model,plate_number')->where('uuid', $uuid)->firstOrFail();
+        return $this->involved($request)->with(['vehicle:id,user_id,nickname,make,model,plate_number', 'reporter'])->where('uuid', $uuid)->firstOrFail();
     }
 
     private function findOwned(Request $request, string $uuid): ContactRequest
@@ -173,6 +214,22 @@ class ContactRequestController extends Controller
             'created_at' => $r->created_at->toIso8601String(),
             'expires_at' => $r->expiresAt()->toIso8601String(),
         ];
+
+        if ($owner) {
+            // Who is writing: a web visitor, or a customer from the app. A customer only has a
+            // name here if they chose to show it; otherwise just how far they can be trusted.
+            $out['sender'] = ['kind' => 'web'];
+            if ($r->reporter_user_id !== null && ($reporter = $r->reporter)) {
+                $out['sender'] = [
+                    'kind' => 'app',
+                    'identity_visible' => (bool) $r->reporter_identity_visible,
+                    'name' => $r->reporter_identity_visible ? $reporter->display_name : null,
+                    'badge' => app(\App\Services\TrustBadge::class)->for($reporter),
+                ];
+            }
+        } else {
+            $out['identity_visible'] = (bool) $r->reporter_identity_visible;
+        }
 
         if ($withMessages) {
             $out['messages'] = $r->messages->map(fn ($m) => [

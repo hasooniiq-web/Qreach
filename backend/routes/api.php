@@ -57,6 +57,16 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::post('devices/push-diagnostic', [DeviceController::class, 'pushDiagnostic'])
             ->middleware('throttle:20,1')->name('devices.push-diagnostic');
 
+        // Technical support: the WhatsApp numbers, and tickets with text and photos.
+        Route::get('support/info', [\App\Http\Controllers\Api\V1\SupportController::class, 'info'])->name('support.info');
+        Route::get('support/tickets', [\App\Http\Controllers\Api\V1\SupportController::class, 'index'])->name('support.tickets.index');
+        Route::post('support/tickets', [\App\Http\Controllers\Api\V1\SupportController::class, 'store'])
+            ->middleware('throttle:10,60')->name('support.tickets.store');
+        Route::get('support/tickets/{uuid}', [\App\Http\Controllers\Api\V1\SupportController::class, 'show'])->name('support.tickets.show');
+        Route::post('support/tickets/{uuid}/reply', [\App\Http\Controllers\Api\V1\SupportController::class, 'reply'])
+            ->middleware('throttle:30,1')->name('support.tickets.reply');
+        Route::get('support/tickets/{uuid}/messages/{message}/image', [\App\Http\Controllers\Api\V1\SupportController::class, 'image'])->name('support.tickets.image');
+
         // Scan another vehicle's code from the app and start / continue the conversation there.
         Route::post('scan/lookup', [\App\Http\Controllers\Api\V1\ScanContactController::class, 'lookup'])
             ->middleware('throttle:30,1')->name('scan.lookup');
@@ -68,6 +78,10 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::get('contact-requests/{uuid}/messages/{message}/image', [ContactRequestController::class, 'messageImage'])->name('contact-requests.message-image');
         Route::post('contact-requests/{uuid}/reply', [ContactRequestController::class, 'reply'])
             ->middleware('throttle:30,1')->name('contact-requests.reply');
+        Route::post('contact-requests/{uuid}/report', [ContactRequestController::class, 'report'])
+            ->middleware('throttle:10,60')->name('contact-requests.report');
+        Route::put('contact-requests/{uuid}/identity', [ContactRequestController::class, 'identity'])
+            ->middleware('throttle:30,1')->name('contact-requests.identity');
         Route::put('contact-requests/{uuid}/read', [ContactRequestController::class, 'markRead'])->name('contact-requests.read');
         Route::put('contact-requests/{uuid}/responded', [ContactRequestController::class, 'markResponded'])->name('contact-requests.responded');
 

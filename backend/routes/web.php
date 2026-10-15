@@ -271,6 +271,28 @@ Route::prefix('admin')->name('admin.')->group(function () {
             Route::middleware('admin.permission:contact_requests.view')->group(function () {
                 Route::get('site-messages', [\App\Http\Controllers\Admin\SiteMessageController::class, 'index'])->name('site-messages.index');
             });
+            // Complaints filed from inside a conversation in the app.
+            Route::get('conversation-reports', [\App\Http\Controllers\Admin\ConversationReportController::class, 'index'])
+                ->middleware('admin.permission:contact_requests.view')->name('conversation-reports.index');
+            Route::post('conversation-reports/{conversationReport}/review', [\App\Http\Controllers\Admin\ConversationReportController::class, 'review'])
+                ->middleware('admin.permission:contact_requests.respond')->name('conversation-reports.review');
+
+            // Technical support tickets opened from the app.
+            Route::middleware('admin.permission:contact_requests.view')->group(function () {
+                Route::get('support', [\App\Http\Controllers\Admin\SupportController::class, 'index'])->name('support.index');
+                Route::get('support/settings', [\App\Http\Controllers\Admin\SupportController::class, 'settings'])
+                    ->middleware('admin.permission:settings.update')->name('support.settings');
+                Route::get('support/{supportTicket}', [\App\Http\Controllers\Admin\SupportController::class, 'show'])->name('support.show');
+                Route::get('support/{supportTicket}/messages/{message}/image', [\App\Http\Controllers\Admin\SupportController::class, 'image'])->name('support.image');
+            });
+            Route::middleware('admin.permission:contact_requests.respond')->group(function () {
+                Route::post('support/{supportTicket}/reply', [\App\Http\Controllers\Admin\SupportController::class, 'reply'])
+                    ->middleware('throttle:60,1')->name('support.reply');
+                Route::post('support/{supportTicket}/close', [\App\Http\Controllers\Admin\SupportController::class, 'close'])->name('support.close');
+                Route::post('support/{supportTicket}/reopen', [\App\Http\Controllers\Admin\SupportController::class, 'reopen'])->name('support.reopen');
+            });
+            Route::put('support/settings', [\App\Http\Controllers\Admin\SupportController::class, 'saveSettings'])
+                ->middleware('admin.permission:settings.update')->name('support.settings.save');
             Route::post('site-messages/{siteMessage}/read', [\App\Http\Controllers\Admin\SiteMessageController::class, 'markRead'])
                 ->middleware('admin.permission:contact_requests.respond')->name('site-messages.read');
             Route::post('contact-requests/{contactRequest}/close', [ContactRequestController::class, 'close'])
