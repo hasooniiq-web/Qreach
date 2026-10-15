@@ -81,7 +81,7 @@ class VehicleDetailScreen extends ConsumerWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: AppSpacing.lg),
+              const SizedBox(height: AppSpacing.md),
               // Editing is always possible; pausing and deleting only make sense once a code is linked.
               FadeSlideIn(
                 index: 2,
@@ -372,7 +372,7 @@ class _CodeSectionState extends ConsumerState<_CodeSection> {
         const SizedBox(height: AppSpacing.md),
         Text(l10n.oneCodeNote,
             style: TextStyle(color: AppColors.ink500, fontSize: 13)),
-        const SizedBox(height: AppSpacing.lg),
+        const SizedBox(height: AppSpacing.md),
         AppButton(
           label: l10n.removeCode,
           icon: Icons.delete_outline_rounded,
