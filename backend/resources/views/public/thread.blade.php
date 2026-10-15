@@ -12,11 +12,6 @@
         </div>
     @endif
 
-    @if ($errors->any())
-        <div class="mb-5 rounded-xl border border-status-danger/30 bg-status-danger/10 p-4 text-sm text-status-danger" role="alert">
-            @foreach ($errors->all() as $error)<p>{{ $error }}</p>@endforeach
-        </div>
-    @endif
 
     @php
         $labels = ['new' => 'أُرسل — بانتظار قراءة المالك', 'read' => 'قرأ المالك بلاغك', 'responded' => 'ردّ المالك', 'closed' => 'أُغلق البلاغ'];
@@ -57,25 +52,10 @@
         </div>
     </div>
 
-    <form method="POST" action="{{ route('public.scan.thread.reply', [$tag->public_token, $thread->uuid]) }}" enctype="multipart/form-data">
-        @csrf
-        <div id="reply-image-chip" class="mb-2 hidden items-center gap-2 self-start rounded-full bg-ink-100 py-1 pe-1 ps-3 text-xs text-ink-700">
-            <span id="reply-image-label"></span>
-            <button type="button" id="reply-image-clear" class="flex size-5 items-center justify-center rounded-full text-ink-500 hover:bg-ink-200" aria-label="إزالة الصورة">
-                <x-icon name="x" class="size-3.5" />
-            </button>
-        </div>
-        <div class="flex items-end gap-2">
-            <label for="reply-image" class="flex size-11 shrink-0 cursor-pointer items-center justify-center rounded-full text-ink-500 transition-colors hover:bg-ink-100" title="إرفاق صورة (من الكاميرا أو المعرض)">
-                <x-icon name="camera" class="size-5" />
-                <input id="reply-image" type="file" name="image" accept="image/*" class="sr-only">
-            </label>
-            <label for="reply-body" class="sr-only">رسالتك</label>
-            <textarea id="reply-body" name="body" rows="1" maxlength="500" placeholder="اكتب رسالة..."
-                      class="max-h-32 flex-1 resize-none rounded-3xl border border-ink-200 bg-white px-4 py-2.5 text-sm focus:border-brand-black focus:outline-none focus:ring-0">{{ old('body') }}</textarea>
-            <button type="submit" class="flex size-11 shrink-0 items-center justify-center rounded-full bg-brand-black text-white transition-opacity hover:opacity-90" aria-label="إرسال">
-                <x-icon name="send" class="size-5 -scale-x-100" />
-            </button>
-        </div>
-    </form>
+    {{-- Nothing is typed on this page. To write back to the owner, the visitor scans the
+         code with the Qreach app, which opens the same conversation there. --}}
+    <section class="rounded-xl border border-ink-200 bg-white p-4 text-sm text-ink-700">
+        <p class="mb-1 font-semibold text-ink-900">للمراسلة مع صاحب المركبة</p>
+        <p class="leading-relaxed">حمّل تطبيق Qreach وامسح رمز المركبة من داخله، فتكمل المحادثة من التطبيق وتصلك ردود المالك فيه.</p>
+    </section>
 </x-layouts.public>

@@ -11,7 +11,7 @@ use Illuminate\Support\Str;
 class ContactRequest extends Model
 {
     protected $fillable = [
-        'vehicle_id', 'tag_id', 'visitor_name', 'visitor_phone', 'message', 'status',
+        'vehicle_id', 'tag_id', 'reporter_user_id', 'visitor_name', 'visitor_phone', 'message', 'status',
         'request_ip', 'user_agent', 'read_at', 'responded_at', 'last_activity_at', 'reason',
     ];
 
@@ -62,6 +62,12 @@ class ContactRequest extends Model
         $this->forceFill(['last_activity_at' => now()])->save();
 
         return $message;
+    }
+
+    /** The customer who started this conversation from the app (null for a web visitor). */
+    public function reporter(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'reporter_user_id');
     }
 
     public function tag(): BelongsTo

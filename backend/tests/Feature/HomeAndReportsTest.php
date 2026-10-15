@@ -38,6 +38,7 @@ class HomeAndReportsTest extends TestCase
         foreach (['malfunction', 'assistance'] as $reason) {
             $this->post("/t/{$tag->public_token}/contact", ['reason' => $reason])->assertRedirect();
             $this->assertDatabaseHas('contact_requests', ['reason' => $reason]);
+            Cache::flush(); // the same address may report again only after a minute
         }
 
         Cache::flush(); // reset the per-minute throttle

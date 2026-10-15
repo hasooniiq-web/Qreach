@@ -135,10 +135,10 @@
         </section>
     @endif
 
-    {{-- Quick report: tap one predefined reason. There is no free-text "other";
-         the visitor can write to the owner in the conversation afterwards. --}}
+    {{-- Quick report: tap one of six predefined reasons. Nothing is typed on this page;
+         talking back to the owner is done from the app. --}}
     <h2 class="text-base font-bold text-ink-900">أبلغ مالك المركبة</h2>
-    <p class="mb-2 text-xs text-ink-500">اختر السبب وأرسل — يصل إشعار للمالك ويمكنك متابعة رده هنا.</p>
+    <p class="mb-2 text-xs text-ink-500">اختر السبب وأرسل — يصل إشعار للمالك. للمراسلة معه استخدم تطبيق Qreach وامسح الرمز منه.</p>
 
     <form method="POST" action="{{ route('public.scan.contact', $tag->public_token) }}" class="group/f space-y-2.5">
         @csrf
@@ -151,7 +151,7 @@
                     'malfunction' => ['يوجد عطل', 'warning'],
                     'safety' => ['مشكلة سلامة', 'shield'],
                     'assistance' => ['أحتاج مساعدة', 'bell'],
-                    'other' => ['سبب آخر', 'pencil'],
+                    'lights' => ['الأضواء مشتعلة', 'bell'],
                 ] as $value => [$label, $icon])
                     <label class="relative cursor-pointer">
                         <input type="radio" name="reason" value="{{ $value }}" class="peer sr-only" @checked(old('reason') === $value) required>
@@ -168,21 +168,7 @@
                 @endforeach
             </div>
 
-            <div id="other-details-wrap" class="mt-2 hidden">
-                <label for="other-details" class="sr-only">تفاصيل السبب</label>
-                <textarea id="other-details" name="other_details" rows="2" maxlength="500"
-                          placeholder="اكتب تفاصيل السبب..." class="form-control">{{ old('other_details') }}</textarea>
-                @error('other_details')<p class="mt-1 text-xs text-status-danger">{{ $message }}</p>@enderror
-            </div>
         </fieldset>
-
-        <details class="rounded-xl border border-ink-200 bg-white px-3 py-2.5">
-            <summary class="cursor-pointer list-none text-sm text-ink-600">إضافة اسمك ورقمك للرد (اختياري)</summary>
-            <div class="mt-2 grid grid-cols-1 gap-2 sm:grid-cols-2">
-                <input type="text" name="visitor_name" maxlength="100" value="{{ old('visitor_name') }}" placeholder="اسمك" aria-label="اسمك" class="form-control">
-                <input type="tel" name="visitor_phone" maxlength="20" value="{{ old('visitor_phone') }}" placeholder="رقمك للرد" aria-label="رقمك للرد" dir="ltr" class="form-control text-start">
-            </div>
-        </details>
 
         {{-- Large and red on purpose: this is the one action on the page. It sticks to the bottom
              of the screen, so it is always reachable without scrolling. --}}

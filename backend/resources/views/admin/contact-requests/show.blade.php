@@ -15,6 +15,14 @@
                 @endif
             </div>
 
+            @if ($contactRequest->reporter_user_id)
+                <div>
+                    <p class="mb-1 text-xs text-ink-400">أُرسل من تطبيق Qreach</p>
+                    <p class="text-sm text-ink-900">{{ $contactRequest->reporter?->display_name ?? "حساب محذوف" }}
+                        <span class="tabular-nums text-ink-500" dir="ltr">{{ $contactRequest->reporter?->phone }}</span></p>
+                </div>
+            @endif
+
             @if ($contactRequest->visitor_phone)
                 <div>
                     <p class="mb-1 text-xs text-ink-400">رقم هاتف الزائر</p>

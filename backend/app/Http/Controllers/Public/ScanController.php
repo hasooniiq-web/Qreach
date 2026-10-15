@@ -11,16 +11,14 @@ use App\Models\Scan;
 use App\Models\Tag;
 use App\Notifications\ContactRequestNotification;
 use App\Notifications\TagActionNotification;
-use App\Rules\PlainTextOnly;
-use App\Services\MessageImageProcessor;
 use App\Services\PublicContacts;
 use App\Services\SecurityEventLogger;
 use App\Services\TagTokenGenerator;
+use App\Support\ContactReasons;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Str;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\Response as HttpResponse;
 
@@ -126,13 +124,11 @@ class ScanController extends Controller
     {
         $tag = $this->resolveActiveTagOrFail($token, $request);
 
-        $message = $this->composeContactMessage($request);
+        $message = ContactReasons::message($request->validated('reason'));
 
         $contactRequest = ContactRequest::create([
             'vehicle_id' => $tag->vehicle_id,
             'tag_id' => $tag->id,
-            'visitor_name' => $request->validated('visitor_name'),
-            'visitor_phone' => $request->validated('visitor_phone'),
             'reason' => $request->validated('reason'),
             'message' => $message,
             'request_ip' => $request->ip(),
@@ -180,41 +176,6 @@ class ScanController extends Controller
         ])->header('Cache-Control', 'no-store');
     }
 
-    public function threadReply(Request $request, string $token, string $uuid): RedirectResponse
-    {
-        $tag = $this->resolveActiveTagOrFail($token, $request);
-        $contactRequest = $this->findThread($tag, $uuid);
-        abort_if(! $contactRequest, 404);
-
-        $data = $request->validate([
-            'body' => ['nullable', 'string', 'max:500', new PlainTextOnly, 'required_without:image'],
-            'image' => ['nullable', 'file', 'image', 'mimes:jpg,jpeg,png,webp', 'max:8192'],
-        ], [
-            'body.required_without' => 'اكتب رسالتك أو أرفق صورة.',
-        ]);
-
-        if ($contactRequest->messages()->count() >= ContactRequest::MAX_MESSAGES) {
-            return back()->withErrors(['body' => 'وصلت المحادثة إلى الحد الأقصى من الرسائل.']);
-        }
-
-        $imagePath = null;
-        if ($request->hasFile('image')) {
-            $jpeg = app(MessageImageProcessor::class)->normalize($request->file('image'));
-            if ($jpeg === null) {
-                return back()->withErrors(['image' => 'تعذّرت معالجة الصورة. جرّب صورة أخرى.']);
-            }
-            $imagePath = 'contact-message-images/'.Str::uuid().'.jpg';
-            Storage::disk('local')->put($imagePath, $jpeg);
-        }
-
-        $body = trim((string) ($data['body'] ?? ''));
-        $contactRequest->addMessage('visitor', $body, $imagePath);
-        $contactRequest->update(['status' => 'new', 'read_at' => null]);
-        $tag->vehicle->user->notify(new ContactRequestNotification($contactRequest, $body !== '' ? $body : '📷 صورة'));
-
-        return back()->with('scan_status', 'تم إرسال رسالتك.');
-    }
-
     /** Serves a message's photo — gated the same way the thread page itself
      *  is (the unguessable uuid), never a public storage URL. */
     public function threadImage(Request $request, string $token, string $uuid, int $message): HttpResponse
@@ -235,25 +196,6 @@ class ScanController extends Controller
     private function findThread(Tag $tag, string $uuid): ?ContactRequest
     {
         return ContactRequest::where('uuid', $uuid)->where('tag_id', $tag->id)->first();
-    }
-
-    /** The report text is the chosen reason's fixed label, except "other"
-     *  which uses whatever the visitor typed; any further talk happens in the thread. */
-    private function composeContactMessage(ContactOwnerRequest $request): string
-    {
-        $reason = $request->validated('reason');
-
-        if ($reason === 'other') {
-            return trim((string) $request->validated('other_details'));
-        }
-
-        return [
-            'blocking' => 'سيارتك تعيق الطريق',
-            'damage' => 'لاحظت ضررًا في المركبة',
-            'malfunction' => 'يوجد عطل',
-            'safety' => 'توجد مشكلة تتعلق بالسلامة',
-            'assistance' => 'أحتاج إلى مساعدة',
-        ][$reason];
     }
 
     private function recordSimpleAction(Request $request, string $token, string $actionType, string $successMessage): RedirectResponse

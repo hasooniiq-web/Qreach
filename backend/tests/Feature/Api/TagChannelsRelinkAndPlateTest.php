@@ -107,6 +107,7 @@ class TagChannelsRelinkAndPlateTest extends TestCase
 
         // After opening the page through the chip, the same session may act.
         $this->scan(strstr($this->tag->nfcUrl(), '?'))->assertOk();
+        Cache::flush(); // the refused attempt above counted against the per-minute limit
         $this->post('/t/'.$this->tag->public_token.'/contact', $payload)->assertRedirect();
     }
 

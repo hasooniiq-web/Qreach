@@ -104,8 +104,16 @@ class AppServiceProvider extends ServiceProvider
             ];
         });
 
+        // The public report page: the same address cannot send the same code's owner an alert more
+        // than once a minute, nor more than five times a day (also counted per browser session, so
+        // switching address does not reset it), on top of the broader hourly caps.
         RateLimiter::for('contact-request', function (Request $request) {
+            $session = $request->hasSession() ? $request->session()->getId() : $request->ip();
+
             return [
+                Limit::perMinute(1)->by('contact-min:'.$request->ip().':'.$request->route('token')),
+                Limit::perDay(5)->by('contact-day:'.$request->ip().':'.$request->route('token')),
+                Limit::perDay(5)->by('contact-day-session:'.$session.':'.$request->route('token')),
                 Limit::perHour(20)->by('contact-ip:'.$request->ip()),
                 Limit::perHour(15)->by('contact-token:'.$request->route('token')),
             ];

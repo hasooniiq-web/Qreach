@@ -77,8 +77,7 @@ Route::prefix('t')->name('public.scan.')->group(function () {
         ->middleware('throttle:public-scan')->name('thread');
     Route::get('{token}/c/{uuid}/messages', [ScanController::class, 'threadMessages'])
         ->middleware('throttle:120,1')->name('thread.messages');
-    Route::post('{token}/c/{uuid}', [ScanController::class, 'threadReply'])
-        ->middleware('throttle:thread-reply')->name('thread.reply');
+
     Route::get('{token}/c/{uuid}/messages/{message}/image', [ScanController::class, 'threadImage'])
         ->middleware('throttle:public-scan')->name('thread.image');
 });

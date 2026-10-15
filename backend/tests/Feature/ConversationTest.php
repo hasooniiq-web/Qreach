@@ -136,19 +136,6 @@ class ConversationTest extends TestCase
         $this->assertDatabaseMissing('contact_requests', ['id' => $old->id]);
     }
 
-    public function test_visitor_follow_up_reopens_the_request_for_the_owner(): void
-    {
-        $owner = User::factory()->create();
-        $tag = $this->assignedTag($owner);
-        $request = ContactRequest::create(['vehicle_id' => $tag->vehicle_id, 'tag_id' => $tag->id, 'message' => 'مرحبا', 'status' => 'responded']);
-
-        $this->post("/t/{$tag->public_token}/c/{$request->uuid}", ['body' => 'شكرًا، هل يمكنك التعجيل؟'])->assertRedirect();
-
-        $this->assertSame('new', $request->fresh()->status);
-        $this->getJson("/api/v1/contact-requests/{$request->uuid}", $this->bearer($owner))
-            ->assertOk()->assertJsonPath('messages.0.sender', 'visitor');
-    }
-
     public function test_a_thread_is_not_reachable_through_another_tags_token_or_by_another_owner(): void
     {
         $owner = User::factory()->create();

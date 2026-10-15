@@ -57,6 +57,12 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
         Route::post('devices/push-diagnostic', [DeviceController::class, 'pushDiagnostic'])
             ->middleware('throttle:20,1')->name('devices.push-diagnostic');
 
+        // Scan another vehicle's code from the app and start / continue the conversation there.
+        Route::post('scan/lookup', [\App\Http\Controllers\Api\V1\ScanContactController::class, 'lookup'])
+            ->middleware('throttle:30,1')->name('scan.lookup');
+        Route::post('scan/contact', [\App\Http\Controllers\Api\V1\ScanContactController::class, 'contact'])
+            ->middleware('throttle:30,1')->name('scan.contact');
+
         Route::get('contact-requests', [ContactRequestController::class, 'index'])->name('contact-requests.index');
         Route::get('contact-requests/{uuid}', [ContactRequestController::class, 'show'])->name('contact-requests.show');
         Route::get('contact-requests/{uuid}/messages/{message}/image', [ContactRequestController::class, 'messageImage'])->name('contact-requests.message-image');

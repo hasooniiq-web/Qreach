@@ -17,10 +17,7 @@ use Illuminate\Http\Request;
  */
 class HomeController extends Controller
 {
-    private const REASONS = [
-        'damage' => 'ضرر في المركبة', 'malfunction' => 'عطل', 'safety' => 'مشكلة سلامة',
-        'assistance' => 'طلب مساعدة',
-    ];
+    private const REASONS = \App\Support\ContactReasons::SHORT;
 
     private const SCAN_LABELS = [
         'view' => 'تم مسح رمز مركبتك', 'contact_owner' => 'رسالة جديدة من زائر', 'important_message' => 'رسالة مهمة من زائر',
