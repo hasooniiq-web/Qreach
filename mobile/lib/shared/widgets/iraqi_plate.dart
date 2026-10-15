@@ -1,5 +1,3 @@
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
 
 /// Plate categories as issued in Iraq, each with its own colour.
@@ -223,23 +221,7 @@ class _EnglishPlate extends StatelessWidget {
                     children: [
                       if (code != null) ...[
                         Text('$code', style: textStyle),
-                        // The small square between the number and the letter.
-                        Padding(
-                          padding:
-                              EdgeInsets.symmetric(horizontal: fontSize * 0.18),
-                          child: Container(
-                            width: fontSize * 0.26,
-                            height: fontSize * 0.26,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFF6F7B8C),
-                              borderRadius:
-                                  BorderRadius.circular(fontSize * 0.04),
-                              border: Border.all(
-                                  color: const Color(0xFF111111),
-                                  width: math.max(0.8, fontSize * 0.025)),
-                            ),
-                          ),
-                        ),
+                        SizedBox(width: fontSize * 0.28),
                       ],
                       if (latin.isNotEmpty) ...[
                         Text(latin, style: textStyle),
@@ -369,11 +351,6 @@ class _GermanPlate extends StatelessWidget {
                               ),
                             ),
                             SizedBox(
-                              height: h * 0.1,
-                              width: double.infinity,
-                              child: CustomPaint(painter: _WavePainter(ink)),
-                            ),
-                            SizedBox(
                               height: h * 0.15,
                               child: FittedBox(
                                 fit: BoxFit.scaleDown,
@@ -439,43 +416,6 @@ class _GermanPlate extends StatelessWidget {
       ),
     );
   }
-}
-
-class _WavePainter extends CustomPainter {
-  const _WavePainter(this.color);
-
-  final Color color;
-
-  @override
-  void paint(Canvas canvas, Size size) {
-    final stroke = math.max(1.2, size.height * 0.2);
-    final paint = Paint()
-      ..color = color
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = stroke
-      ..strokeJoin = StrokeJoin.round;
-    // A ring at each end, as on the printed plate; the wave runs between them.
-    final r = size.height * 0.34;
-    final left = r + stroke;
-    final right = size.width - r - stroke;
-    canvas.drawCircle(Offset(r, size.height / 2), r, paint);
-    canvas.drawCircle(Offset(size.width - r, size.height / 2), r, paint);
-
-    final path = Path()..moveTo(left, size.height / 2);
-    const waves = 8;
-    final span = right - left;
-    for (var x = 0.0; x <= span; x += 1) {
-      path.lineTo(
-          left + x,
-          size.height / 2 +
-              math.sin(x / span * waves * 2 * math.pi) *
-                  (size.height / 2 - stroke / 2));
-    }
-    canvas.drawPath(path, paint);
-  }
-
-  @override
-  bool shouldRepaint(covariant _WavePainter old) => old.color != color;
 }
 
 /// The plain card: governorate on the side, the number large in the middle and
