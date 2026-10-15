@@ -154,9 +154,10 @@ class _TabFadeState extends State<_TabFade>
   }
 }
 
-/// A floating navigation bar. The selected destination grows into a dark pill
-/// that shows its label, animating its width as selection moves; the others
-/// stay as quiet icons. Icons cross-fade between outlined and filled.
+/// The bottom bar: icons only, in fixed equal slots — nothing grows or moves when the
+/// selection changes. Two tabs, the round scan button in the middle (raised above the bar),
+/// two tabs. The selected tab is a solid disc behind its icon; the labels are kept only for
+/// screen readers.
 class _AppNavBar extends StatelessWidget {
   const _AppNavBar({
     required this.items,
@@ -172,15 +173,16 @@ class _AppNavBar extends StatelessWidget {
   final String scanLabel;
   final VoidCallback onScan;
 
+  static const double _barHeight = 64;
+  static const double _lift = 26; // how far the scan button rises above the bar
+  static const double _scanSize = 62;
+
   @override
   Widget build(BuildContext context) {
     final bottom = MediaQuery.of(context).padding.bottom;
-    const barHeight = 68.0;
-    const lift = 28.0; // how far the round scan button rises above the bar
     final half = items.length ~/ 2;
 
     Widget tab(int i) => Expanded(
-          flex: i == selected ? 5 : 3,
           child: _NavButton(
             item: items[i],
             selected: i == selected,
@@ -195,7 +197,7 @@ class _AppNavBar extends StatelessWidget {
       padding:
           EdgeInsets.fromLTRB(16, 0, 16, 12 + (bottom > 0 ? bottom - 8 : 0)),
       child: SizedBox(
-        height: barHeight + lift,
+        height: _barHeight + _lift,
         child: Stack(
           clipBehavior: Clip.none,
           children: [
@@ -203,12 +205,11 @@ class _AppNavBar extends StatelessWidget {
               left: 0,
               right: 0,
               bottom: 0,
-              height: barHeight,
+              height: _barHeight,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
                 decoration: BoxDecoration(
                   color: AppColors.surface,
-                  borderRadius: BorderRadius.circular(34),
+                  borderRadius: BorderRadius.circular(_barHeight / 2),
                   boxShadow: AppColors.dark
                       ? const []
                       : const [
@@ -222,14 +223,13 @@ class _AppNavBar extends StatelessWidget {
                 child: Row(
                   children: [
                     for (var i = 0; i < half; i++) tab(i),
-                    // The middle is the floating scan button's place.
-                    const SizedBox(width: 78),
+                    // The middle belongs to the scan button.
+                    const SizedBox(width: _scanSize + 16),
                     for (var i = half; i < items.length; i++) tab(i),
                   ],
                 ),
               ),
             ),
-            // The floating "scan a vehicle code" button, centred on the bar.
             Positioned(
               top: 0,
               left: 0,
@@ -242,13 +242,12 @@ class _AppNavBar extends StatelessWidget {
                     behavior: HitTestBehavior.opaque,
                     onTap: onScan,
                     child: Container(
-                      width: 64,
-                      height: 64,
+                      width: _scanSize,
+                      height: _scanSize,
                       decoration: BoxDecoration(
                         color: AppColors.brandYellow,
                         shape: BoxShape.circle,
-                        border:
-                            Border.all(color: AppColors.surface, width: 4),
+                        border: Border.all(color: AppColors.surface, width: 4),
                         boxShadow: const [
                           BoxShadow(
                               color: Color(0x33000000),
@@ -260,22 +259,6 @@ class _AppNavBar extends StatelessWidget {
                           size: 30, color: AppColors.brandBlack),
                     ),
                   ),
-                ),
-              ),
-            ),
-            Positioned(
-              bottom: 8,
-              left: 0,
-              right: 0,
-              child: IgnorePointer(
-                child: Text(
-                  scanLabel,
-                  textAlign: TextAlign.center,
-                  maxLines: 1,
-                  style: TextStyle(
-                      color: AppColors.ink700,
-                      fontSize: 11.5,
-                      fontWeight: FontWeight.w800),
                 ),
               ),
             ),
@@ -300,8 +283,8 @@ class _NavButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final dark = AppColors.dark;
-    final pillColor = dark ? AppColors.brandYellow : AppColors.brandBlack;
-    final onPill = dark ? AppColors.brandBlack : AppColors.brandYellow;
+    final discColor = dark ? AppColors.brandYellow : AppColors.brandBlack;
+    final onDisc = dark ? AppColors.brandBlack : AppColors.brandYellow;
 
     return Semantics(
       button: true,
@@ -309,62 +292,28 @@ class _NavButton extends StatelessWidget {
       label: item.label,
       child: Pressable(
         onTap: onTap,
-        scale: 0.94,
+        scale: 0.92,
         child: Center(
           child: AnimatedContainer(
             duration: AppMotion.base,
             curve: AppMotion.standard,
+            width: 48,
             height: 48,
-            padding: EdgeInsets.symmetric(horizontal: selected ? 14 : 0),
             decoration: BoxDecoration(
-              color: selected ? pillColor : Colors.transparent,
-              borderRadius: BorderRadius.circular(24),
+              color: selected ? discColor : Colors.transparent,
+              shape: BoxShape.circle,
             ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Badge(
-                  isLabelVisible: item.badge > 0,
-                  label: Text(item.badge > 9 ? '9+' : '${item.badge}'),
-                  backgroundColor: AppColors.brandYellow,
-                  textColor: AppColors.brandBlack,
-                  offset: const Offset(-4, -4),
-                  child: AnimatedSwitcher(
-                    duration: AppMotion.fast,
-                    transitionBuilder: (c, a) => ScaleTransition(
-                        scale: a, child: FadeTransition(opacity: a, child: c)),
-                    child: Icon(
-                      selected ? item.selectedIcon : item.icon,
-                      key: ValueKey(selected),
-                      size: 25,
-                      color: selected ? onPill : AppColors.ink500,
-                    ),
-                  ),
-                ),
-                // The label slides open only for the selected item.
-                Flexible(
-                  child: AnimatedSize(
-                    duration: AppMotion.base,
-                    curve: AppMotion.standard,
-                    alignment: AlignmentDirectional.centerStart,
-                    child: selected
-                        ? Padding(
-                            padding: const EdgeInsetsDirectional.only(start: 8),
-                            child: Text(
-                              item.label,
-                              maxLines: 1,
-                              overflow: TextOverflow.fade,
-                              softWrap: false,
-                              style: TextStyle(
-                                  color: onPill,
-                                  fontSize: 13.5,
-                                  fontWeight: FontWeight.w800),
-                            ),
-                          )
-                        : const SizedBox.shrink(),
-                  ),
-                ),
-              ],
+            child: Badge(
+              isLabelVisible: item.badge > 0,
+              label: Text(item.badge > 9 ? '9+' : '${item.badge}'),
+              backgroundColor: AppColors.brandYellow,
+              textColor: AppColors.brandBlack,
+              offset: const Offset(-2, -2),
+              child: Icon(
+                selected ? item.selectedIcon : item.icon,
+                size: 26,
+                color: selected ? onDisc : AppColors.ink500,
+              ),
             ),
           ),
         ),

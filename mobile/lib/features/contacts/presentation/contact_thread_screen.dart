@@ -272,7 +272,19 @@ class _ContactThreadScreenState extends ConsumerState<ContactThreadScreen> {
               decoration: BoxDecoration(
                   shape: BoxShape.circle, color: AppColors.brandYellow),
               alignment: Alignment.center,
-              child: named
+              clipBehavior: Clip.antiAlias,
+              child: (fromApp && thread!.senderHasAvatar)
+                  ? Consumer(builder: (context, ref, _) {
+                      final photo = ref.watch(contactMessageImageProvider(
+                          '/contact-requests/${widget.requestId}/sender-avatar'));
+                      return photo.maybeWhen(
+                        data: (bytes) => Image.memory(bytes,
+                            width: 38, height: 38, fit: BoxFit.cover),
+                        orElse: () => const Icon(Icons.person_rounded,
+                            color: AppColors.brandBlack, size: 22),
+                      );
+                    })
+                  : named
                   ? Text(thread!.visitorName!.characters.first,
                       style: const TextStyle(
                           color: AppColors.brandBlack,
@@ -363,6 +375,14 @@ class _ContactThreadScreenState extends ConsumerState<ContactThreadScreen> {
                   ]),
                 ),
               ],
+            ),
+          // A customer who showed their identity can be called.
+          if (fromApp && thread!.senderPhone?.isNotEmpty == true)
+            IconButton(
+              tooltip: l10n.callVisitor,
+              icon: const Icon(Icons.call_rounded),
+              onPressed: () =>
+                  launchUrl(Uri(scheme: 'tel', path: thread.senderPhone)),
             ),
           if (thread?.visitorPhone?.isNotEmpty == true)
             IconButton(

@@ -3,13 +3,7 @@
 @endphp
 
 <x-layouts.admin title="الدعم الفني">
-    <x-page-header title="الدعم الفني" subtitle="تذاكر يفتحها العملاء من التطبيق (نص وصور). الأقدم انتظارًا في الأعلى.">
-        <x-slot:actions>
-            @if (auth('admin')->user()->hasPermission('settings.update'))
-                <a href="{{ route('admin.support.settings') }}" class="btn-secondary">أرقام الواتساب</a>
-            @endif
-        </x-slot:actions>
-    </x-page-header>
+    <x-page-header title="الدعم الفني" subtitle="تذاكر يفتحها العملاء من التطبيق (نص وصور). الأقدم انتظارًا في الأعلى." />
 
     <x-filter-bar>
         <select name="status" data-auto-submit aria-label="الحالة" class="form-control w-auto">

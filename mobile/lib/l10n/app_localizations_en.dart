@@ -1602,7 +1602,8 @@ class AppLocalizationsEn extends AppLocalizations {
       'A conversation you started by scanning the vehicle code';
 
   @override
-  String get threadMenuShowIdentity => 'Show my identity to the owner';
+  String get threadMenuShowIdentity =>
+      'Show my identity to the owner (name, photo, number)';
 
   @override
   String get threadMenuHideIdentity => 'Hide my identity';
@@ -1611,7 +1612,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get threadMenuReport => 'Report a problem';
 
   @override
-  String get identityShownSnack => 'Your name is now visible to the owner.';
+  String get identityShownSnack =>
+      'The owner now sees your name, photo and number and can call you.';
 
   @override
   String get identityHiddenSnack =>

@@ -136,6 +136,24 @@ class ContactRequestController extends Controller
         return response()->json($this->present($contact->fresh(['vehicle', 'reporter']), $request));
     }
 
+    /** The photo of the customer who wrote from the app — only while they show their identity. */
+    public function senderAvatar(Request $request, string $uuid): Response
+    {
+        $contact = $this->findOwned($request, $uuid);
+        $reporter = $contact->reporter;
+
+        abort_unless(
+            $contact->reporter_identity_visible && $reporter && $reporter->avatar_path
+                && Storage::disk('local')->exists($reporter->avatar_path),
+            404
+        );
+
+        return Storage::disk('local')->response($reporter->avatar_path, null, [
+            'Content-Type' => 'image/jpeg',
+            'Cache-Control' => 'private, no-store',
+        ]);
+    }
+
     public function markRead(Request $request, string $uuid): JsonResponse
     {
         $contact = $this->findOwned($request, $uuid);
@@ -220,10 +238,14 @@ class ContactRequestController extends Controller
             // name here if they chose to show it; otherwise just how far they can be trusted.
             $out['sender'] = ['kind' => 'web'];
             if ($r->reporter_user_id !== null && ($reporter = $r->reporter)) {
+                $shown = (bool) $r->reporter_identity_visible;
                 $out['sender'] = [
                     'kind' => 'app',
-                    'identity_visible' => (bool) $r->reporter_identity_visible,
-                    'name' => $r->reporter_identity_visible ? $reporter->display_name : null,
+                    'identity_visible' => $shown,
+                    'name' => $shown ? $reporter->display_name : null,
+                    // Showing the identity means the name, the photo and the number: the owner can call.
+                    'phone' => $shown ? $reporter->phone : null,
+                    'has_avatar' => $shown && (bool) $reporter->avatar_path,
                     'badge' => app(\App\Services\TrustBadge::class)->for($reporter),
                 ];
             }

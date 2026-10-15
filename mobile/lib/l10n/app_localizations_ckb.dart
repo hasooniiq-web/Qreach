@@ -15,8 +15,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get welcomeTitle => 'بەخێربێیت بۆ Qreach';
 
   @override
-  String get welcomeSubtitle =>
-      'کۆدی SmartTag بۆ ئۆتۆمبێلەکەت زیاد بکە تا بە سەلامەتی پەیوەندی بکرێت';
+  String get welcomeSubtitle => 'کۆدی SmartTag بۆ ئۆتۆمبێلەکەت زیاد بکە تا بە سەلامەتی پەیوەندی بکرێت';
 
   @override
   String get createAccountButton => 'دروستکردنی هەژماری نوێ';
@@ -28,8 +27,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get createAccountTitle => 'دروستکردنی هەژماری نوێ';
 
   @override
-  String get createAccountSubtitle =>
-      'ناو و ژمارەی مۆبایل و وشەی نهێنی بنووسە — کۆدێکی پشتڕاستکردنەوەی یەکجار بەکارهێنان بۆ دڵنیابوون لە ژمارەکەت دەنێرین';
+  String get createAccountSubtitle => 'ناو و ژمارەی مۆبایل و وشەی نهێنی بنووسە — کۆدێکی پشتڕاستکردنەوەی یەکجار بەکارهێنان بۆ دڵنیابوون لە ژمارەکەت دەنێرین';
 
   @override
   String get loginTitle => 'چوونەژوورەوە';
@@ -74,8 +72,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get forgotPasswordTitle => 'گەڕاندنەوەی وشەی نهێنی';
 
   @override
-  String get forgotPasswordSubtitle =>
-      'ژمارەی مۆبایلت بنووسە، کۆدێکی پشتڕاستکردنەوە دەنێرین بۆ دانانی وشەی نهێنییەکی نوێ';
+  String get forgotPasswordSubtitle => 'ژمارەی مۆبایلت بنووسە، کۆدێکی پشتڕاستکردنەوە دەنێرین بۆ دانانی وشەی نهێنییەکی نوێ';
 
   @override
   String get forgotPasswordSendOtp => 'ناردنی کۆدی پشتڕاستکردنەوە';
@@ -117,26 +114,22 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get biometricToggleLabel => 'چوونەژوورەوە بە پەنجەمۆر یان دەموچاو';
 
   @override
-  String get biometricToggleHint =>
-      'بێ نووسینی وشەی نهێنی لە هەموو جارێکدا بەرنامەکە بکەرەوە';
+  String get biometricToggleHint => 'بێ نووسینی وشەی نهێنی لە هەموو جارێکدا بەرنامەکە بکەرەوە';
 
   @override
-  String get biometricEnablePrompt =>
-      'چوونەژوورەوە بە پەنجەمۆر یان دەموچاو بۆ ئەم هەژمارە چالاک بکە';
+  String get biometricEnablePrompt => 'چوونەژوورەوە بە پەنجەمۆر یان دەموچاو بۆ ئەم هەژمارە چالاک بکە';
 
   @override
   String get lockScreenTitle => 'بەرنامەکە داخراوە';
 
   @override
-  String get lockScreenSubtitle =>
-      'پەنجەمۆر یان دەموچاوت بەکاربهێنە بۆ کردنەوەی Qreach SmartTag';
+  String get lockScreenSubtitle => 'پەنجەمۆر یان دەموچاوت بەکاربهێنە بۆ کردنەوەی Qreach SmartTag';
 
   @override
   String get lockScreenUnlockButton => 'کردنەوەی قوفڵ';
 
   @override
-  String get lockScreenFailed =>
-      'نەتوانرا قوفڵەکە بکرێتەوە. دووبارە هەوڵبدەرەوە.';
+  String get lockScreenFailed => 'نەتوانرا قوفڵەکە بکرێتەوە. دووبارە هەوڵبدەرەوە.';
 
   @override
   String get otpTitle => 'کۆدی پشتڕاستکردنەوە بنووسە';
@@ -178,8 +171,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get notificationsComingSoonTitle => 'ئاگادارکردنەوەکان بەم زووانە';
 
   @override
-  String get notificationsComingSoonSubtitle =>
-      'کار دەکەین بۆ زیادکردنی ناوەندێکی تەواوی ئاگادارکردنەوە بۆ سکانکردن و چالاکییەکان.';
+  String get notificationsComingSoonSubtitle => 'کار دەکەین بۆ زیادکردنی ناوەندێکی تەواوی ئاگادارکردنەوە بۆ سکانکردن و چالاکییەکان.';
 
   @override
   String get vehicleProtected => 'بەستراوەتەوە';
@@ -191,8 +183,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get noVehicleYetHomeTitle => 'یەکەم ئۆتۆمبێلەکەت زیاد بکە';
 
   @override
-  String get noVehicleYetHomeSubtitle =>
-      'ئۆتۆمبێلێک زیاد بکە بۆ دەستپێکردنی بەکارهێنانی SmartTag.';
+  String get noVehicleYetHomeSubtitle => 'ئۆتۆمبێلێک زیاد بکە بۆ دەستپێکردنی بەکارهێنانی SmartTag.';
 
   @override
   String get myVehicles => 'ئۆتۆمبێلەکانم';
@@ -204,8 +195,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get noVehiclesTitle => 'هێشتا هیچ ئۆتۆمبێلێک نییە';
 
   @override
-  String get noVehiclesSubtitle =>
-      'یەکەم ئۆتۆمبێلەکەت زیاد بکە بۆ دەستپێکردنی بەکارهێنانی SmartTag';
+  String get noVehiclesSubtitle => 'یەکەم ئۆتۆمبێلەکەت زیاد بکە بۆ دەستپێکردنی بەکارهێنانی SmartTag';
 
   @override
   String get plateNumber => 'ژمارەی تابلۆ';
@@ -244,8 +234,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get linkNewTag => 'بەستنەوەی کۆدێکی نوێ';
 
   @override
-  String get scanTagInstructions =>
-      'کامێراکە ڕووبکە لە کۆدی QR لەسەر ستیکەرەکە';
+  String get scanTagInstructions => 'کامێراکە ڕووبکە لە کۆدی QR لەسەر ستیکەرەکە';
 
   @override
   String get activating => 'بەستنەوە ئەنجام دەدرێت...';
@@ -311,8 +300,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get genericError => 'هەڵەیەک ڕوویدا. دووبارە هەوڵبدەرەوە.';
 
   @override
-  String get networkError =>
-      'نەتوانرا پەیوەندی بە سێرڤەرەوە بکرێت. ئینتەرنێتەکەت بپشکنە.';
+  String get networkError => 'نەتوانرا پەیوەندی بە سێرڤەرەوە بکرێت. ئینتەرنێتەکەت بپشکنە.';
 
   @override
   String get retry => 'دووبارە هەوڵدانەوە';
@@ -361,12 +349,10 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get featurePublicPhone => 'پیشاندانی ژمارەی مۆبایلت بە سەردانکەران';
 
   @override
-  String get featurePublicInstagram =>
-      'زیادکردنی هەژمارەکانی پەیوەندی (ئینستاگرام، فەیسبووک، سناپ...)';
+  String get featurePublicInstagram => 'زیادکردنی هەژمارەکانی پەیوەندی (ئینستاگرام، فەیسبووک، سناپ...)';
 
   @override
-  String get featurePublicExtra =>
-      'کۆنتڕۆڵکردنی ئەوەی سەردانکەر لە هەر هەژمارێک دەیبینێت';
+  String get featurePublicExtra => 'کۆنتڕۆڵکردنی ئەوەی سەردانکەر لە هەر هەژمارێک دەیبینێت';
 
   @override
   String get plansTitle => 'پاکێجەکان';
@@ -399,8 +385,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   }
 
   @override
-  String get upgradeConfirmBody =>
-      'تیمی Qreach داواکارییەکەت پێداچوونەوە دەکات و پەیوەندیت پێوە دەکات بۆ تەواوکردنی ئابوونە و چالاککردنی پاکێجەکە.';
+  String get upgradeConfirmBody => 'تیمی Qreach داواکارییەکەت پێداچوونەوە دەکات و پەیوەندیت پێوە دەکات بۆ تەواوکردنی ئابوونە و چالاککردنی پاکێجەکە.';
 
   @override
   String get upgradeSent => 'داواکاری بەرزکردنەوە نێردرا';
@@ -412,15 +397,13 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get voucherEntryTitle => 'کارتی چالاککردنت هەیە؟';
 
   @override
-  String get voucherEntryBody =>
-      'ژمارە 12 پیت و ڕەقەمییەکە بنووسە یان کۆدی QR سکان بکە بۆ چالاککردنی پاکێجەکە.';
+  String get voucherEntryBody => 'ژمارە 12 پیت و ڕەقەمییەکە بنووسە یان کۆدی QR سکان بکە بۆ چالاککردنی پاکێجەکە.';
 
   @override
   String get voucherTitle => 'چالاککردن بە کارت';
 
   @override
-  String get voucherIntro =>
-      'کارتی چالاککردنت لە دابەشکەرێک کڕیوە؟ ژمارە 12 پیت و ڕەقەمییەکەی بنووسە یان کۆدی QR ی سەر کارتەکە سکان بکە، پاکێجەکەت دەستبەجێ چالاک دەبێت.';
+  String get voucherIntro => 'کارتی چالاککردنت لە دابەشکەرێک کڕیوە؟ ژمارە 12 پیت و ڕەقەمییەکەی بنووسە یان کۆدی QR ی سەر کارتەکە سکان بکە، پاکێجەکەت دەستبەجێ چالاک دەبێت.';
 
   @override
   String get voucherFieldLabel => 'ژمارەی کارت (12 پیت و ژمارە)';
@@ -435,8 +418,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get voucherScanHint => 'کامێراکە ڕووبکە لە کۆدی QR ی سەر کارتەکە';
 
   @override
-  String get voucherNote =>
-      'هەر کارتێک تەنها یەکجار بەکاردێت. ئەگەر بەکارهاتبێت یان بەسەرچووبێت یان هەڵوەشێنرابێتەوە، بەرنامەکە پێت دەڵێت.';
+  String get voucherNote => 'هەر کارتێک تەنها یەکجار بەکاردێت. ئەگەر بەکارهاتبێت یان بەسەرچووبێت یان هەڵوەشێنرابێتەوە، بەرنامەکە پێت دەڵێت.';
 
   @override
   String voucherSuccessTitle(String plan) {
@@ -454,12 +436,10 @@ class AppLocalizationsCkb extends AppLocalizations {
   }
 
   @override
-  String get voucherErrInvalid =>
-      'ئەم ژمارەی کارتە بوونی نییە. بیپشکنە و دووبارە هەوڵبدەرەوە.';
+  String get voucherErrInvalid => 'ئەم ژمارەی کارتە بوونی نییە. بیپشکنە و دووبارە هەوڵبدەرەوە.';
 
   @override
-  String get voucherErrFormat =>
-      'ژمارەکە تەواو نییە یان هەڵەیە. دڵنیابە لە 12 پیت و ژمارە.';
+  String get voucherErrFormat => 'ژمارەکە تەواو نییە یان هەڵەیە. دڵنیابە لە 12 پیت و ژمارە.';
 
   @override
   String get voucherErrUsed => 'ئەم کارتە پێشتر بەکارهاتووە.';
@@ -468,37 +448,31 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get voucherErrExpired => 'ماوەی ئەم کارتە بەسەرچووە.';
 
   @override
-  String get voucherErrRevoked =>
-      'ئەم کارتە هەڵوەشێنراوەتەوە و ناتوانرێت بەکاربهێنرێت.';
+  String get voucherErrRevoked => 'ئەم کارتە هەڵوەشێنراوەتەوە و ناتوانرێت بەکاربهێنرێت.';
 
   @override
-  String get voucherErrThrottled =>
-      'هەوڵی زۆر لە ماوەیەکی کورتدا. خولەکێک چاوەڕێ بکە و دووبارە هەوڵبدەرەوە.';
+  String get voucherErrThrottled => 'هەوڵی زۆر لە ماوەیەکی کورتدا. خولەکێک چاوەڕێ بکە و دووبارە هەوڵبدەرەوە.';
 
   @override
-  String get voucherErrLocked =>
-      'لە ژمارەی هەوڵە ڕێگەپێدراوەکان تێپەڕیت. دوای کاتژمێرێک هەوڵبدەرەوە.';
+  String get voucherErrLocked => 'لە ژمارەی هەوڵە ڕێگەپێدراوەکان تێپەڕیت. دوای کاتژمێرێک هەوڵبدەرەوە.';
 
   @override
   String get onboard1Title => 'کۆدەکەت بە ئۆتۆمبێلەکەتەوە ببەستەرەوە';
 
   @override
-  String get onboard1Body =>
-      'ئۆتۆمبێلەکەت زیاد بکە، پاشان کۆدی QR سکان بکە یان مۆبایلەکەت لە چیپی NFC نزیک بکەرەوە بۆ بەستنەوەی. کۆدەکە لەسەر ئۆتۆمبێلەکە دەلکێنرێت و پاراستن دەستبەجێ دەست پێدەکات.';
+  String get onboard1Body => 'ئۆتۆمبێلەکەت زیاد بکە، پاشان کۆدی QR سکان بکە یان مۆبایلەکەت لە چیپی NFC نزیک بکەرەوە بۆ بەستنەوەی. کۆدەکە لەسەر ئۆتۆمبێلەکە دەلکێنرێت و پاراستن دەستبەجێ دەست پێدەکات.';
 
   @override
   String get onboard2Title => 'ڕاپۆرت دەگات، نەک بێزارکردن';
 
   @override
-  String get onboard2Body =>
-      'کاتێک کەسێک کۆدەکە سکان دەکات هۆکاری ڕاپۆرتەکە هەڵدەبژێرێت و دەینێرێت، ئاگادارکردنەوەیەکت بۆ دێت و لە «گفتوگۆکان» وەڵامەکە دەبینیت بەبێ ئەوەی ژمارەکەت بزانێت.';
+  String get onboard2Body => 'کاتێک کەسێک کۆدەکە سکان دەکات هۆکاری ڕاپۆرتەکە هەڵدەبژێرێت و دەینێرێت، ئاگادارکردنەوەیەکت بۆ دێت و لە «گفتوگۆکان» وەڵامەکە دەبینیت بەبێ ئەوەی ژمارەکەت بزانێت.';
 
   @override
   String get onboard3Title => 'تۆ کۆنتڕۆڵی ئەوە دەکەیت کە دەردەکەوێت';
 
   @override
-  String get onboard3Body =>
-      'لە «ئەوەی سەردانکەر دەیبینێت» هەڵبژێرە سەردانکەر چی ببینێت: ناو یان مۆبایل یان پەیوەندی تەنگانە. لە «ئابوونە» پاکێجەکەت نوێ دەکەیتەوە و ڕێگای پەیوەندی زیاتر زیاد دەکەیت.';
+  String get onboard3Body => 'لە «ئەوەی سەردانکەر دەیبینێت» هەڵبژێرە سەردانکەر چی ببینێت: ناو یان مۆبایل یان پەیوەندی تەنگانە. لە «ئابوونە» پاکێجەکەت نوێ دەکەیتەوە و ڕێگای پەیوەندی زیاتر زیاد دەکەیت.';
 
   @override
   String get onboardSkip => 'تێپەڕاندن';
@@ -528,8 +502,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   }
 
   @override
-  String get trialCardBody =>
-      'بەبێ پارەدان، و تەنها یەک جار بۆ هەر هەژمارێک. خۆی کۆتایی دێت و نوێ ناکرێتەوە.';
+  String get trialCardBody => 'بەبێ پارەدان، و تەنها یەک جار بۆ هەر هەژمارێک. خۆی کۆتایی دێت و نوێ ناکرێتەوە.';
 
   @override
   String get trialStartButton => 'دەستپێکردنی تاقیکردنەوەی بێبەرامبەر';
@@ -551,8 +524,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   }
 
   @override
-  String get trialEndedBanner =>
-      'تاقیکردنەوەی بێبەرامبەرەکەت تەواو بوو. ئابوونەی Plus بکە بۆ بەردەوامبوون لە بەکارهێنانی تایبەتمەندییەکانی.';
+  String get trialEndedBanner => 'تاقیکردنەوەی بێبەرامبەرەکەت تەواو بوو. ئابوونەی Plus بکە بۆ بەردەوامبوون لە بەکارهێنانی تایبەتمەندییەکانی.';
 
   @override
   String get referralTitle => 'هاوڕێیەک بانگهێشت بکە';
@@ -568,8 +540,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   }
 
   @override
-  String get referralTileBody =>
-      'هاوڕێکانت بانگهێشت بکە و مانگێک Plus بێبەرامبەر وەربگرە';
+  String get referralTileBody => 'هاوڕێکانت بانگهێشت بکە و مانگێک Plus بێبەرامبەر وەربگرە';
 
   @override
   String get referralYourCode => 'کۆدی بانگهێشتەکەت';
@@ -607,15 +578,13 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get referralApply => 'پشتڕاستکردنەوەی کۆد';
 
   @override
-  String get referralApplied =>
-      'کۆدی بانگهێشت پاشەکەوت کرا. بۆ پاداشتی هاوڕێکەت هەژمار دەکرێت.';
+  String get referralApplied => 'کۆدی بانگهێشت پاشەکەوت کرا. بۆ پاداشتی هاوڕێکەت هەژمار دەکرێت.';
 
   @override
   String get referralDisabledNote => 'بانگهێشتکردن ئێستا ڕاگیراوە.';
 
   @override
-  String get referralErrInvalid =>
-      'کۆدی بانگهێشت دروست نییە. پشتڕاستی بکەرەوە و دووبارە هەوڵ بدەرەوە.';
+  String get referralErrInvalid => 'کۆدی بانگهێشت دروست نییە. پشتڕاستی بکەرەوە و دووبارە هەوڵ بدەرەوە.';
 
   @override
   String get referralErrSelf => 'ناتوانیت کۆدی بانگهێشتی خۆت بەکاربهێنیت.';
@@ -624,8 +593,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get referralErrAlready => 'پێشتر کۆدی بانگهێشتت داخڵ کردووە.';
 
   @override
-  String get referralErrNotNew =>
-      'کۆدی بانگهێشت بۆ ئەو کەسانەیە کە هێشتا ئابوونە نەبوون.';
+  String get referralErrNotNew => 'کۆدی بانگهێشت بۆ ئەو کەسانەیە کە هێشتا ئابوونە نەبوون.';
 
   @override
   String get referralErrUnavailable => 'بانگهێشتکردن ئێستا بەردەست نییە.';
@@ -710,16 +678,13 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get channelNfc => 'چیپی NFC';
 
   @override
-  String get channelsHint =>
-      'هەریەکێکیان یان هەردووکیان ڕابگرە: سەردانکەر ناتوانێت بەو ڕێگایەی ڕاتگرتووە کۆدەکە بکاتەوە.';
+  String get channelsHint => 'هەریەکێکیان یان هەردووکیان ڕابگرە: سەردانکەر ناتوانێت بەو ڕێگایەی ڕاتگرتووە کۆدەکە بکاتەوە.';
 
   @override
-  String get channelsBothOff =>
-      'هەردوو ڕێگاکە ڕاگیراون: کەس ناتوانێت کۆدەکە بکاتەوە هەتا یەکێکیان چالاک بکەیتەوە.';
+  String get channelsBothOff => 'هەردوو ڕێگاکە ڕاگیراون: کەس ناتوانێت کۆدەکە بکاتەوە هەتا یەکێکیان چالاک بکەیتەوە.';
 
   @override
-  String get referralErrFull =>
-      'خاوەنی ئەم کۆدە گەیشتووەتە زۆرترین ژمارەی بانگهێشتکردن.';
+  String get referralErrFull => 'خاوەنی ئەم کۆدە گەیشتووەتە زۆرترین ژمارەی بانگهێشتکردن.';
 
   @override
   String referralRemaining(int n) {
@@ -747,8 +712,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get resumeRenewal => 'دووبارە چالاککردنی نوێکردنەوە';
 
   @override
-  String get renewalCanceledDone =>
-      'نوێکردنەوە ڕاگیرا. پاکێجەکەت کار دەکات هەتا کۆتایی ماوەکە.';
+  String get renewalCanceledDone => 'نوێکردنەوە ڕاگیرا. پاکێجەکەت کار دەکات هەتا کۆتایی ماوەکە.';
 
   @override
   String get renewalResumedDone => 'نوێکردنەوە دووبارە چالاککرایەوە.';
@@ -775,15 +739,13 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get publicContactTitle => 'زانیاری پەیوەندی گشتی';
 
   @override
-  String get publicContactSubtitle =>
-      'بۆ هەر کەسێک دەردەکەوێت کە کۆدی ئۆتۆمبێلەکەت سکان بکات. ئەوە هەڵبژێرە کە دەتەوێت هاوبەشی بکەیت.';
+  String get publicContactSubtitle => 'بۆ هەر کەسێک دەردەکەوێت کە کۆدی ئۆتۆمبێلەکەت سکان بکات. ئەوە هەڵبژێرە کە دەتەوێت هاوبەشی بکەیت.';
 
   @override
   String get publicContactLockedTitle => 'لە پاکێجی Plus بەردەستە';
 
   @override
-  String get publicContactLockedBody =>
-      'لە پاکێجی بنەڕەتی سەردانکەران تەنها دەتوانن پەیامت بۆ بنێرن. ژمارەی مۆبایل و هەژمارەکانت پێیان پیشان نادرێت.';
+  String get publicContactLockedBody => 'لە پاکێجی بنەڕەتی سەردانکەران تەنها دەتوانن پەیامت بۆ بنێرن. ژمارەی مۆبایل و هەژمارەکانت پێیان پیشان نادرێت.';
 
   @override
   String get viewPlans => 'بینینی پاکێجەکان';
@@ -828,8 +790,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get homeUpgradeTitle => 'هەژمارەکانی پەیوەندی زیاد بکە لەگەڵ Plus';
 
   @override
-  String get homeUpgradeBody =>
-      'پاکێجی Plus ڕێگەت دەدات ئینستاگرام و فەیسبووک و سناپ و هتد زیاد بکەیت و بیانخەیتە بەرچاوی سەردانکەر.';
+  String get homeUpgradeBody => 'پاکێجی Plus ڕێگەت دەدات ئینستاگرام و فەیسبووک و سناپ و هتد زیاد بکەیت و بیانخەیتە بەرچاوی سەردانکەر.';
 
   @override
   String tagsLinkedCount(int count) {
@@ -837,12 +798,10 @@ class AppLocalizationsCkb extends AppLocalizations {
   }
 
   @override
-  String get activationFreeYears =>
-      'خزمەتگوزاریی بنەڕەتیی ئەم ستیکەرە بۆ ماوەی ١٠ ساڵ لە بەرواری چالاککردنەوە بێبەرامبەرە.';
+  String get activationFreeYears => 'خزمەتگوزاریی بنەڕەتیی ئەم ستیکەرە بۆ ماوەی ١٠ ساڵ لە بەرواری چالاککردنەوە بێبەرامبەرە.';
 
   @override
-  String get activationSuccessSubtitle =>
-      'ئێستا هەر کەسێک دەتوانێت کۆدەکە سکان بکات و پەیوەندیت پێوە بکات.';
+  String get activationSuccessSubtitle => 'ئێستا هەر کەسێک دەتوانێت کۆدەکە سکان بکات و پەیوەندیت پێوە بکات.';
 
   @override
   String get done => 'تەواو';
@@ -866,15 +825,13 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get vehicleFormMore => 'وردەکاری زیاتر';
 
   @override
-  String get vehicleFormNicknameHint =>
-      'ناوێک کە ئۆتۆمبێلەکەت لە ئەوانی تر جیا دەکاتەوە';
+  String get vehicleFormNicknameHint => 'ناوێک کە ئۆتۆمبێلەکەت لە ئەوانی تر جیا دەکاتەوە';
 
   @override
   String get notificationsEmptyTitle => 'هێشتا هیچ ئاگادارکردنەوەیەک نییە';
 
   @override
-  String get notificationsEmptySubtitle =>
-      'لێرە ئاگادارکردنەوە دەردەکەون کاتێک کەسێک مامەڵە لەگەڵ کۆدی ئۆتۆمبێلەکەت دەکات.';
+  String get notificationsEmptySubtitle => 'لێرە ئاگادارکردنەوە دەردەکەون کاتێک کەسێک مامەڵە لەگەڵ کۆدی ئۆتۆمبێلەکەت دەکات.';
 
   @override
   String get markAllRead => 'هەموو وەک خوێندراوە دیاری بکە';
@@ -901,8 +858,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get emergencyLabel => 'تەنگانە';
 
   @override
-  String get noRecentActivity =>
-      'هێشتا هیچ چالاکییەک نییە. کاتێک کەسێک کۆدی ئۆتۆمبێلەکەت سکان بکات لێرە دەیبینیت.';
+  String get noRecentActivity => 'هێشتا هیچ چالاکییەک نییە. کاتێک کەسێک کۆدی ئۆتۆمبێلەکەت سکان بکات لێرە دەیبینیت.';
 
   @override
   String get tabHome => 'سەرەکی';
@@ -923,8 +879,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get contactsEmptyTitle => 'هێشتا هیچ پەیامێک نییە';
 
   @override
-  String get contactsEmptySubtitle =>
-      'کاتێک کەسێک دوای سکانکردنی کۆدی ئۆتۆمبێلەکەت پەیامت بۆ بنێرێت لێرە دەردەکەوێت.';
+  String get contactsEmptySubtitle => 'کاتێک کەسێک دوای سکانکردنی کۆدی ئۆتۆمبێلەکەت پەیامت بۆ بنێرێت لێرە دەردەکەوێت.';
 
   @override
   String get contactStatusNew => 'نوێ';
@@ -962,22 +917,19 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get removeCodeConfirmTitle => 'کۆدی ئۆتۆمبێل بسڕدرێتەوە؟';
 
   @override
-  String get removeCodeConfirmBody =>
-      'کۆدی ئێستا بۆ هەمیشە کار ناکات و ناتوانرێت دووبارە ببەسترێتەوە. دوای ئەوە دەتوانیت کۆدێکی نوێ ببەستیتەوە.';
+  String get removeCodeConfirmBody => 'کۆدی ئێستا بۆ هەمیشە کار ناکات و ناتوانرێت دووبارە ببەسترێتەوە. دوای ئەوە دەتوانیت کۆدێکی نوێ ببەستیتەوە.';
 
   @override
   String get codeRemoved => 'کۆدەکە سڕایەوە';
 
   @override
-  String get oneCodeNote =>
-      'هەر ئۆتۆمبێلێک یەک کۆدی هەیە. بۆ گۆڕینی، ئەوەی ئێستا بسڕەوە پاشان نوێیەکە ببەستەرەوە.';
+  String get oneCodeNote => 'هەر ئۆتۆمبێلێک یەک کۆدی هەیە. بۆ گۆڕینی، ئەوەی ئێستا بسڕەوە پاشان نوێیەکە ببەستەرەوە.';
 
   @override
   String get noCodeYetTitle => 'هیچ کۆدێک نەبەستراوەتەوە';
 
   @override
-  String get noCodeYetSubtitle =>
-      'کۆدی ستیکەرەکە سکان بکە تا ئۆتۆمبێلەکە بتوانرێت پەیوەندی پێوە بکرێت.';
+  String get noCodeYetSubtitle => 'کۆدی ستیکەرەکە سکان بکە تا ئۆتۆمبێلەکە بتوانرێت پەیوەندی پێوە بکرێت.';
 
   @override
   String get profileMyInfo => 'زانیارییەکانم';
@@ -998,8 +950,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get visibilityTitle => 'ئەوەی سەردانکەر دەیبینێت';
 
   @override
-  String get visibilitySubtitle =>
-      'بە شێوەی بنەڕەتی سەردانکەر هیچ نابینێت جگە لە ناردنی پەیام بۆ تۆ. زانیارییەکانت زیاد بکە و ئەوە هەڵبژێرە کە دەتەوێت پیشانی بدەیت.';
+  String get visibilitySubtitle => 'بە شێوەی بنەڕەتی سەردانکەر هیچ نابینێت جگە لە ناردنی پەیام بۆ تۆ. زانیارییەکانت زیاد بکە و ئەوە هەڵبژێرە کە دەتەوێت پیشانی بدەیت.';
 
   @override
   String get showToVisitors => 'پیشاندان بە سەردانکەران';
@@ -1008,8 +959,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get proBadge => 'Plus';
 
   @override
-  String get visibilityNoneShown =>
-      'ئێستا هیچ شتێک بۆ سەردانکەر پیشان نادرێت — تەنها دەتوانێت پەیامت بۆ بنێرێت.';
+  String get visibilityNoneShown => 'ئێستا هیچ شتێک بۆ سەردانکەر پیشان نادرێت — تەنها دەتوانێت پەیامت بۆ بنێرێت.';
 
   @override
   String visibilitySharing(String items) {
@@ -1017,8 +967,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   }
 
   @override
-  String get visibilityLockedHint =>
-      'زیادکردنی هەژمارەکانی پەیوەندیی تر لە پاکێجی Plus بەردەستە.';
+  String get visibilityLockedHint => 'زیادکردنی هەژمارەکانی پەیوەندیی تر لە پاکێجی Plus بەردەستە.';
 
   @override
   String get scanManualTitle => 'نووسینی کۆد بە دەست';
@@ -1033,8 +982,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get scanCameraError => 'نەتوانرا کامێرا کار پێبکرێت';
 
   @override
-  String get scanCameraPermission =>
-      'ڕێگە بە بەرنامەکە بدە کامێرا بەکاربهێنێت لە ڕێکخستنەکانی مۆبایل پاشان دووبارە هەوڵبدەرەوە، یان کۆدەکە بە دەست بنووسە.';
+  String get scanCameraPermission => 'ڕێگە بە بەرنامەکە بدە کامێرا بەکاربهێنێت لە ڕێکخستنەکانی مۆبایل پاشان دووبارە هەوڵبدەرەوە، یان کۆدەکە بە دەست بنووسە.';
 
   @override
   String get scanTorch => 'فلاش';
@@ -1072,15 +1020,13 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get scanModeNfc => 'NFC';
 
   @override
-  String get nfcHoldPhone =>
-      'پشتی مۆبایلەکەت لە چیپی NFC لەسەر ئۆتۆمبێلەکە نزیک بکەرەوە';
+  String get nfcHoldPhone => 'پشتی مۆبایلەکەت لە چیپی NFC لەسەر ئۆتۆمبێلەکە نزیک بکەرەوە';
 
   @override
   String get nfcUnavailable => 'ئەم ئامێرە پشتگیری NFC ناکات';
 
   @override
-  String get nfcDisabled =>
-      'NFC لە ڕێکخستنەکانی مۆبایل چالاک بکە پاشان بگەڕێرەوە ئێرە';
+  String get nfcDisabled => 'NFC لە ڕێکخستنەکانی مۆبایل چالاک بکە پاشان بگەڕێرەوە ئێرە';
 
   @override
   String get nfcNoLink => 'بەستەری Qreach لەم چیپەدا نەدۆزرایەوە';
@@ -1182,15 +1128,13 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get visShowName => 'ناوم پیشانی سەردانکەر بدە';
 
   @override
-  String get visNameHint =>
-      'بە شێوەی بنەڕەتی شاراوەیە. سەردانکەر ناوەکەت نابینێت مەگەر ئەمە چالاک بکەیت.';
+  String get visNameHint => 'بە شێوەی بنەڕەتی شاراوەیە. سەردانکەر ناوەکەت نابینێت مەگەر ئەمە چالاک بکەیت.';
 
   @override
   String get visShowAvatar => 'وێنەی کەسیم پیشانی سەردانکەر بدە';
 
   @override
-  String get visAvatarHint =>
-      'بە شێوەی بنەڕەتی شاراوەیە. سەرەتا وێنەیەک لە پڕۆفایلەکەتەوە زیاد بکە.';
+  String get visAvatarHint => 'بە شێوەی بنەڕەتی شاراوەیە. سەرەتا وێنەیەک لە پڕۆفایلەکەتەوە زیاد بکە.';
 
   @override
   String get visAvatarLabel => 'وێنەی کەسیم';
@@ -1199,8 +1143,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get visShowCover => 'وێنەی بەرگ پیشانی سەردانکەر بدە';
 
   @override
-  String get visCoverHint =>
-      'بە شێوەی بنەڕەتی شاراوەیە. سەرەتا وێنەی بەرگێک لە پڕۆفایلەکەتەوە زیاد بکە.';
+  String get visCoverHint => 'بە شێوەی بنەڕەتی شاراوەیە. سەرەتا وێنەی بەرگێک لە پڕۆفایلەکەتەوە زیاد بکە.';
 
   @override
   String get visCoverLabel => 'وێنەی بەرگ';
@@ -1209,8 +1152,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get emergencySection => 'پەیوەندی تەنگانە';
 
   @override
-  String get emergencyHint =>
-      'وەک باوک یان دایک — تەنها کاتێک بۆ سەردانکەر دەردەکەوێت کە پیشاندانەکە چالاک بکەیت.';
+  String get emergencyHint => 'وەک باوک یان دایک — تەنها کاتێک بۆ سەردانکەر دەردەکەوێت کە پیشاندانەکە چالاک بکەیت.';
 
   @override
   String get emergencyName => 'ناو';
@@ -1240,8 +1182,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get methodsLockedTitle => 'لە پاکێجی Plus بەردەستە';
 
   @override
-  String get methodsLockedBody =>
-      'پاکێجی Plus ڕێگەت دەدات ئینستاگرام و فەیسبووک و سناپچات و تیکتۆک و واتساپ زیاد بکەیت و کۆنتڕۆڵی ئەوە بکەیت کە سەردانکەر دەیبینێت.';
+  String get methodsLockedBody => 'پاکێجی Plus ڕێگەت دەدات ئینستاگرام و فەیسبووک و سناپچات و تیکتۆک و واتساپ زیاد بکەیت و کۆنتڕۆڵی ئەوە بکەیت کە سەردانکەر دەیبینێت.';
 
   @override
   String get upgradeToPlus => 'بەرزکردنەوە بۆ Plus';
@@ -1265,8 +1206,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get serverAddress => 'ناونیشانی سێرڤەر (IP:پۆرت)';
 
   @override
-  String get serverSetupHelp =>
-      'ناونیشانی ئەو سێرڤەرە بنووسە کە بەرنامەکە پێوەی پەیوەندی دەکات، وەک 192.168.1.10:8000 یان ناوی دۆمەین. تەنها لەسەر ئەم مۆبایلە پاشەکەوت دەکرێت.';
+  String get serverSetupHelp => 'ناونیشانی ئەو سێرڤەرە بنووسە کە بەرنامەکە پێوەی پەیوەندی دەکات، وەک 192.168.1.10:8000 یان ناوی دۆمەین. تەنها لەسەر ئەم مۆبایلە پاشەکەوت دەکرێت.';
 
   @override
   String get serverTest => 'تاقیکردنەوەی پەیوەندی';
@@ -1275,15 +1215,13 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get serverOk => 'پەیوەندی بە سێرڤەرەوە سەرکەوتوو بوو';
 
   @override
-  String get serverFail =>
-      'نەتوانرا بگەیتە سێرڤەر. ناونیشان و پۆرتەکە بپشکنە و دڵنیابە مۆبایلەکە لەسەر هەمان تۆڕە.';
+  String get serverFail => 'نەتوانرا بگەیتە سێرڤەر. ناونیشان و پۆرتەکە بپشکنە و دڵنیابە مۆبایلەکە لەسەر هەمان تۆڕە.';
 
   @override
   String get serverInvalid => 'ناونیشانەکە دروست نییە';
 
   @override
-  String get serverHttpsOnly =>
-      'وەشانی کۆتایی تەنها ناونیشانی https قبووڵ دەکات';
+  String get serverHttpsOnly => 'وەشانی کۆتایی تەنها ناونیشانی https قبووڵ دەکات';
 
   @override
   String get serverSaved => 'ناونیشانی سێرڤەر پاشەکەوتکرا';
@@ -1307,8 +1245,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get themeDark => 'تاریک';
 
   @override
-  String get sessionReplacedNotice =>
-      'چوویتە دەرەوە چونکە هەژمارەکەت لەسەر ئامێرێکی تر کرایەوە.';
+  String get sessionReplacedNotice => 'چوویتە دەرەوە چونکە هەژمارەکەت لەسەر ئامێرێکی تر کرایەوە.';
 
   @override
   String get disableVehicle => 'ڕاگرتنی ئۆتۆمبێل';
@@ -1320,8 +1257,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get disableVehicleTitle => 'ئەم ئۆتۆمبێلە ڕابگیرێت؟';
 
   @override
-  String get disableVehicleBody =>
-      'لە کاتی ڕاگرتندا، سکانکردنی کۆدی QR یان چیپی NFC لاپەڕەی \"بەردەست نییە\" پیشان دەدات: سەردانکەران ناتوانن پەیوەندیت پێوە بکەن و هیچ ئاگادارکردنەوەیەکت بۆ نایەت. کۆد و زانیاری ئۆتۆمبێل و گفتوگۆ پێشووەکانت وەک خۆیان دەمێننەوە و دەتوانیت لە هەر کاتێکدا دووبارە چالاکی بکەیتەوە.';
+  String get disableVehicleBody => 'لە کاتی ڕاگرتندا، سکانکردنی کۆدی QR یان چیپی NFC لاپەڕەی \"بەردەست نییە\" پیشان دەدات: سەردانکەران ناتوانن پەیوەندیت پێوە بکەن و هیچ ئاگادارکردنەوەیەکت بۆ نایەت. کۆد و زانیاری ئۆتۆمبێل و گفتوگۆ پێشووەکانت وەک خۆیان دەمێننەوە و دەتوانیت لە هەر کاتێکدا دووبارە چالاکی بکەیتەوە.';
 
   @override
   String get disableConfirm => 'ڕاگرتن';
@@ -1330,15 +1266,13 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get enableVehicleTitle => 'ئەم ئۆتۆمبێلە دووبارە چالاک بکرێتەوە؟';
 
   @override
-  String get enableVehicleBody =>
-      'ئەو سەردانکەرانەی کۆدەکەی سکان دەکەن دووبارە دەتوانن پەیوەندیت پێوە بکەن.';
+  String get enableVehicleBody => 'ئەو سەردانکەرانەی کۆدەکەی سکان دەکەن دووبارە دەتوانن پەیوەندیت پێوە بکەن.';
 
   @override
   String get enableConfirm => 'دووبارە چالاککردنەوە';
 
   @override
-  String get vehicleDisabledBanner =>
-      'ئەم ئۆتۆمبێلە ڕاگیراوە. کۆدەکەی لاپەڕەی \"بەردەست نییە\" بۆ سەردانکەران پیشان دەدات.';
+  String get vehicleDisabledBanner => 'ئەم ئۆتۆمبێلە ڕاگیراوە. کۆدەکەی لاپەڕەی \"بەردەست نییە\" بۆ سەردانکەران پیشان دەدات.';
 
   @override
   String get vehicleDisabledDone => 'ئۆتۆمبێلەکە ڕاگیرا';
@@ -1350,8 +1284,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get deleteVehicleTitle => 'ئەم ئۆتۆمبێلە بسڕدرێتەوە؟';
 
   @override
-  String get deleteVehicleBody =>
-      'ئۆتۆمبێلەکە لە هەژمارەکەت لادەبرێت و کۆدەکەی کار ناکات. ناتوانرێت ئەم کردارە بگەڕێندرێتەوە. ئەگەر دەتەوێت تەنها بۆ ماوەیەک ڕایبگریت، \"ڕاگرتنی ئۆتۆمبێل\" بەکاربهێنە لەبری سڕینەوە.';
+  String get deleteVehicleBody => 'ئۆتۆمبێلەکە لە هەژمارەکەت لادەبرێت و کۆدەکەی کار ناکات. ناتوانرێت ئەم کردارە بگەڕێندرێتەوە. ئەگەر دەتەوێت تەنها بۆ ماوەیەک ڕایبگریت، \"ڕاگرتنی ئۆتۆمبێل\" بەکاربهێنە لەبری سڕینەوە.';
 
   @override
   String get attachPhoto => 'هاوپێچکردنی وێنە';
@@ -1363,20 +1296,16 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get imageTooLarge => 'وێنەکە زۆر گەورەیە (زۆرترین 8 مێگابایت).';
 
   @override
-  String get imageTypeUnsupported =>
-      'جۆری فایلەکە پشتگیری ناکرێت. وێنەی JPG یان PNG یان WebP بەکاربهێنە.';
+  String get imageTypeUnsupported => 'جۆری فایلەکە پشتگیری ناکرێت. وێنەی JPG یان PNG یان WebP بەکاربهێنە.';
 
   @override
-  String get cameraPermissionDenied =>
-      'ڕێگە بدە بە کامێرا لە ڕێکخستنەکانی مۆبایل بۆ گرتنی وێنە.';
+  String get cameraPermissionDenied => 'ڕێگە بدە بە کامێرا لە ڕێکخستنەکانی مۆبایل بۆ گرتنی وێنە.';
 
   @override
-  String get photosPermissionDenied =>
-      'ڕێگە بدە بە وێنەکان لە ڕێکخستنەکانی مۆبایل بۆ هەڵبژاردنی وێنە.';
+  String get photosPermissionDenied => 'ڕێگە بدە بە وێنەکان لە ڕێکخستنەکانی مۆبایل بۆ هەڵبژاردنی وێنە.';
 
   @override
-  String get imageSendFailed =>
-      'نەتوانرا وێنەکە بنێردرێت. دووبارە هەوڵبدەرەوە.';
+  String get imageSendFailed => 'نەتوانرا وێنەکە بنێردرێت. دووبارە هەوڵبدەرەوە.';
 
   @override
   String get payCheckoutTitle => 'ئابوونە';
@@ -1394,8 +1323,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get payMethodTitle => 'شێوازی پارەدان';
 
   @override
-  String get payNoMethods =>
-      'ئێستا هیچ شێوازێکی پارەدان بەردەست نییە. دواتر هەوڵبدەرەوە.';
+  String get payNoMethods => 'ئێستا هیچ شێوازێکی پارەدان بەردەست نییە. دواتر هەوڵبدەرەوە.';
 
   @override
   String get payTestBadge => 'تاقیکاری';
@@ -1404,8 +1332,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get payNow => 'ئێستا پارە بدە';
 
   @override
-  String get payNote =>
-      'دەچیتە لاپەڕەیەکی پارەدانی سەلامەت. پاکێجەکەت تەنها دوای پشتڕاستکردنەوەی پارەدان چالاک دەکرێت.';
+  String get payNote => 'دەچیتە لاپەڕەیەکی پارەدانی سەلامەت. پاکێجەکەت تەنها دوای پشتڕاستکردنەوەی پارەدان چالاک دەکرێت.';
 
   @override
   String get payStatusTitle => 'پارەدان';
@@ -1414,8 +1341,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get payChecking => 'پارەدان پشتڕاست دەکرێتەوە…';
 
   @override
-  String get payCheckingHint =>
-      'ئەمە بەزۆری چەند چرکەیەک دەخایەنێت. پاکێجەکەت هەر کە پارەدان پشتڕاست بکرێتەوە چالاک دەبێت.';
+  String get payCheckingHint => 'ئەمە بەزۆری چەند چرکەیەک دەخایەنێت. پاکێجەکەت هەر کە پارەدان پشتڕاست بکرێتەوە چالاک دەبێت.';
 
   @override
   String get paySuccessTitle => 'پارەدان ئەنجام درا';
@@ -1424,12 +1350,10 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get payFailedTitle => 'پارەدان تەواو نەبوو';
 
   @override
-  String get payFailedHint =>
-      'هیچ بڕێک لێت نەبڕدراوە. دەتوانیت دووبارە هەوڵبدەیتەوە.';
+  String get payFailedHint => 'هیچ بڕێک لێت نەبڕدراوە. دەتوانیت دووبارە هەوڵبدەیتەوە.';
 
   @override
-  String get payFailedExpired =>
-      'ماوەی پارەدان تەواو بوو پێش ئەوەی ئەنجام بدرێت.';
+  String get payFailedExpired => 'ماوەی پارەدان تەواو بوو پێش ئەوەی ئەنجام بدرێت.';
 
   @override
   String get payTryAgain => 'دووبارە هەوڵبدەرەوە';
@@ -1462,8 +1386,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get payOpenFailed => 'نەتوانرا لاپەڕەی پارەدان بکرێتەوە.';
 
   @override
-  String get payTestNotice =>
-      'ئەمە پارەدانێکی تاقیکاری بوو. هیچ بڕێکی ڕاستەقینە نەبڕدرا.';
+  String get payTestNotice => 'ئەمە پارەدانێکی تاقیکاری بوو. هیچ بڕێکی ڕاستەقینە نەبڕدرا.';
 
   @override
   String get paySubscribeButton => 'ئابوونەی ئەم پاکێجە بکە';
@@ -1496,8 +1419,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get vinLabel => 'ژمارەی شاسی (VIN) — ئارەزوومەندانە';
 
   @override
-  String get vinInvalid =>
-      'ژمارەی شاسی دروست نییە (ژمارە و پیتی لاتینی بەبێ I و O و Q).';
+  String get vinInvalid => 'ژمارەی شاسی دروست نییە (ژمارە و پیتی لاتینی بەبێ I و O و Q).';
 
   @override
   String get copyLink => 'کۆپی کردنی بەستەر';
@@ -1534,8 +1456,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get vehicleLimitGo => 'بڕۆ بۆ ئابوونە';
 
   @override
-  String get vehicleLockedBanner =>
-      'ئەم ئۆتۆمبێلە ناچالاکە چونکە پاکێجی ئێستات ناگرێتەوە. بە چالاککردنی Plus خۆکارانە چالاک دەبێتەوە.';
+  String get vehicleLockedBanner => 'ئەم ئۆتۆمبێلە ناچالاکە چونکە پاکێجی ئێستات ناگرێتەوە. بە چالاککردنی Plus خۆکارانە چالاک دەبێتەوە.';
 
   @override
   String get vehicleLockedBadge => 'ناچالاک';
@@ -1559,15 +1480,13 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get scanReportTitle => 'ئاگاداری خاوەنی ئۆتۆمبێل بکە';
 
   @override
-  String get scanReportSubtitle =>
-      'هۆکارێک هەڵبژێرە و بینێرە. گفتوگۆکە دوای ٧ ڕۆژ خۆکارانە دەسڕدرێتەوە.';
+  String get scanReportSubtitle => 'هۆکارێک هەڵبژێرە و بینێرە. گفتوگۆکە دوای ٧ ڕۆژ خۆکارانە دەسڕدرێتەوە.';
 
   @override
   String get scanReportSend => 'ناردنی ڕاپۆرت';
 
   @override
-  String get scanReportExisting =>
-      'گفتوگۆیەکی کراوەت هەیە لەگەڵ ئەم ئۆتۆمبێلە و ڕاپۆرتەکە دەخرێتە ناو ئەوە.';
+  String get scanReportExisting => 'گفتوگۆیەکی کراوەت هەیە لەگەڵ ئەم ئۆتۆمبێلە و ڕاپۆرتەکە دەخرێتە ناو ئەوە.';
 
   @override
   String scanOwnerLine(String name) {
@@ -1602,11 +1521,10 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get contactWithOwner => 'خاوەنی ئۆتۆمبێل';
 
   @override
-  String get contactWithOwnerSubtitle =>
-      'گفتوگۆیەک کە دوای سکانی کۆدی ئۆتۆمبێلەکە دەستت پێکرد';
+  String get contactWithOwnerSubtitle => 'گفتوگۆیەک کە دوای سکانی کۆدی ئۆتۆمبێلەکە دەستت پێکرد';
 
   @override
-  String get threadMenuShowIdentity => 'ناسنامەکەم نیشانی خاوەنەکە بدە';
+  String get threadMenuShowIdentity => 'ناسنامەکەم نیشانی خاوەنەکە بدە (ناو، وێنە، ژمارە)';
 
   @override
   String get threadMenuHideIdentity => 'ناسنامەکەم بشارەوە';
@@ -1615,11 +1533,10 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get threadMenuReport => 'ڕاپۆرتی کێشە';
 
   @override
-  String get identityShownSnack => 'ناوەکەت بۆ خاوەنەکە دیارە.';
+  String get identityShownSnack => 'خاوەنەکە ئێستا ناو و وێنە و ژمارەکەت دەبینێت و دەتوانێت پەیوەندیت پێوە بکات.';
 
   @override
-  String get identityHiddenSnack =>
-      'ناوەکەت شاردرایەوە. خاوەنەکە تەنها دەبینێت هەژمارێکی پشتڕاستکراویت.';
+  String get identityHiddenSnack => 'ناوەکەت شاردرایەوە. خاوەنەکە تەنها دەبینێت هەژمارێکی پشتڕاستکراویت.';
 
   @override
   String get badgeTrusted => 'بەکارهێنەری متمانەپێکراو';
@@ -1634,8 +1551,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get reportTitle => 'ڕاپۆرتی کێشە';
 
   @override
-  String get reportSubtitle =>
-      'ڕاپۆرتەکە دەگاتە تیمی Qreach و لایەنەکەی تر نازانێت.';
+  String get reportSubtitle => 'ڕاپۆرتەکە دەگاتە تیمی Qreach و لایەنەکەی تر نازانێت.';
 
   @override
   String get reportReasonHarassment => 'ئازاردان';
@@ -1668,8 +1584,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get supportWhatsappTitle => 'پەیوەندی لە ڕێگەی واتسئاپ';
 
   @override
-  String get supportNoNumbers =>
-      'ئێستا هیچ ژمارەیەکی واتسئاپ نییە. تکێتێک بکەرەوە و وەڵامت دەدەینەوە.';
+  String get supportNoNumbers => 'ئێستا هیچ ژمارەیەکی واتسئاپ نییە. تکێتێک بکەرەوە و وەڵامت دەدەینەوە.';
 
   @override
   String get supportOpenTicket => 'کردنەوەی تکێتی نوێ';
@@ -1723,8 +1638,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get supportStatusClosed => 'داخراوە';
 
   @override
-  String get supportClosedNote =>
-      'ئەم تکێتە داخراوە. ئەگەر یارمەتیت دەوێت تکێتێکی نوێ بکەرەوە.';
+  String get supportClosedNote => 'ئەم تکێتە داخراوە. ئەگەر یارمەتیت دەوێت تکێتێکی نوێ بکەرەوە.';
 
   @override
   String get supportStaff => 'پشتگیری';

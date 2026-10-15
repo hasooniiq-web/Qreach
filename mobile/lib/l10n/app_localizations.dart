@@ -2941,7 +2941,7 @@ abstract class AppLocalizations {
   /// No description provided for @threadMenuShowIdentity.
   ///
   /// In ar, this message translates to:
-  /// **'إظهار هويتي للمالك'**
+  /// **'إظهار هويتي للمالك (الاسم والصورة والرقم)'**
   String get threadMenuShowIdentity;
 
   /// No description provided for @threadMenuHideIdentity.
@@ -2959,7 +2959,7 @@ abstract class AppLocalizations {
   /// No description provided for @identityShownSnack.
   ///
   /// In ar, this message translates to:
-  /// **'صار اسمك ظاهرًا للمالك.'**
+  /// **'يرى المالك الآن اسمك وصورتك ورقمك ويمكنه الاتصال بك.'**
   String get identityShownSnack;
 
   /// No description provided for @identityHiddenSnack.

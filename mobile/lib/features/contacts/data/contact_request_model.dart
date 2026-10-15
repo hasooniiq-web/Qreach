@@ -45,6 +45,8 @@ class ContactRequestModel extends Equatable {
     this.senderIdentityVisible = false,
     this.senderName,
     this.senderBadge,
+    this.senderPhone,
+    this.senderHasAvatar = false,
     this.identityVisible = false,
   });
 
@@ -83,6 +85,10 @@ class ContactRequestModel extends Equatable {
   final String? senderName;
   final String? senderBadge;
 
+  /// Only when the sender chose to show their identity: the number to call and whether there is a photo.
+  final String? senderPhone;
+  final bool senderHasAvatar;
+
   /// For the one who started it from the app: is my name shown to the owner.
   final bool identityVisible;
 
@@ -108,6 +114,8 @@ class ContactRequestModel extends Equatable {
         senderIdentityVisible: senderIdentityVisible,
         senderName: senderName,
         senderBadge: senderBadge,
+        senderPhone: senderPhone,
+        senderHasAvatar: senderHasAvatar,
         identityVisible: identityVisible,
       );
 
@@ -137,6 +145,11 @@ class ContactRequestModel extends Equatable {
             (json['sender'] as Map<String, dynamic>?)?['name'] as String?,
         senderBadge:
             (json['sender'] as Map<String, dynamic>?)?['badge'] as String?,
+        senderPhone:
+            (json['sender'] as Map<String, dynamic>?)?['phone'] as String?,
+        senderHasAvatar: (json['sender']
+                as Map<String, dynamic>?)?['has_avatar'] as bool? ??
+            false,
         identityVisible: json['identity_visible'] as bool? ?? false,
       );
 
@@ -157,6 +170,8 @@ class ContactRequestModel extends Equatable {
         senderIdentityVisible,
         senderName,
         senderBadge,
+        senderPhone,
+        senderHasAvatar,
         identityVisible
       ];
 }

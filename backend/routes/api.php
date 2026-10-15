@@ -80,6 +80,7 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
             ->middleware('throttle:30,1')->name('contact-requests.reply');
         Route::post('contact-requests/{uuid}/report', [ContactRequestController::class, 'report'])
             ->middleware('throttle:10,60')->name('contact-requests.report');
+        Route::get('contact-requests/{uuid}/sender-avatar', [ContactRequestController::class, 'senderAvatar'])->name('contact-requests.sender-avatar');
         Route::put('contact-requests/{uuid}/identity', [ContactRequestController::class, 'identity'])
             ->middleware('throttle:30,1')->name('contact-requests.identity');
         Route::put('contact-requests/{uuid}/read', [ContactRequestController::class, 'markRead'])->name('contact-requests.read');

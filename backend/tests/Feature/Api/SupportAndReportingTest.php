@@ -171,11 +171,13 @@ class SupportAndReportingTest extends TestCase
             ->assertOk()->assertJsonPath('identity_visible', true);
 
         $r = $this->getJson("/api/v1/contact-requests/{$id}", $this->as($owner))->assertOk();
-        $r->assertJsonPath('sender.identity_visible', true)->assertJsonPath('sender.name', $scanner->display_name);
-        $this->assertStringNotContainsString($scanner->phone, $r->getContent());
+        $r->assertJsonPath('sender.identity_visible', true)->assertJsonPath('sender.name', $scanner->display_name)
+            ->assertJsonPath('sender.phone', $scanner->phone);
 
         $this->putJson("/api/v1/contact-requests/{$id}/identity", ['visible' => false], $this->as($scanner))->assertOk();
-        $this->getJson("/api/v1/contact-requests/{$id}", $this->as($owner))->assertJsonPath('sender.name', null);
+        $hidden = $this->getJson("/api/v1/contact-requests/{$id}", $this->as($owner));
+        $hidden->assertJsonPath('sender.name', null)->assertJsonPath('sender.phone', null)->assertJsonPath('sender.has_avatar', false);
+        $this->assertStringNotContainsString($scanner->phone, $hidden->getContent());
 
         // The owner cannot change it for them.
         $this->putJson("/api/v1/contact-requests/{$id}/identity", ['visible' => true], $this->as($owner))->assertNotFound();
@@ -221,5 +223,27 @@ class SupportAndReportingTest extends TestCase
         $this->postJson("/api/v1/contact-requests/{$thread->uuid}/report", ['reason' => 'abuse'], $this->as($owner))->assertCreated();
 
         $this->assertNull(ConversationReport::firstOrFail()->reported_user_id);
+    }
+
+    public function test_the_photo_is_served_to_the_owner_only_while_the_identity_is_shown(): void
+    {
+        [$owner, $scanner, $id] = $this->appConversation();
+
+        $path = 'avatars/test-'.uniqid().'.jpg';
+        \Illuminate\Support\Facades\Storage::disk('local')->put($path, 'jpeg-bytes');
+        $scanner->forceFill(['avatar_path' => $path])->save();
+
+        // Hidden: no photo, nothing to fetch.
+        $this->get("/api/v1/contact-requests/{$id}/sender-avatar", $this->as($owner))->assertNotFound();
+
+        $this->putJson("/api/v1/contact-requests/{$id}/identity", ['visible' => true], $this->as($scanner))->assertOk();
+        $this->getJson("/api/v1/contact-requests/{$id}", $this->as($owner))->assertJsonPath('sender.has_avatar', true);
+        $this->get("/api/v1/contact-requests/{$id}/sender-avatar", $this->as($owner))->assertOk()->assertHeader('Content-Type', 'image/jpeg');
+
+        // Nobody else, and not the sender through the owner's route.
+        $this->get("/api/v1/contact-requests/{$id}/sender-avatar", $this->as(User::factory()->create()))->assertNotFound();
+        $this->get("/api/v1/contact-requests/{$id}/sender-avatar", $this->as($scanner))->assertNotFound();
+
+        \Illuminate\Support\Facades\Storage::disk('local')->delete($path);
     }
 }

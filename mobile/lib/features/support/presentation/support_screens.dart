@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart' hide TextDirection;
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/network/api_client.dart';
 import '../../../core/providers.dart';
@@ -18,10 +17,6 @@ import '../../../shared/widgets/status_badge.dart';
 import '../../contacts/presentation/contact_thread_screen.dart'
     show MessageComposer, MessageImage;
 import '../data/support_repository.dart';
-
-final supportWhatsappProvider =
-    FutureProvider.autoDispose<List<SupportWhatsapp>>(
-        (ref) => ref.watch(supportRepositoryProvider).whatsapp());
 
 final supportTicketsProvider =
     FutureProvider.autoDispose<List<SupportTicketModel>>(
@@ -53,86 +48,18 @@ class SupportScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    final numbers = ref.watch(supportWhatsappProvider);
     final tickets = ref.watch(supportTicketsProvider);
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.supportTitle)),
       body: RefreshIndicator(
         onRefresh: () async {
-          ref.invalidate(supportWhatsappProvider);
           ref.invalidate(supportTicketsProvider);
           await ref.read(supportTicketsProvider.future);
         },
         child: ListView(
           padding: const EdgeInsets.all(AppSpacing.lg),
           children: [
-            Text(l10n.supportWhatsappTitle,
-                style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 16)),
-            const SizedBox(height: AppSpacing.sm),
-            numbers.when(
-              loading: () => const Padding(
-                padding: EdgeInsets.all(AppSpacing.lg),
-                child: Center(child: CircularProgressIndicator()),
-              ),
-              error: (_, __) => Text(l10n.supportNoNumbers,
-                  style: TextStyle(color: AppColors.ink500)),
-              data: (list) => list.isEmpty
-                  ? Text(l10n.supportNoNumbers,
-                      style: TextStyle(color: AppColors.ink500))
-                  : Column(
-                      children: [
-                        for (final n in list)
-                          Padding(
-                            padding:
-                                const EdgeInsets.only(bottom: AppSpacing.sm),
-                            child: AppCard(
-                              child: InkWell(
-                                borderRadius: BorderRadius.circular(12),
-                                onTap: () => launchUrl(Uri.parse(n.url),
-                                    mode: LaunchMode.externalApplication),
-                                child: Row(
-                                  children: [
-                                    Container(
-                                      width: 44,
-                                      height: 44,
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xFF25D366)
-                                            .withValues(alpha: 0.15),
-                                        shape: BoxShape.circle,
-                                      ),
-                                      child: const Icon(Icons.chat_rounded,
-                                          color: Color(0xFF128C7E)),
-                                    ),
-                                    const SizedBox(width: AppSpacing.md),
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          if (n.label.isNotEmpty)
-                                            Text(n.label,
-                                                style: const TextStyle(
-                                                    fontWeight:
-                                                        FontWeight.w700)),
-                                          Text(n.phone,
-                                              textDirection: TextDirection.ltr,
-                                              style: TextStyle(
-                                                  color: AppColors.ink600)),
-                                        ],
-                                      ),
-                                    ),
-                                    Icon(Icons.open_in_new_rounded,
-                                        size: 20, color: AppColors.ink400),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
-            ),
-            const SizedBox(height: AppSpacing.lg),
             AppButton(
               label: l10n.supportOpenTicket,
               icon: Icons.add_comment_outlined,

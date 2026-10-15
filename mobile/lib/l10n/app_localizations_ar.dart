@@ -27,8 +27,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get createAccountTitle => 'إنشاء حساب جديد';
 
   @override
-  String get createAccountSubtitle =>
-      'أدخل اسمك ورقم هاتفك وكلمة مرور — سنرسل لك رمز تحقق لمرة واحدة لتأكيد رقمك';
+  String get createAccountSubtitle => 'أدخل اسمك ورقم هاتفك وكلمة مرور — سنرسل لك رمز تحقق لمرة واحدة لتأكيد رقمك';
 
   @override
   String get loginTitle => 'تسجيل الدخول';
@@ -73,8 +72,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get forgotPasswordTitle => 'استعادة كلمة المرور';
 
   @override
-  String get forgotPasswordSubtitle =>
-      'أدخل رقم هاتفك وسنرسل لك رمز تحقق لتعيين كلمة مرور جديدة';
+  String get forgotPasswordSubtitle => 'أدخل رقم هاتفك وسنرسل لك رمز تحقق لتعيين كلمة مرور جديدة';
 
   @override
   String get forgotPasswordSendOtp => 'إرسال رمز التحقق';
@@ -116,12 +114,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get biometricToggleLabel => 'الدخول بالبصمة أو الوجه';
 
   @override
-  String get biometricToggleHint =>
-      'افتح التطبيق دون إدخال كلمة المرور في كل مرة';
+  String get biometricToggleHint => 'افتح التطبيق دون إدخال كلمة المرور في كل مرة';
 
   @override
-  String get biometricEnablePrompt =>
-      'فعّل الدخول بالبصمة أو الوجه لهذا الحساب';
+  String get biometricEnablePrompt => 'فعّل الدخول بالبصمة أو الوجه لهذا الحساب';
 
   @override
   String get lockScreenTitle => 'التطبيق مُقفل';
@@ -175,8 +171,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get notificationsComingSoonTitle => 'الإشعارات قريبًا';
 
   @override
-  String get notificationsComingSoonSubtitle =>
-      'نعمل على إضافة مركز إشعارات كامل لعمليات المسح والنشاط.';
+  String get notificationsComingSoonSubtitle => 'نعمل على إضافة مركز إشعارات كامل لعمليات المسح والنشاط.';
 
   @override
   String get vehicleProtected => 'مربوطة';
@@ -200,8 +195,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get noVehiclesTitle => 'لا توجد مركبات بعد';
 
   @override
-  String get noVehiclesSubtitle =>
-      'أضف مركبتك الأولى للبدء في استخدام SmartTag';
+  String get noVehiclesSubtitle => 'أضف مركبتك الأولى للبدء في استخدام SmartTag';
 
   @override
   String get plateNumber => 'رقم اللوحة';
@@ -240,8 +234,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get linkNewTag => 'ربط رمز جديد';
 
   @override
-  String get scanTagInstructions =>
-      'وجّه الكاميرا نحو رمز QR الموجود على الملصق';
+  String get scanTagInstructions => 'وجّه الكاميرا نحو رمز QR الموجود على الملصق';
 
   @override
   String get activating => 'جارٍ الربط...';
@@ -356,8 +349,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get featurePublicPhone => 'عرض رقم هاتفك للزوار';
 
   @override
-  String get featurePublicInstagram =>
-      'إضافة حسابات التواصل (إنستغرام، فيسبوك، سناب...)';
+  String get featurePublicInstagram => 'إضافة حسابات التواصل (إنستغرام، فيسبوك، سناب...)';
 
   @override
   String get featurePublicExtra => 'التحكم بما يراه الزائر من كل حساب';
@@ -393,8 +385,7 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get upgradeConfirmBody =>
-      'سيراجع فريق Qreach طلبك ويتواصل معك لإتمام الاشتراك وتفعيل الباقة.';
+  String get upgradeConfirmBody => 'سيراجع فريق Qreach طلبك ويتواصل معك لإتمام الاشتراك وتفعيل الباقة.';
 
   @override
   String get upgradeSent => 'تم إرسال طلب الترقية';
@@ -406,15 +397,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get voucherEntryTitle => 'لديك قسيمة تفعيل؟';
 
   @override
-  String get voucherEntryBody =>
-      'أدخل الرقم المكوّن من 12 خانة أو امسح رمز QR لتفعيل الباقة.';
+  String get voucherEntryBody => 'أدخل الرقم المكوّن من 12 خانة أو امسح رمز QR لتفعيل الباقة.';
 
   @override
   String get voucherTitle => 'تفعيل بقسيمة';
 
   @override
-  String get voucherIntro =>
-      'اشتريت قسيمة تفعيل من أحد الموزّعين؟ أدخل رقمها المكوّن من 12 خانة (أحرف وأرقام) أو امسح رمز QR المطبوع عليها، فتُفعَّل باقتك فورًا.';
+  String get voucherIntro => 'اشتريت قسيمة تفعيل من أحد الموزّعين؟ أدخل رقمها المكوّن من 12 خانة (أحرف وأرقام) أو امسح رمز QR المطبوع عليها، فتُفعَّل باقتك فورًا.';
 
   @override
   String get voucherFieldLabel => 'رقم القسيمة (12 خانة)';
@@ -429,8 +418,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get voucherScanHint => 'وجّه الكاميرا نحو رمز QR المطبوع على القسيمة';
 
   @override
-  String get voucherNote =>
-      'تُستخدم كل قسيمة مرة واحدة فقط. إن كانت مستخدمة أو منتهية أو ملغاة فسيخبرك التطبيق.';
+  String get voucherNote => 'تُستخدم كل قسيمة مرة واحدة فقط. إن كانت مستخدمة أو منتهية أو ملغاة فسيخبرك التطبيق.';
 
   @override
   String voucherSuccessTitle(String plan) {
@@ -448,12 +436,10 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get voucherErrInvalid =>
-      'رقم القسيمة غير موجود. تأكد منه وأعد المحاولة.';
+  String get voucherErrInvalid => 'رقم القسيمة غير موجود. تأكد منه وأعد المحاولة.';
 
   @override
-  String get voucherErrFormat =>
-      'الرقم غير مكتمل أو غير صحيح. تأكد أنه 12 خانة من الأحرف والأرقام.';
+  String get voucherErrFormat => 'الرقم غير مكتمل أو غير صحيح. تأكد أنه 12 خانة من الأحرف والأرقام.';
 
   @override
   String get voucherErrUsed => 'هذه القسيمة مستخدمة من قبل.';
@@ -465,33 +451,28 @@ class AppLocalizationsAr extends AppLocalizations {
   String get voucherErrRevoked => 'هذه القسيمة ملغاة ولا يمكن استخدامها.';
 
   @override
-  String get voucherErrThrottled =>
-      'محاولات كثيرة خلال وقت قصير. انتظر دقيقة ثم حاول مجددًا.';
+  String get voucherErrThrottled => 'محاولات كثيرة خلال وقت قصير. انتظر دقيقة ثم حاول مجددًا.';
 
   @override
-  String get voucherErrLocked =>
-      'تجاوزت عدد المحاولات المسموح بها. حاول بعد ساعة.';
+  String get voucherErrLocked => 'تجاوزت عدد المحاولات المسموح بها. حاول بعد ساعة.';
 
   @override
   String get onboard1Title => 'اربط رمزك بمركبتك';
 
   @override
-  String get onboard1Body =>
-      'أضف مركبتك، ثم امسح رمز QR أو قرّب هاتفك من شريحة NFC لربطه بها. يلصق الرمز على المركبة وتبدأ الحماية فورًا.';
+  String get onboard1Body => 'أضف مركبتك، ثم امسح رمز QR أو قرّب هاتفك من شريحة NFC لربطه بها. يلصق الرمز على المركبة وتبدأ الحماية فورًا.';
 
   @override
   String get onboard2Title => 'يصلك بلاغ لا إزعاج';
 
   @override
-  String get onboard2Body =>
-      'عندما يمسح أحدهم الرمز يختار سبب البلاغ ويرسله، فيصلك إشعار وتتابع الرد من «المحادثات» دون أن يعرف رقمك.';
+  String get onboard2Body => 'عندما يمسح أحدهم الرمز يختار سبب البلاغ ويرسله، فيصلك إشعار وتتابع الرد من «المحادثات» دون أن يعرف رقمك.';
 
   @override
   String get onboard3Title => 'أنت تتحكم بما يظهر';
 
   @override
-  String get onboard3Body =>
-      'من «ما يظهر للزائر» اختر ما يراه الزائر: الاسم أو الهاتف أو جهة اتصال للطوارئ. وفي «الاشتراك» تجدّد باقتك وتضيف وسائل تواصل أكثر.';
+  String get onboard3Body => 'من «ما يظهر للزائر» اختر ما يراه الزائر: الاسم أو الهاتف أو جهة اتصال للطوارئ. وفي «الاشتراك» تجدّد باقتك وتضيف وسائل تواصل أكثر.';
 
   @override
   String get onboardSkip => 'تخطي';
@@ -521,8 +502,7 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get trialCardBody =>
-      'بدون أي دفع، وتُمنح مرة واحدة فقط لكل حساب. تنتهي تلقائيًا ولا تتجدد.';
+  String get trialCardBody => 'بدون أي دفع، وتُمنح مرة واحدة فقط لكل حساب. تنتهي تلقائيًا ولا تتجدد.';
 
   @override
   String get trialStartButton => 'ابدأ التجربة المجانية';
@@ -544,8 +524,7 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get trialEndedBanner =>
-      'انتهت تجربتك المجانية. اشترك في بلس لتستمر في استخدام ميزاته.';
+  String get trialEndedBanner => 'انتهت تجربتك المجانية. اشترك في بلس لتستمر في استخدام ميزاته.';
 
   @override
   String get referralTitle => 'ادعُ صديقًا';
@@ -605,8 +584,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get referralDisabledNote => 'الدعوات متوقفة حاليًا.';
 
   @override
-  String get referralErrInvalid =>
-      'رمز الدعوة غير صحيح. تأكد منه وأعد المحاولة.';
+  String get referralErrInvalid => 'رمز الدعوة غير صحيح. تأكد منه وأعد المحاولة.';
 
   @override
   String get referralErrSelf => 'لا يمكنك استخدام رمز دعوتك أنت.';
@@ -708,16 +686,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get channelNfc => 'شريحة NFC';
 
   @override
-  String get channelsHint =>
-      'أوقف أحدهما أو كليهما: الزائر لا يستطيع فتح الرمز من الطريقة الموقوفة.';
+  String get channelsHint => 'أوقف أحدهما أو كليهما: الزائر لا يستطيع فتح الرمز من الطريقة الموقوفة.';
 
   @override
-  String get channelsBothOff =>
-      'الطريقتان موقوفتان: لن يظهر الرمز لأحد حتى تُفعّل إحداهما.';
+  String get channelsBothOff => 'الطريقتان موقوفتان: لن يظهر الرمز لأحد حتى تُفعّل إحداهما.';
 
   @override
-  String get referralErrFull =>
-      'وصل صاحب هذا الرمز إلى الحد الأقصى من الدعوات.';
+  String get referralErrFull => 'وصل صاحب هذا الرمز إلى الحد الأقصى من الدعوات.';
 
   @override
   String referralRemaining(int n) {
@@ -745,8 +720,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get resumeRenewal => 'إعادة تفعيل التجديد';
 
   @override
-  String get renewalCanceledDone =>
-      'تم إيقاف التجديد. باقتك تعمل حتى نهاية المدة.';
+  String get renewalCanceledDone => 'تم إيقاف التجديد. باقتك تعمل حتى نهاية المدة.';
 
   @override
   String get renewalResumedDone => 'تمت إعادة تفعيل التجديد.';
@@ -773,15 +747,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get publicContactTitle => 'بيانات التواصل العامة';
 
   @override
-  String get publicContactSubtitle =>
-      'تظهر لأي شخص يمسح رمز مركبتك. اختر ما تريد مشاركته.';
+  String get publicContactSubtitle => 'تظهر لأي شخص يمسح رمز مركبتك. اختر ما تريد مشاركته.';
 
   @override
   String get publicContactLockedTitle => 'متاحة في باقة Plus';
 
   @override
-  String get publicContactLockedBody =>
-      'في الباقة الأساسية يستطيع الزوار مراسلتك فقط. رقم هاتفك وحسابك لا يظهران لهم.';
+  String get publicContactLockedBody => 'في الباقة الأساسية يستطيع الزوار مراسلتك فقط. رقم هاتفك وحسابك لا يظهران لهم.';
 
   @override
   String get viewPlans => 'عرض الباقات';
@@ -826,8 +798,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get homeUpgradeTitle => 'أضف حسابات التواصل مع Plus';
 
   @override
-  String get homeUpgradeBody =>
-      'باقة Plus تتيح إضافة إنستغرام وفيسبوك وسناب وغيرها وعرضها للزائر.';
+  String get homeUpgradeBody => 'باقة Plus تتيح إضافة إنستغرام وفيسبوك وسناب وغيرها وعرضها للزائر.';
 
   @override
   String tagsLinkedCount(int count) {
@@ -835,12 +806,10 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get activationFreeYears =>
-      'الخدمة الأساسية لهذا الملصق مجانية لمدة 10 سنوات من تاريخ التفعيل.';
+  String get activationFreeYears => 'الخدمة الأساسية لهذا الملصق مجانية لمدة 10 سنوات من تاريخ التفعيل.';
 
   @override
-  String get activationSuccessSubtitle =>
-      'أصبح بإمكان أي شخص مسح الرمز والتواصل معك.';
+  String get activationSuccessSubtitle => 'أصبح بإمكان أي شخص مسح الرمز والتواصل معك.';
 
   @override
   String get done => 'تم';
@@ -870,8 +839,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get notificationsEmptyTitle => 'لا توجد إشعارات بعد';
 
   @override
-  String get notificationsEmptySubtitle =>
-      'ستظهر هنا تنبيهات عندما يتفاعل أحدهم مع رمز مركبتك.';
+  String get notificationsEmptySubtitle => 'ستظهر هنا تنبيهات عندما يتفاعل أحدهم مع رمز مركبتك.';
 
   @override
   String get markAllRead => 'تحديد الكل كمقروء';
@@ -898,8 +866,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get emergencyLabel => 'طارئ';
 
   @override
-  String get noRecentActivity =>
-      'لا يوجد نشاط بعد. عندما يمسح أحدهم رمز مركبتك ستراه هنا.';
+  String get noRecentActivity => 'لا يوجد نشاط بعد. عندما يمسح أحدهم رمز مركبتك ستراه هنا.';
 
   @override
   String get tabHome => 'الرئيسية';
@@ -920,8 +887,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get contactsEmptyTitle => 'لا توجد رسائل بعد';
 
   @override
-  String get contactsEmptySubtitle =>
-      'عندما يراسلك أحدهم بعد مسح رمز مركبتك ستظهر رسالته هنا.';
+  String get contactsEmptySubtitle => 'عندما يراسلك أحدهم بعد مسح رمز مركبتك ستظهر رسالته هنا.';
 
   @override
   String get contactStatusNew => 'جديد';
@@ -959,22 +925,19 @@ class AppLocalizationsAr extends AppLocalizations {
   String get removeCodeConfirmTitle => 'حذف رمز المركبة؟';
 
   @override
-  String get removeCodeConfirmBody =>
-      'سيتوقف الرمز الحالي عن العمل نهائيًا ولا يمكن ربطه من جديد. بعدها تستطيع ربط رمز جديد.';
+  String get removeCodeConfirmBody => 'سيتوقف الرمز الحالي عن العمل نهائيًا ولا يمكن ربطه من جديد. بعدها تستطيع ربط رمز جديد.';
 
   @override
   String get codeRemoved => 'تم حذف الرمز';
 
   @override
-  String get oneCodeNote =>
-      'لكل مركبة رمز واحد. لتبديله احذف الحالي ثم اربط الجديد.';
+  String get oneCodeNote => 'لكل مركبة رمز واحد. لتبديله احذف الحالي ثم اربط الجديد.';
 
   @override
   String get noCodeYetTitle => 'لا يوجد رمز مرتبط';
 
   @override
-  String get noCodeYetSubtitle =>
-      'امسح رمز الملصق لتصبح المركبة قابلة للتواصل.';
+  String get noCodeYetSubtitle => 'امسح رمز الملصق لتصبح المركبة قابلة للتواصل.';
 
   @override
   String get profileMyInfo => 'معلوماتي';
@@ -995,8 +958,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get visibilityTitle => 'ما يظهر للزائر';
 
   @override
-  String get visibilitySubtitle =>
-      'افتراضيًا لا يرى الزائر شيئًا سوى إرسال رسالة لك. أضف معلوماتك واختر ما تريد إظهاره.';
+  String get visibilitySubtitle => 'افتراضيًا لا يرى الزائر شيئًا سوى إرسال رسالة لك. أضف معلوماتك واختر ما تريد إظهاره.';
 
   @override
   String get showToVisitors => 'إظهار للزوار';
@@ -1005,8 +967,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get proBadge => 'Plus';
 
   @override
-  String get visibilityNoneShown =>
-      'لا يظهر للزائر أي شيء الآن — يستطيع مراسلتك فقط.';
+  String get visibilityNoneShown => 'لا يظهر للزائر أي شيء الآن — يستطيع مراسلتك فقط.';
 
   @override
   String visibilitySharing(String items) {
@@ -1014,8 +975,7 @@ class AppLocalizationsAr extends AppLocalizations {
   }
 
   @override
-  String get visibilityLockedHint =>
-      'إضافة حسابات تواصل أخرى متاحة في باقة Plus.';
+  String get visibilityLockedHint => 'إضافة حسابات تواصل أخرى متاحة في باقة Plus.';
 
   @override
   String get scanManualTitle => 'إدخال الرمز يدويًا';
@@ -1030,8 +990,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get scanCameraError => 'تعذّر تشغيل الكاميرا';
 
   @override
-  String get scanCameraPermission =>
-      'اسمح للتطبيق باستخدام الكاميرا من إعدادات الهاتف ثم أعد المحاولة، أو أدخل الرمز يدويًا.';
+  String get scanCameraPermission => 'اسمح للتطبيق باستخدام الكاميرا من إعدادات الهاتف ثم أعد المحاولة، أو أدخل الرمز يدويًا.';
 
   @override
   String get scanTorch => 'الفلاش';
@@ -1177,8 +1136,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get visShowName => 'إظهار اسمي للزائر';
 
   @override
-  String get visNameHint =>
-      'مخفي افتراضيًا. الزائر لا يرى اسمك إلا إذا فعّلت هذا.';
+  String get visNameHint => 'مخفي افتراضيًا. الزائر لا يرى اسمك إلا إذا فعّلت هذا.';
 
   @override
   String get visShowAvatar => 'إظهار صورتي الشخصية للزائر';
@@ -1193,8 +1151,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get visShowCover => 'إظهار صورة الغلاف للزائر';
 
   @override
-  String get visCoverHint =>
-      'مخفية افتراضيًا. أضف صورة غلاف من ملفك الشخصي أولًا.';
+  String get visCoverHint => 'مخفية افتراضيًا. أضف صورة غلاف من ملفك الشخصي أولًا.';
 
   @override
   String get visCoverLabel => 'صورة الغلاف';
@@ -1203,8 +1160,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get emergencySection => 'جهة اتصال الطوارئ';
 
   @override
-  String get emergencyHint =>
-      'مثل الأب أو الأم — تظهر للزائر فقط إذا فعّلت العرض.';
+  String get emergencyHint => 'مثل الأب أو الأم — تظهر للزائر فقط إذا فعّلت العرض.';
 
   @override
   String get emergencyName => 'الاسم';
@@ -1234,8 +1190,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get methodsLockedTitle => 'متاح في باقة Plus';
 
   @override
-  String get methodsLockedBody =>
-      'تتيح لك باقة Plus إضافة إنستغرام وفيسبوك وسناب شات وتيك توك وواتساب، والتحكم بما يراه الزائر.';
+  String get methodsLockedBody => 'تتيح لك باقة Plus إضافة إنستغرام وفيسبوك وسناب شات وتيك توك وواتساب، والتحكم بما يراه الزائر.';
 
   @override
   String get upgradeToPlus => 'الترقية إلى Plus';
@@ -1259,8 +1214,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get serverAddress => 'عنوان الخادم (IP:المنفذ)';
 
   @override
-  String get serverSetupHelp =>
-      'أدخل عنوان الخادم الذي يتصل به التطبيق، مثل 192.168.1.10:8000 أو اسم نطاق. يُحفظ على هذا الهاتف فقط.';
+  String get serverSetupHelp => 'أدخل عنوان الخادم الذي يتصل به التطبيق، مثل 192.168.1.10:8000 أو اسم نطاق. يُحفظ على هذا الهاتف فقط.';
 
   @override
   String get serverTest => 'اختبار الاتصال';
@@ -1269,8 +1223,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get serverOk => 'تم الاتصال بالخادم بنجاح';
 
   @override
-  String get serverFail =>
-      'تعذّر الوصول إلى الخادم. تأكد من العنوان والمنفذ وأن الهاتف على نفس الشبكة.';
+  String get serverFail => 'تعذّر الوصول إلى الخادم. تأكد من العنوان والمنفذ وأن الهاتف على نفس الشبكة.';
 
   @override
   String get serverInvalid => 'العنوان غير صالح';
@@ -1300,8 +1253,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get themeDark => 'داكن';
 
   @override
-  String get sessionReplacedNotice =>
-      'تم تسجيل خروجك لأن حسابك فُتح على جهاز آخر.';
+  String get sessionReplacedNotice => 'تم تسجيل خروجك لأن حسابك فُتح على جهاز آخر.';
 
   @override
   String get disableVehicle => 'إيقاف المركبة';
@@ -1313,8 +1265,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get disableVehicleTitle => 'إيقاف هذه المركبة؟';
 
   @override
-  String get disableVehicleBody =>
-      'أثناء الإيقاف، يعرض مسح رمز QR أو شريحة NFC صفحة \"غير متاح\": لن يتمكن الزوار من التواصل معك ولن تصلك أي تنبيهات. يبقى الرمز وبيانات المركبة ومحادثاتك السابقة كما هي، ويمكنك إعادة التفعيل في أي وقت.';
+  String get disableVehicleBody => 'أثناء الإيقاف، يعرض مسح رمز QR أو شريحة NFC صفحة \"غير متاح\": لن يتمكن الزوار من التواصل معك ولن تصلك أي تنبيهات. يبقى الرمز وبيانات المركبة ومحادثاتك السابقة كما هي، ويمكنك إعادة التفعيل في أي وقت.';
 
   @override
   String get disableConfirm => 'إيقاف';
@@ -1323,15 +1274,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get enableVehicleTitle => 'إعادة تفعيل هذه المركبة؟';
 
   @override
-  String get enableVehicleBody =>
-      'سيتمكن الزوار الذين يمسحون رمزها من التواصل معك مجددًا.';
+  String get enableVehicleBody => 'سيتمكن الزوار الذين يمسحون رمزها من التواصل معك مجددًا.';
 
   @override
   String get enableConfirm => 'إعادة التفعيل';
 
   @override
-  String get vehicleDisabledBanner =>
-      'هذه المركبة موقوفة. يعرض رمزها صفحة \"غير متاح\" للزوار.';
+  String get vehicleDisabledBanner => 'هذه المركبة موقوفة. يعرض رمزها صفحة \"غير متاح\" للزوار.';
 
   @override
   String get vehicleDisabledDone => 'تم إيقاف المركبة';
@@ -1343,8 +1292,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get deleteVehicleTitle => 'حذف هذه المركبة؟';
 
   @override
-  String get deleteVehicleBody =>
-      'ستُزال المركبة من حسابك ويتوقف رمزها عن العمل. لا يمكن التراجع عن هذا الإجراء. إن أردت إيقافها مؤقتًا فقط فاستخدم \"إيقاف المركبة\" بدلًا من الحذف.';
+  String get deleteVehicleBody => 'ستُزال المركبة من حسابك ويتوقف رمزها عن العمل. لا يمكن التراجع عن هذا الإجراء. إن أردت إيقافها مؤقتًا فقط فاستخدم \"إيقاف المركبة\" بدلًا من الحذف.';
 
   @override
   String get attachPhoto => 'إرفاق صورة';
@@ -1356,16 +1304,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get imageTooLarge => 'الصورة كبيرة جدًا (الحد الأقصى 8 ميغابايت).';
 
   @override
-  String get imageTypeUnsupported =>
-      'نوع الملف غير مدعوم. استخدم صورة JPG أو PNG أو WebP.';
+  String get imageTypeUnsupported => 'نوع الملف غير مدعوم. استخدم صورة JPG أو PNG أو WebP.';
 
   @override
-  String get cameraPermissionDenied =>
-      'اسمح بالوصول إلى الكاميرا من إعدادات الهاتف لالتقاط صورة.';
+  String get cameraPermissionDenied => 'اسمح بالوصول إلى الكاميرا من إعدادات الهاتف لالتقاط صورة.';
 
   @override
-  String get photosPermissionDenied =>
-      'اسمح بالوصول إلى الصور من إعدادات الهاتف لاختيار صورة.';
+  String get photosPermissionDenied => 'اسمح بالوصول إلى الصور من إعدادات الهاتف لاختيار صورة.';
 
   @override
   String get imageSendFailed => 'تعذّر إرسال الصورة. حاول مرة أخرى.';
@@ -1395,8 +1340,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get payNow => 'ادفع الآن';
 
   @override
-  String get payNote =>
-      'ستنتقل إلى صفحة دفع آمنة. لا تُفعَّل باقتك إلا بعد تأكيد الدفع.';
+  String get payNote => 'ستنتقل إلى صفحة دفع آمنة. لا تُفعَّل باقتك إلا بعد تأكيد الدفع.';
 
   @override
   String get payStatusTitle => 'الدفع';
@@ -1405,8 +1349,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get payChecking => 'جارٍ تأكيد الدفع…';
 
   @override
-  String get payCheckingHint =>
-      'يستغرق ذلك عادةً بضع ثوانٍ. تُفعَّل باقتك فور تأكيد الدفع.';
+  String get payCheckingHint => 'يستغرق ذلك عادةً بضع ثوانٍ. تُفعَّل باقتك فور تأكيد الدفع.';
 
   @override
   String get paySuccessTitle => 'تمت عملية الدفع';
@@ -1451,8 +1394,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get payOpenFailed => 'تعذّر فتح صفحة الدفع.';
 
   @override
-  String get payTestNotice =>
-      'كانت هذه عملية دفع تجريبية. لم يُخصم أي مبلغ حقيقي.';
+  String get payTestNotice => 'كانت هذه عملية دفع تجريبية. لم يُخصم أي مبلغ حقيقي.';
 
   @override
   String get paySubscribeButton => 'اشترك في هذه الباقة';
@@ -1485,8 +1427,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get vinLabel => 'رقم الهيكل (VIN) — اختياري';
 
   @override
-  String get vinInvalid =>
-      'رقم الهيكل غير صالح (أرقام وحروف لاتينية بدون I وO وQ).';
+  String get vinInvalid => 'رقم الهيكل غير صالح (أرقام وحروف لاتينية بدون I وO وQ).';
 
   @override
   String get copyLink => 'نسخ الرابط';
@@ -1523,8 +1464,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get vehicleLimitGo => 'الانتقال إلى الاشتراك';
 
   @override
-  String get vehicleLockedBanner =>
-      'هذه المركبة غير فعّالة لأن باقتك الحالية لا تشملها. تتفعّل تلقائيًا عند تفعيل باقة Plus.';
+  String get vehicleLockedBanner => 'هذه المركبة غير فعّالة لأن باقتك الحالية لا تشملها. تتفعّل تلقائيًا عند تفعيل باقة Plus.';
 
   @override
   String get vehicleLockedBadge => 'غير فعّالة';
@@ -1548,15 +1488,13 @@ class AppLocalizationsAr extends AppLocalizations {
   String get scanReportTitle => 'أبلغ مالك المركبة';
 
   @override
-  String get scanReportSubtitle =>
-      'اختر السبب ثم أرسل. تُحذف المحادثة تلقائيًا بعد 7 أيام.';
+  String get scanReportSubtitle => 'اختر السبب ثم أرسل. تُحذف المحادثة تلقائيًا بعد 7 أيام.';
 
   @override
   String get scanReportSend => 'إرسال البلاغ';
 
   @override
-  String get scanReportExisting =>
-      'لديك محادثة مفتوحة مع هذه المركبة، وسيُضاف البلاغ إليها.';
+  String get scanReportExisting => 'لديك محادثة مفتوحة مع هذه المركبة، وسيُضاف البلاغ إليها.';
 
   @override
   String scanOwnerLine(String name) {
@@ -1594,7 +1532,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get contactWithOwnerSubtitle => 'محادثة بدأتَها بعد مسح رمز المركبة';
 
   @override
-  String get threadMenuShowIdentity => 'إظهار هويتي للمالك';
+  String get threadMenuShowIdentity => 'إظهار هويتي للمالك (الاسم والصورة والرقم)';
 
   @override
   String get threadMenuHideIdentity => 'إخفاء هويتي';
@@ -1603,11 +1541,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String get threadMenuReport => 'إبلاغ عن مشكلة';
 
   @override
-  String get identityShownSnack => 'صار اسمك ظاهرًا للمالك.';
+  String get identityShownSnack => 'يرى المالك الآن اسمك وصورتك ورقمك ويمكنه الاتصال بك.';
 
   @override
-  String get identityHiddenSnack =>
-      'أُخفي اسمك. يرى المالك أنك حساب موثّق فقط.';
+  String get identityHiddenSnack => 'أُخفي اسمك. يرى المالك أنك حساب موثّق فقط.';
 
   @override
   String get badgeTrusted => 'مستخدم موثوق';
@@ -1622,8 +1559,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get reportTitle => 'الإبلاغ عن مشكلة';
 
   @override
-  String get reportSubtitle =>
-      'يصل البلاغ إلى فريق Qreach، ولا يعرف الطرف الآخر أنك أبلغت.';
+  String get reportSubtitle => 'يصل البلاغ إلى فريق Qreach، ولا يعرف الطرف الآخر أنك أبلغت.';
 
   @override
   String get reportReasonHarassment => 'مضايقة';
@@ -1656,8 +1592,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get supportWhatsappTitle => 'تواصل عبر واتساب';
 
   @override
-  String get supportNoNumbers =>
-      'لا توجد أرقام واتساب حاليًا. افتح تذكرة وسنرد عليك.';
+  String get supportNoNumbers => 'لا توجد أرقام واتساب حاليًا. افتح تذكرة وسنرد عليك.';
 
   @override
   String get supportOpenTicket => 'فتح تذكرة جديدة';
@@ -1711,8 +1646,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get supportStatusClosed => 'مغلقة';
 
   @override
-  String get supportClosedNote =>
-      'أُغلقت هذه التذكرة. افتح تذكرة جديدة إن احتجت مساعدة.';
+  String get supportClosedNote => 'أُغلقت هذه التذكرة. افتح تذكرة جديدة إن احتجت مساعدة.';
 
   @override
   String get supportStaff => 'الدعم الفني';

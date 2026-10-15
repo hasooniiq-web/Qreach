@@ -145,15 +145,41 @@ ContactRequestModel _appThread({required String role, bool visible = false}) =>
     );
 
 void main() {
-  testWidgets('the support page offers WhatsApp, a new ticket and my tickets',
+  testWidgets('an owner can call a customer who showed their identity', (tester) async {
+    _tall(tester);
+    final t = ContactRequestModel(
+      id: 'c1',
+      visitorName: null,
+      visitorPhone: null,
+      message: 'سيارتك تعيق الطريق',
+      status: 'new',
+      vehicle: 'سيارة العمل',
+      createdAt: DateTime(2026, 10, 16, 9),
+      senderKind: 'app',
+      senderIdentityVisible: true,
+      senderName: 'سارة',
+      senderPhone: '+9647701234567',
+      senderBadge: 'trusted',
+      identityVisible: true,
+    );
+    await tester.pumpWidget(_app(const ContactThreadScreen(requestId: 'c1'),
+        [contactRequestRepositoryProvider.overrideWithValue(_Contacts(t))]));
+    await tester.pumpAndSettle();
+
+    expect(find.text('سارة'), findsOneWidget);
+    expect(find.byIcon(Icons.call_rounded), findsOneWidget);
+  });
+
+  testWidgets('the support page is tickets only: a new ticket and my tickets',
       (tester) async {
     _tall(tester);
     await tester.pumpWidget(_app(const SupportScreen(),
         [supportRepositoryProvider.overrideWithValue(_Support())]));
     await tester.pumpAndSettle();
 
-    expect(find.text('الدعم'), findsOneWidget);
-    expect(find.text('+9647701234567'), findsOneWidget);
+    // No WhatsApp numbers in the app any more.
+    expect(find.text('+9647701234567'), findsNothing);
+    expect(find.text('تواصل عبر واتساب'), findsNothing);
     expect(find.text('فتح تذكرة جديدة'), findsOneWidget);
     expect(find.text('التطبيق يتوقف'), findsOneWidget);
     expect(find.text('تم الرد'), findsOneWidget);
@@ -206,7 +232,7 @@ void main() {
 
     await tester.tap(find.byType(PopupMenuButton<String>));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('إظهار هويتي للمالك'));
+    await tester.tap(find.textContaining('إظهار هويتي للمالك'));
     await tester.pumpAndSettle();
 
     expect(repo.identity, isTrue);
