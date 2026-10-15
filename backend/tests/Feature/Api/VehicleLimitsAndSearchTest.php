@@ -169,16 +169,17 @@ class VehicleLimitsAndSearchTest extends TestCase
 
     // ---- role name -------------------------------------------------------------------------------------
 
-    public function test_a_role_name_with_spaces_is_normalised_by_the_system(): void
+    public function test_a_role_needs_only_an_arabic_name(): void
     {
         $admin = $this->admin();
 
+
         $this->actingAs($admin, 'admin')->post('/admin/roles', [
-            'name_ar' => 'مدير إقليمي', 'name_en' => 'Regional Manager', 'permissions' => [],
+            'name_ar' => 'مدير إقليمي', 'permissions' => [],
         ])->assertRedirect();
 
         $role = Role::where('name_ar', 'مدير إقليمي')->firstOrFail();
-        $this->assertSame('Regional_Manager', $role->name_en);
-        $this->assertSame('regional_manager', $role->slug);
+        $this->assertStringStartsWith('role_', $role->slug);
+        $this->assertSame('مدير إقليمي', $role->name_en);
     }
 }

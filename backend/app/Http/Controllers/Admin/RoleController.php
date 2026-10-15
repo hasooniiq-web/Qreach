@@ -35,27 +35,25 @@ class RoleController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        // The person is not asked to avoid spaces: the system turns "Regional Manager" into regional_manager.
-        $request->merge(['name_en' => preg_replace('/[\s\-]+/u', '_', trim((string) $request->input('name_en')))]);
 
         $data = $request->validate([
             'name_ar' => ['required', 'string', 'max:100'],
-            'name_en' => ['required', 'string', 'max:100', 'regex:/^[A-Za-z0-9_]+$/'],
             'description' => ['nullable', 'string', 'max:255'],
             'permissions' => ['nullable', 'array'],
             'permissions.*' => ['integer', 'exists:permissions,id'],
         ]);
 
         $role = Role::create([
-            'slug' => Str::slug($data['name_en'], '_'),
+            // The internal key is made by the system; nobody is asked to write one.
+            'slug' => 'role_'.Str::lower(Str::random(10)),
             'name_ar' => $data['name_ar'],
-            'name_en' => $data['name_en'],
+            'name_en' => $data['name_ar'],
             'description' => $data['description'] ?? null,
             'is_system' => false,
         ]);
         $role->permissions()->sync($data['permissions'] ?? []);
 
-        AuditLogger::log('admin.role_created', 'admin', $request->user('admin')->id, 'Role', $role->id, 'success', ['name' => $role->name_en], $request);
+        AuditLogger::log('admin.role_created', 'admin', $request->user('admin')->id, 'Role', $role->id, 'success', ['name' => $role->name_ar], $request);
 
         return redirect()->route('admin.roles.index')->with('status', 'تم إنشاء الدور بنجاح.');
     }
