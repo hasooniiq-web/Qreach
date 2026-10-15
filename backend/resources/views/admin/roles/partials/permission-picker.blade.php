@@ -6,7 +6,7 @@
         @foreach ($permissionGroups as $group => $permissions)
             <fieldset>
                 <legend class="mb-2 flex items-center gap-2 text-xs font-semibold text-ink-500">
-                    {{ $group }}
+                    {{ \App\Models\Permission::groupLabel($group) }}
                     <button type="button" data-select-group="{{ $group }}" class="text-ink-400 underline hover:text-ink-700">تحديد الكل</button>
                 </legend>
                 <div class="space-y-1.5">
@@ -17,8 +17,7 @@
                                    @checked(in_array($permission->id, $currentIds))
                                    class="mt-0.5 size-4 rounded border-ink-300 accent-brand-yellow">
                             <span>
-                                <span class="block">{{ $permission->name_ar }}</span>
-                                <span class="block font-mono text-[11px] text-ink-400" dir="ltr">{{ $permission->key }}</span>
+                                <span class="block">{{ $permission->label }}</span>
                             </span>
                         </label>
                     @endforeach

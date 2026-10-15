@@ -37,7 +37,9 @@ class UserController extends Controller
         $users = User::query()
             ->when($request->filled('q'), function ($query) use ($request) {
                 $term = '%'.$request->string('q').'%';
-                $query->where(fn ($q) => $q->where('phone', 'like', $term)->orWhere('name', 'like', $term));
+                // A number is matched on its national digits: 07727009040, 7727009040 and +964… are one.
+                $phone = \App\Support\PhoneSearch::pattern($request->string('q')->toString());
+                $query->where(fn ($q) => $q->where('phone', 'like', $phone ?? $term)->orWhere('name', 'like', $term));
             })
             ->when($request->filled('status'), fn ($query) => $query->where('status', $request->string('status')))
             ->with('subscriptions.plan')

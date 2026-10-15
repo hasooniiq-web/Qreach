@@ -35,7 +35,7 @@ class SubscriptionPlanSeeder extends Seeder
             'name_ar' => 'بلس', 'name_en' => 'Plus',
             'description_ar' => 'كل ما في الأساسية + إضافة حسابات وطرق تواصل (إنستغرام، فيسبوك، سناب، تيك توك، واتساب...) والتحكم بما يراه الزائر.',
             'currency' => 'IQD', 'billing_period_days' => 365,
-            'max_vehicles' => 5, 'max_tags' => 10, 'is_active' => true, 'sort_order' => 2,
+            'max_vehicles' => 3, 'max_tags' => 10, 'is_active' => true, 'sort_order' => 2,
             'features' => ['messaging' => true, 'emergency_contact' => true, 'extra_contact_methods' => true, 'public_contacts' => SubscriptionPlan::PUBLIC_CONTACT_TYPES],
         ] + (SubscriptionPlan::where('slug', SubscriptionPlan::PLUS)->exists() ? [] : ['price_cents' => 25000]));
     }

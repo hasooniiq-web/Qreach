@@ -18,6 +18,9 @@ class VehicleResource extends JsonResource
             'vin' => $this->vin,
             'plate_letter' => $this->plate_letter,
             'plate_governorate' => $this->plate_governorate,
+            'plate_style' => $this->plate_style ?? 'other',
+            // Held back by the plan: the free plan keeps one vehicle active, Plus three.
+            'locked_by_plan' => $this->lockedByPlan($request),
             'make' => $this->make,
             'model' => $this->model,
             'year' => $this->year,
@@ -44,5 +47,18 @@ class VehicleResource extends JsonResource
             }),
             'created_at' => $this->created_at?->toIso8601String(),
         ];
+    }
+
+    /** Whether the owner's plan no longer covers this vehicle (computed once per request per owner). */
+    private function lockedByPlan(Request $request): bool
+    {
+        $key = 'locked_vehicle_ids:'.$this->user_id;
+
+        if (! $request->attributes->has($key)) {
+            $owner = \App\Models\User::find($this->user_id);
+            $request->attributes->set($key, $owner ? app(\App\Services\PlanEntitlements::class)->lockedVehicleIds($owner) : []);
+        }
+
+        return in_array($this->id, $request->attributes->get($key), true);
     }
 }

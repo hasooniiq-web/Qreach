@@ -74,11 +74,6 @@ class SubscriptionScreen extends ConsumerWidget {
                 const SizedBox(height: AppSpacing.md),
                 FadeSlideIn(index: 1, child: _TrialCard(days: info.trial.days)),
               ],
-              if (info.endsAt != null &&
-                  (info.canCancelRenewal || info.renewalCanceled)) ...[
-                const SizedBox(height: AppSpacing.md),
-                _RenewalControl(info: info),
-              ],
               const SizedBox(height: AppSpacing.md),
               FadeSlideIn(index: 1, child: const _VoucherEntry()),
               const SizedBox(height: AppSpacing.md),
@@ -104,6 +99,13 @@ class SubscriptionScreen extends ConsumerWidget {
                   child: _PlanCard(plan: info.plans[i], info: info),
                 ),
                 const SizedBox(height: AppSpacing.md),
+              ],
+              // At the very end of the page, away from the buttons people tap to subscribe.
+              if (info.endsAt != null &&
+                  (info.canCancelRenewal || info.renewalCanceled)) ...[
+                const SizedBox(height: AppSpacing.lg),
+                _RenewalControl(info: info),
+                const SizedBox(height: AppSpacing.lg),
               ],
             ],
           ),
@@ -459,7 +461,7 @@ class _RenewalControlState extends ConsumerState<_RenewalControl> {
     return AppButton(
       label: l10n.cancelAnnualPlan,
       icon: Icons.event_busy_rounded,
-      style: AppButtonStyle.secondary,
+      style: AppButtonStyle.danger,
       loading: _busy,
       onPressed: _busy ? null : _cancel,
     );

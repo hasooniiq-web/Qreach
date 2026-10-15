@@ -85,54 +85,61 @@ class ReferralTest extends TestCase
             ->assertJsonPath('code', ReferralService::format($this->codeOf($user)));
     }
 
-    public function test_a_friend_enters_the_code_and_the_inviter_is_rewarded_on_the_first_paid_activation(): void
+    private function friendJoins(User $inviter): User
     {
-        $inviter = User::factory()->create();
         $friend = User::factory()->create();
-
         $this->actingAs($friend, 'sanctum')->postJson('/api/v1/referral/apply', ['code' => ReferralService::format($this->codeOf($inviter))])
             ->assertOk()->assertJsonPath('referred', true)->assertJsonPath('can_apply', false);
 
+        return $friend;
+    }
+
+    public function test_the_inviter_gets_one_month_of_plus_when_the_second_friend_joins(): void
+    {
+        $inviter = User::factory()->create();
+
+        $this->friendJoins($inviter);
         $this->assertSame('pending', Referral::firstOrFail()->status);
         $this->assertSame('basic', $this->planOf($inviter));
+        $this->assertSame(0, $inviter->notifications()->count());
 
-        $this->friendPays($friend);
+        $this->friendJoins($inviter);
 
-        $referral = Referral::firstOrFail();
-        $this->assertSame('rewarded', $referral->status);
-        $this->assertSame(30, $referral->reward_days);
+        $this->assertSame(2, Referral::where('status', 'rewarded')->count());
+        $this->assertSame(30, (int) Referral::where('referrer_id', $inviter->id)->sum('reward_days'));
         $this->assertSame('plus', $this->planOf($inviter));
         $this->assertEqualsWithDelta(30, now()->diffInDays($inviter->subscriptions()->first()->current_period_ends_at), 0.1);
 
         $this->actingAs($inviter, 'sanctum')->getJson('/api/v1/referral')
-            ->assertJsonPath('invited', 1)->assertJsonPath('rewarded', 1)->assertJsonPath('earned_days', 30);
+            ->assertJsonPath('invited', 2)->assertJsonPath('rewarded', 2)->assertJsonPath('earned_days', 30);
 
         $this->assertSame(1, $inviter->notifications()->count());
     }
 
-    public function test_the_reward_is_paid_once_per_friend(): void
+    public function test_the_reward_is_given_once_per_account_even_if_the_limit_is_raised(): void
     {
+        SystemSetting::set('referral_max_invites', 10);
+        Cache::flush();
         $inviter = User::factory()->create();
-        $friend = User::factory()->create();
-        $this->actingAs($friend, 'sanctum')->postJson('/api/v1/referral/apply', ['code' => $this->codeOf($inviter)])->assertOk();
 
-        $this->friendPays($friend);
-        $this->friendPays($friend); // a renewal
+        foreach (range(1, 4) as $i) {
+            $this->friendJoins($inviter);
+        }
 
         $this->assertSame(1, $inviter->notifications()->count());
         $this->assertEqualsWithDelta(30, now()->diffInDays($inviter->subscriptions()->first()->current_period_ends_at), 0.1);
     }
 
-    public function test_a_free_trial_does_not_pay_the_inviter(): void
+    public function test_a_friend_paying_or_starting_a_trial_changes_nothing_for_the_inviter(): void
     {
         $inviter = User::factory()->create();
-        $friend = User::factory()->create();
-        $this->actingAs($friend, 'sanctum')->postJson('/api/v1/referral/apply', ['code' => $this->codeOf($inviter)])->assertOk();
+        $friend = $this->friendJoins($inviter);
 
-        app(SubscriptionManager::class)->startTrial($friend);
+        $this->friendPays($friend);
+        app(SubscriptionManager::class)->startTrial(User::factory()->create());
 
-        $this->assertSame('pending', Referral::firstOrFail()->status);
         $this->assertSame('basic', $this->planOf($inviter));
+        $this->assertSame(0, $inviter->notifications()->count());
     }
 
     public function test_a_code_cannot_be_used_on_yourself_twice_or_after_paying(): void
@@ -167,24 +174,6 @@ class ReferralTest extends TestCase
         $this->actingAs($b, 'sanctum')->postJson('/api/v1/referral/apply', ['code' => $this->codeOf($a)])->assertOk();
         $this->actingAs($a, 'sanctum')->postJson('/api/v1/referral/apply', ['code' => $this->codeOf($b)])
             ->assertStatus(422)->assertJsonPath('error.code', 'REFERRAL_INVALID');
-    }
-
-    public function test_an_inviter_stops_earning_at_the_cap(): void
-    {
-        SystemSetting::set('referral_max_rewards', 2);
-        SystemSetting::set('referral_max_invites', 10); // this test is about the reward cap, not the invitation cap
-        Cache::flush();
-        $inviter = User::factory()->create();
-
-        foreach (range(1, 3) as $i) {
-            $friend = User::factory()->create();
-            $this->actingAs($friend, 'sanctum')->postJson('/api/v1/referral/apply', ['code' => $this->codeOf($inviter)])->assertOk();
-            $this->friendPays($friend);
-        }
-
-        $this->assertSame(2, Referral::where('status', 'rewarded')->count());
-        $this->assertSame(1, Referral::where('status', 'capped')->count());
-        $this->assertEqualsWithDelta(60, now()->diffInDays($inviter->subscriptions()->first()->current_period_ends_at), 0.1);
     }
 
     public function test_an_account_can_invite_only_two_friends(): void
@@ -228,7 +217,8 @@ class ReferralTest extends TestCase
         $inviter = User::factory()->create(['name' => 'الداعي']);
         $friend = User::factory()->create(['name' => 'الصديق']);
         $this->actingAs($friend, 'sanctum')->postJson('/api/v1/referral/apply', ['code' => $this->codeOf($inviter)])->assertOk();
-        $this->friendPays($friend);
+        $second = User::factory()->create(['name' => 'الثاني']);
+        $this->actingAs($second, 'sanctum')->postJson('/api/v1/referral/apply', ['code' => $this->codeOf($inviter)])->assertOk();
 
         $this->actingAs($admin, 'admin')->get('/admin/referrals')
             ->assertOk()->assertSee('الداعي')->assertSee('الصديق')->assertSee('تمت المكافأة');

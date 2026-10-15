@@ -11,6 +11,8 @@ class VehicleModel extends Equatable {
     this.plateType = 'private',
     this.plateLetter,
     this.plateGovernorate,
+    this.plateStyle = 'other',
+    this.lockedByPlan = false,
     this.make,
     this.model,
     this.year,
@@ -32,6 +34,12 @@ class VehicleModel extends Equatable {
   final String plateType;
   final String? plateLetter;
   final String? plateGovernorate;
+
+  /// english | german | other — how the plate is drawn.
+  final String plateStyle;
+
+  /// The owner's plan no longer covers this vehicle (free plan keeps one, Plus three).
+  final bool lockedByPlan;
   final String? make;
   final String? model;
   final int? year;
@@ -45,8 +53,11 @@ class VehicleModel extends Equatable {
   /// Serial of the code the owner removed last, which can be linked again (null when none).
   final String? previousTagSerial;
 
-  String get displayName =>
-      nickname?.isNotEmpty == true ? nickname! : plateNumber;
+  /// The name the owner gave it, or null: the plate number is never shown in its place.
+  String? get nameOrNull =>
+      nickname?.trim().isNotEmpty == true ? nickname!.trim() : null;
+
+  String get displayName => nameOrNull ?? plateNumber;
 
   factory VehicleModel.fromJson(Map<String, dynamic> json) => VehicleModel(
         id: json['id'] as String,
@@ -56,6 +67,8 @@ class VehicleModel extends Equatable {
         plateType: json['plate_type'] as String? ?? 'private',
         plateLetter: json['plate_letter'] as String?,
         plateGovernorate: json['plate_governorate'] as String?,
+        plateStyle: json['plate_style'] as String? ?? 'other',
+        lockedByPlan: json['locked_by_plan'] as bool? ?? false,
         make: json['make'] as String?,
         model: json['model'] as String?,
         year: json['year'] as int?,
@@ -81,6 +94,7 @@ class VehicleModel extends Equatable {
           'plate_letter': plateLetter,
         if (plateGovernorate != null && plateGovernorate!.isNotEmpty)
           'plate_governorate': plateGovernorate,
+        'plate_style': plateStyle,
         if (make != null) 'make': make,
         if (model != null) 'model': model,
         if (year != null) 'year': year,
@@ -99,6 +113,7 @@ class VehicleModel extends Equatable {
         'plate_letter': (plateLetter ?? '').isEmpty ? null : plateLetter,
         'plate_governorate':
             (plateGovernorate ?? '').isEmpty ? null : plateGovernorate,
+        'plate_style': plateStyle,
         'make': make,
         'model': model,
         'year': year,
@@ -116,6 +131,8 @@ class VehicleModel extends Equatable {
         plateType,
         plateLetter,
         plateGovernorate,
+        plateStyle,
+        lockedByPlan,
         make,
         model,
         year,

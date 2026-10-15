@@ -33,7 +33,7 @@ class PaymentController extends Controller
                 ->where('receipt_number', 'like', "%{$q}%")
                 ->orWhere('gateway_reference', 'like', "%{$q}%")
                 ->orWhere('uuid', 'like', "%{$q}%")
-                ->orWhereHas('user', fn ($u) => $u->where('phone', 'like', "%{$q}%")->orWhere('name', 'like', "%{$q}%"))))
+                ->orWhereHas('user', fn ($u) => $u->where('phone', 'like', \App\Support\PhoneSearch::pattern($q) ?? "%{$q}%")->orWhere('name', 'like', "%{$q}%"))))
             ->latest('id');
 
         if ($export = $this->exportRows($request, 'payments', 'المدفوعات', ['العميل', 'الهاتف', 'الباقة', 'المبلغ', 'المُسترد', 'البوابة', 'الحالة', 'رقم الإيصال', 'التاريخ'], $payments,

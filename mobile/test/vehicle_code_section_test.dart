@@ -57,7 +57,7 @@ void _tall(WidgetTester tester) {
 
 void main() {
   group('a vehicle with no code', () {
-    testWidgets('offers only linking: no edit, pause or delete', (tester) async {
+    testWidgets('offers linking and editing, but no pause or delete', (tester) async {
       _tall(tester);
       final repo = _Recording([
         const VehicleModel(id: 'v-1', plateNumber: '65600', vehicleType: 'sedan'),
@@ -66,7 +66,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('ربط رمز جديد'), findsOneWidget);
-      expect(find.text('تعديل'), findsNothing);
+      // Editing is always possible; pausing and deleting need a linked code.
+      expect(find.text('تعديل'), findsOneWidget);
       expect(find.text('إيقاف المركبة'), findsNothing);
       expect(find.text('حذف'), findsNothing);
       // Nothing was removed before, so there is no "link it again" button either.

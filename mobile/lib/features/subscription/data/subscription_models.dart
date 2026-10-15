@@ -19,6 +19,7 @@ class PlanModel extends Equatable {
     required this.billingPeriodDays,
     required this.publicContacts,
     this.extraContactMethods = false,
+    this.maxVehicles,
   });
 
   final String slug;
@@ -32,6 +33,9 @@ class PlanModel extends Equatable {
 
   /// Plus: may add contact platforms beyond the phone number.
   final bool extraContactMethods;
+
+  /// How many vehicles the plan keeps active (null = no limit).
+  final int? maxVehicles;
 
   bool allows(String contactType) => publicContacts.contains(contactType);
 
@@ -54,6 +58,7 @@ class PlanModel extends Equatable {
               .map((e) => e as String)
               .toList(),
       extraContactMethods: features['extra_contact_methods'] as bool? ?? false,
+      maxVehicles: (json['max_vehicles'] as num?)?.toInt(),
     );
   }
 
@@ -68,6 +73,7 @@ class PlanModel extends Equatable {
         billingPeriodDays,
         publicContacts,
         extraContactMethods,
+        maxVehicles,
       ];
 }
 

@@ -21,6 +21,8 @@ class PlanResource extends JsonResource
             'currency' => $this->currency,
             'is_free' => $this->isFree(),
             'billing_period_days' => $this->billing_period_days,
+            // How many vehicles this plan keeps active (null = no limit).
+            'max_vehicles' => $this->max_vehicles,
             'features' => [
                 'messaging' => $this->allowsMessaging(),
                 'public_contacts' => $this->publicContactTypes(),

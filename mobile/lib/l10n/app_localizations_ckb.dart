@@ -558,18 +558,18 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get referralTitle => 'هاوڕێیەک بانگهێشت بکە';
 
   @override
-  String referralHeadline(String days) {
-    return 'هاوڕێیەک بانگهێشت بکە و $days ڕۆژی بێبەرامبەر وەربگرە';
+  String referralHeadline(String days, String count) {
+    return 'هاوڕێکانت بانگهێشت بکە: کاتێک $count لەوان بەشدار دەبن، $days ڕۆژی Plus بێبەرامبەر وەردەگریت';
   }
 
   @override
-  String referralBody(String days) {
-    return 'کۆدەکەت بڵاو بکەرەوە. کاتێک هاوڕێکەت بۆ یەکەمجار ئابوونە دەبێت، $days ڕۆژی Plus زیاد دەکرێت بۆ پاکێجەکەت.';
+  String referralBody(String days, String count) {
+    return 'کۆدەکەت بڵاو بکەرەوە. کاتێک $count هاوڕێکەت کۆدەکەت دەنووسن، $days ڕۆژی Plus زیاد دەکرێت بۆ پاکێجەکەت — تەنها یەکجار بۆ هەر ئەکاونتێک.';
   }
 
   @override
   String get referralTileBody =>
-      'هاوڕێیەک بانگهێشت بکە و ڕۆژی بێبەرامبەری Plus وەربگرە';
+      'هاوڕێکانت بانگهێشت بکە و مانگێک Plus بێبەرامبەر وەربگرە';
 
   @override
   String get referralYourCode => 'کۆدی بانگهێشتەکەت';
@@ -592,7 +592,7 @@ class AppLocalizationsCkb extends AppLocalizations {
   String get referralStatInvited => 'بانگهێشتکراوان';
 
   @override
-  String get referralStatSubscribed => 'ئابوونەبوون';
+  String get referralStatSubscribed => 'بانگهێشتی ماوە';
 
   @override
   String get referralStatDays => 'ڕۆژی بێبەرامبەر';
@@ -608,7 +608,7 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get referralApplied =>
-      'کۆدی بانگهێشت پاشەکەوت کرا. کاتێک ئابوونە دەبیت هاوڕێکەت پاداشتەکەی وەردەگرێت.';
+      'کۆدی بانگهێشت پاشەکەوت کرا. بۆ پاداشتی هاوڕێکەت هەژمار دەکرێت.';
 
   @override
   String get referralDisabledNote => 'بانگهێشتکردن ئێستا ڕاگیراوە.';
@@ -1504,4 +1504,48 @@ class AppLocalizationsCkb extends AppLocalizations {
 
   @override
   String get linkCopied => 'بەستەرەکە کۆپی کرا';
+
+  @override
+  String get plateStyleTitle => 'دیزاینی تابلۆ';
+
+  @override
+  String get plateStyleEnglish => 'ئینگلیزی';
+
+  @override
+  String get plateStyleGerman => 'ئەڵمانی';
+
+  @override
+  String get plateStyleOther => 'هی تر';
+
+  @override
+  String get vehicleLimitTitle => 'گەیشتیتە سنووری پاکێجەکەت';
+
+  @override
+  String vehicleLimitFree(int max) {
+    return 'پاکێجی بێبەرامبەر تەنها یەک ئۆتۆمبێل دەگرێت. Plus چالاک بکە بۆ زیادکردنی زیاتر (تا $max بە گشتی).';
+  }
+
+  @override
+  String vehicleLimitPlus(int max) {
+    return 'گەیشتیتە زۆرترین ژمارە ($max ئۆتۆمبێل) لە پاکێجەکەت.';
+  }
+
+  @override
+  String get vehicleLimitGo => 'بڕۆ بۆ ئابوونە';
+
+  @override
+  String get vehicleLockedBanner =>
+      'ئەم ئۆتۆمبێلە ناچالاکە چونکە پاکێجی ئێستات ناگرێتەوە. بە چالاککردنی Plus خۆکارانە چالاک دەبێتەوە.';
+
+  @override
+  String get vehicleLockedBadge => 'ناچالاک';
+
+  @override
+  String get vehicleLockedAction => 'چالاککردنی پاکێج';
+
+  @override
+  String get scanErrorTitle => 'ئەم کۆدە بەکارنایەت';
+
+  @override
+  String get scanErrorClose => 'باشە';
 }

@@ -18,6 +18,7 @@ class StoreVehicleRequest extends FormRequest
             // One letter, as on an Iraqi plate.
             'plate_letter' => ['nullable', 'string', 'regex:/^[\p{L}]$/u'],
             'plate_governorate' => ['nullable', 'string', 'max:40'],
+            'plate_style' => ['nullable', 'in:english,german,other'],
             'vin' => ['nullable', 'string', 'max:32', 'regex:/^[A-HJ-NPR-Z0-9]+$/i', 'unique:vehicles,vin'],
             'nickname' => ['nullable', 'string', 'max:100'],
             // Up to six digits (an Iraqi plate); other countries keep their own format.

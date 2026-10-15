@@ -35,9 +35,12 @@ class RoleController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
+        // The person is not asked to avoid spaces: the system turns "Regional Manager" into regional_manager.
+        $request->merge(['name_en' => preg_replace('/[\s\-]+/u', '_', trim((string) $request->input('name_en')))]);
+
         $data = $request->validate([
             'name_ar' => ['required', 'string', 'max:100'],
-            'name_en' => ['required', 'string', 'max:100', 'alpha_dash'],
+            'name_en' => ['required', 'string', 'max:100', 'regex:/^[A-Za-z0-9_]+$/'],
             'description' => ['nullable', 'string', 'max:255'],
             'permissions' => ['nullable', 'array'],
             'permissions.*' => ['integer', 'exists:permissions,id'],

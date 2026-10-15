@@ -8,9 +8,12 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/providers.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../vehicles/presentation/vehicle_controller.dart';
-import '../data/nfc_reader.dart';
 import '../data/tag_repository.dart';
 
+/// Links a printed QR code to a vehicle. Only the camera is offered here: the
+/// code on a sticker is what an owner holds after buying one. A refused code is
+/// explained in the middle of the screen, and the screen is then left, so the
+/// camera does not keep sending the same rejected code again and again.
 class ScanScreen extends ConsumerStatefulWidget {
   const ScanScreen({super.key, required this.vehicleId});
 
@@ -22,14 +25,10 @@ class ScanScreen extends ConsumerStatefulWidget {
 
 class _ScanScreenState extends ConsumerState<ScanScreen> {
   final _controller = MobileScannerController();
-  final _nfc = const NfcReader();
   bool _processing = false;
-  bool _nfcMode = false;
-  String? _error;
 
   @override
   void dispose() {
-    _nfc.stop();
     _controller.dispose();
     super.dispose();
   }
@@ -40,48 +39,6 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
     final rawValue = capture.barcodes.first.rawValue;
     if (rawValue == null) return;
     await _activate(rawValue);
-  }
-
-  Future<void> _setMode({required bool nfc}) async {
-    if (_nfcMode == nfc || _processing) return;
-    final l10n = AppLocalizations.of(context)!;
-
-    setState(() {
-      _nfcMode = nfc;
-      _error = null;
-    });
-
-    if (!nfc) {
-      await _nfc.stop();
-      try {
-        await _controller.start();
-      } catch (_) {}
-      return;
-    }
-
-    try {
-      await _controller.stop();
-    } catch (_) {}
-    final state = await _nfc.state();
-    if (!mounted) return;
-    if (state != NfcState.ready) {
-      setState(() => _error =
-          state == NfcState.disabled ? l10n.nfcDisabled : l10n.nfcUnavailable);
-      return;
-    }
-    await _startNfc();
-  }
-
-  Future<void> _startNfc() async {
-    final l10n = AppLocalizations.of(context)!;
-    await _nfc.start(onLink: (link) {
-      if (!mounted) return;
-      if (link == null) {
-        setState(() => _error = l10n.nfcNoLink);
-        return;
-      }
-      _activate(link);
-    });
   }
 
   Future<void> _enterManually() async {
@@ -113,14 +70,10 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
 
   Future<void> _activate(String rawValue) async {
     if (_processing) return;
-    setState(() {
-      _processing = true;
-      _error = null;
-    });
+    setState(() => _processing = true);
     try {
       await _controller.stop();
     } catch (_) {}
-    await _nfc.stop();
 
     final token = TagRepository.extractToken(rawValue);
 
@@ -139,19 +92,45 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
       ref.read(vehicleListControllerProvider.notifier).refresh();
       if (mounted) context.pop();
     } catch (e) {
+      if (!mounted) return;
       final apiError = asApiException(e);
-      setState(() {
-        _error = _messageForCode(apiError.code) ?? apiError.message;
-        _processing = false;
-      });
-      if (_nfcMode) {
-        await _startNfc();
-      } else {
-        try {
-          await _controller.start();
-        } catch (_) {}
-      }
+      await _showRefusal(_messageForCode(apiError.code) ?? apiError.message);
+      // Leave the scanner: the camera would otherwise read the same code again.
+      if (mounted) context.pop();
     }
+  }
+
+  /// The reason, large and in the middle of the screen.
+  Future<void> _showRefusal(String message) {
+    final l10n = AppLocalizations.of(context)!;
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+        icon: Container(
+          width: 64,
+          height: 64,
+          decoration: BoxDecoration(
+            color: AppColors.statusDanger.withValues(alpha: 0.12),
+            shape: BoxShape.circle,
+          ),
+          child: Icon(Icons.error_outline_rounded,
+              size: 36, color: AppColors.statusDanger),
+        ),
+        title: Text(l10n.scanErrorTitle, textAlign: TextAlign.center),
+        content: Text(message,
+            textAlign: TextAlign.center,
+            style: const TextStyle(fontSize: 15, height: 1.6)),
+        actionsAlignment: MainAxisAlignment.center,
+        actions: [
+          FilledButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text(l10n.scanErrorClose),
+          ),
+        ],
+      ),
+    );
   }
 
   String? _messageForCode(String code) {
@@ -187,37 +166,33 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
           ]),
       body: Stack(
         children: [
-          if (_nfcMode)
-            const _NfcPrompt()
-          else ...[
-            MobileScanner(
-              controller: _controller,
-              onDetect: _onDetect,
-              errorBuilder: (context, error, child) => Center(
-                child: Padding(
-                  padding: const EdgeInsets.all(32),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const Icon(Icons.no_photography_outlined,
-                          color: AppColors.brandWhite, size: 48),
-                      const SizedBox(height: 16),
-                      Text(l10n.scanCameraError,
-                          style: const TextStyle(
-                              color: AppColors.brandWhite,
-                              fontSize: 18,
-                              fontWeight: FontWeight.w700)),
-                      const SizedBox(height: 8),
-                      Text(l10n.scanCameraPermission,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(color: Colors.white70)),
-                    ],
-                  ),
+          MobileScanner(
+            controller: _controller,
+            onDetect: _onDetect,
+            errorBuilder: (context, error, child) => Center(
+              child: Padding(
+                padding: const EdgeInsets.all(32),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(Icons.no_photography_outlined,
+                        color: AppColors.brandWhite, size: 48),
+                    const SizedBox(height: 16),
+                    Text(l10n.scanCameraError,
+                        style: const TextStyle(
+                            color: AppColors.brandWhite,
+                            fontSize: 18,
+                            fontWeight: FontWeight.w700)),
+                    const SizedBox(height: 8),
+                    Text(l10n.scanCameraPermission,
+                        textAlign: TextAlign.center,
+                        style: const TextStyle(color: Colors.white70)),
+                  ],
                 ),
               ),
             ),
-            const _ScanOverlay(),
-          ],
+          ),
+          const _ScanOverlay(),
           Positioned(
             left: 24,
             right: 24,
@@ -232,35 +207,13 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
                     borderRadius: BorderRadius.circular(999),
                   ),
                   child: Text(
-                    _nfcMode ? l10n.nfcHoldPhone : l10n.scanTagInstructions,
+                    l10n.scanTagInstructions,
                     textAlign: TextAlign.center,
                     style: const TextStyle(
                         color: AppColors.brandWhite, fontSize: 15),
                   ),
                 ),
                 const SizedBox(height: 12),
-                SegmentedButton<bool>(
-                  showSelectedIcon: false,
-                  style: SegmentedButton.styleFrom(
-                    backgroundColor: Colors.black.withValues(alpha: 0.6),
-                    foregroundColor: AppColors.brandWhite,
-                    selectedBackgroundColor: AppColors.brandYellow,
-                    selectedForegroundColor: AppColors.brandBlack,
-                  ),
-                  segments: [
-                    ButtonSegment(
-                        value: false,
-                        icon: const Icon(Icons.qr_code_scanner),
-                        label: Text(l10n.scanModeQr)),
-                    ButtonSegment(
-                        value: true,
-                        icon: const Icon(Icons.nfc),
-                        label: Text(l10n.scanModeNfc)),
-                  ],
-                  selected: {_nfcMode},
-                  onSelectionChanged: (v) => _setMode(nfc: v.first),
-                ),
-                const SizedBox(height: 4),
                 TextButton.icon(
                   onPressed: _processing ? null : _enterManually,
                   icon: const Icon(Icons.keyboard_alt_outlined,
@@ -271,19 +224,6 @@ class _ScanScreenState extends ConsumerState<ScanScreen> {
                 if (_processing) ...[
                   const SizedBox(height: 16),
                   const CircularProgressIndicator(color: AppColors.brandYellow),
-                ],
-                if (_error != null) ...[
-                  const SizedBox(height: 16),
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      color: AppColors.statusDanger.withValues(alpha: 0.9),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    child: Text(_error!,
-                        style: const TextStyle(color: AppColors.brandWhite),
-                        textAlign: TextAlign.center),
-                  ),
                 ],
               ],
             ),
@@ -473,45 +413,6 @@ class _ActivationSuccessDialog extends StatelessWidget {
           child: Text(l10n.done),
         ),
       ],
-    );
-  }
-}
-
-/// What the NFC mode shows instead of the camera: an unmistakable "tap the
-/// tag on the back of the phone" prompt.
-class _NfcPrompt extends StatelessWidget {
-  const _NfcPrompt();
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 120,
-              height: 120,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                border: Border.all(color: AppColors.brandYellow, width: 4),
-              ),
-              child:
-                  const Icon(Icons.nfc, size: 56, color: AppColors.brandYellow),
-            ),
-            const SizedBox(height: 24),
-            Text(l10n.nfcHoldPhone,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                    color: AppColors.brandWhite,
-                    fontSize: 18,
-                    fontWeight: FontWeight.w700)),
-          ],
-        ),
-      ),
     );
   }
 }

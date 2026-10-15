@@ -551,17 +551,17 @@ class AppLocalizationsAr extends AppLocalizations {
   String get referralTitle => 'ادعُ صديقًا';
 
   @override
-  String referralHeadline(String days) {
-    return 'ادعُ صديقًا واحصل على $days يومًا مجانية';
+  String referralHeadline(String days, String count) {
+    return 'ادعُ أصدقاءك: عندما ينضم $count منهم تحصل على $days يومًا من Plus مجانًا';
   }
 
   @override
-  String referralBody(String days) {
-    return 'شارك رمزك. عندما يشترك صديقك لأول مرة تُضاف $days يومًا من Plus إلى باقتك.';
+  String referralBody(String days, String count) {
+    return 'شارك رمزك. عندما يُدخل $count من أصدقائك رمزك تُضاف $days يومًا من Plus إلى باقتك، مرة واحدة لكل حساب.';
   }
 
   @override
-  String get referralTileBody => 'ادعُ صديقًا واحصل على أيام مجانية من Plus';
+  String get referralTileBody => 'ادعُ أصدقاءك واحصل على شهر Plus مجانًا';
 
   @override
   String get referralYourCode => 'رمز دعوتك';
@@ -584,7 +584,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get referralStatInvited => 'المدعوون';
 
   @override
-  String get referralStatSubscribed => 'اشتركوا';
+  String get referralStatSubscribed => 'دعوات متبقية';
 
   @override
   String get referralStatDays => 'أيام مجانية';
@@ -599,8 +599,7 @@ class AppLocalizationsAr extends AppLocalizations {
   String get referralApply => 'تأكيد الرمز';
 
   @override
-  String get referralApplied =>
-      'تم حفظ رمز الدعوة. عندما تشترك سيحصل صديقك على مكافأته.';
+  String get referralApplied => 'تم حفظ رمز الدعوة. حُسبت دعوتك لصاحب الرمز.';
 
   @override
   String get referralDisabledNote => 'الدعوات متوقفة حاليًا.';
@@ -1494,4 +1493,48 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get linkCopied => 'تم نسخ الرابط';
+
+  @override
+  String get plateStyleTitle => 'تصميم اللوحة';
+
+  @override
+  String get plateStyleEnglish => 'إنكليزي';
+
+  @override
+  String get plateStyleGerman => 'ألماني';
+
+  @override
+  String get plateStyleOther => 'أخرى';
+
+  @override
+  String get vehicleLimitTitle => 'وصلت إلى حد باقتك';
+
+  @override
+  String vehicleLimitFree(int max) {
+    return 'الباقة المجانية تتيح مركبة واحدة فقط. فعّل باقة Plus لإضافة مركبات أخرى (حتى $max مركبات في المجموع).';
+  }
+
+  @override
+  String vehicleLimitPlus(int max) {
+    return 'وصلت إلى الحد الأقصى ($max مركبات) في باقتك.';
+  }
+
+  @override
+  String get vehicleLimitGo => 'الانتقال إلى الاشتراك';
+
+  @override
+  String get vehicleLockedBanner =>
+      'هذه المركبة غير فعّالة لأن باقتك الحالية لا تشملها. تتفعّل تلقائيًا عند تفعيل باقة Plus.';
+
+  @override
+  String get vehicleLockedBadge => 'غير فعّالة';
+
+  @override
+  String get vehicleLockedAction => 'تفعيل الباقة';
+
+  @override
+  String get scanErrorTitle => 'تعذّر استخدام هذا الرمز';
+
+  @override
+  String get scanErrorClose => 'حسنًا';
 }

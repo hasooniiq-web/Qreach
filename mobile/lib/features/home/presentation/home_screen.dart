@@ -484,6 +484,7 @@ class _VehicleCard extends StatelessWidget {
                                   letter: vehicle.plateLetter,
                                   governorate: vehicle.plateGovernorate,
                                   type: PlateType.fromCode(vehicle.plateType),
+                                  style: PlateStyle.fromCode(vehicle.plateStyle),
                                   width: 190,
                                 ),
                               ),

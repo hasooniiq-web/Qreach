@@ -478,11 +478,11 @@ class _Composer extends StatelessWidget {
                                       strokeWidth: 2.2,
                                       color: AppColors.brandBlack),
                                 )
-                              : Transform.flip(
+                              : KeyedSubtree(
                                   key: const ValueKey('send'),
-                                  // The send glyph points right; in RTL it must point left.
-                                  flipX: Directionality.of(context) ==
-                                      TextDirection.rtl,
+                                  // The glyph mirrors itself with the text direction (it
+                                  // points left in Arabic): the manual flip that turned it
+                                  // back the other way is gone.
                                   child: Icon(Icons.send_rounded,
                                       size: 22,
                                       color: canSend

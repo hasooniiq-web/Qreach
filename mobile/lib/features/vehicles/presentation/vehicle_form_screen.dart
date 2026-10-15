@@ -16,6 +16,7 @@ import '../../../core/theme/app_spacing.dart';
 import '../../../l10n/app_localizations.dart';
 import '../../../shared/widgets/error_banner.dart';
 import '../data/vehicle_model.dart';
+import 'add_vehicle_flow.dart';
 import 'vehicle_controller.dart';
 
 class VehicleFormScreen extends ConsumerStatefulWidget {
@@ -41,6 +42,8 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
   final _letterController = TextEditingController();
   String _vehicleType = 'sedan';
   String _plateType = 'private';
+  // A new vehicle starts on the current (English) plate; an existing one keeps its own.
+  String _plateStyle = 'english';
   String? _governorate;
   bool _submitting = false;
   String? _error;
@@ -52,6 +55,7 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
     super.initState();
     final v = widget.vehicle;
     if (v == null) return;
+    _plateStyle = v.plateStyle;
     _plateController.text = v.plateNumber;
     _nicknameController.text = v.nickname ?? '';
     _letterController.text = v.plateLetter ?? '';
@@ -88,6 +92,7 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
         id: widget.vehicle?.id ?? '',
         plateNumber: _plateController.text.trim(),
         plateType: _plateType,
+        plateStyle: _plateStyle,
         plateLetter: _letterController.text.trim(),
         plateGovernorate: _governorate,
         nickname: _nicknameController.text.trim(),
@@ -111,7 +116,12 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
       }
       if (mounted) context.pop();
     } catch (e) {
-      setState(() => _error = asApiException(e).message);
+      final apiError = asApiException(e);
+      if (apiError.code == 'VEHICLE_LIMIT' && mounted) {
+        await showVehicleLimitDialog(context, free: true);
+      } else {
+        setState(() => _error = apiError.message);
+      }
     } finally {
       if (mounted) setState(() => _submitting = false);
     }
@@ -166,9 +176,31 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
                     letter: _letterController.text.trim(),
                     governorate: _governorate,
                     type: PlateType.fromCode(_plateType),
-                    width: 260,
+                    style: PlateStyle.fromCode(_plateStyle),
+                    width: 280,
                   ),
                 ),
+              ),
+              const SizedBox(height: AppSpacing.lg),
+              Text(l10n.plateStyleTitle,
+                  style: const TextStyle(fontWeight: FontWeight.w600)),
+              const SizedBox(height: AppSpacing.sm),
+              Wrap(
+                spacing: AppSpacing.sm,
+                runSpacing: AppSpacing.sm,
+                children: [
+                  for (final entry in {
+                    PlateStyle.english: l10n.plateStyleEnglish,
+                    PlateStyle.german: l10n.plateStyleGerman,
+                    PlateStyle.other: l10n.plateStyleOther,
+                  }.entries)
+                    ChoiceChip(
+                      label: Text(entry.value),
+                      selected: _plateStyle == entry.key.code,
+                      onSelected: (_) =>
+                          setState(() => _plateStyle = entry.key.code),
+                    ),
+                ],
               ),
               const SizedBox(height: AppSpacing.lg),
               Text(l10n.plateTypeTitle,
@@ -212,8 +244,13 @@ class _VehicleFormScreenState extends ConsumerState<VehicleFormScreen> {
                       value: _governorate,
                       allowOther: false,
                       options: [
+                        // The number printed first on a current plate is shown beside the name.
                         for (final g in iraqGovernorates)
-                          ChoiceOption(value: g, label: g),
+                          ChoiceOption(
+                              value: g,
+                              label: iraqGovernorateCodes[g] == null
+                                  ? g
+                                  : '${iraqGovernorateCodes[g]}  ·  $g'),
                       ],
                       onChanged: (v) => setState(() => _governorate = v),
                     ),

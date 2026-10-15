@@ -62,7 +62,7 @@ class PlanController extends Controller
 
         return back()->with('status', $days === 0
             ? 'أُوقفت التجربة المجانية. لن تظهر لأي عميل جديد.'
-            : "صارت التجربة المجانية لباقة Plus {$days} يومًا. تسري على من يبدأها من الآن.");
+            : "صارت التجربة المجانية لباقة بلس {$days} يومًا. تسري على من يبدأها من الآن.");
     }
     public function update(Request $request, SubscriptionPlan $plan): RedirectResponse
     {

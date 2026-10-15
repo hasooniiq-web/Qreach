@@ -16,6 +16,7 @@ class ReferralInfo extends Equatable {
     required this.earnedDays,
     this.maxInvites = 2,
     this.remainingInvites = 2,
+    this.invitesRequired = 2,
   });
 
   /// Grouped for reading aloud, e.g. `K7M2-P9QX`.
@@ -34,6 +35,9 @@ class ReferralInfo extends Equatable {
   final int maxInvites;
   final int remainingInvites;
 
+  /// Accepted invitations that earn the one-month reward (once per account).
+  final int invitesRequired;
+
   factory ReferralInfo.fromJson(Map<String, dynamic> json) => ReferralInfo(
         code: json['code'] as String? ?? '',
         rewardDays: (json['reward_days'] as num?)?.toInt() ?? 0,
@@ -45,6 +49,7 @@ class ReferralInfo extends Equatable {
         earnedDays: (json['earned_days'] as num?)?.toInt() ?? 0,
         maxInvites: (json['max_invites'] as num?)?.toInt() ?? 2,
         remainingInvites: (json['remaining_invites'] as num?)?.toInt() ?? 2,
+        invitesRequired: (json['invites_required'] as num?)?.toInt() ?? 2,
       );
 
   @override
@@ -59,6 +64,7 @@ class ReferralInfo extends Equatable {
         earnedDays,
         maxInvites,
         remainingInvites,
+        invitesRequired,
       ];
 }
 

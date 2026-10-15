@@ -17,8 +17,9 @@ class VehicleController extends Controller
             ->with('user')
             ->when($request->filled('q'), function ($query) use ($request) {
                 $term = '%'.$request->string('q').'%';
-                $query->where('plate_number', 'like', $term)
-                    ->orWhereHas('user', fn ($q) => $q->where('phone', 'like', $term));
+                $phone = \App\Support\PhoneSearch::pattern($request->string('q')->toString());
+                $query->where(fn ($w) => $w->where('plate_number', 'like', $term)
+                    ->orWhereHas('user', fn ($q) => $q->where('phone', 'like', $phone ?? $term)));
             })
             ->when($request->filled('status'), fn ($query) => $query->where('status', $request->string('status')))
             ->withCount([

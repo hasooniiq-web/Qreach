@@ -10,7 +10,7 @@
 @endphp
 <div {{ $attributes->merge(['class' => 'flex items-center gap-2']) }}>
     <a href="{{ $base.'?'.http_build_query($query + ['export' => 'xlsx']) }}" data-no-progress download class="btn-secondary">
-        <x-icon name="audit" class="size-4" /> Excel
+        <x-icon name="audit" class="size-4" /> إكسل
     </a>
     <a href="{{ $base.'?'.http_build_query($query + ['export' => 'pdf']) }}" data-no-progress download class="btn-secondary">
         <x-icon name="audit" class="size-4" /> PDF

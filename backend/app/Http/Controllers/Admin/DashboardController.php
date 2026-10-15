@@ -160,7 +160,7 @@ class DashboardController extends Controller
         }
         $upgrades = PlanUpgradeRequest::where('status', 'pending')->count();
         if ($upgrades > 0) {
-            $out[] = ['tone' => 'accent', 'icon' => 'star', 'text' => "{$upgrades} طلب ترقية إلى Plus بانتظار الموافقة.", 'href' => route('admin.subscriptions.requests')];
+            $out[] = ['tone' => 'accent', 'icon' => 'star', 'text' => "{$upgrades} طلب ترقية إلى بلس بانتظار الموافقة.", 'href' => route('admin.subscriptions.requests')];
         }
         if ($stats['security_events_unresolved'] > 0) {
             $out[] = ['tone' => 'danger', 'icon' => 'shield', 'text' => "{$stats['security_events_unresolved']} حدثًا أمنيًا غير محلول.", 'href' => route('admin.security.index')];

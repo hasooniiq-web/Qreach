@@ -40,7 +40,7 @@
         </x-card>
 
         <x-card padding="p-6">
-            <h3 class="mb-2 text-sm font-semibold text-ink-900">رابط الإشعارات (Webhook)</h3>
+            <h3 class="mb-2 text-sm font-semibold text-ink-900">رابط إشعارات البوابة</h3>
             <p class="mb-2 text-xs text-ink-500">أدخل هذا الرابط في لوحة مزوّد الدفع ليخبر الخادم بنتيجة كل عملية.</p>
             <code class="block break-all rounded-md bg-ink-50 px-3 py-2 text-xs text-ink-900" dir="ltr">{{ $webhookUrl }}</code>
         </x-card>

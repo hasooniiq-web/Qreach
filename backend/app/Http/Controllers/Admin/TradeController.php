@@ -27,8 +27,8 @@ class TradeController extends Controller
     public function index(Request $request): View|\Illuminate\Http\Response
     {
         $customers = TradeCustomer::query()
-            ->when($request->filled('q'), fn ($q) => $q->where('name', 'like', '%'.$request->string('q').'%')
-                ->orWhere('phone', 'like', '%'.$request->string('q').'%'))
+            ->when($request->filled('q'), fn ($q) => $q->where(fn ($w) => $w->where('name', 'like', '%'.$request->string('q').'%')
+                ->orWhere('phone', 'like', \App\Support\PhoneSearch::pattern($request->string('q')->toString()) ?? '%'.$request->string('q').'%')))
             ->withSum(['entries as sales_total' => fn ($q) => $q->whereIn('type', TradeEntry::CHARGES)->whereNull('voided_at')], 'amount')
             ->withSum(['entries as paid_total' => fn ($q) => $q->where('type', TradeEntry::PAYMENT)->whereNull('voided_at')], 'amount')
             ->withSum(['entries as delivered_qty' => fn ($q) => $q->where('type', TradeEntry::SALE)->whereNull('voided_at')], 'quantity')

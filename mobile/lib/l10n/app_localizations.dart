@@ -1081,19 +1081,19 @@ abstract class AppLocalizations {
   /// No description provided for @referralHeadline.
   ///
   /// In ar, this message translates to:
-  /// **'ادعُ صديقًا واحصل على {days} يومًا مجانية'**
-  String referralHeadline(String days);
+  /// **'ادعُ أصدقاءك: عندما ينضم {count} منهم تحصل على {days} يومًا من Plus مجانًا'**
+  String referralHeadline(String days, String count);
 
   /// No description provided for @referralBody.
   ///
   /// In ar, this message translates to:
-  /// **'شارك رمزك. عندما يشترك صديقك لأول مرة تُضاف {days} يومًا من Plus إلى باقتك.'**
-  String referralBody(String days);
+  /// **'شارك رمزك. عندما يُدخل {count} من أصدقائك رمزك تُضاف {days} يومًا من Plus إلى باقتك، مرة واحدة لكل حساب.'**
+  String referralBody(String days, String count);
 
   /// No description provided for @referralTileBody.
   ///
   /// In ar, this message translates to:
-  /// **'ادعُ صديقًا واحصل على أيام مجانية من Plus'**
+  /// **'ادعُ أصدقاءك واحصل على شهر Plus مجانًا'**
   String get referralTileBody;
 
   /// No description provided for @referralYourCode.
@@ -1135,7 +1135,7 @@ abstract class AppLocalizations {
   /// No description provided for @referralStatSubscribed.
   ///
   /// In ar, this message translates to:
-  /// **'اشتركوا'**
+  /// **'دعوات متبقية'**
   String get referralStatSubscribed;
 
   /// No description provided for @referralStatDays.
@@ -1165,7 +1165,7 @@ abstract class AppLocalizations {
   /// No description provided for @referralApplied.
   ///
   /// In ar, this message translates to:
-  /// **'تم حفظ رمز الدعوة. عندما تشترك سيحصل صديقك على مكافأته.'**
+  /// **'تم حفظ رمز الدعوة. حُسبت دعوتك لصاحب الرمز.'**
   String get referralApplied;
 
   /// No description provided for @referralDisabledNote.
@@ -2757,6 +2757,84 @@ abstract class AppLocalizations {
   /// In ar, this message translates to:
   /// **'تم نسخ الرابط'**
   String get linkCopied;
+
+  /// No description provided for @plateStyleTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تصميم اللوحة'**
+  String get plateStyleTitle;
+
+  /// No description provided for @plateStyleEnglish.
+  ///
+  /// In ar, this message translates to:
+  /// **'إنكليزي'**
+  String get plateStyleEnglish;
+
+  /// No description provided for @plateStyleGerman.
+  ///
+  /// In ar, this message translates to:
+  /// **'ألماني'**
+  String get plateStyleGerman;
+
+  /// No description provided for @plateStyleOther.
+  ///
+  /// In ar, this message translates to:
+  /// **'أخرى'**
+  String get plateStyleOther;
+
+  /// No description provided for @vehicleLimitTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'وصلت إلى حد باقتك'**
+  String get vehicleLimitTitle;
+
+  /// No description provided for @vehicleLimitFree.
+  ///
+  /// In ar, this message translates to:
+  /// **'الباقة المجانية تتيح مركبة واحدة فقط. فعّل باقة Plus لإضافة مركبات أخرى (حتى {max} مركبات في المجموع).'**
+  String vehicleLimitFree(int max);
+
+  /// No description provided for @vehicleLimitPlus.
+  ///
+  /// In ar, this message translates to:
+  /// **'وصلت إلى الحد الأقصى ({max} مركبات) في باقتك.'**
+  String vehicleLimitPlus(int max);
+
+  /// No description provided for @vehicleLimitGo.
+  ///
+  /// In ar, this message translates to:
+  /// **'الانتقال إلى الاشتراك'**
+  String get vehicleLimitGo;
+
+  /// No description provided for @vehicleLockedBanner.
+  ///
+  /// In ar, this message translates to:
+  /// **'هذه المركبة غير فعّالة لأن باقتك الحالية لا تشملها. تتفعّل تلقائيًا عند تفعيل باقة Plus.'**
+  String get vehicleLockedBanner;
+
+  /// No description provided for @vehicleLockedBadge.
+  ///
+  /// In ar, this message translates to:
+  /// **'غير فعّالة'**
+  String get vehicleLockedBadge;
+
+  /// No description provided for @vehicleLockedAction.
+  ///
+  /// In ar, this message translates to:
+  /// **'تفعيل الباقة'**
+  String get vehicleLockedAction;
+
+  /// No description provided for @scanErrorTitle.
+  ///
+  /// In ar, this message translates to:
+  /// **'تعذّر استخدام هذا الرمز'**
+  String get scanErrorTitle;
+
+  /// No description provided for @scanErrorClose.
+  ///
+  /// In ar, this message translates to:
+  /// **'حسنًا'**
+  String get scanErrorClose;
 }
 
 class _AppLocalizationsDelegate

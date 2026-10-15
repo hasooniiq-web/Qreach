@@ -290,6 +290,11 @@ class ScanController extends Controller
             return null;
         }
 
+        // The owner's plan no longer covers this vehicle: it answers like an unlinked code until it does.
+        if ($tag && $tag->status === 'assigned' && $tag->vehicle && app(\App\Services\PlanEntitlements::class)->isVehicleLocked($tag->vehicle)) {
+            return null;
+        }
+
         if (! $tag || $tag->status !== 'assigned' || ! $tag->vehicle) {
             SecurityEventLogger::log(
                 SecurityEventLogger::QR_GUESSING, 'info', 'unknown', null,

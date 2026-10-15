@@ -13,7 +13,6 @@ import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/error_state.dart';
 import '../../../shared/widgets/skeleton.dart';
-import '../../subscription/presentation/subscription_controller.dart';
 import '../data/referral_repository.dart';
 
 final referralProvider = FutureProvider.autoDispose<ReferralInfo>((ref) {
@@ -145,14 +144,14 @@ class _BodyState extends ConsumerState<_Body> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(l10n.referralHeadline(days),
+                Text(l10n.referralHeadline(days, info.invitesRequired.toString()),
                     style: const TextStyle(
                         color: AppColors.brandWhite,
                         fontSize: 20,
                         fontWeight: FontWeight.w800,
                         height: 1.4)),
                 const SizedBox(height: AppSpacing.sm),
-                Text(l10n.referralBody(days),
+                Text(l10n.referralBody(days, info.invitesRequired.toString()),
                     style: const TextStyle(color: Colors.white70, height: 1.6)),
               ],
             ),
@@ -190,10 +189,6 @@ class _BodyState extends ConsumerState<_Body> {
               ],
             ),
           ),
-          const SizedBox(height: AppSpacing.sm),
-          Text(l10n.referralRemaining(info.remainingInvites),
-              textAlign: TextAlign.center,
-              style: TextStyle(color: AppColors.ink500, fontSize: 13)),
           const SizedBox(height: AppSpacing.lg),
           Row(
             children: [
@@ -203,7 +198,7 @@ class _BodyState extends ConsumerState<_Body> {
               const SizedBox(width: AppSpacing.md),
               Expanded(
                   child: _Stat(
-                      value: info.rewarded,
+                      value: info.remainingInvites,
                       label: l10n.referralStatSubscribed)),
               const SizedBox(width: AppSpacing.md),
               Expanded(

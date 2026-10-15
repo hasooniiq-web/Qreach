@@ -60,7 +60,7 @@ class RolesAndPermissionsSeeder extends Seeder
                     ['key' => "{$group}.{$action}"],
                     [
                         'group' => $group,
-                        'name_ar' => $groupNamesAr[$group].' - '.$action,
+                        'name_ar' => $groupNamesAr[$group].' — '.(Permission::ACTION_LABELS[$action] ?? $action),
                         'name_en' => "{$group}.{$action}",
                     ]
                 );

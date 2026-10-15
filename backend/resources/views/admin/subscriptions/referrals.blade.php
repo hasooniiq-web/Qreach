@@ -3,8 +3,8 @@
 
     <p class="mb-5 text-sm text-ink-500">
         @if ($rewardDays > 0)
-            كل عميل لديه رمز دعوة. عندما يُتمّ صديقه أول اشتراك مدفوع (دفع إلكتروني أو قسيمة) يحصل الداعي على
-            <strong class="text-ink-900">{{ $rewardDays }}</strong> يومًا من بلس، بحدّ أقصى <strong class="text-ink-900">{{ $maxRewards }}</strong> مكافأة لكل عميل.
+            كل عميل لديه رمز دعوة. عندما يستخدم رمزه <strong class="text-ink-900">{{ $invitesRequired }}</strong> من الأصدقاء يحصل على
+            <strong class="text-ink-900">{{ $rewardDays }}</strong> يومًا من بلس مجانًا، مرة واحدة لكل حساب.
             تُضبط القيمتان من «الإعدادات».
         @else
             الدعوات متوقفة حاليًا (أيام المكافأة = 0). فعّلها من «الإعدادات».

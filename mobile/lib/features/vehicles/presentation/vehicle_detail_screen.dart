@@ -63,6 +63,10 @@ class VehicleDetailScreen extends ConsumerWidget {
                 FadeSlideIn(child: const _DisabledBanner()),
                 const SizedBox(height: AppSpacing.md),
               ],
+              if (vehicle.lockedByPlan) ...[
+                FadeSlideIn(child: const _LockedByPlanBanner()),
+                const SizedBox(height: AppSpacing.md),
+              ],
               FadeSlideIn(child: _VehicleHero(vehicle: vehicle)),
               const SizedBox(height: AppSpacing.xl),
               FadeSlideIn(
@@ -77,13 +81,16 @@ class VehicleDetailScreen extends ConsumerWidget {
                   ],
                 ),
               ),
-              const SizedBox(height: AppSpacing.xxl),
-              // Without a linked code the only thing to do is link one (or link the last one back).
-              if (vehicle.tags.any((t) => t.status == 'assigned'))
-                FadeSlideIn(
-                  index: 2,
-                  child: _VehicleActions(vehicle: vehicle, vehicleId: vehicleId),
+              const SizedBox(height: AppSpacing.lg),
+              // Editing is always possible; pausing and deleting only make sense once a code is linked.
+              FadeSlideIn(
+                index: 2,
+                child: _VehicleActions(
+                  vehicle: vehicle,
+                  vehicleId: vehicleId,
+                  editOnly: !vehicle.tags.any((t) => t.status == 'assigned'),
                 ),
+              ),
             ],
           ),
         ),
@@ -247,6 +254,7 @@ class _CodeSectionState extends ConsumerState<_CodeSection> {
             ),
           ),
           const SizedBox(height: AppSpacing.lg),
+          if (!widget.vehicle.lockedByPlan)
           AppButton(
             label: l10n.linkNewTag,
             icon: Icons.qr_code_scanner_rounded,
@@ -256,7 +264,8 @@ class _CodeSectionState extends ConsumerState<_CodeSection> {
                 : () => context.push('/vehicles/${widget.vehicleId}/scan'),
           ),
           // The code that was taken off this vehicle last can simply be put back.
-          if (widget.vehicle.previousTagSerial != null) ...[
+          if (widget.vehicle.previousTagSerial != null &&
+              !widget.vehicle.lockedByPlan) ...[
             const SizedBox(height: AppSpacing.md),
             AppButton(
               label: l10n.relinkPreviousTag(widget.vehicle.previousTagSerial!),
@@ -443,14 +452,18 @@ class _VehicleHero extends StatelessWidget {
             ),
           ),
           const SizedBox(height: AppSpacing.md),
-          Text(vehicle.displayName,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: const TextStyle(
-                  color: AppColors.brandWhite,
-                  fontSize: 21,
-                  fontWeight: FontWeight.w800)),
-          const SizedBox(height: AppSpacing.md),
+          // The name the owner gave it — nothing at all when there is none (the plate
+          // is shown just below; it is not repeated here in the name's place).
+          if (vehicle.nameOrNull != null) ...[
+            Text(vehicle.nameOrNull!,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: const TextStyle(
+                    color: AppColors.brandWhite,
+                    fontSize: 21,
+                    fontWeight: FontWeight.w800)),
+            const SizedBox(height: AppSpacing.md),
+          ],
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -461,6 +474,7 @@ class _VehicleHero extends StatelessWidget {
                   letter: vehicle.plateLetter,
                   governorate: vehicle.plateGovernorate,
                   type: PlateType.fromCode(vehicle.plateType),
+                  style: PlateStyle.fromCode(vehicle.plateStyle),
                   width: 168,
                 ),
               ),
@@ -502,6 +516,49 @@ class _VehicleHero extends StatelessWidget {
   }
 }
 
+/// The owner's plan no longer covers this vehicle (free: one, Plus: three).
+class _LockedByPlanBanner extends StatelessWidget {
+  const _LockedByPlanBanner();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Container(
+      padding: const EdgeInsets.all(AppSpacing.md),
+      decoration: BoxDecoration(
+        color: AppColors.statusDanger.withValues(alpha: 0.10),
+        borderRadius: AppRadius.rMd,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            children: [
+              Icon(Icons.lock_outline_rounded, color: AppColors.statusDanger),
+              const SizedBox(width: AppSpacing.sm),
+              Expanded(
+                child: Text(l10n.vehicleLockedBanner,
+                    style: TextStyle(
+                        color: AppColors.ink900,
+                        fontSize: 13.5,
+                        height: 1.5,
+                        fontWeight: FontWeight.w600)),
+              ),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.md),
+          AppButton(
+            label: l10n.vehicleLockedAction,
+            icon: Icons.workspace_premium_outlined,
+            style: AppButtonStyle.accent,
+            onPressed: () => context.push('/subscription'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _DisabledBanner extends StatelessWidget {
   const _DisabledBanner();
 
@@ -536,10 +593,17 @@ class _DisabledBanner extends StatelessWidget {
 /// delete (destructive, visually distinct). Each asks for confirmation and
 /// states what it will do first. The server still enforces ownership.
 class _VehicleActions extends ConsumerStatefulWidget {
-  const _VehicleActions({required this.vehicle, required this.vehicleId});
+  const _VehicleActions({
+    required this.vehicle,
+    required this.vehicleId,
+    this.editOnly = false,
+  });
 
   final VehicleModel vehicle;
   final String vehicleId;
+
+  /// No code is linked yet: only editing is offered.
+  final bool editOnly;
 
   @override
   ConsumerState<_VehicleActions> createState() => _VehicleActionsState();
@@ -656,6 +720,7 @@ class _VehicleActionsState extends ConsumerState<_VehicleActions> {
               : () => context.push('/vehicles/${widget.vehicleId}/edit',
                   extra: widget.vehicle),
         ),
+        if (!widget.editOnly) ...[
         const SizedBox(height: AppSpacing.md),
         Row(
           children: [
@@ -680,6 +745,7 @@ class _VehicleActionsState extends ConsumerState<_VehicleActions> {
             ),
           ],
         ),
+        ],
       ],
     );
   }

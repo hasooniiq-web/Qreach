@@ -15,9 +15,9 @@
     <x-card padding="p-5" class="mb-8">
         <div class="flex flex-wrap items-start justify-between gap-4">
             <div class="max-w-xl">
-                <h2 class="text-sm font-semibold text-ink-900">التجربة المجانية لباقة Plus</h2>
+                <h2 class="text-sm font-semibold text-ink-900">التجربة المجانية لباقة بلس</h2>
                 <p class="mt-1 text-sm leading-6 text-ink-500">
-                    يحصل كل عميل على تجربة واحدة فقط لباقة Plus بلا دفع. تنتهي وحدها دون فترة سماح، ويُرسَل له إشعار قبل نهايتها بيوم.
+                    يحصل كل عميل على تجربة واحدة فقط لباقة بلس بلا دفع. تنتهي وحدها دون فترة سماح، ويُرسَل له إشعار قبل نهايتها بيوم.
                     @if ($trial['days'] > 0)
                         المدة الحالية <strong class="text-ink-900">{{ $trial['days'] }}</strong> يومًا.
                     @else
@@ -102,7 +102,7 @@
                     <form method="POST" action="{{ route('admin.plans.update', $plan) }}" class="space-y-4">
                         @csrf
                         @method('PUT')
-                        <h3 class="text-base font-semibold text-ink-900">{{ $plan->name_ar }} <span class="text-xs font-normal text-ink-400" dir="ltr">({{ $plan->slug }})</span></h3>
+                        <h3 class="text-base font-semibold text-ink-900">{{ $plan->name_ar }}</h3>
 
                         {{-- The app shows the language the customer chose; an empty language falls back to Arabic. --}}
                         <fieldset class="space-y-3 rounded-lg border border-ink-100 p-4">

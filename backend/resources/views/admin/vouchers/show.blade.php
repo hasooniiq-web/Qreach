@@ -16,7 +16,7 @@
                 <details data-menu class="relative">
                     <summary class="btn-accent cursor-pointer list-none">تصدير الأرقام ▾</summary>
                     <div class="menu-panel absolute end-0 top-full z-40 mt-2 w-56 rounded-xl border border-ink-200 bg-surface p-1.5 shadow-(--shadow-pop)">
-                        <a href="{{ route('admin.vouchers.export', [$batch, 'xlsx']) }}" data-no-progress class="block rounded-lg px-2.5 py-2 text-sm text-ink-800 hover:bg-ink-100">Excel</a>
+                        <a href="{{ route('admin.vouchers.export', [$batch, 'xlsx']) }}" data-no-progress class="block rounded-lg px-2.5 py-2 text-sm text-ink-800 hover:bg-ink-100">إكسل</a>
                         <a href="{{ route('admin.vouchers.export', [$batch, 'pdf']) }}" data-no-progress class="block rounded-lg px-2.5 py-2 text-sm text-ink-800 hover:bg-ink-100">PDF</a>
                         <a href="{{ route('admin.vouchers.export', [$batch, 'csv']) }}" data-no-progress class="block rounded-lg px-2.5 py-2 text-sm text-ink-800 hover:bg-ink-100">CSV (أرقام فقط)</a>
                         <a href="{{ route('admin.vouchers.export', [$batch, 'print']) }}" target="_blank" class="block rounded-lg px-2.5 py-2 text-sm text-ink-800 hover:bg-ink-100">طباعة البطاقات مع QR</a>
@@ -131,7 +131,7 @@
             @forelse ($exports as $export)
                 <div class="flex items-start justify-between gap-3 border-b border-ink-100 py-2 text-sm last:border-0">
                     <div>
-                        <p class="text-ink-900">{{ number_format($export->count) }} قسيمة — {{ ['xlsx' => 'Excel', 'pdf' => 'PDF', 'csv' => 'CSV', 'print' => 'طباعة'][$export->format] ?? $export->format }}</p>
+                        <p class="text-ink-900">{{ number_format($export->count) }} قسيمة — {{ ['xlsx' => 'إكسل', 'pdf' => 'PDF', 'csv' => 'CSV', 'print' => 'طباعة'][$export->format] ?? $export->format }}</p>
                         <p class="text-xs text-ink-500">
                             إلى: {{ $export->recipient ?: '—' }} — بواسطة {{ $export->admin?->name ?? '—' }}
                         </p>

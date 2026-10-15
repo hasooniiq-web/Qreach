@@ -54,6 +54,42 @@ class PlanEntitlements
         return $this->activeSubscription($user)?->plan ?? $this->basicPlan();
     }
 
+    /** How many vehicles the customer's plan keeps active; null = no limit. */
+    public function maxVehicles(User $user): ?int
+    {
+        return $this->planFor($user)->max_vehicles;
+    }
+
+    /**
+     * The vehicles the plan no longer covers: everything after the first N by when it was added.
+     * Nothing is deleted — they simply stop answering until the plan covers them again, and
+     * come back by themselves the moment it does (a renewal, a voucher, an invitation reward).
+     *
+     * @return list<int>
+     */
+    public function lockedVehicleIds(User $user): array
+    {
+        $max = $this->maxVehicles($user);
+        if ($max === null) {
+            return [];
+        }
+
+        return \App\Models\Vehicle::where('user_id', $user->id)
+            ->orderBy('created_at')->orderBy('id')
+            ->pluck('id')
+            ->slice($max)
+            ->map(fn ($id) => (int) $id)
+            ->values()
+            ->all();
+    }
+
+    public function isVehicleLocked(\App\Models\Vehicle $vehicle): bool
+    {
+        $owner = $vehicle->user ?? User::find($vehicle->user_id);
+
+        return $owner !== null && in_array($vehicle->id, $this->lockedVehicleIds($owner), true);
+    }
+
     public function canDisplayPublicly(User $user, string $contactType): bool
     {
         return $this->planFor($user)->allowsPublicContact($contactType);

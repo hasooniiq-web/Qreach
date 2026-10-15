@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'vehicle_type_labels.dart';
+import 'add_vehicle_flow.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -41,7 +43,7 @@ class VehicleListScreen extends ConsumerWidget {
                 icon: Icons.add_rounded,
                 tooltip: l10n.addVehicle,
                 filled: true,
-                onTap: () => context.push('/vehicles/new'),
+                onTap: () => startAddVehicle(context, ref),
               ),
             ),
             Expanded(
@@ -77,7 +79,7 @@ class VehicleListScreen extends ConsumerWidget {
                                   expand: false,
                                   style: AppButtonStyle.accent,
                                   onPressed: () =>
-                                      context.push('/vehicles/new'),
+                                      startAddVehicle(context, ref),
                                 ),
                               ),
                             ),
@@ -163,12 +165,16 @@ class _VehicleRow extends StatelessWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(vehicle.displayName,
+                      Text(
+                          vehicle.nameOrNull ??
+                              (subtitle.isNotEmpty
+                                  ? subtitle
+                                  : vehicleTypeLabel(context, vehicle.vehicleType)),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style:
                               AppText.section(context).copyWith(fontSize: 17)),
-                      if (subtitle.isNotEmpty)
+                      if (subtitle.isNotEmpty && vehicle.nameOrNull != null)
                         Padding(
                           padding: const EdgeInsets.only(top: 2),
                           child: Text(subtitle,
@@ -177,12 +183,16 @@ class _VehicleRow extends StatelessWidget {
                         ),
                       const SizedBox(height: AppSpacing.sm),
                       StatusBadge(
-                        label: isProtected
-                            ? l10n.vehicleProtected
-                            : l10n.vehicleNotProtectedYet,
-                        tone: isProtected
-                            ? StatusTone.success
-                            : StatusTone.warning,
+                        label: vehicle.lockedByPlan
+                            ? l10n.vehicleLockedBadge
+                            : (isProtected
+                                ? l10n.vehicleProtected
+                                : l10n.vehicleNotProtectedYet),
+                        tone: vehicle.lockedByPlan
+                            ? StatusTone.danger
+                            : (isProtected
+                                ? StatusTone.success
+                                : StatusTone.warning),
                       ),
                     ],
                   ),
@@ -207,6 +217,7 @@ class _VehicleRow extends StatelessWidget {
                   letter: vehicle.plateLetter,
                   governorate: vehicle.plateGovernorate,
                   type: PlateType.fromCode(vehicle.plateType),
+                  style: PlateStyle.fromCode(vehicle.plateStyle),
                   width: 176,
                 ),
               ],

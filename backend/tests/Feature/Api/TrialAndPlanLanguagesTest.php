@@ -251,7 +251,7 @@ class TrialAndPlanLanguagesTest extends TestCase
     {
         $admin = $this->superAdmin();
 
-        $this->actingAs($admin, 'admin')->get('/admin/plans')->assertOk()->assertSee('التجربة المجانية لباقة Plus')->assertSee('المدة الحالية');
+        $this->actingAs($admin, 'admin')->get('/admin/plans')->assertOk()->assertSee('التجربة المجانية لباقة بلس')->assertSee('المدة الحالية');
 
         $this->actingAs($admin, 'admin')->put('/admin/plans/trial', ['trial_days' => '14'])->assertRedirect()->assertSessionHasNoErrors();
         Cache::flush();

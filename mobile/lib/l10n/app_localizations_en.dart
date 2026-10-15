@@ -557,17 +557,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get referralTitle => 'Invite a friend';
 
   @override
-  String referralHeadline(String days) {
-    return 'Invite a friend and get $days free days';
+  String referralHeadline(String days, String count) {
+    return 'Invite friends: when $count of them join, get $days days of Plus free';
   }
 
   @override
-  String referralBody(String days) {
-    return 'Share your code. When your friend subscribes for the first time, $days days of Plus are added to your plan.';
+  String referralBody(String days, String count) {
+    return 'Share your code. When $count of your friends enter it, $days days of Plus are added to your plan — once per account.';
   }
 
   @override
-  String get referralTileBody => 'Invite a friend and earn free days of Plus';
+  String get referralTileBody => 'Invite friends and get a month of Plus free';
 
   @override
   String get referralYourCode => 'Your invite code';
@@ -590,7 +590,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get referralStatInvited => 'Invited';
 
   @override
-  String get referralStatSubscribed => 'Subscribed';
+  String get referralStatSubscribed => 'Invites left';
 
   @override
   String get referralStatDays => 'Free days';
@@ -606,7 +606,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get referralApplied =>
-      'Invite code saved. When you subscribe, your friend gets their reward.';
+      'Invite code saved. It counts toward your friend\'s reward.';
 
   @override
   String get referralDisabledNote => 'Invitations are paused right now.';
@@ -1499,4 +1499,48 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get linkCopied => 'Link copied';
+
+  @override
+  String get plateStyleTitle => 'Plate design';
+
+  @override
+  String get plateStyleEnglish => 'English';
+
+  @override
+  String get plateStyleGerman => 'German';
+
+  @override
+  String get plateStyleOther => 'Other';
+
+  @override
+  String get vehicleLimitTitle => 'You\'ve reached your plan\'s limit';
+
+  @override
+  String vehicleLimitFree(int max) {
+    return 'The free plan holds one vehicle. Activate Plus to add more (up to $max in total).';
+  }
+
+  @override
+  String vehicleLimitPlus(int max) {
+    return 'You\'ve reached your plan\'s maximum ($max vehicles).';
+  }
+
+  @override
+  String get vehicleLimitGo => 'Go to subscription';
+
+  @override
+  String get vehicleLockedBanner =>
+      'This vehicle is inactive because your current plan doesn\'t cover it. It turns active again when Plus is activated.';
+
+  @override
+  String get vehicleLockedBadge => 'Inactive';
+
+  @override
+  String get vehicleLockedAction => 'Activate plan';
+
+  @override
+  String get scanErrorTitle => 'This code can\'t be used';
+
+  @override
+  String get scanErrorClose => 'OK';
 }

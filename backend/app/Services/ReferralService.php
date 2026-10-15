@@ -12,10 +12,9 @@ use Illuminate\Database\UniqueConstraintViolationException;
 use Illuminate\Support\Facades\DB;
 
 /**
- * Invite a friend. Every customer has a personal code. A friend who is new to paid
- * plans enters it once; when that friend makes a first paid activation (an electronic
- * payment or a voucher — a free trial does not count), the inviter is given free days
- * of Plus. One reward per invited friend, and a cap per inviter.
+ * Invite a friend. Every customer has a personal code. A friend who is new to paid plans
+ * enters it once. When the inviter's count of accepted invitations reaches the required
+ * number (two), the inviter is given one month of Plus — once per account, ever.
  */
 class ReferralService
 {
@@ -36,10 +35,10 @@ class ReferralService
         return max(0, (int) SystemSetting::get('referral_max_invites', 2));
     }
 
-    /** How many friends can earn one inviter a reward. */
-    public function maxRewards(): int
+    /** How many accepted invitations earn the inviter the reward (once per account). */
+    public function invitesRequired(): int
     {
-        return max(0, (int) SystemSetting::get('referral_max_rewards', 12));
+        return max(1, (int) SystemSetting::get('referral_invites_required', 2));
     }
 
     /** The customer's own code, made on first use. */
@@ -144,52 +143,44 @@ class ReferralService
             'referrer_id' => $inviter->id,
         ]);
 
-        return $referral;
+        $this->rewardInviterIfDue($inviter, $referral);
+
+        return $referral->fresh();
     }
 
     /**
-     * Called right after a customer's paid activation. Pays the inviter once for this
-     * friend; later renewals pay nothing. Safe to call for anyone — most are not invited.
+     * One month of Plus the moment the inviter's accepted invitations reach the required
+     * count. Never twice for the same account, however many friends join later.
      */
-    public function rewardInviter(User $referred, SubscriptionManager $subscriptions): ?Referral
+    private function rewardInviterIfDue(User $inviter, Referral $latest): void
     {
         $days = $this->rewardDays();
         if ($days === 0) {
-            return null;
+            return;
         }
 
-        return DB::transaction(function () use ($referred, $subscriptions, $days) {
-            $referral = Referral::where('referred_id', $referred->id)
-                ->where('status', 'pending')
-                ->lockForUpdate()
-                ->first();
-
-            if (! $referral) {
-                return null;
+        DB::transaction(function () use ($inviter, $latest, $days) {
+            // Serialise concurrent invitations of the same inviter.
+            $locked = User::whereKey($inviter->id)->lockForUpdate()->first();
+            if (! $locked || $locked->status !== 'active') {
+                return;
             }
 
-            $rewarded = Referral::where('referrer_id', $referral->referrer_id)->where('status', 'rewarded')->count();
-            if ($rewarded >= $this->maxRewards()) {
-                $referral->update(['status' => 'capped']);
-
-                return $referral;
+            $all = Referral::where('referrer_id', $inviter->id)->get();
+            if ($all->where('status', 'rewarded')->isNotEmpty() || $all->count() < $this->invitesRequired()) {
+                return;
             }
 
-            $inviter = User::find($referral->referrer_id);
-            if (! $inviter || $inviter->status !== 'active') {
-                return null;
-            }
+            app(SubscriptionManager::class)->grantReward($locked, $days);
 
-            $subscriptions->grantReward($inviter, $days);
-            $referral->update(['status' => 'rewarded', 'reward_days' => $days, 'rewarded_at' => now()]);
+            Referral::where('referrer_id', $inviter->id)->update(['status' => 'rewarded', 'rewarded_at' => now()]);
+            $latest->update(['reward_days' => $days]);
 
-            AuditLogger::log('referral.rewarded', 'system', null, 'Referral', $referral->id, 'success', [
-                'referrer_id' => $inviter->id, 'referred_id' => $referred->id, 'days' => $days,
+            AuditLogger::log('referral.rewarded', 'system', null, 'Referral', $latest->id, 'success', [
+                'referrer_id' => $inviter->id, 'invitations' => $all->count(), 'days' => $days,
             ]);
 
-            $inviter->notify(new ReferralRewardNotification($days));
-
-            return $referral;
+            $locked->notify(new ReferralRewardNotification($days));
         });
     }
 
@@ -203,6 +194,7 @@ class ReferralService
             'rewarded' => $rows->where('status', 'rewarded')->count(),
             'earned_days' => (int) $rows->where('status', 'rewarded')->sum('reward_days'),
             'max_invites' => $this->maxInvites(),
+            'invites_required' => $this->invitesRequired(),
             'remaining_invites' => max(0, $this->maxInvites() - $rows->count()),
         ];
     }

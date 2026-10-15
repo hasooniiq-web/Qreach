@@ -23,7 +23,7 @@
 
     <p class="mb-6 text-xs text-ink-400">
         الفترة: {{ $from->translatedFormat('d M Y') }} — {{ $to->translatedFormat('d M Y') }}.
-        البيانات مُجمّعة يوميًا بواسطة مهمة مجدولة (<code class="font-mono">analytics:aggregate</code>) — إذا لم يعمل المجدول بعد فقد تظهر بعض الأيام صفرًا.
+        البيانات مُجمّعة يوميًا بواسطة مهمة مجدولة — إذا لم يعمل المجدول بعد فقد تظهر بعض الأيام صفرًا.
     </p>
 
     <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">

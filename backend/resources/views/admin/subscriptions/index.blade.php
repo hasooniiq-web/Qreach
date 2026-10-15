@@ -4,7 +4,7 @@
     <x-subscription-tabs current="subscriptions" :pending="$stats['pending_requests']" />
 
     <div class="mb-3 grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <x-kpi label="مشتركو باقة Plus" :value="$stats['pro_active']" icon="users" size="lg" tone="success" />
+        <x-kpi label="مشتركو باقة بلس" :value="$stats['pro_active']" icon="users" size="lg" tone="success" />
         <x-kpi label="مستخدمو الباقة الأساسية" :value="$stats['basic']" icon="users" size="lg" />
         <x-card>
             <div class="mb-3 flex items-center justify-between">

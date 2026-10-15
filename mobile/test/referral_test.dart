@@ -86,7 +86,8 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('K7M2-P9QX'), findsOneWidget);
-      expect(find.text('ادعُ صديقًا واحصل على 30 يومًا مجانية'), findsOneWidget);
+      expect(find.text('ادعُ أصدقاءك: عندما ينضم 2 منهم تحصل على 30 يومًا من Plus مجانًا'),
+          findsOneWidget);
       expect(find.text('المدعوون'), findsOneWidget);
       expect(find.text('3'), findsOneWidget);
       expect(find.text('مشاركة الدعوة'), findsOneWidget);
@@ -103,7 +104,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(repo.applied, ['ab12-cd34']);
-      expect(find.text('تم حفظ رمز الدعوة. عندما تشترك سيحصل صديقك على مكافأته.'),
+      expect(find.text('تم حفظ رمز الدعوة. حُسبت دعوتك لصاحب الرمز.'),
           findsOneWidget);
     });
 

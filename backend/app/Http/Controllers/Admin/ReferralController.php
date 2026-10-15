@@ -14,7 +14,7 @@ class ReferralController extends Controller
     use \App\Http\Controllers\Concerns\ExportsTables;
 
     public const STATUS_LABELS = [
-        'pending' => 'بانتظار اشتراك الصديق',
+        'pending' => 'بانتظار اكتمال العدد',
         'rewarded' => 'تمت المكافأة',
         'capped' => 'تجاوز الحد الأقصى',
     ];
@@ -55,7 +55,7 @@ class ReferralController extends Controller
                 'days' => (int) Referral::where('status', 'rewarded')->sum('reward_days'),
             ],
             'rewardDays' => $referrals->rewardDays(),
-            'maxRewards' => $referrals->maxRewards(),
+            'invitesRequired' => $referrals->invitesRequired(),
         ]);
     }
 }

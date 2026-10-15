@@ -7,8 +7,8 @@
             <x-field label="اسم الدور (بالعربية)" name="name_ar">
                 <input id="name_ar" name="name_ar" value="{{ old('name_ar') }}" required maxlength="100" class="form-control">
             </x-field>
-            <x-field label="الاسم البرمجي (بالإنجليزية، بدون مسافات)" name="name_en" hint="يُستخدم داخليًا فقط، مثل Regional Manager">
-                <input id="name_en" name="name_en" value="{{ old('name_en') }}" required maxlength="100" dir="ltr" class="form-control text-start" placeholder="Regional Manager">
+            <x-field label="الاسم البرمجي (بالإنجليزية)" name="name_en" hint="يُستخدم داخليًا فقط. اكتبه بالأحرف الإنجليزية؛ تُستبدل المسافات تلقائيًا بشرطة سفلية، مثل: regional_manager">
+                <input id="name_en" name="name_en" value="{{ old('name_en') }}" required maxlength="100" dir="ltr" class="form-control text-start" placeholder="regional_manager">
             </x-field>
             <x-field label="الوصف (اختياري)" name="description">
                 <input id="description" name="description" value="{{ old('description') }}" maxlength="255" class="form-control">

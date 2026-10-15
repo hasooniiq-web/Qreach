@@ -26,6 +26,7 @@ class TagController extends Controller
         $vehicle = Vehicle::where('uuid', $request->input('vehicle_id'))->firstOrFail();
 
         $this->authorize('update', $vehicle);
+        $this->ensureNotLocked($vehicle);
 
         $tag = $this->lifecycle->activate($request->input('token'), $vehicle, $request->user());
 
@@ -52,10 +53,21 @@ class TagController extends Controller
         return response()->json(['message' => 'تم حذف الرمز من المركبة.']);
     }
 
+    private function ensureNotLocked(Vehicle $vehicle): void
+    {
+        if (app(\App\Services\PlanEntitlements::class)->isVehicleLocked($vehicle)) {
+            abort(response()->json(['error' => [
+                'code' => 'VEHICLE_LOCKED',
+                'message' => 'هذه المركبة غير فعّالة لأن باقتك الحالية لا تشملها. تتفعّل تلقائيًا بتفعيل باقة Plus.',
+            ]], 403));
+        }
+    }
+
     /** Links the code the owner removed last back to this vehicle. */
     public function relink(Request $request, Vehicle $vehicle): JsonResponse
     {
         $this->authorize('update', $vehicle);
+        $this->ensureNotLocked($vehicle);
 
         $tag = $this->lifecycle->relink($vehicle, $request->user());
 

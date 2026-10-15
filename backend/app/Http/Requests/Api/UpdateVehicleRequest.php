@@ -23,6 +23,7 @@ class UpdateVehicleRequest extends FormRequest
                 }
             }],
             'plate_governorate' => ['nullable', 'string', 'max:40'],
+            'plate_style' => ['sometimes', 'nullable', 'in:english,german,other'],
             'vin' => ['nullable', 'string', 'max:32', 'regex:/^[A-HJ-NPR-Z0-9]+$/i', 'unique:vehicles,vin,'.$this->route('vehicle')?->id],
             'nickname' => ['sometimes', 'nullable', 'string', 'max:100'],
             'plate_number' => ['sometimes', 'string', 'max:32', function ($attribute, $value, $fail) {

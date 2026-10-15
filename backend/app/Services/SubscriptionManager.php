@@ -52,9 +52,6 @@ class SubscriptionManager
                 'user_id' => $payment->user_id, 'plan' => $plan->slug, 'days' => $days, 'payment_id' => $payment->id,
             ]);
 
-            // A friend's first paid activation pays the customer who invited them.
-            app(ReferralService::class)->rewardInviter($payment->user, $this);
-
             return $subscription;
         });
     }
@@ -105,8 +102,6 @@ class SubscriptionManager
             AuditLogger::log($action, $adminId ? 'admin' : 'system', $adminId, 'Subscription', $subscription->id, 'success', [
                 'user_id' => $user->id, 'plan' => $plan->slug, 'days' => $days, 'voucher_id' => $voucher->id,
             ]);
-
-            app(ReferralService::class)->rewardInviter($user, $this);
 
             return $subscription;
         });
