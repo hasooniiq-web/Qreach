@@ -1,7 +1,7 @@
 name: qreach_smarttag
 description: "Qreach SmartTag — customer mobile app"
 publish_to: 'none'
-version: 0.1.0+35
+version: 0.1.0+36
 
 environment:
   sdk: ^3.5.0

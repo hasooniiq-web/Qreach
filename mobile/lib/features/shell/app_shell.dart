@@ -224,7 +224,7 @@ class _AppNavBar extends StatelessWidget {
                   children: [
                     for (var i = 0; i < half; i++) tab(i),
                     // The middle belongs to the scan button.
-                    const SizedBox(width: _scanSize + 16),
+                    const Spacer(),
                     for (var i = half; i < items.length; i++) tab(i),
                   ],
                 ),
@@ -303,16 +303,20 @@ class _NavButton extends StatelessWidget {
               color: selected ? discColor : Colors.transparent,
               shape: BoxShape.circle,
             ),
-            child: Badge(
-              isLabelVisible: item.badge > 0,
-              label: Text(item.badge > 9 ? '9+' : '${item.badge}'),
-              backgroundColor: AppColors.brandYellow,
-              textColor: AppColors.brandBlack,
-              offset: const Offset(-2, -2),
-              child: Icon(
-                selected ? item.selectedIcon : item.icon,
-                size: 26,
-                color: selected ? onDisc : AppColors.ink500,
+            // Centred explicitly: a Badge with a label otherwise pins its child to the top
+            // corner of the disc, which pushed the badged tab out of line with the others.
+            child: Center(
+              child: Badge(
+                isLabelVisible: item.badge > 0 && !selected,
+                label: Text(item.badge > 9 ? '9+' : '${item.badge}'),
+                backgroundColor: AppColors.brandYellow,
+                textColor: AppColors.brandBlack,
+                offset: const Offset(-2, -2),
+                child: Icon(
+                  selected ? item.selectedIcon : item.icon,
+                  size: 26,
+                  color: selected ? onDisc : AppColors.ink500,
+                ),
               ),
             ),
           ),
